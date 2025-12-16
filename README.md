@@ -1,6 +1,6 @@
-<img width="1280" height="640" alt="design-os-og" src="https://github.com/user-attachments/assets/f70671a2-66e8-4c80-8998-d4318af55d10" />
+<img width="1280" height="640" alt="Design OS" src="https://github.com/user-attachments/assets/a9c04258-7b9a-45b6-8475-3431cdf5dbe9" />
 
-## The missing step between your idea and your codebase.
+## The missing design process between your idea and your codebase.
 
 [Design OS](https://buildermethods.com/design-os) is a product planning and design tool that helps you define your product vision, structure your data model, design your UI, and export production-ready components for implementation. Rather than jumping straight into code, you work through a guided process that captures what you're building and why—then hands off everything your coding agent needs to build it right.
 
