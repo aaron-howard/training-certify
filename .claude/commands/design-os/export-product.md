@@ -67,9 +67,8 @@ product-plan/
 │   ├── one-shot-instructions.md # All milestones combined
 │   └── incremental/             # For milestone-by-milestone implementation
 │       ├── 01-foundation.md
-│       ├── 02-shell.md
-│       ├── 03-[first-section].md
-│       ├── 04-[second-section].md
+│       ├── 02-[first-section].md
+│       ├── 03-[second-section].md
 │       └── ...
 │
 ├── design-system/               # Design tokens
@@ -143,10 +142,9 @@ Create `product-plan/product-overview.md`:
 
 Build this product in milestones:
 
-1. **Foundation** — Set up design tokens and data model types
-2. **Shell** — Implement the application shell and navigation
-3. **[Section 1]** — [Brief description]
-4. **[Section 2]** — [Brief description]
+1. **Foundation** — Set up design tokens, data model types, and application shell
+2. **[Section 1]** — [Brief description]
+3. **[Section 2]** — [Brief description]
 ...
 
 Each milestone has a dedicated instruction document in `product-plan/instructions/`.
@@ -201,7 +199,7 @@ Place in `product-plan/instructions/incremental/01-foundation.md`:
 
 ## Goal
 
-Set up the foundational elements: design tokens, data model types, and routing structure.
+Set up the foundational elements: design tokens, data model types, routing structure, and application shell.
 
 ## What to Implement
 
@@ -234,37 +232,9 @@ Create placeholder routes for each section:
 
 [List routes based on roadmap sections]
 
-## Files to Reference
-
-- `product-plan/design-system/` — Design tokens
-- `product-plan/data-model/` — Type definitions
-
-## Done When
-
-- [ ] Design tokens are configured
-- [ ] Data model types are defined
-- [ ] Routes exist for all sections (can be placeholder pages)
-```
-
-### 02-shell.md
-
-Place in `product-plan/instructions/incremental/02-shell.md`:
-
-```markdown
-# Milestone 2: Application Shell
-
-> **Provide alongside:** `product-overview.md`
-> **Prerequisites:** Milestone 1 complete
-
-## Goal
-
-Implement the application shell — the persistent navigation and layout that wraps all sections.
-
-## What to Implement
+### 4. Application Shell
 
 [If shell exists:]
-
-### Shell Components
 
 Copy the shell components from `product-plan/shell/components/` to your project:
 
@@ -272,13 +242,13 @@ Copy the shell components from `product-plan/shell/components/` to your project:
 - `MainNav.tsx` — Navigation component
 - `UserMenu.tsx` — User menu with avatar
 
-### Wire Up Navigation
+**Wire Up Navigation:**
 
 Connect navigation to your routing:
 
 [List nav items from shell spec]
 
-### User Menu
+**User Menu:**
 
 The user menu expects:
 - User name
@@ -294,12 +264,17 @@ Design and implement your own application shell with:
 
 ## Files to Reference
 
-- `product-plan/shell/README.md` — Design intent
-- `product-plan/shell/components/` — React components
-- `product-plan/shell/screenshot.png` — Visual reference
+- `product-plan/design-system/` — Design tokens
+- `product-plan/data-model/` — Type definitions
+- `product-plan/shell/README.md` — Shell design intent
+- `product-plan/shell/components/` — Shell React components
+- `product-plan/shell/screenshot.png` — Shell visual reference
 
 ## Done When
 
+- [ ] Design tokens are configured
+- [ ] Data model types are defined
+- [ ] Routes exist for all sections (can be placeholder pages)
 - [ ] Shell renders with navigation
 - [ ] Navigation links to correct routes
 - [ ] User menu shows user info
@@ -308,13 +283,13 @@ Design and implement your own application shell with:
 
 ### [NN]-[section-id].md (for each section)
 
-Place in `product-plan/instructions/incremental/[NN]-[section-id].md`:
+Place in `product-plan/instructions/incremental/[NN]-[section-id].md` (starting at 02 for the first section):
 
 ```markdown
 # Milestone [N]: [Section Title]
 
 > **Provide alongside:** `product-overview.md`
-> **Prerequisites:** Milestones 1-[N-1] complete
+> **Prerequisites:** Milestone 1 (Foundation) complete, plus any prior section milestones
 
 ## Goal
 
@@ -490,21 +465,21 @@ The test instructions include:
 
 # Milestone 1: Foundation
 
-[Include 01-foundation.md content WITHOUT the preamble — it's already at the top]
+[Include 01-foundation.md content WITHOUT the preamble — it's already at the top. This includes design tokens, data model, routing, AND application shell.]
 
 ---
 
-# Milestone 2: Application Shell
+# Milestone 2: [First Section Name]
 
-[Include 02-shell.md content WITHOUT the preamble]
+[Include first section handoff content WITHOUT the preamble]
 
 ---
 
-# Milestone 3: [Section Name]
+# Milestone 3: [Second Section Name]
 
-[Include section handoff content WITHOUT the preamble]
+[Include second section handoff content WITHOUT the preamble]
 
-[Repeat for all sections]
+[Repeat for all sections, incrementing milestone numbers]
 ```
 
 ## Step 7: Copy and Transform Components
@@ -903,7 +878,11 @@ Please ask me clarifying questions about:
    - What database do you prefer?
    - Any specific hosting/deployment requirements?
 
-4. **Any Other Clarifications**
+4. **Backend Business Logic**
+   - Any server-side logic, validations or processes needed beyond what's shown in the UI?
+   - Background processes, notifications, or other processes to trigger?
+
+5. **Any Other Clarifications**
    - Questions about specific features or user flows
    - Edge cases that need clarification
    - Integration requirements
@@ -925,7 +904,7 @@ Create `product-plan/prompts/section-prompt.md`:
 
 - **SECTION_NAME** = [Human-readable name, e.g., "Invoices" or "Project Dashboard"]
 - **SECTION_ID** = [Folder name in sections/, e.g., "invoices" or "project-dashboard"]
-- **NN** = [Milestone number, e.g., "03" or "04"]
+- **NN** = [Milestone number, e.g., "02" or "03" — sections start at 02 since 01 is Foundation]
 
 ---
 
@@ -961,7 +940,11 @@ Please ask me clarifying questions about:
    - How should this section connect to existing features?
    - Any API endpoints already built that this should use?
 
-4. **Any Other Clarifications**
+4. **Backend Business Logic**
+   - Any server-side logic, validations or processes needed beyond what's shown in the UI?
+   - Background processes, notifications, or other processes to trigger?
+
+5. **Any Other Clarifications**
    - Questions about specific user flows in this section
    - Edge cases that need clarification
 
@@ -996,7 +979,7 @@ This folder contains everything needed to implement [Product Name].
 **Instructions:**
 - `product-overview.md` — Product summary (provide with every implementation)
 - `instructions/one-shot-instructions.md` — All milestones combined for full implementation
-- `instructions/incremental/` — Milestone-by-milestone instructions (foundation, shell, sections)
+- `instructions/incremental/` — Milestone-by-milestone instructions (foundation, then sections)
 
 **Design Assets:**
 - `design-system/` — Colors, fonts, design tokens
@@ -1011,14 +994,13 @@ This folder contains everything needed to implement [Product Name].
 Build your app milestone by milestone for better control:
 
 1. Copy the `product-plan/` folder to your codebase
-2. Start with Foundation (`instructions/incremental/01-foundation.md`)
-3. Then Shell (`instructions/incremental/02-shell.md`)
-4. For each section:
+2. Start with Foundation (`instructions/incremental/01-foundation.md`) — includes design tokens, data model, routing, and application shell
+3. For each section:
    - Open `prompts/section-prompt.md`
    - Fill in the section variables at the top (SECTION_NAME, SECTION_ID, NN)
    - Copy/paste into your coding agent
    - Answer questions and implement
-5. Review and test after each milestone
+4. Review and test after each milestone
 
 ### Option B: One-Shot
 
@@ -1044,12 +1026,11 @@ The test instructions are **framework-agnostic** — they describe WHAT to test,
 
 ## Tips
 
-- Always include `product-overview.md` context — it helps your agent understand the full product
-- Use the pre-written prompts — they include important clarifying questions about auth and data modeling
-- Let your agent read the README files for design intent
-- Use sample-data.json files to test before building real APIs
-- Use tests.md files to guide your test-driven development
-- Screenshots show target UI — use them as reference
+- **Use the pre-written prompts** — They include important clarifying questions about auth and data modeling.
+- **Add your own notes** — Customize prompts with project-specific context when needed.
+- **Build on your designs** — Use completed sections as the starting point for future feature development.
+- **Review thoroughly** — Check plans and implementations carefully to catch details and inconsistencies.
+- **Fill in the gaps** — Backend business logic may need manual additions. Incremental implementation helps you identify these along the way.
 
 ---
 
@@ -1091,7 +1072,7 @@ Let the user know:
 **Instructions:**
 - `product-overview.md` — Product summary (always provide with instructions)
 - `instructions/one-shot-instructions.md` — All milestones combined
-- `instructions/incremental/` — [N] milestone instructions (foundation, shell, sections)
+- `instructions/incremental/` — [N] milestone instructions (foundation, then sections)
 
 **Design Assets:**
 - `design-system/` — Colors, fonts, tokens
