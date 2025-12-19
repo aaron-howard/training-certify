@@ -5,9 +5,13 @@ import { loadProductData } from '@/lib/product-loader'
 
 /**
  * Get a storage key based on the product name to track dismissed warnings per product
+ * Converts " & " to "-and-" to maintain semantic meaning
  */
 function getStorageKey(productName: string): string {
-  const sanitized = productName.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+  const sanitized = productName
+    .toLowerCase()
+    .replace(/\s+&\s+/g, '-and-') // Convert " & " to "-and-" first
+    .replace(/[^a-z0-9]+/g, '-')
   return `design-os-phase-warning-dismissed-${sanitized}`
 }
 

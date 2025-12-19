@@ -6,6 +6,7 @@ https://buildermethods.com/design-os
 ## [0.1.2] - 2025-12-19
 
 - Fixed errors related to importing google fonts out of order.
+- Handled sections that use '&' in their name.
 
 ## [0.1.1] - 2025-12-18
 

@@ -23,10 +23,12 @@ const exportZipFiles = import.meta.glob('/product-plan.zip', {
 
 /**
  * Slugify a string for use as an ID
+ * Converts " & " to "-and-" to maintain semantic meaning
  */
 function slugify(str: string): string {
   return str
     .toLowerCase()
+    .replace(/\s+&\s+/g, '-and-') // Convert " & " to "-and-" first
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '')
 }
