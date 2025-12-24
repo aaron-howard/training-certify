@@ -70,7 +70,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <ClerkProvider publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}>
+        <ClerkProvider publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || (process.env.CLERK_PUBLISHABLE_KEY as string)}>
           <QueryClientProvider client={queryClient}>
             {children}
             <TanStackDevtools
