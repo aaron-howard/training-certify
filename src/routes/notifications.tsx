@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { getNotifications } from '../api/others'
-import { Bell, Info, AlertTriangle, CheckCircle, MoreHorizontal } from 'lucide-react'
+import { Info, AlertTriangle, MoreHorizontal } from 'lucide-react'
 
 export const Route = createFileRoute('/notifications')({
     component: NotificationsPage,

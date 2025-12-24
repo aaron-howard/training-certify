@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { getCatalog } from '../api/others'
-import { BookOpen, Search, Filter, ExternalLink } from 'lucide-react'
+import { Search, ExternalLink } from 'lucide-react'
 
 export const Route = createFileRoute('/catalog')({
     component: CatalogPage,

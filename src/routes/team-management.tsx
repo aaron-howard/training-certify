@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { getTeamData } from '../api/teams'
-import { Users, Target, TrendingUp, AlertTriangle, ShieldCheck } from 'lucide-react'
+// No unused icons
 
 export const Route = createFileRoute('/team-management')({
     component: TeamManagementPage,
