@@ -7,6 +7,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { AppShell } from '../components/shell/AppShell'
 import { useEffect } from 'react'
 import { ensureUser } from '../api/users'
+import { ENV } from '../lib/env'
 
 import appCss from '../styles.css?url'
 
@@ -72,7 +73,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <ClerkProvider publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || (process.env.CLERK_PUBLISHABLE_KEY as string)}>
+        <ClerkProvider publishableKey={ENV.CLERK_PUBLISHABLE_KEY}>
           <QueryClientProvider client={queryClient}>
             {children}
             <TanStackDevtools
@@ -111,9 +112,9 @@ function RootComponent() {
           email: user.emailAddresses[0]?.emailAddress || '',
           avatarUrl: user.imageUrl
         }
-      }).then(res => {
+      }).then((res: any) => {
         console.log('👤 [Client] User synced with DB:', res.role)
-      }).catch(err => {
+      }).catch((err: any) => {
         console.error('❌ [Client] Sync failed:', err)
       })
     }

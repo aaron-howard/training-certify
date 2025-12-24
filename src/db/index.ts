@@ -3,21 +3,17 @@ import { drizzle } from 'drizzle-orm/neon-http';
 import * as schema from './schema';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { ENV } from '../lib/env';
 
 const isServer = typeof window === 'undefined';
 
 function getDatabaseUrl() {
     if (!isServer) return null;
 
-    // 1. Try standard process.env
-    let url = process.env.DATABASE_URL || process.env.VITE_DATABASE_URL;
+    // 1. Try centralized ENV (handles process.env and import.meta.env)
+    let url = ENV.DATABASE_URL;
 
-    // 2. Try import.meta.env (Vite dev)
-    if (!url && (import.meta as any).env) {
-        url = (import.meta as any).env.DATABASE_URL || (import.meta as any).env.VITE_DATABASE_URL;
-    }
-
-    // 3. Last resort: Manual file read (useful for some Windows dev environments where env injection is flaky)
+    // 2. Manual file read fallback (only on server if first check failed)
     if (!url) {
         const envFiles = ['.env.local', '.env'];
         for (const file of envFiles) {
@@ -25,7 +21,6 @@ function getDatabaseUrl() {
                 const fullPath = path.resolve(process.cwd(), file);
                 if (fs.existsSync(fullPath)) {
                     const content = fs.readFileSync(fullPath, 'utf8');
-                    // More lenient regex: allows spaces around =, handles CRLF/LF, etc.
                     const lines = content.split(/\r?\n/);
                     for (const line of lines) {
                         const trimmed = line.trim();
@@ -40,9 +35,7 @@ function getDatabaseUrl() {
                     }
                     if (url) break;
                 }
-            } catch (e) {
-                // Ignore FS errors
-            }
+            } catch (e) { }
         }
     }
 
@@ -52,18 +45,12 @@ function getDatabaseUrl() {
 const dbUrl = getDatabaseUrl();
 
 if (isServer) {
-    console.log('⚙️ [Server DB Init]', {
+    console.log('⚙️ [DB Init]', {
         hasDbUrl: !!dbUrl,
         urlPrefix: dbUrl ? dbUrl.substring(0, 20) + '...' : 'none',
-        cwd: process.cwd(),
-        nodeVersion: process.version
     });
 }
 
 export const db = (isServer && dbUrl)
     ? drizzle(neon(dbUrl), { schema })
     : null;
-
-if (isServer && !db) {
-    console.warn('❌ [Server DB] FATAL: Database initialization failed. Check your DATABASE_URL in .env');
-}
