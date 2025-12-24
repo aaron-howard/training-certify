@@ -6,21 +6,32 @@ import { getTeamData } from '../api/teams'
 export const Route = createFileRoute('/team-management')({
     component: TeamManagementPage,
     loader: async ({ context }) => {
-        const { queryClient } = context as any
-        await queryClient.ensureQueryData({
-            queryKey: ['teamData'],
-            queryFn: () => getTeamData(),
-        })
+        try {
+            const { queryClient } = context as any
+            await queryClient.ensureQueryData({
+                queryKey: ['teamData'],
+                queryFn: async () => {
+                    const data = await getTeamData()
+                    return data ?? { teams: [], metrics: [] }
+                },
+            })
+        } catch (error) {
+            console.error('Error loading team data:', error)
+        }
     },
 })
 
 function TeamManagementPage() {
-    const { data: teamData } = useQuery({
+    const { data: teamData, isLoading } = useQuery({
         queryKey: ['teamData'],
-        queryFn: () => getTeamData(),
+        queryFn: async () => {
+            const res = await getTeamData()
+            return res ?? { teams: [], metrics: [] }
+        },
     })
 
-    if (!teamData) return <div className="p-8">Loading team data...</div>
+    if (isLoading) return <div className="p-8">Loading team data...</div>
+    if (!teamData) return <div className="p-8">Team data unavailable.</div>
 
     return (
         <div className="space-y-8">

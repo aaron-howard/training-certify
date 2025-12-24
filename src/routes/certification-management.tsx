@@ -1,32 +1,77 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { getUserCertifications } from '../api/certifications'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { getUserCertifications, createCertification, updateCertification, deleteCertification } from '../api/certifications'
 import { CertificationManagement } from '../components/sections/certification-management/CertificationManagement'
+import { useUser } from '@clerk/tanstack-react-start'
 
 export const Route = createFileRoute('/certification-management')({
     component: CertificationManagementPage,
     loader: async ({ context }) => {
-        // Error check: in case queryClient is not properly typing
         const { queryClient } = context as any
         await queryClient.ensureQueryData({
             queryKey: ['userCertifications'],
-            queryFn: () => getUserCertifications(),
+            queryFn: async () => {
+                const data = await getUserCertifications()
+                return data ?? []
+            },
         })
     },
 })
 
 function CertificationManagementPage() {
+    const queryClient = useQueryClient()
+    const { user } = useUser()
+
     const { data: certs } = useQuery({
         queryKey: ['userCertifications'],
-        queryFn: () => getUserCertifications(),
+        queryFn: async () => {
+            const res = await getUserCertifications()
+            return res ?? []
+        },
     })
+
+    const createMutation = useMutation({
+        mutationFn: createCertification,
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['userCertifications'] }),
+    })
+
+    const updateMutation = useMutation({
+        mutationFn: updateCertification,
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['userCertifications'] }),
+    })
+
+    const deleteMutation = useMutation({
+        mutationFn: deleteCertification,
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['userCertifications'] }),
+    })
+
+    const handleCreate = (data: any) => {
+        createMutation.mutate({
+            data: {
+                ...data,
+                userId: user?.id || 'unknown'
+            }
+        })
+    }
+
+    const handleEdit = (id: string, updates: any) => {
+        updateMutation.mutate({
+            data: { id, updates }
+        })
+    }
+
+    const handleDelete = (id: string) => {
+        if (confirm('Are you sure you want to delete this certification?')) {
+            deleteMutation.mutate({ data: id })
+        }
+    }
 
     return (
         <CertificationManagement
             userCertifications={certs || []}
-            onCreate={(data) => console.log('Create', data)}
-            onEdit={(id, data) => console.log('Edit', id, data)}
-            onDelete={(id) => console.log('Delete', id)}
+            onCreate={handleCreate}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
             onView={(id) => console.log('View', id)}
         />
     )

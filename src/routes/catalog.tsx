@@ -6,21 +6,32 @@ import { Search, ExternalLink } from 'lucide-react'
 export const Route = createFileRoute('/catalog')({
     component: CatalogPage,
     loader: async ({ context }) => {
-        const { queryClient } = context as any
-        await queryClient.ensureQueryData({
-            queryKey: ['catalog'],
-            queryFn: () => getCatalog(),
-        })
+        try {
+            const { queryClient } = context as any
+            await queryClient.ensureQueryData({
+                queryKey: ['catalog'],
+                queryFn: async () => {
+                    const data = await getCatalog()
+                    return data ?? { certifications: [] }
+                },
+            })
+        } catch (error) {
+            console.error('Error loading catalog data:', error)
+        }
     },
 })
 
 function CatalogPage() {
-    const { data: catalog } = useQuery({
+    const { data: catalog, isLoading } = useQuery({
         queryKey: ['catalog'],
-        queryFn: () => getCatalog(),
+        queryFn: async () => {
+            const res = await getCatalog()
+            return res ?? { certifications: [] }
+        },
     })
 
-    if (!catalog) return <div className="p-8">Loading catalog...</div>
+    if (isLoading) return <div className="p-8">Loading catalog...</div>
+    if (!catalog) return <div className="p-8 text-slate-600">Catalog unavailable at the moment.</div>
 
     return (
         <div className="space-y-8">
@@ -40,7 +51,7 @@ function CatalogPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {catalog.certifications.map((cert) => (
+                {catalog?.certifications.map((cert: any) => (
                     <div key={cert.id} className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow group">
                         <div className="flex justify-between items-start mb-4">
                             <div className="w-12 h-12 bg-blue-50 dark:bg-blue-950/30 rounded-lg flex items-center justify-center text-blue-600 font-bold">

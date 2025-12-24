@@ -6,21 +6,32 @@ import { Shield, FileCheck, AlertCircle, History } from 'lucide-react'
 export const Route = createFileRoute('/compliance-audit')({
     component: ComplianceAuditPage,
     loader: async ({ context }) => {
-        const { queryClient } = context as any
-        await queryClient.ensureQueryData({
-            queryKey: ['complianceData'],
-            queryFn: () => getComplianceData(),
-        })
+        try {
+            const { queryClient } = context as any
+            await queryClient.ensureQueryData({
+                queryKey: ['complianceData'],
+                queryFn: async () => {
+                    const data = await getComplianceData()
+                    return data ?? { auditLogs: [], stats: { complianceRate: 0, totalAudits: 0, issuesFound: 0 } }
+                },
+            })
+        } catch (error) {
+            console.error('Error loading compliance data:', error)
+        }
     },
 })
 
 function ComplianceAuditPage() {
-    const { data: compliance } = useQuery({
+    const { data: compliance, isLoading } = useQuery({
         queryKey: ['complianceData'],
-        queryFn: () => getComplianceData(),
+        queryFn: async () => {
+            const res = await getComplianceData()
+            return res ?? { auditLogs: [], stats: { complianceRate: 0, totalAudits: 0, issuesFound: 0 } }
+        },
     })
 
-    if (!compliance) return <div className="p-8">Loading compliance data...</div>
+    if (isLoading) return <div className="p-8">Loading compliance data...</div>
+    if (!compliance) return <div className="p-8">Compliance data unavailable.</div>
 
     return (
         <div className="space-y-8">
@@ -65,7 +76,7 @@ function ComplianceAuditPage() {
                     <h3 className="font-semibold text-slate-900 dark:text-slate-100">Audit Trail</h3>
                 </div>
                 <div className="divide-y divide-slate-200 dark:divide-slate-800">
-                    {compliance.auditLogs.map((log) => (
+                    {compliance?.auditLogs.map((log: any) => (
                         <div key={log.id} className="px-6 py-4 flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
                             <div className="flex gap-4 items-center">
                                 <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-500 font-bold">

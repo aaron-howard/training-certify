@@ -24,10 +24,32 @@ export function CertificationManagement({
     const [statusFilter, setStatusFilter] = useState<CertificationStatus | 'all'>('all')
     const [sortBy, setSortBy] = useState<'expiration' | 'name'>('expiration')
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
-    const [uploadingId, setUploadingId] = useState<string | null>(null)
+
+    const normalizedCertifications = useMemo(() => {
+        // Deduplicate and enrich with dynamic status
+        const unique = Array.from(new Map(userCertifications.map(c => [c.id, c])).values())
+
+        return unique.map(cert => {
+            if (!cert.expirationDate) return cert
+
+            const expDate = new Date(cert.expirationDate)
+            const daysRemaining = Math.ceil((expDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+
+            let status = cert.status
+            if (daysRemaining <= 0) {
+                status = 'expired'
+            } else if (daysRemaining <= 30) {
+                status = 'expiring'
+            } else if (daysRemaining <= 90) { // Catching the "soon" cases better
+                status = 'expiring-soon'
+            }
+
+            return { ...cert, status, daysUntilExpiration: daysRemaining }
+        })
+    }, [userCertifications])
 
     const filteredCertifications = useMemo(() => {
-        let filtered = [...userCertifications]
+        let filtered = [...normalizedCertifications]
 
         if (searchQuery) {
             filtered = filtered.filter(cert =>
@@ -37,7 +59,12 @@ export function CertificationManagement({
         }
 
         if (statusFilter !== 'all') {
-            filtered = filtered.filter(cert => cert.status === statusFilter)
+            if (statusFilter === 'expiring') {
+                // Filter for both expiring and expiring-soon
+                filtered = filtered.filter(cert => cert.status === 'expiring' || cert.status === 'expiring-soon')
+            } else {
+                filtered = filtered.filter(cert => cert.status === statusFilter)
+            }
         }
 
         filtered.sort((a, b) => {
@@ -55,16 +82,16 @@ export function CertificationManagement({
         })
 
         return filtered
-    }, [userCertifications, searchQuery, statusFilter, sortBy, sortOrder])
+    }, [normalizedCertifications, searchQuery, statusFilter, sortBy, sortOrder])
 
     const statusCounts = useMemo(() => {
         return {
-            all: userCertifications.length,
-            active: userCertifications.filter(c => c.status === 'active').length,
-            expiring: userCertifications.filter(c => c.status === 'expiring').length,
-            expired: userCertifications.filter(c => c.status === 'expired').length,
+            all: normalizedCertifications.length,
+            active: normalizedCertifications.filter(c => c.status === 'active').length,
+            expiring: normalizedCertifications.filter(c => c.status === 'expiring' || c.status === 'expiring-soon').length,
+            expired: normalizedCertifications.filter(c => c.status === 'expired').length,
         }
-    }, [userCertifications])
+    }, [normalizedCertifications])
 
     const handleSort = (field: 'expiration' | 'name') => {
         if (sortBy === field) {
@@ -246,7 +273,6 @@ export function CertificationManagement({
                         key={cert.id}
                         certification={cert}
                         onEdit={onEdit}
-                        onDelete={onDelete}
                         onView={onView}
                     />
                 ))}
@@ -279,7 +305,7 @@ function CertificationRow({
 }) {
     const daysUntilExpiration = certification.expirationDate
         ? Math.ceil((new Date(certification.expirationDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-        : 0
+        : null
 
     return (
         <tr className="hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors group">
@@ -299,11 +325,11 @@ function CertificationRow({
             <td className="px-6 py-4">
                 <div>
                     <div className="text-slate-900 dark:text-slate-50">
-                        {new Date(certification.expirationDate).toLocaleDateString('en-US', {
+                        {certification.expirationDate ? new Date(certification.expirationDate).toLocaleDateString('en-US', {
                             month: 'short',
                             day: 'numeric',
                             year: 'numeric',
-                        })}
+                        }) : 'Never'}
                     </div>
                     <div className={`text-sm mt-0.5 ${certification.status === 'expired'
                         ? 'text-red-600 dark:text-red-400'
@@ -312,8 +338,10 @@ function CertificationRow({
                             : 'text-slate-600 dark:text-slate-400'
                         }`}>
                         {certification.status === 'expired'
-                            ? `Expired ${Math.abs(daysUntilExpiration)} days ago`
-                            : `${daysUntilExpiration} days remaining`}
+                            ? `Expired ${daysUntilExpiration ? Math.abs(daysUntilExpiration) : 0} days ago`
+                            : daysUntilExpiration !== null
+                                ? `${daysUntilExpiration} days remaining`
+                                : 'No expiration'}
                     </div>
                 </div>
             </td>
@@ -364,17 +392,15 @@ function CertificationRow({
 function CertificationCard({
     certification,
     onEdit,
-    onDelete,
     onView,
 }: {
     certification: UserCertification
     onEdit?: (id: string, data: any) => void
-    onDelete?: (id: string) => void
     onView?: (id: string) => void
 }) {
-    const daysUntilExpiration = Math.ceil(
-        (new Date(certification.expirationDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-    )
+    const daysUntilExpiration = certification.expirationDate
+        ? Math.ceil((new Date(certification.expirationDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+        : null
 
     return (
         <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
@@ -395,9 +421,16 @@ function CertificationCard({
                     <Calendar className="w-4 h-4 text-slate-400" />
                     <span className="text-slate-600 dark:text-slate-400">Expires:</span>
                     <span className="text-slate-900 dark:text-slate-50 font-medium">
-                        {new Date(certification.expirationDate).toLocaleDateString()}
+                        {certification.expirationDate ? new Date(certification.expirationDate).toLocaleDateString() : 'Never'}
                     </span>
                 </div>
+                {daysUntilExpiration !== null && (
+                    <div className="text-xs text-slate-500 ml-6">
+                        {certification.status === 'expired'
+                            ? `${Math.abs(daysUntilExpiration)} days overdue`
+                            : `${daysUntilExpiration} days remaining`}
+                    </div>
+                )}
             </div>
 
             <div className="flex gap-2">
