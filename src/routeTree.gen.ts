@@ -11,7 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UserProfileRouteImport } from './routes/user-profile'
 import { Route as TeamManagementRouteImport } from './routes/team-management'
+import { Route as SignUpRouteImport } from './routes/sign-up'
+import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as DbHealthRouteImport } from './routes/db-health'
 import { Route as ComplianceAuditRouteImport } from './routes/compliance-audit'
 import { Route as CertificationManagementRouteImport } from './routes/certification-management'
 import { Route as CatalogRouteImport } from './routes/catalog'
@@ -34,9 +37,24 @@ const TeamManagementRoute = TeamManagementRouteImport.update({
   path: '/team-management',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SignUpRoute = SignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignInRoute = SignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NotificationsRoute = NotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DbHealthRoute = DbHealthRouteImport.update({
+  id: '/db-health',
+  path: '/db-health',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ComplianceAuditRoute = ComplianceAuditRouteImport.update({
@@ -100,7 +118,10 @@ export interface FileRoutesByFullPath {
   '/catalog': typeof CatalogRoute
   '/certification-management': typeof CertificationManagementRoute
   '/compliance-audit': typeof ComplianceAuditRoute
+  '/db-health': typeof DbHealthRoute
   '/notifications': typeof NotificationsRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
   '/team-management': typeof TeamManagementRoute
   '/user-profile': typeof UserProfileRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -116,7 +137,10 @@ export interface FileRoutesByTo {
   '/catalog': typeof CatalogRoute
   '/certification-management': typeof CertificationManagementRoute
   '/compliance-audit': typeof ComplianceAuditRoute
+  '/db-health': typeof DbHealthRoute
   '/notifications': typeof NotificationsRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
   '/team-management': typeof TeamManagementRoute
   '/user-profile': typeof UserProfileRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -133,7 +157,10 @@ export interface FileRoutesById {
   '/catalog': typeof CatalogRoute
   '/certification-management': typeof CertificationManagementRoute
   '/compliance-audit': typeof ComplianceAuditRoute
+  '/db-health': typeof DbHealthRoute
   '/notifications': typeof NotificationsRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
   '/team-management': typeof TeamManagementRoute
   '/user-profile': typeof UserProfileRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -151,7 +178,10 @@ export interface FileRouteTypes {
     | '/catalog'
     | '/certification-management'
     | '/compliance-audit'
+    | '/db-health'
     | '/notifications'
+    | '/sign-in'
+    | '/sign-up'
     | '/team-management'
     | '/user-profile'
     | '/demo/api/names'
@@ -167,7 +197,10 @@ export interface FileRouteTypes {
     | '/catalog'
     | '/certification-management'
     | '/compliance-audit'
+    | '/db-health'
     | '/notifications'
+    | '/sign-in'
+    | '/sign-up'
     | '/team-management'
     | '/user-profile'
     | '/demo/api/names'
@@ -183,7 +216,10 @@ export interface FileRouteTypes {
     | '/catalog'
     | '/certification-management'
     | '/compliance-audit'
+    | '/db-health'
     | '/notifications'
+    | '/sign-in'
+    | '/sign-up'
     | '/team-management'
     | '/user-profile'
     | '/demo/api/names'
@@ -200,7 +236,10 @@ export interface RootRouteChildren {
   CatalogRoute: typeof CatalogRoute
   CertificationManagementRoute: typeof CertificationManagementRoute
   ComplianceAuditRoute: typeof ComplianceAuditRoute
+  DbHealthRoute: typeof DbHealthRoute
   NotificationsRoute: typeof NotificationsRoute
+  SignInRoute: typeof SignInRoute
+  SignUpRoute: typeof SignUpRoute
   TeamManagementRoute: typeof TeamManagementRoute
   UserProfileRoute: typeof UserProfileRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
@@ -228,11 +267,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeamManagementRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sign-up': {
+      id: '/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof SignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/notifications': {
       id: '/notifications'
       path: '/notifications'
       fullPath: '/notifications'
       preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/db-health': {
+      id: '/db-health'
+      path: '/db-health'
+      fullPath: '/db-health'
+      preLoaderRoute: typeof DbHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/compliance-audit': {
@@ -320,7 +380,10 @@ const rootRouteChildren: RootRouteChildren = {
   CatalogRoute: CatalogRoute,
   CertificationManagementRoute: CertificationManagementRoute,
   ComplianceAuditRoute: ComplianceAuditRoute,
+  DbHealthRoute: DbHealthRoute,
   NotificationsRoute: NotificationsRoute,
+  SignInRoute: SignInRoute,
+  SignUpRoute: SignUpRoute,
   TeamManagementRoute: TeamManagementRoute,
   UserProfileRoute: UserProfileRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,

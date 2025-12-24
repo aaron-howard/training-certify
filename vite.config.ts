@@ -18,6 +18,15 @@ const config = defineConfig({
     tanstackStart(),
     viteReact(),
   ],
+  optimizeDeps: {
+    include: [
+      'use-sync-external-store/shim/index.js',
+      'react',
+      'react-dom',
+      '@clerk/tanstack-react-start',
+      '@tanstack/react-query'
+    ],
+  },
 })
 
 export default config

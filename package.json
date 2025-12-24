@@ -16,6 +16,7 @@
     "@neondatabase/serverless": "^1.0.2",
     "@tailwindcss/vite": "^4.0.6",
     "@tanstack/react-devtools": "^0.7.0",
+    "@tanstack/react-query": "^5.90.12",
     "@tanstack/react-router": "^1.132.0",
     "@tanstack/react-router-devtools": "^1.132.0",
     "@tanstack/react-router-ssr-query": "^1.131.7",
@@ -27,6 +28,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tailwindcss": "^4.0.6",
+    "use-sync-external-store": "^1.6.0",
     "vite-tsconfig-paths": "^6.0.2"
   },
   "devDependencies": {
