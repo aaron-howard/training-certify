@@ -53,12 +53,15 @@ export const getComplianceData = createServerFn({ method: 'GET' })
 export const getNotifications = createServerFn({ method: 'GET' })
     .handler(async () => {
         try {
-            console.log('Fetching notifications...')
-            if (!db) return []
+            console.log('🚀 [Server] getNotifications called')
+            if (!db) {
+                console.log('⚠️ [Server] DB is null')
+                return []
+            }
 
             const result = await db.select().from(notifications).orderBy(desc(notifications.timestamp)).limit(20)
 
-            console.log(`Found ${result.length} notifications`)
+            console.log(`✅ [Server] Found ${result.length} notifications`)
             return result.map((n: any) => ({
                 id: n.id,
                 title: n.title,
@@ -68,7 +71,7 @@ export const getNotifications = createServerFn({ method: 'GET' })
                 read: n.isRead
             }))
         } catch (error) {
-            console.error('Failed to fetch notifications:', error)
-            return [] // Return empty array on error instead of crashing
+            console.error('❌ [Server] Failed:', error)
+            return []
         }
     })

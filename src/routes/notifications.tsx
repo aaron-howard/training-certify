@@ -9,18 +9,24 @@ export const Route = createFileRoute('/notifications')({
         const { queryClient } = context as any
         await queryClient.ensureQueryData({
             queryKey: ['notifications'],
-            queryFn: () => getNotifications(),
+            queryFn: async () => {
+                const res = await getNotifications()
+                return res || []
+            },
         })
     },
 })
 
 function NotificationsPage() {
-    const { data: notifications } = useQuery({
+    const { data: notifications = [], isLoading } = useQuery({
         queryKey: ['notifications'],
-        queryFn: () => getNotifications(),
+        queryFn: async () => {
+            const res = await getNotifications()
+            return res || []
+        },
     })
 
-    if (!notifications) return <div className="p-8">Loading notifications...</div>
+    if (isLoading) return <div className="p-8">Loading notifications...</div>
 
     return (
         <div className="max-w-4xl mx-auto space-y-6">
