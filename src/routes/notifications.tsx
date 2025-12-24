@@ -5,6 +5,13 @@ import { Bell, Info, AlertTriangle, CheckCircle, MoreHorizontal } from 'lucide-r
 
 export const Route = createFileRoute('/notifications')({
     component: NotificationsPage,
+    loader: async ({ context }) => {
+        const { queryClient } = context as any
+        await queryClient.ensureQueryData({
+            queryKey: ['notifications'],
+            queryFn: () => getNotifications(),
+        })
+    },
 })
 
 function NotificationsPage() {

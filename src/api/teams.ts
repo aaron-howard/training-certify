@@ -1,10 +1,18 @@
 import { createServerFn } from '@tanstack/react-start'
 import { db } from '../db'
-import { teams } from '../db/schema'
+import { teams, userTeams } from '../db/schema'
+import { sql, eq } from 'drizzle-orm'
 
 export const getTeamData = createServerFn({ method: 'GET' })
     .handler(async () => {
-        const teamsResult = await db.select().from(teams)
+        const teamsResult = await db.select({
+            id: teams.id,
+            name: teams.name,
+            memberCount: sql<number>`count(${userTeams.userId})`.mapWith(Number)
+        })
+            .from(teams)
+            .leftJoin(userTeams, eq(teams.id, userTeams.teamId))
+            .groupBy(teams.id, teams.name)
 
         // Mock metrics for now as they aren't in DB yet
         const metrics = [
@@ -16,10 +24,8 @@ export const getTeamData = createServerFn({ method: 'GET' })
 
         return {
             teams: teamsResult.map(t => ({
-                id: t.id,
-                name: t.name,
-                memberCount: 0,
-                coverage: 0
+                ...t,
+                coverage: Math.floor(Math.random() * 40) + 60 // Mock coverage for now
             })),
             metrics
         }

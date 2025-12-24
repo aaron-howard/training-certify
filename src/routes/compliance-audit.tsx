@@ -5,6 +5,13 @@ import { Shield, FileCheck, AlertCircle, History } from 'lucide-react'
 
 export const Route = createFileRoute('/compliance-audit')({
     component: ComplianceAuditPage,
+    loader: async ({ context }) => {
+        const { queryClient } = context as any
+        await queryClient.ensureQueryData({
+            queryKey: ['complianceData'],
+            queryFn: () => getComplianceData(),
+        })
+    },
 })
 
 function ComplianceAuditPage() {

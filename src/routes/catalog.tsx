@@ -5,6 +5,13 @@ import { BookOpen, Search, Filter, ExternalLink } from 'lucide-react'
 
 export const Route = createFileRoute('/catalog')({
     component: CatalogPage,
+    loader: async ({ context }) => {
+        const { queryClient } = context as any
+        await queryClient.ensureQueryData({
+            queryKey: ['catalog'],
+            queryFn: () => getCatalog(),
+        })
+    },
 })
 
 function CatalogPage() {

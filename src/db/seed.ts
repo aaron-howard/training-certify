@@ -109,6 +109,31 @@ async function main() {
         }
     ]);
 
+    // 7. Seed Audit Logs
+    await db.insert(schema.auditLogs).values([
+        {
+            userId: user1.id,
+            action: 'Created Certification',
+            resourceType: 'user_certification',
+            resourceId: 'uc-001',
+            details: 'Added AWS Certified Solutions Architect - Associate',
+        },
+        {
+            userId: user1.id,
+            action: 'Updated Profile',
+            resourceType: 'user',
+            resourceId: user1.id,
+            details: 'Updated contact information',
+        },
+        {
+            userId: user1.id,
+            action: 'Viewed Audit Log',
+            resourceType: 'system',
+            resourceId: 'system',
+            details: 'Accessed compliance dashboard',
+        }
+    ]);
+
     console.log('Seeding completed successfully!');
 }
 

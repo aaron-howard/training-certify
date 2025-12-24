@@ -5,6 +5,13 @@ import { Users, Target, TrendingUp, AlertTriangle, ShieldCheck } from 'lucide-re
 
 export const Route = createFileRoute('/team-management')({
     component: TeamManagementPage,
+    loader: async ({ context }) => {
+        const { queryClient } = context as any
+        await queryClient.ensureQueryData({
+            queryKey: ['teamData'],
+            queryFn: () => getTeamData(),
+        })
+    },
 })
 
 function TeamManagementPage() {
