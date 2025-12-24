@@ -1,0 +1,539 @@
+{
+  "_meta": {
+    "models": {
+      "certifications": "Each certification represents a professional credential from a vendor like AWS, Azure, or (ISC)² that employees can pursue and track. Certifications include metadata about difficulty, exam requirements, and renewal cycles.",
+      "vendors": "Vendors are the certification issuing bodies (AWS, Microsoft, (ISC)², etc.) that create and maintain certification programs."
+    },
+    "relationships": [
+      "Each Certification belongs to a Vendor (identified by vendorId and vendorName)",
+      "Certifications can have prerequisites that reference other Certifications by name",
+      "The holderCount field shows how many team members currently hold each certification"
+    ]
+  },
+  "certifications": [
+    {
+      "id": "cert-001",
+      "name": "AWS Certified Solutions Architect - Associate",
+      "vendorId": "vendor-aws",
+      "vendorName": "Amazon Web Services (AWS)",
+      "vendorLogo": "https://placeholder.com/aws-logo.png",
+      "category": "Cloud",
+      "difficulty": "Intermediate",
+      "validityPeriod": "3 years",
+      "intendedAudience": ["Solution Architect", "Cloud Engineer", "DevOps Engineer"],
+      "description": "The AWS Certified Solutions Architect - Associate certification validates your ability to design distributed systems on AWS. This certification demonstrates your expertise in designing cost-optimized, fault-tolerant, and scalable systems using AWS services.",
+      "prerequisites": {
+        "required": [],
+        "recommended": ["6-12 months of hands-on experience with AWS", "Understanding of core AWS services (EC2, S3, RDS, VPC)"]
+      },
+      "examInfo": {
+        "format": "Multiple choice and multiple response",
+        "duration": "130 minutes",
+        "numberOfQuestions": "65 questions",
+        "passingScore": "720 out of 1000",
+        "cost": "$150 USD"
+      },
+      "renewalRequirements": {
+        "cycle": "3 years",
+        "options": [
+          "Pass the current version of the exam",
+          "Pass a higher-level AWS certification exam",
+          "Complete 40 hours of AWS training and pass a recertification exam"
+        ]
+      },
+      "holderCount": 12
+    },
+    {
+      "id": "cert-002",
+      "name": "AWS Certified Cloud Practitioner",
+      "vendorId": "vendor-aws",
+      "vendorName": "Amazon Web Services (AWS)",
+      "vendorLogo": "https://placeholder.com/aws-logo.png",
+      "category": "Cloud",
+      "difficulty": "Beginner",
+      "validityPeriod": "3 years",
+      "intendedAudience": ["Anyone new to cloud", "Business Analyst", "Project Manager", "Sales"],
+      "description": "AWS Certified Cloud Practitioner is an entry-level certification that validates overall understanding of the AWS Cloud. This certification is ideal for individuals in technical, managerial, sales, purchasing, or financial roles who work with the AWS Cloud.",
+      "prerequisites": {
+        "required": [],
+        "recommended": ["Basic understanding of IT services and their uses in the AWS Cloud platform"]
+      },
+      "examInfo": {
+        "format": "Multiple choice and multiple response",
+        "duration": "90 minutes",
+        "numberOfQuestions": "65 questions",
+        "passingScore": "700 out of 1000",
+        "cost": "$100 USD"
+      },
+      "renewalRequirements": {
+        "cycle": "3 years",
+        "options": [
+          "Pass the current version of the Cloud Practitioner exam",
+          "Pass any AWS Associate or Professional level certification exam"
+        ]
+      },
+      "holderCount": 24
+    },
+    {
+      "id": "cert-003",
+      "name": "AWS Certified DevOps Engineer - Professional",
+      "vendorId": "vendor-aws",
+      "vendorName": "Amazon Web Services (AWS)",
+      "vendorLogo": "https://placeholder.com/aws-logo.png",
+      "category": "Cloud",
+      "difficulty": "Expert",
+      "validityPeriod": "3 years",
+      "intendedAudience": ["DevOps Engineer", "SRE", "Cloud Architect"],
+      "description": "The AWS Certified DevOps Engineer - Professional certification validates technical expertise in provisioning, operating, and managing distributed application systems on the AWS platform. This certification demonstrates your ability to implement and manage continuous delivery systems and methodologies on AWS.",
+      "prerequisites": {
+        "required": ["AWS Certified Developer - Associate OR AWS Certified SysOps Administrator - Associate"],
+        "recommended": ["2+ years of experience provisioning, operating, and managing AWS environments"]
+      },
+      "examInfo": {
+        "format": "Multiple choice and multiple response",
+        "duration": "180 minutes",
+        "numberOfQuestions": "75 questions",
+        "passingScore": "750 out of 1000",
+        "cost": "$300 USD"
+      },
+      "renewalRequirements": {
+        "cycle": "3 years",
+        "options": [
+          "Pass the current version of the DevOps Engineer Professional exam",
+          "Complete 80 hours of AWS training and pass a recertification exam"
+        ]
+      },
+      "holderCount": 5
+    },
+    {
+      "id": "cert-004",
+      "name": "Microsoft Azure Administrator Associate",
+      "vendorId": "vendor-azure",
+      "vendorName": "Microsoft Azure",
+      "vendorLogo": "https://placeholder.com/azure-logo.png",
+      "category": "Cloud",
+      "difficulty": "Intermediate",
+      "validityPeriod": "2 years",
+      "intendedAudience": ["Cloud Administrator", "System Administrator", "DevOps Engineer"],
+      "description": "The Azure Administrator Associate certification validates your skills in implementing, managing, and monitoring an organization's Microsoft Azure environment. This includes managing cloud infrastructure services, applications, networks, and security.",
+      "prerequisites": {
+        "required": [],
+        "recommended": ["6+ months of hands-on experience with Azure administration", "Understanding of core Azure services, workloads, security, and governance"]
+      },
+      "examInfo": {
+        "format": "Multiple choice, case studies, and hands-on labs",
+        "duration": "120 minutes",
+        "numberOfQuestions": "40-60 questions",
+        "passingScore": "700 out of 1000",
+        "cost": "$165 USD"
+      },
+      "renewalRequirements": {
+        "cycle": "2 years",
+        "options": [
+          "Pass a free online renewal assessment on Microsoft Learn",
+          "Pass the current version of the AZ-104 exam"
+        ]
+      },
+      "holderCount": 8
+    },
+    {
+      "id": "cert-005",
+      "name": "Microsoft Azure Solutions Architect Expert",
+      "vendorId": "vendor-azure",
+      "vendorName": "Microsoft Azure",
+      "vendorLogo": "https://placeholder.com/azure-logo.png",
+      "category": "Cloud",
+      "difficulty": "Advanced",
+      "validityPeriod": "2 years",
+      "intendedAudience": ["Solution Architect", "Cloud Architect", "Technical Lead"],
+      "description": "The Azure Solutions Architect Expert certification validates expertise in designing cloud and hybrid solutions that run on Microsoft Azure. This certification demonstrates advanced skills in compute, network, storage, and security.",
+      "prerequisites": {
+        "required": ["Microsoft Azure Administrator Associate certification"],
+        "recommended": ["Advanced experience with Azure administration, development, and DevOps processes"]
+      },
+      "examInfo": {
+        "format": "Multiple choice, case studies, and scenario-based questions",
+        "duration": "120 minutes",
+        "numberOfQuestions": "40-60 questions",
+        "passingScore": "700 out of 1000",
+        "cost": "$165 USD"
+      },
+      "renewalRequirements": {
+        "cycle": "2 years",
+        "options": [
+          "Pass a free online renewal assessment on Microsoft Learn",
+          "Pass the current version of the AZ-305 exam"
+        ]
+      },
+      "holderCount": 4
+    },
+    {
+      "id": "cert-006",
+      "name": "Google Cloud Professional Cloud Architect",
+      "vendorId": "vendor-gcp",
+      "vendorName": "Google Cloud Platform (GCP)",
+      "vendorLogo": "https://placeholder.com/gcp-logo.png",
+      "category": "Cloud",
+      "difficulty": "Advanced",
+      "validityPeriod": "2 years",
+      "intendedAudience": ["Cloud Architect", "Solution Architect", "Technical Lead"],
+      "description": "The Google Cloud Professional Cloud Architect certification demonstrates your ability to design, develop, and manage robust, secure, scalable, highly available, and dynamic solutions to drive business objectives using Google Cloud technologies.",
+      "prerequisites": {
+        "required": [],
+        "recommended": ["3+ years of industry experience including 1+ years designing and managing solutions using Google Cloud"]
+      },
+      "examInfo": {
+        "format": "Multiple choice and multiple select",
+        "duration": "120 minutes",
+        "numberOfQuestions": "50-60 questions",
+        "passingScore": "Not disclosed",
+        "cost": "$200 USD"
+      },
+      "renewalRequirements": {
+        "cycle": "2 years",
+        "options": [
+          "Pass the current version of the Professional Cloud Architect exam"
+        ]
+      },
+      "holderCount": 3
+    },
+    {
+      "id": "cert-007",
+      "name": "CISSP - Certified Information Systems Security Professional",
+      "vendorId": "vendor-isc2",
+      "vendorName": "(ISC)²",
+      "vendorLogo": "https://placeholder.com/isc2-logo.png",
+      "category": "Security",
+      "difficulty": "Advanced",
+      "validityPeriod": "3 years",
+      "intendedAudience": ["Security Engineer", "Security Architect", "Security Manager", "CISO"],
+      "description": "CISSP is an internationally recognized certification in information security. It demonstrates an advanced level of knowledge in designing, implementing, and managing cybersecurity programs. CISSP covers eight domains of security knowledge.",
+      "prerequisites": {
+        "required": ["5 years of cumulative paid work experience in two or more of the eight domains of the CISSP CBK"],
+        "recommended": ["Bachelor's degree or additional certification can substitute for 1 year of experience"]
+      },
+      "examInfo": {
+        "format": "Computerized adaptive testing (CAT)",
+        "duration": "3 hours",
+        "numberOfQuestions": "100-150 questions",
+        "passingScore": "700 out of 1000",
+        "cost": "$749 USD"
+      },
+      "renewalRequirements": {
+        "cycle": "3 years",
+        "options": [
+          "Earn 120 CPE credits (40 per year) through professional development activities",
+          "Pay annual maintenance fees"
+        ]
+      },
+      "holderCount": 6
+    },
+    {
+      "id": "cert-008",
+      "name": "CompTIA Security+",
+      "vendorId": "vendor-comptia",
+      "vendorName": "CompTIA",
+      "vendorLogo": "https://placeholder.com/comptia-logo.png",
+      "category": "Security",
+      "difficulty": "Beginner",
+      "validityPeriod": "3 years",
+      "intendedAudience": ["Security Administrator", "Network Administrator", "Junior Security Engineer"],
+      "description": "CompTIA Security+ is a global certification that validates the baseline skills necessary to perform core security functions and pursue an IT security career. It covers essential principles for network security and risk management.",
+      "prerequisites": {
+        "required": [],
+        "recommended": ["CompTIA Network+ and 2 years of experience in IT administration with a security focus"]
+      },
+      "examInfo": {
+        "format": "Multiple choice and performance-based",
+        "duration": "90 minutes",
+        "numberOfQuestions": "Maximum of 90 questions",
+        "passingScore": "750 out of 900",
+        "cost": "$392 USD"
+      },
+      "renewalRequirements": {
+        "cycle": "3 years",
+        "options": [
+          "Earn 50 Continuing Education Units (CEUs)",
+          "Retake the current version of the Security+ exam"
+        ]
+      },
+      "holderCount": 15
+    },
+    {
+      "id": "cert-009",
+      "name": "CompTIA Network+",
+      "vendorId": "vendor-comptia",
+      "vendorName": "CompTIA",
+      "vendorLogo": "https://placeholder.com/comptia-logo.png",
+      "category": "Networking",
+      "difficulty": "Beginner",
+      "validityPeriod": "3 years",
+      "intendedAudience": ["Network Administrator", "Network Technician", "Help Desk Technician"],
+      "description": "CompTIA Network+ validates the essential knowledge and skills needed to confidently design, configure, manage and troubleshoot wired and wireless networks. This certification covers networking concepts, infrastructure, operations, security, and troubleshooting.",
+      "prerequisites": {
+        "required": [],
+        "recommended": ["CompTIA A+ certification and 9-12 months of networking experience"]
+      },
+      "examInfo": {
+        "format": "Multiple choice and performance-based",
+        "duration": "90 minutes",
+        "numberOfQuestions": "Maximum of 90 questions",
+        "passingScore": "720 out of 900",
+        "cost": "$358 USD"
+      },
+      "renewalRequirements": {
+        "cycle": "3 years",
+        "options": [
+          "Earn 30 Continuing Education Units (CEUs)",
+          "Retake the current version of the Network+ exam"
+        ]
+      },
+      "holderCount": 18
+    },
+    {
+      "id": "cert-010",
+      "name": "ITIL 4 Foundation",
+      "vendorId": "vendor-itil",
+      "vendorName": "ITIL (Axelos)",
+      "vendorLogo": "https://placeholder.com/itil-logo.png",
+      "category": "Project Management",
+      "difficulty": "Beginner",
+      "validityPeriod": "Lifetime",
+      "intendedAudience": ["IT Service Manager", "Project Manager", "Business Analyst", "IT Professional"],
+      "description": "ITIL 4 Foundation introduces modern IT service management concepts and provides a practical and flexible approach to support organizations on their journey to digital transformation. It covers key concepts of service management and the ITIL 4 service value system.",
+      "prerequisites": {
+        "required": [],
+        "recommended": ["Basic understanding of IT services and terminology"]
+      },
+      "examInfo": {
+        "format": "Multiple choice",
+        "duration": "60 minutes",
+        "numberOfQuestions": "40 questions",
+        "passingScore": "26 out of 40 (65%)",
+        "cost": "$320 USD"
+      },
+      "renewalRequirements": {
+        "cycle": "No renewal required",
+        "options": [
+          "This is a lifetime certification with no renewal requirements"
+        ]
+      },
+      "holderCount": 22
+    },
+    {
+      "id": "cert-011",
+      "name": "Certified Kubernetes Administrator (CKA)",
+      "vendorId": "vendor-cncf",
+      "vendorName": "Cloud Native Computing Foundation (CNCF)",
+      "vendorLogo": "https://placeholder.com/cncf-logo.png",
+      "category": "Cloud",
+      "difficulty": "Intermediate",
+      "validityPeriod": "3 years",
+      "intendedAudience": ["Kubernetes Administrator", "DevOps Engineer", "Site Reliability Engineer"],
+      "description": "The CKA certification demonstrates proficiency in managing Kubernetes clusters, including installation, configuration, management, and troubleshooting. This hands-on certification validates your ability to perform the responsibilities of Kubernetes administrators.",
+      "prerequisites": {
+        "required": [],
+        "recommended": ["Experience with command-line interface and container technologies"]
+      },
+      "examInfo": {
+        "format": "Performance-based (hands-on command line)",
+        "duration": "120 minutes",
+        "numberOfQuestions": "15-20 performance-based tasks",
+        "passingScore": "66%",
+        "cost": "$395 USD"
+      },
+      "renewalRequirements": {
+        "cycle": "3 years",
+        "options": [
+          "Retake and pass the current version of the CKA exam"
+        ]
+      },
+      "holderCount": 7
+    },
+    {
+      "id": "cert-012",
+      "name": "Certified Information Security Manager (CISM)",
+      "vendorId": "vendor-isaca",
+      "vendorName": "ISACA",
+      "vendorLogo": "https://placeholder.com/isaca-logo.png",
+      "category": "Security",
+      "difficulty": "Advanced",
+      "validityPeriod": "3 years",
+      "intendedAudience": ["Security Manager", "IT Manager", "Security Consultant", "CISO"],
+      "description": "CISM certification indicates expertise in information security governance, risk management, incident management, and program development and management. CISM is designed for experienced security managers and those who have information security management responsibilities.",
+      "prerequisites": {
+        "required": ["5 years of work experience in information security management"],
+        "recommended": ["A combination of experience in multiple CISM domains"]
+      },
+      "examInfo": {
+        "format": "Multiple choice",
+        "duration": "4 hours",
+        "numberOfQuestions": "150 questions",
+        "passingScore": "450 out of 800",
+        "cost": "$575 USD (member) / $760 USD (non-member)"
+      },
+      "renewalRequirements": {
+        "cycle": "3 years",
+        "options": [
+          "Earn 120 Continuing Professional Education (CPE) hours (20 per year minimum)",
+          "Pay annual maintenance fees"
+        ]
+      },
+      "holderCount": 2
+    },
+    {
+      "id": "cert-013",
+      "name": "Terraform Associate",
+      "vendorId": "vendor-hashicorp",
+      "vendorName": "HashiCorp",
+      "vendorLogo": "https://placeholder.com/hashicorp-logo.png",
+      "category": "Cloud",
+      "difficulty": "Intermediate",
+      "validityPeriod": "2 years",
+      "intendedAudience": ["DevOps Engineer", "Cloud Engineer", "Infrastructure Engineer"],
+      "description": "The HashiCorp Certified: Terraform Associate certification validates your knowledge of basic concepts and skills in infrastructure automation using Terraform. This certification covers Terraform's purpose, workflow, and key features for infrastructure as code.",
+      "prerequisites": {
+        "required": [],
+        "recommended": ["Basic understanding of cloud infrastructure and experience using Terraform in production"]
+      },
+      "examInfo": {
+        "format": "Multiple choice",
+        "duration": "60 minutes",
+        "numberOfQuestions": "57 questions",
+        "passingScore": "70%",
+        "cost": "$70.50 USD"
+      },
+      "renewalRequirements": {
+        "cycle": "2 years",
+        "options": [
+          "Retake and pass the current version of the Terraform Associate exam"
+        ]
+      },
+      "holderCount": 9
+    },
+    {
+      "id": "cert-014",
+      "name": "Microsoft Azure Data Engineer Associate",
+      "vendorId": "vendor-azure",
+      "vendorName": "Microsoft Azure",
+      "vendorLogo": "https://placeholder.com/azure-logo.png",
+      "category": "Data",
+      "difficulty": "Intermediate",
+      "validityPeriod": "2 years",
+      "intendedAudience": ["Data Engineer", "Data Architect", "Database Administrator"],
+      "description": "The Azure Data Engineer Associate certification validates your ability to design and implement data management, monitoring, security, and privacy using Azure data services. This includes integrating, transforming, and consolidating data from structured and unstructured data systems.",
+      "prerequisites": {
+        "required": [],
+        "recommended": ["Experience with data processing and data engineering concepts", "Familiarity with Azure data services"]
+      },
+      "examInfo": {
+        "format": "Multiple choice and case studies",
+        "duration": "120 minutes",
+        "numberOfQuestions": "40-60 questions",
+        "passingScore": "700 out of 1000",
+        "cost": "$165 USD"
+      },
+      "renewalRequirements": {
+        "cycle": "2 years",
+        "options": [
+          "Pass a free online renewal assessment on Microsoft Learn",
+          "Pass the current version of the DP-203 exam"
+        ]
+      },
+      "holderCount": 6
+    },
+    {
+      "id": "cert-015",
+      "name": "Certified Ethical Hacker (CEH)",
+      "vendorId": "vendor-eccouncil",
+      "vendorName": "EC-Council",
+      "vendorLogo": "https://placeholder.com/eccouncil-logo.png",
+      "category": "Security",
+      "difficulty": "Intermediate",
+      "validityPeriod": "3 years",
+      "intendedAudience": ["Penetration Tester", "Security Analyst", "Ethical Hacker", "Security Consultant"],
+      "description": "The Certified Ethical Hacker certification demonstrates knowledge of assessing the security of computer systems by looking for weaknesses and vulnerabilities using the same techniques as malicious hackers, but in a lawful and legitimate manner.",
+      "prerequisites": {
+        "required": [],
+        "recommended": ["2 years of work experience in information security OR attend official EC-Council training"]
+      },
+      "examInfo": {
+        "format": "Multiple choice",
+        "duration": "4 hours",
+        "numberOfQuestions": "125 questions",
+        "passingScore": "70%",
+        "cost": "$1,199 USD (includes training) or $950 USD (exam only with experience waiver)"
+      },
+      "renewalRequirements": {
+        "cycle": "3 years",
+        "options": [
+          "Earn 120 ECE credits through various professional activities",
+          "Retake the current version of the CEH exam"
+        ]
+      },
+      "holderCount": 4
+    }
+  ],
+  "vendors": [
+    {
+      "id": "vendor-aws",
+      "name": "Amazon Web Services (AWS)",
+      "logo": "https://placeholder.com/aws-logo.png",
+      "certificationCount": 3
+    },
+    {
+      "id": "vendor-azure",
+      "name": "Microsoft Azure",
+      "logo": "https://placeholder.com/azure-logo.png",
+      "certificationCount": 3
+    },
+    {
+      "id": "vendor-gcp",
+      "name": "Google Cloud Platform (GCP)",
+      "logo": "https://placeholder.com/gcp-logo.png",
+      "certificationCount": 1
+    },
+    {
+      "id": "vendor-isc2",
+      "name": "(ISC)²",
+      "logo": "https://placeholder.com/isc2-logo.png",
+      "certificationCount": 1
+    },
+    {
+      "id": "vendor-comptia",
+      "name": "CompTIA",
+      "logo": "https://placeholder.com/comptia-logo.png",
+      "certificationCount": 2
+    },
+    {
+      "id": "vendor-itil",
+      "name": "ITIL (Axelos)",
+      "logo": "https://placeholder.com/itil-logo.png",
+      "certificationCount": 1
+    },
+    {
+      "id": "vendor-cncf",
+      "name": "Cloud Native Computing Foundation (CNCF)",
+      "logo": "https://placeholder.com/cncf-logo.png",
+      "certificationCount": 1
+    },
+    {
+      "id": "vendor-isaca",
+      "name": "ISACA",
+      "logo": "https://placeholder.com/isaca-logo.png",
+      "certificationCount": 1
+    },
+    {
+      "id": "vendor-hashicorp",
+      "name": "HashiCorp",
+      "logo": "https://placeholder.com/hashicorp-logo.png",
+      "certificationCount": 1
+    },
+    {
+      "id": "vendor-eccouncil",
+      "name": "EC-Council",
+      "logo": "https://placeholder.com/eccouncil-logo.png",
+      "certificationCount": 1
+    }
+  ]
+}

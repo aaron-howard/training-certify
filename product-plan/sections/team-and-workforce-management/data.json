@@ -1,0 +1,919 @@
+{
+  "_meta": {
+    "models": {
+      "teams": "Groups of users for competency tracking, workforce management, and gap analysis; users can belong to multiple teams.",
+      "users": "Individual employees who need certifications tracked; can have roles like User, Manager, Executive, or Auditor to determine their permissions and dashboard views.",
+      "userCertifications": "A user's acquired certification with expiration date, upload proof, current status, renewal tracking, and verification timestamps.",
+      "certifications": "A specific certification from the catalog with metadata including name, vendor, renewal cycle, intended audience (Developer, Architect, SRE, PM, etc.), prerequisites, and difficulty level.",
+      "teamMetrics": "Aggregated dashboard metrics for each team showing certification coverage, expiring certifications, and competency gaps.",
+      "certificationRequirements": "Required certifications for specific roles or teams to ensure compliance and competency standards.",
+      "workforcePlanningInsights": "Strategic workforce planning data including projected gaps, hiring recommendations, and training priorities based on current team composition and requirements."
+    },
+    "relationships": [
+      "Each Team contains multiple Users (through team membership)",
+      "Each User has multiple UserCertifications showing their acquired certifications",
+      "Each UserCertification references a Certification from the catalog",
+      "Each Team has TeamMetrics showing aggregated coverage and gap data",
+      "Each CertificationRequirement applies to a specific Team and Role combination",
+      "WorkforcePlanningInsights are generated per Team based on requirements and current certifications"
+    ]
+  },
+  "teams": [
+    {
+      "id": "team-001",
+      "name": "Engineering",
+      "description": "Core software engineering team building cloud-native applications",
+      "memberCount": 8,
+      "managerId": "user-002"
+    },
+    {
+      "id": "team-002",
+      "name": "DevOps",
+      "description": "Infrastructure and deployment automation specialists",
+      "memberCount": 5,
+      "managerId": "user-009"
+    },
+    {
+      "id": "team-003",
+      "name": "Security",
+      "description": "Information security and compliance team",
+      "memberCount": 4,
+      "managerId": "user-014"
+    },
+    {
+      "id": "team-004",
+      "name": "Product",
+      "description": "Product management and strategy",
+      "memberCount": 3,
+      "managerId": "user-017"
+    },
+    {
+      "id": "team-005",
+      "name": "Cloud Platform",
+      "description": "Cloud infrastructure and architecture team",
+      "memberCount": 6,
+      "managerId": "user-020"
+    }
+  ],
+  "users": [
+    {
+      "id": "user-001",
+      "name": "Sarah Chen",
+      "email": "sarah.chen@company.com",
+      "role": "Developer",
+      "teamIds": ["team-001"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-002",
+      "name": "Marcus Williams",
+      "email": "marcus.williams@company.com",
+      "role": "Manager",
+      "teamIds": ["team-001"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-003",
+      "name": "Emily Rodriguez",
+      "email": "emily.rodriguez@company.com",
+      "role": "Developer",
+      "teamIds": ["team-001"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-004",
+      "name": "James Park",
+      "email": "james.park@company.com",
+      "role": "Architect",
+      "teamIds": ["team-001", "team-005"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-005",
+      "name": "Aisha Patel",
+      "email": "aisha.patel@company.com",
+      "role": "Developer",
+      "teamIds": ["team-001"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-006",
+      "name": "David Kim",
+      "email": "david.kim@company.com",
+      "role": "SRE",
+      "teamIds": ["team-001", "team-002"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-007",
+      "name": "Lisa Thompson",
+      "email": "lisa.thompson@company.com",
+      "role": "Developer",
+      "teamIds": ["team-001"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-008",
+      "name": "Michael Chang",
+      "email": "michael.chang@company.com",
+      "role": "Developer",
+      "teamIds": ["team-001"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-009",
+      "name": "Rachel Green",
+      "email": "rachel.green@company.com",
+      "role": "Manager",
+      "teamIds": ["team-002"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-010",
+      "name": "Carlos Martinez",
+      "email": "carlos.martinez@company.com",
+      "role": "SRE",
+      "teamIds": ["team-002"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-011",
+      "name": "Nina Okonkwo",
+      "email": "nina.okonkwo@company.com",
+      "role": "SRE",
+      "teamIds": ["team-002"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-012",
+      "name": "Tom Bradley",
+      "email": "tom.bradley@company.com",
+      "role": "SRE",
+      "teamIds": ["team-002"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-013",
+      "name": "Jennifer Liu",
+      "email": "jennifer.liu@company.com",
+      "role": "SRE",
+      "teamIds": ["team-002"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-014",
+      "name": "Kevin O'Brien",
+      "email": "kevin.obrien@company.com",
+      "role": "Manager",
+      "teamIds": ["team-003"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-015",
+      "name": "Priya Sharma",
+      "email": "priya.sharma@company.com",
+      "role": "Security Engineer",
+      "teamIds": ["team-003"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-016",
+      "name": "Alex Foster",
+      "email": "alex.foster@company.com",
+      "role": "Security Engineer",
+      "teamIds": ["team-003"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-017",
+      "name": "Jessica Taylor",
+      "email": "jessica.taylor@company.com",
+      "role": "Manager",
+      "teamIds": ["team-004"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-018",
+      "name": "Ryan Murphy",
+      "email": "ryan.murphy@company.com",
+      "role": "PM",
+      "teamIds": ["team-004"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-019",
+      "name": "Sophie Anderson",
+      "email": "sophie.anderson@company.com",
+      "role": "PM",
+      "teamIds": ["team-004"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-020",
+      "name": "Daniel Nguyen",
+      "email": "daniel.nguyen@company.com",
+      "role": "Manager",
+      "teamIds": ["team-005"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-021",
+      "name": "Hannah Scott",
+      "email": "hannah.scott@company.com",
+      "role": "Architect",
+      "teamIds": ["team-005"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-022",
+      "name": "Omar Hassan",
+      "email": "omar.hassan@company.com",
+      "role": "Architect",
+      "teamIds": ["team-005"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-023",
+      "name": "Grace Lee",
+      "email": "grace.lee@company.com",
+      "role": "SRE",
+      "teamIds": ["team-005"],
+      "avatarUrl": null
+    },
+    {
+      "id": "user-024",
+      "name": "Ben Johnson",
+      "email": "ben.johnson@company.com",
+      "role": "SRE",
+      "teamIds": ["team-005"],
+      "avatarUrl": null
+    }
+  ],
+  "certifications": [
+    {
+      "id": "cert-001",
+      "name": "AWS Certified Solutions Architect - Associate",
+      "vendor": "AWS",
+      "renewalCycle": 36,
+      "audience": ["Architect", "Developer", "SRE"],
+      "difficulty": "Intermediate"
+    },
+    {
+      "id": "cert-002",
+      "name": "AWS Certified Solutions Architect - Professional",
+      "vendor": "AWS",
+      "renewalCycle": 36,
+      "audience": ["Architect"],
+      "difficulty": "Advanced"
+    },
+    {
+      "id": "cert-003",
+      "name": "AWS Certified DevOps Engineer - Professional",
+      "vendor": "AWS",
+      "renewalCycle": 36,
+      "audience": ["SRE", "Developer"],
+      "difficulty": "Advanced"
+    },
+    {
+      "id": "cert-004",
+      "name": "Microsoft Azure Solutions Architect Expert",
+      "vendor": "Microsoft",
+      "renewalCycle": 12,
+      "audience": ["Architect"],
+      "difficulty": "Advanced"
+    },
+    {
+      "id": "cert-005",
+      "name": "CISSP - Certified Information Systems Security Professional",
+      "vendor": "(ISC)²",
+      "renewalCycle": 36,
+      "audience": ["Security Engineer", "Manager"],
+      "difficulty": "Advanced"
+    },
+    {
+      "id": "cert-006",
+      "name": "Certified Kubernetes Administrator (CKA)",
+      "vendor": "CNCF",
+      "renewalCycle": 36,
+      "audience": ["SRE", "Developer"],
+      "difficulty": "Intermediate"
+    },
+    {
+      "id": "cert-007",
+      "name": "Terraform Associate",
+      "vendor": "HashiCorp",
+      "renewalCycle": 24,
+      "audience": ["SRE", "Developer"],
+      "difficulty": "Beginner"
+    },
+    {
+      "id": "cert-008",
+      "name": "Certified Ethical Hacker (CEH)",
+      "vendor": "EC-Council",
+      "renewalCycle": 36,
+      "audience": ["Security Engineer"],
+      "difficulty": "Intermediate"
+    },
+    {
+      "id": "cert-009",
+      "name": "Professional Scrum Master I",
+      "vendor": "Scrum.org",
+      "renewalCycle": 0,
+      "audience": ["PM", "Manager"],
+      "difficulty": "Beginner"
+    },
+    {
+      "id": "cert-010",
+      "name": "Google Cloud Professional Cloud Architect",
+      "vendor": "Google Cloud",
+      "renewalCycle": 24,
+      "audience": ["Architect"],
+      "difficulty": "Advanced"
+    }
+  ],
+  "userCertifications": [
+    {
+      "id": "ucert-001",
+      "userId": "user-001",
+      "certificationId": "cert-001",
+      "issueDate": "2023-06-15",
+      "expirationDate": "2026-06-15",
+      "status": "active",
+      "daysUntilExpiration": 905
+    },
+    {
+      "id": "ucert-002",
+      "userId": "user-002",
+      "certificationId": "cert-002",
+      "issueDate": "2022-08-20",
+      "expirationDate": "2025-08-20",
+      "status": "active",
+      "daysUntilExpiration": 605
+    },
+    {
+      "id": "ucert-003",
+      "userId": "user-002",
+      "certificationId": "cert-009",
+      "issueDate": "2021-03-10",
+      "expirationDate": null,
+      "status": "active",
+      "daysUntilExpiration": null
+    },
+    {
+      "id": "ucert-004",
+      "userId": "user-003",
+      "certificationId": "cert-006",
+      "issueDate": "2023-11-05",
+      "expirationDate": "2026-11-05",
+      "status": "active",
+      "daysUntilExpiration": 1048
+    },
+    {
+      "id": "ucert-005",
+      "userId": "user-004",
+      "certificationId": "cert-002",
+      "issueDate": "2023-01-15",
+      "expirationDate": "2026-01-15",
+      "status": "active",
+      "daysUntilExpiration": 754
+    },
+    {
+      "id": "ucert-006",
+      "userId": "user-004",
+      "certificationId": "cert-004",
+      "issueDate": "2024-09-01",
+      "expirationDate": "2025-09-01",
+      "status": "expiring-soon",
+      "daysUntilExpiration": 253
+    },
+    {
+      "id": "ucert-007",
+      "userId": "user-005",
+      "certificationId": "cert-007",
+      "issueDate": "2024-05-20",
+      "expirationDate": "2026-05-20",
+      "status": "active",
+      "daysUntilExpiration": 879
+    },
+    {
+      "id": "ucert-008",
+      "userId": "user-006",
+      "certificationId": "cert-003",
+      "issueDate": "2022-12-10",
+      "expirationDate": "2025-12-10",
+      "status": "expiring-soon",
+      "daysUntilExpiration": 347
+    },
+    {
+      "id": "ucert-009",
+      "userId": "user-006",
+      "certificationId": "cert-006",
+      "issueDate": "2023-07-22",
+      "expirationDate": "2026-07-22",
+      "status": "active",
+      "daysUntilExpiration": 942
+    },
+    {
+      "id": "ucert-010",
+      "userId": "user-007",
+      "certificationId": "cert-001",
+      "issueDate": "2021-10-15",
+      "expirationDate": "2024-10-15",
+      "status": "expired",
+      "daysUntilExpiration": -68
+    },
+    {
+      "id": "ucert-011",
+      "userId": "user-008",
+      "certificationId": "cert-006",
+      "issueDate": "2024-03-05",
+      "expirationDate": "2027-03-05",
+      "status": "active",
+      "daysUntilExpiration": 803
+    },
+    {
+      "id": "ucert-012",
+      "userId": "user-009",
+      "certificationId": "cert-003",
+      "issueDate": "2023-04-18",
+      "expirationDate": "2026-04-18",
+      "status": "active",
+      "daysUntilExpiration": 847
+    },
+    {
+      "id": "ucert-013",
+      "userId": "user-010",
+      "certificationId": "cert-006",
+      "issueDate": "2024-08-12",
+      "expirationDate": "2027-08-12",
+      "status": "active",
+      "daysUntilExpiration": 963
+    },
+    {
+      "id": "ucert-014",
+      "userId": "user-010",
+      "certificationId": "cert-007",
+      "issueDate": "2023-09-30",
+      "expirationDate": "2025-09-30",
+      "status": "expiring-soon",
+      "daysUntilExpiration": 282
+    },
+    {
+      "id": "ucert-015",
+      "userId": "user-011",
+      "certificationId": "cert-006",
+      "issueDate": "2022-05-14",
+      "expirationDate": "2025-05-14",
+      "status": "expiring-soon",
+      "daysUntilExpiration": 143
+    },
+    {
+      "id": "ucert-016",
+      "userId": "user-011",
+      "certificationId": "cert-003",
+      "issueDate": "2024-11-20",
+      "expirationDate": "2027-11-20",
+      "status": "active",
+      "daysUntilExpiration": 1063
+    },
+    {
+      "id": "ucert-017",
+      "userId": "user-012",
+      "certificationId": "cert-001",
+      "issueDate": "2023-02-28",
+      "expirationDate": "2026-02-28",
+      "status": "active",
+      "daysUntilExpiration": 798
+    },
+    {
+      "id": "ucert-018",
+      "userId": "user-013",
+      "certificationId": "cert-007",
+      "issueDate": "2024-10-05",
+      "expirationDate": "2026-10-05",
+      "status": "active",
+      "daysUntilExpiration": 1017
+    },
+    {
+      "id": "ucert-019",
+      "userId": "user-014",
+      "certificationId": "cert-005",
+      "issueDate": "2022-06-15",
+      "expirationDate": "2025-06-15",
+      "status": "expiring-soon",
+      "daysUntilExpiration": 175
+    },
+    {
+      "id": "ucert-020",
+      "userId": "user-014",
+      "certificationId": "cert-009",
+      "issueDate": "2020-11-10",
+      "expirationDate": null,
+      "status": "active",
+      "daysUntilExpiration": null
+    },
+    {
+      "id": "ucert-021",
+      "userId": "user-015",
+      "certificationId": "cert-005",
+      "issueDate": "2023-08-22",
+      "expirationDate": "2026-08-22",
+      "status": "active",
+      "daysUntilExpiration": 973
+    },
+    {
+      "id": "ucert-022",
+      "userId": "user-015",
+      "certificationId": "cert-008",
+      "issueDate": "2024-01-10",
+      "expirationDate": "2027-01-10",
+      "status": "active",
+      "daysUntilExpiration": 749
+    },
+    {
+      "id": "ucert-023",
+      "userId": "user-016",
+      "certificationId": "cert-008",
+      "issueDate": "2023-12-05",
+      "expirationDate": "2026-12-05",
+      "status": "active",
+      "daysUntilExpiration": 713
+    },
+    {
+      "id": "ucert-024",
+      "userId": "user-017",
+      "certificationId": "cert-009",
+      "issueDate": "2022-03-15",
+      "expirationDate": null,
+      "status": "active",
+      "daysUntilExpiration": null
+    },
+    {
+      "id": "ucert-025",
+      "userId": "user-018",
+      "certificationId": "cert-009",
+      "issueDate": "2023-07-20",
+      "expirationDate": null,
+      "status": "active",
+      "daysUntilExpiration": null
+    },
+    {
+      "id": "ucert-026",
+      "userId": "user-019",
+      "certificationId": "cert-009",
+      "issueDate": "2024-02-14",
+      "expirationDate": null,
+      "status": "active",
+      "daysUntilExpiration": null
+    },
+    {
+      "id": "ucert-027",
+      "userId": "user-020",
+      "certificationId": "cert-002",
+      "issueDate": "2023-05-10",
+      "expirationDate": "2026-05-10",
+      "status": "active",
+      "daysUntilExpiration": 869
+    },
+    {
+      "id": "ucert-028",
+      "userId": "user-020",
+      "certificationId": "cert-010",
+      "issueDate": "2024-06-18",
+      "expirationDate": "2026-06-18",
+      "status": "active",
+      "daysUntilExpiration": 908
+    },
+    {
+      "id": "ucert-029",
+      "userId": "user-021",
+      "certificationId": "cert-004",
+      "issueDate": "2024-11-01",
+      "expirationDate": "2025-11-01",
+      "status": "expiring-soon",
+      "daysUntilExpiration": 314
+    },
+    {
+      "id": "ucert-030",
+      "userId": "user-021",
+      "certificationId": "cert-010",
+      "issueDate": "2023-09-15",
+      "expirationDate": "2025-09-15",
+      "status": "expiring-soon",
+      "daysUntilExpiration": 267
+    },
+    {
+      "id": "ucert-031",
+      "userId": "user-022",
+      "certificationId": "cert-002",
+      "issueDate": "2024-07-25",
+      "expirationDate": "2027-07-25",
+      "status": "active",
+      "daysUntilExpiration": 945
+    },
+    {
+      "id": "ucert-032",
+      "userId": "user-023",
+      "certificationId": "cert-006",
+      "issueDate": "2024-04-10",
+      "expirationDate": "2027-04-10",
+      "status": "active",
+      "daysUntilExpiration": 839
+    },
+    {
+      "id": "ucert-033",
+      "userId": "user-024",
+      "certificationId": "cert-007",
+      "issueDate": "2024-12-01",
+      "expirationDate": "2026-12-01",
+      "status": "active",
+      "daysUntilExpiration": 709
+    }
+  ],
+  "teamMetrics": [
+    {
+      "teamId": "team-001",
+      "coveragePercentage": 62.5,
+      "totalRequired": 16,
+      "totalAcquired": 10,
+      "expiringIn30Days": 0,
+      "expiringIn60Days": 0,
+      "expiringIn90Days": 0,
+      "expired": 1,
+      "gapCount": 6,
+      "topGaps": [
+        "AWS Certified Solutions Architect - Associate",
+        "Certified Kubernetes Administrator (CKA)"
+      ]
+    },
+    {
+      "teamId": "team-002",
+      "coveragePercentage": 80,
+      "totalRequired": 10,
+      "totalAcquired": 8,
+      "expiringIn30Days": 0,
+      "expiringIn60Days": 1,
+      "expiringIn90Days": 0,
+      "expired": 0,
+      "gapCount": 2,
+      "topGaps": [
+        "AWS Certified DevOps Engineer - Professional"
+      ]
+    },
+    {
+      "teamId": "team-003",
+      "coveragePercentage": 75,
+      "totalRequired": 8,
+      "totalAcquired": 6,
+      "expiringIn30Days": 0,
+      "expiringIn60Days": 1,
+      "expiringIn90Days": 0,
+      "expired": 0,
+      "gapCount": 2,
+      "topGaps": [
+        "CISSP - Certified Information Systems Security Professional"
+      ]
+    },
+    {
+      "teamId": "team-004",
+      "coveragePercentage": 100,
+      "totalRequired": 3,
+      "totalAcquired": 3,
+      "expiringIn30Days": 0,
+      "expiringIn60Days": 0,
+      "expiringIn90Days": 0,
+      "expired": 0,
+      "gapCount": 0,
+      "topGaps": []
+    },
+    {
+      "teamId": "team-005",
+      "coveragePercentage": 66.7,
+      "totalRequired": 12,
+      "totalAcquired": 8,
+      "expiringIn30Days": 0,
+      "expiringIn60Days": 0,
+      "expiringIn90Days": 2,
+      "expired": 0,
+      "gapCount": 4,
+      "topGaps": [
+        "AWS Certified Solutions Architect - Professional",
+        "Google Cloud Professional Cloud Architect"
+      ]
+    }
+  ],
+  "certificationRequirements": [
+    {
+      "id": "req-001",
+      "teamId": "team-001",
+      "role": "Developer",
+      "certificationId": "cert-001",
+      "priority": "required",
+      "dueDate": null
+    },
+    {
+      "id": "req-002",
+      "teamId": "team-001",
+      "role": "Developer",
+      "certificationId": "cert-006",
+      "priority": "recommended",
+      "dueDate": null
+    },
+    {
+      "id": "req-003",
+      "teamId": "team-001",
+      "role": "Architect",
+      "certificationId": "cert-002",
+      "priority": "required",
+      "dueDate": null
+    },
+    {
+      "id": "req-004",
+      "teamId": "team-002",
+      "role": "SRE",
+      "certificationId": "cert-006",
+      "priority": "required",
+      "dueDate": null
+    },
+    {
+      "id": "req-005",
+      "teamId": "team-002",
+      "role": "SRE",
+      "certificationId": "cert-003",
+      "priority": "recommended",
+      "dueDate": null
+    },
+    {
+      "id": "req-006",
+      "teamId": "team-003",
+      "role": "Security Engineer",
+      "certificationId": "cert-005",
+      "priority": "required",
+      "dueDate": "2025-12-31"
+    },
+    {
+      "id": "req-007",
+      "teamId": "team-003",
+      "role": "Security Engineer",
+      "certificationId": "cert-008",
+      "priority": "recommended",
+      "dueDate": null
+    },
+    {
+      "id": "req-008",
+      "teamId": "team-004",
+      "role": "PM",
+      "certificationId": "cert-009",
+      "priority": "required",
+      "dueDate": null
+    },
+    {
+      "id": "req-009",
+      "teamId": "team-005",
+      "role": "Architect",
+      "certificationId": "cert-002",
+      "priority": "required",
+      "dueDate": null
+    },
+    {
+      "id": "req-010",
+      "teamId": "team-005",
+      "role": "Architect",
+      "certificationId": "cert-004",
+      "priority": "recommended",
+      "dueDate": null
+    }
+  ],
+  "workforcePlanningInsights": [
+    {
+      "teamId": "team-001",
+      "projectedGaps": [
+        {
+          "certificationId": "cert-001",
+          "reason": "1 expired, 3 team members lack this required certification",
+          "impactLevel": "high",
+          "projectedDate": "2025-01-31"
+        },
+        {
+          "certificationId": "cert-006",
+          "reason": "Recommended for 5 developers, only 3 have it",
+          "impactLevel": "medium",
+          "projectedDate": "2025-03-31"
+        }
+      ],
+      "hiringRecommendations": [
+        {
+          "role": "Senior Developer",
+          "certifications": ["cert-001", "cert-006"],
+          "rationale": "Current team lacks AWS and Kubernetes expertise, critical for Q1 2025 cloud migration",
+          "priority": "high"
+        }
+      ],
+      "trainingPriorities": [
+        {
+          "certificationId": "cert-001",
+          "targetEmployees": ["user-007", "user-003"],
+          "estimatedCost": 600,
+          "estimatedDuration": 90,
+          "priority": "high"
+        },
+        {
+          "certificationId": "cert-006",
+          "targetEmployees": ["user-005", "user-008"],
+          "estimatedCost": 400,
+          "estimatedDuration": 60,
+          "priority": "medium"
+        }
+      ]
+    },
+    {
+      "teamId": "team-002",
+      "projectedGaps": [
+        {
+          "certificationId": "cert-003",
+          "reason": "Only 2 team members have advanced DevOps certification",
+          "impactLevel": "medium",
+          "projectedDate": "2025-06-30"
+        }
+      ],
+      "hiringRecommendations": [],
+      "trainingPriorities": [
+        {
+          "certificationId": "cert-003",
+          "targetEmployees": ["user-012"],
+          "estimatedCost": 500,
+          "estimatedDuration": 120,
+          "priority": "medium"
+        }
+      ]
+    },
+    {
+      "teamId": "team-003",
+      "projectedGaps": [
+        {
+          "certificationId": "cert-005",
+          "reason": "Manager certification expiring in 175 days, only 2/4 team members certified",
+          "impactLevel": "high",
+          "projectedDate": "2025-06-15"
+        }
+      ],
+      "hiringRecommendations": [
+        {
+          "role": "Security Engineer",
+          "certifications": ["cert-005", "cert-008"],
+          "rationale": "Growing compliance requirements need additional CISSP-certified staff",
+          "priority": "medium"
+        }
+      ],
+      "trainingPriorities": [
+        {
+          "certificationId": "cert-005",
+          "targetEmployees": ["user-014"],
+          "estimatedCost": 800,
+          "estimatedDuration": 180,
+          "priority": "high"
+        }
+      ]
+    },
+    {
+      "teamId": "team-004",
+      "projectedGaps": [],
+      "hiringRecommendations": [],
+      "trainingPriorities": []
+    },
+    {
+      "teamId": "team-005",
+      "projectedGaps": [
+        {
+          "certificationId": "cert-004",
+          "reason": "Azure certification expiring in 253 days for key architect",
+          "impactLevel": "medium",
+          "projectedDate": "2025-09-01"
+        },
+        {
+          "certificationId": "cert-010",
+          "reason": "GCP certification expiring in 267 days, only 2/3 architects certified",
+          "impactLevel": "medium",
+          "projectedDate": "2025-09-15"
+        }
+      ],
+      "hiringRecommendations": [],
+      "trainingPriorities": [
+        {
+          "certificationId": "cert-004",
+          "targetEmployees": ["user-004", "user-022"],
+          "estimatedCost": 500,
+          "estimatedDuration": 90,
+          "priority": "medium"
+        },
+        {
+          "certificationId": "cert-010",
+          "targetEmployees": ["user-021", "user-022"],
+          "estimatedCost": 450,
+          "estimatedDuration": 90,
+          "priority": "medium"
+        }
+      ]
+    }
+  ]
+}

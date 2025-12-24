@@ -1,0 +1,808 @@
+{
+  "_meta": {
+    "models": {
+      "auditLogs": "Timestamped record of all actions including uploads, renewals, assignments, and verifications for compliance tracking and regulatory requirements.",
+      "users": "Individual employees who need certifications tracked; can have roles like User, Manager, Executive, or Auditor to determine their permissions and dashboard views.",
+      "userCertifications": "A user's acquired certification with expiration date, upload proof, current status, renewal tracking, and verification timestamps.",
+      "certifications": "A specific certification from the catalog with metadata including name, vendor, renewal cycle, intended audience (Developer, Architect, SRE, PM, etc.), prerequisites, and difficulty level.",
+      "complianceMetrics": "Dashboard-level metrics showing overall compliance status, trending indicators, and compliance percentage across the organization.",
+      "complianceReports": "Generated compliance reports for regulatory and contractual requirements, including audit trail exports, certification status reports, and compliance summaries."
+    },
+    "relationships": [
+      "Each AuditLog entry tracks an action performed by a User on a UserCertification or Certification",
+      "ComplianceMetrics aggregate data from AuditLogs and UserCertifications to show overall compliance status",
+      "ComplianceReports are generated from AuditLogs and UserCertifications for specific date ranges or criteria"
+    ]
+  },
+  "auditLogs": [
+    {
+      "id": "audit-001",
+      "timestamp": "2024-12-22T14:23:15Z",
+      "action": "upload",
+      "performedBy": {
+        "userId": "user-001",
+        "name": "Sarah Chen",
+        "email": "sarah.chen@company.com",
+        "role": "Developer"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-045",
+        "name": "AWS Certified Solutions Architect - Associate",
+        "userId": "user-001"
+      },
+      "details": "Uploaded certification document (cert-aws-sa-2024.pdf)"
+    },
+    {
+      "id": "audit-002",
+      "timestamp": "2024-12-22T11:45:32Z",
+      "action": "verification",
+      "performedBy": {
+        "userId": "user-014",
+        "name": "Kevin O'Brien",
+        "email": "kevin.obrien@company.com",
+        "role": "Manager"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-044",
+        "name": "CISSP - Certified Information Systems Security Professional",
+        "userId": "user-015"
+      },
+      "details": "Verified certification authenticity and expiration date"
+    },
+    {
+      "id": "audit-003",
+      "timestamp": "2024-12-21T16:20:08Z",
+      "action": "renewal",
+      "performedBy": {
+        "userId": "user-010",
+        "name": "Carlos Martinez",
+        "email": "carlos.martinez@company.com",
+        "role": "SRE"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-014",
+        "name": "Terraform Associate",
+        "userId": "user-010"
+      },
+      "details": "Renewed certification for additional 24 months"
+    },
+    {
+      "id": "audit-004",
+      "timestamp": "2024-12-21T09:15:42Z",
+      "action": "assignment",
+      "performedBy": {
+        "userId": "user-002",
+        "name": "Marcus Williams",
+        "email": "marcus.williams@company.com",
+        "role": "Manager"
+      },
+      "affectedResource": {
+        "type": "certificationRequirement",
+        "id": "req-011",
+        "name": "Certified Kubernetes Administrator (CKA)",
+        "teamId": "team-001"
+      },
+      "details": "Assigned CKA certification as required for all SRE roles in Engineering team"
+    },
+    {
+      "id": "audit-005",
+      "timestamp": "2024-12-20T13:48:21Z",
+      "action": "upload",
+      "performedBy": {
+        "userId": "user-021",
+        "name": "Hannah Scott",
+        "email": "hannah.scott@company.com",
+        "role": "Architect"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-046",
+        "name": "Google Cloud Professional Cloud Architect",
+        "userId": "user-021"
+      },
+      "details": "Uploaded certification document (gcp-arch-2024.pdf)"
+    },
+    {
+      "id": "audit-006",
+      "timestamp": "2024-12-20T10:32:15Z",
+      "action": "deletion",
+      "performedBy": {
+        "userId": "user-007",
+        "name": "Lisa Thompson",
+        "email": "lisa.thompson@company.com",
+        "role": "Developer"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-010",
+        "name": "AWS Certified Solutions Architect - Associate",
+        "userId": "user-007"
+      },
+      "details": "Removed expired certification from active records"
+    },
+    {
+      "id": "audit-007",
+      "timestamp": "2024-12-19T15:27:44Z",
+      "action": "verification",
+      "performedBy": {
+        "userId": "user-017",
+        "name": "Jessica Taylor",
+        "email": "jessica.taylor@company.com",
+        "role": "Manager"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-045",
+        "name": "AWS Certified Solutions Architect - Associate",
+        "userId": "user-001"
+      },
+      "details": "Verified certification authenticity and expiration date"
+    },
+    {
+      "id": "audit-008",
+      "timestamp": "2024-12-19T08:54:11Z",
+      "action": "upload",
+      "performedBy": {
+        "userId": "user-024",
+        "name": "Ben Johnson",
+        "email": "ben.johnson@company.com",
+        "role": "SRE"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-033",
+        "name": "Terraform Associate",
+        "userId": "user-024"
+      },
+      "details": "Uploaded certification document (terraform-2024.pdf)"
+    },
+    {
+      "id": "audit-009",
+      "timestamp": "2024-12-18T14:12:37Z",
+      "action": "update",
+      "performedBy": {
+        "userId": "user-011",
+        "name": "Nina Okonkwo",
+        "email": "nina.okonkwo@company.com",
+        "role": "SRE"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-015",
+        "name": "Certified Kubernetes Administrator (CKA)",
+        "userId": "user-011"
+      },
+      "details": "Updated certification expiration date to 2025-05-14"
+    },
+    {
+      "id": "audit-010",
+      "timestamp": "2024-12-18T11:38:52Z",
+      "action": "expiration",
+      "performedBy": {
+        "userId": "system",
+        "name": "System",
+        "email": "system@company.com",
+        "role": "System"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-010",
+        "name": "AWS Certified Solutions Architect - Associate",
+        "userId": "user-007"
+      },
+      "details": "Certification expired and marked as inactive"
+    },
+    {
+      "id": "audit-011",
+      "timestamp": "2024-12-17T16:45:29Z",
+      "action": "upload",
+      "performedBy": {
+        "userId": "user-016",
+        "name": "Alex Foster",
+        "email": "alex.foster@company.com",
+        "role": "Security Engineer"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-047",
+        "name": "Certified Ethical Hacker (CEH)",
+        "userId": "user-016"
+      },
+      "details": "Uploaded certification document (ceh-2024.pdf)"
+    },
+    {
+      "id": "audit-012",
+      "timestamp": "2024-12-17T09:21:15Z",
+      "action": "verification",
+      "performedBy": {
+        "userId": "user-014",
+        "name": "Kevin O'Brien",
+        "email": "kevin.obrien@company.com",
+        "role": "Manager"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-046",
+        "name": "Google Cloud Professional Cloud Architect",
+        "userId": "user-021"
+      },
+      "details": "Verified certification authenticity and expiration date"
+    },
+    {
+      "id": "audit-013",
+      "timestamp": "2024-12-16T13:56:42Z",
+      "action": "assignment",
+      "performedBy": {
+        "userId": "user-020",
+        "name": "Daniel Nguyen",
+        "email": "daniel.nguyen@company.com",
+        "role": "Manager"
+      },
+      "affectedResource": {
+        "type": "certificationRequirement",
+        "id": "req-012",
+        "name": "Google Cloud Professional Cloud Architect",
+        "teamId": "team-005"
+      },
+      "details": "Assigned GCP certification as recommended for Cloud Platform team architects"
+    },
+    {
+      "id": "audit-014",
+      "timestamp": "2024-12-15T10:42:18Z",
+      "action": "renewal",
+      "performedBy": {
+        "userId": "user-004",
+        "name": "James Park",
+        "email": "james.park@company.com",
+        "role": "Architect"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-006",
+        "name": "Microsoft Azure Solutions Architect Expert",
+        "userId": "user-004"
+      },
+      "details": "Renewed certification for additional 12 months"
+    },
+    {
+      "id": "audit-015",
+      "timestamp": "2024-12-14T15:33:27Z",
+      "action": "upload",
+      "performedBy": {
+        "userId": "user-003",
+        "name": "Emily Rodriguez",
+        "email": "emily.rodriguez@company.com",
+        "role": "Developer"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-048",
+        "name": "AWS Certified Developer - Associate",
+        "userId": "user-003"
+      },
+      "details": "Uploaded certification document (aws-dev-2024.pdf)"
+    },
+    {
+      "id": "audit-016",
+      "timestamp": "2024-12-13T11:24:55Z",
+      "action": "verification",
+      "performedBy": {
+        "userId": "user-002",
+        "name": "Marcus Williams",
+        "email": "marcus.williams@company.com",
+        "role": "Manager"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-047",
+        "name": "Certified Ethical Hacker (CEH)",
+        "userId": "user-016"
+      },
+      "details": "Verified certification authenticity and expiration date"
+    },
+    {
+      "id": "audit-017",
+      "timestamp": "2024-12-12T14:18:39Z",
+      "action": "upload",
+      "performedBy": {
+        "userId": "user-013",
+        "name": "Jennifer Liu",
+        "email": "jennifer.liu@company.com",
+        "role": "SRE"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-018",
+        "name": "Terraform Associate",
+        "userId": "user-013"
+      },
+      "details": "Uploaded certification document (terraform-liu-2024.pdf)"
+    },
+    {
+      "id": "audit-018",
+      "timestamp": "2024-12-11T09:47:22Z",
+      "action": "assignment",
+      "performedBy": {
+        "userId": "user-009",
+        "name": "Rachel Green",
+        "email": "rachel.green@company.com",
+        "role": "Manager"
+      },
+      "affectedResource": {
+        "type": "certificationRequirement",
+        "id": "req-013",
+        "name": "AWS Certified DevOps Engineer - Professional",
+        "teamId": "team-002"
+      },
+      "details": "Updated DevOps certification requirement to mandatory for all senior SREs"
+    },
+    {
+      "id": "audit-019",
+      "timestamp": "2024-12-10T16:52:14Z",
+      "action": "update",
+      "performedBy": {
+        "userId": "user-006",
+        "name": "David Kim",
+        "email": "david.kim@company.com",
+        "role": "SRE"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-008",
+        "name": "AWS Certified DevOps Engineer - Professional",
+        "userId": "user-006"
+      },
+      "details": "Updated certification document with renewed version"
+    },
+    {
+      "id": "audit-020",
+      "timestamp": "2024-12-09T13:29:47Z",
+      "action": "verification",
+      "performedBy": {
+        "userId": "user-017",
+        "name": "Jessica Taylor",
+        "email": "jessica.taylor@company.com",
+        "role": "Manager"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-048",
+        "name": "AWS Certified Developer - Associate",
+        "userId": "user-003"
+      },
+      "details": "Verified certification authenticity and expiration date"
+    },
+    {
+      "id": "audit-021",
+      "timestamp": "2024-12-08T10:15:33Z",
+      "action": "upload",
+      "performedBy": {
+        "userId": "user-022",
+        "name": "Omar Hassan",
+        "email": "omar.hassan@company.com",
+        "role": "Architect"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-031",
+        "name": "AWS Certified Solutions Architect - Professional",
+        "userId": "user-022"
+      },
+      "details": "Uploaded certification document (aws-pro-hassan.pdf)"
+    },
+    {
+      "id": "audit-022",
+      "timestamp": "2024-12-07T15:41:28Z",
+      "action": "renewal",
+      "performedBy": {
+        "userId": "user-015",
+        "name": "Priya Sharma",
+        "email": "priya.sharma@company.com",
+        "role": "Security Engineer"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-021",
+        "name": "CISSP - Certified Information Systems Security Professional",
+        "userId": "user-015"
+      },
+      "details": "Renewed CISSP certification for additional 36 months"
+    },
+    {
+      "id": "audit-023",
+      "timestamp": "2024-12-06T11:36:19Z",
+      "action": "verification",
+      "performedBy": {
+        "userId": "user-020",
+        "name": "Daniel Nguyen",
+        "email": "daniel.nguyen@company.com",
+        "role": "Manager"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-031",
+        "name": "AWS Certified Solutions Architect - Professional",
+        "userId": "user-022"
+      },
+      "details": "Verified certification authenticity and expiration date"
+    },
+    {
+      "id": "audit-024",
+      "timestamp": "2024-12-05T14:22:51Z",
+      "action": "upload",
+      "performedBy": {
+        "userId": "user-005",
+        "name": "Aisha Patel",
+        "email": "aisha.patel@company.com",
+        "role": "Developer"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-007",
+        "name": "Terraform Associate",
+        "userId": "user-005"
+      },
+      "details": "Uploaded certification document (terraform-patel.pdf)"
+    },
+    {
+      "id": "audit-025",
+      "timestamp": "2024-12-04T09:58:37Z",
+      "action": "assignment",
+      "performedBy": {
+        "userId": "user-014",
+        "name": "Kevin O'Brien",
+        "email": "kevin.obrien@company.com",
+        "role": "Manager"
+      },
+      "affectedResource": {
+        "type": "certificationRequirement",
+        "id": "req-014",
+        "name": "CISSP - Certified Information Systems Security Professional",
+        "teamId": "team-003"
+      },
+      "details": "Extended CISSP requirement deadline to 2025-12-31 for all security engineers"
+    },
+    {
+      "id": "audit-026",
+      "timestamp": "2024-12-03T16:44:12Z",
+      "action": "verification",
+      "performedBy": {
+        "userId": "user-002",
+        "name": "Marcus Williams",
+        "email": "marcus.williams@company.com",
+        "role": "Manager"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-007",
+        "name": "Terraform Associate",
+        "userId": "user-005"
+      },
+      "details": "Verified certification authenticity and expiration date"
+    },
+    {
+      "id": "audit-027",
+      "timestamp": "2024-12-02T13:31:48Z",
+      "action": "update",
+      "performedBy": {
+        "userId": "user-012",
+        "name": "Tom Bradley",
+        "email": "tom.bradley@company.com",
+        "role": "SRE"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-017",
+        "name": "AWS Certified Solutions Architect - Associate",
+        "userId": "user-012"
+      },
+      "details": "Updated certification number and issue date"
+    },
+    {
+      "id": "audit-028",
+      "timestamp": "2024-12-01T10:27:35Z",
+      "action": "upload",
+      "performedBy": {
+        "userId": "user-019",
+        "name": "Sophie Anderson",
+        "email": "sophie.anderson@company.com",
+        "role": "PM"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-026",
+        "name": "Professional Scrum Master I",
+        "userId": "user-019"
+      },
+      "details": "Uploaded certification document (psm-anderson.pdf)"
+    },
+    {
+      "id": "audit-029",
+      "timestamp": "2024-11-30T15:19:24Z",
+      "action": "verification",
+      "performedBy": {
+        "userId": "user-017",
+        "name": "Jessica Taylor",
+        "email": "jessica.taylor@company.com",
+        "role": "Manager"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-026",
+        "name": "Professional Scrum Master I",
+        "userId": "user-019"
+      },
+      "details": "Verified certification authenticity - no expiration date"
+    },
+    {
+      "id": "audit-030",
+      "timestamp": "2024-11-29T11:53:17Z",
+      "action": "renewal",
+      "performedBy": {
+        "userId": "user-020",
+        "name": "Daniel Nguyen",
+        "email": "daniel.nguyen@company.com",
+        "role": "Manager"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-027",
+        "name": "AWS Certified Solutions Architect - Professional",
+        "userId": "user-020"
+      },
+      "details": "Renewed certification for additional 36 months"
+    },
+    {
+      "id": "audit-031",
+      "timestamp": "2024-11-28T14:38:42Z",
+      "action": "upload",
+      "performedBy": {
+        "userId": "user-023",
+        "name": "Grace Lee",
+        "email": "grace.lee@company.com",
+        "role": "SRE"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-032",
+        "name": "Certified Kubernetes Administrator (CKA)",
+        "userId": "user-023"
+      },
+      "details": "Uploaded certification document (cka-lee.pdf)"
+    },
+    {
+      "id": "audit-032",
+      "timestamp": "2024-11-27T09:24:55Z",
+      "action": "verification",
+      "performedBy": {
+        "userId": "user-020",
+        "name": "Daniel Nguyen",
+        "email": "daniel.nguyen@company.com",
+        "role": "Manager"
+      },
+      "affectedResource": {
+        "type": "userCertification",
+        "id": "ucert-032",
+        "name": "Certified Kubernetes Administrator (CKA)",
+        "userId": "user-023"
+      },
+      "details": "Verified certification authenticity and expiration date"
+    }
+  ],
+  "complianceMetrics": {
+    "overallCompliancePercentage": 82.5,
+    "trend": "up",
+    "totalCertifications": 48,
+    "verifiedCertifications": 41,
+    "pendingVerifications": 7,
+    "expiringSoon": {
+      "next30Days": 2,
+      "next60Days": 4,
+      "next90Days": 7
+    },
+    "recentActivity": {
+      "last7Days": 12,
+      "last30Days": 32,
+      "last90Days": 68
+    },
+    "complianceByTeam": [
+      {
+        "teamId": "team-001",
+        "teamName": "Engineering",
+        "compliancePercentage": 78.5
+      },
+      {
+        "teamId": "team-002",
+        "teamName": "DevOps",
+        "compliancePercentage": 88.0
+      },
+      {
+        "teamId": "team-003",
+        "teamName": "Security",
+        "compliancePercentage": 91.5
+      },
+      {
+        "teamId": "team-004",
+        "teamName": "Product",
+        "compliancePercentage": 100.0
+      },
+      {
+        "teamId": "team-005",
+        "teamName": "Cloud Platform",
+        "compliancePercentage": 75.0
+      }
+    ]
+  },
+  "complianceReports": [
+    {
+      "id": "report-001",
+      "title": "Q4 2024 Compliance Summary",
+      "type": "compliance-summary",
+      "generatedDate": "2024-12-20T10:00:00Z",
+      "generatedBy": {
+        "userId": "user-014",
+        "name": "Kevin O'Brien",
+        "email": "kevin.obrien@company.com"
+      },
+      "dateRange": {
+        "start": "2024-10-01T00:00:00Z",
+        "end": "2024-12-31T23:59:59Z"
+      },
+      "status": "completed",
+      "downloadUrl": "/reports/q4-2024-compliance-summary.pdf",
+      "fileSize": "2.4 MB"
+    },
+    {
+      "id": "report-002",
+      "title": "Full Audit Trail - November 2024",
+      "type": "audit-trail-export",
+      "generatedDate": "2024-12-01T14:30:00Z",
+      "generatedBy": {
+        "userId": "user-017",
+        "name": "Jessica Taylor",
+        "email": "jessica.taylor@company.com"
+      },
+      "dateRange": {
+        "start": "2024-11-01T00:00:00Z",
+        "end": "2024-11-30T23:59:59Z"
+      },
+      "status": "completed",
+      "downloadUrl": "/reports/audit-trail-november-2024.csv",
+      "fileSize": "1.8 MB"
+    },
+    {
+      "id": "report-003",
+      "title": "Certification Status Report - All Teams",
+      "type": "certification-status",
+      "generatedDate": "2024-12-15T09:15:00Z",
+      "generatedBy": {
+        "userId": "user-002",
+        "name": "Marcus Williams",
+        "email": "marcus.williams@company.com"
+      },
+      "dateRange": null,
+      "status": "completed",
+      "downloadUrl": "/reports/cert-status-all-teams-dec-2024.pdf",
+      "fileSize": "3.1 MB"
+    },
+    {
+      "id": "report-004",
+      "title": "Security Team Compliance Audit",
+      "type": "compliance-summary",
+      "generatedDate": "2024-12-10T16:45:00Z",
+      "generatedBy": {
+        "userId": "user-014",
+        "name": "Kevin O'Brien",
+        "email": "kevin.obrien@company.com"
+      },
+      "dateRange": {
+        "start": "2024-01-01T00:00:00Z",
+        "end": "2024-12-31T23:59:59Z"
+      },
+      "status": "completed",
+      "downloadUrl": "/reports/security-team-compliance-2024.pdf",
+      "fileSize": "1.2 MB"
+    },
+    {
+      "id": "report-005",
+      "title": "Full Audit Trail - Q4 2024",
+      "type": "audit-trail-export",
+      "generatedDate": null,
+      "generatedBy": {
+        "userId": "user-020",
+        "name": "Daniel Nguyen",
+        "email": "daniel.nguyen@company.com"
+      },
+      "dateRange": {
+        "start": "2024-10-01T00:00:00Z",
+        "end": "2024-12-31T23:59:59Z"
+      },
+      "status": "pending",
+      "downloadUrl": null,
+      "fileSize": null
+    },
+    {
+      "id": "report-006",
+      "title": "Certification Status - Engineering Team",
+      "type": "certification-status",
+      "generatedDate": "2024-12-18T11:20:00Z",
+      "generatedBy": {
+        "userId": "user-002",
+        "name": "Marcus Williams",
+        "email": "marcus.williams@company.com"
+      },
+      "dateRange": null,
+      "status": "completed",
+      "downloadUrl": "/reports/cert-status-engineering-dec-2024.pdf",
+      "fileSize": "892 KB"
+    },
+    {
+      "id": "report-007",
+      "title": "Annual Compliance Report 2024",
+      "type": "compliance-summary",
+      "generatedDate": null,
+      "generatedBy": {
+        "userId": "user-017",
+        "name": "Jessica Taylor",
+        "email": "jessica.taylor@company.com"
+      },
+      "dateRange": {
+        "start": "2024-01-01T00:00:00Z",
+        "end": "2024-12-31T23:59:59Z"
+      },
+      "status": "generating",
+      "downloadUrl": null,
+      "fileSize": null
+    }
+  ],
+  "pendingVerifications": [
+    {
+      "id": "ucert-045",
+      "userId": "user-001",
+      "userName": "Sarah Chen",
+      "certificationName": "AWS Certified Solutions Architect - Associate",
+      "uploadedDate": "2024-12-22T14:23:15Z",
+      "documentUrl": "/uploads/cert-aws-sa-2024.pdf",
+      "status": "pending-verification"
+    },
+    {
+      "id": "ucert-048",
+      "userId": "user-003",
+      "userName": "Emily Rodriguez",
+      "certificationName": "AWS Certified Developer - Associate",
+      "uploadedDate": "2024-12-14T15:33:27Z",
+      "documentUrl": "/uploads/aws-dev-2024.pdf",
+      "status": "verified"
+    },
+    {
+      "id": "ucert-033",
+      "userId": "user-024",
+      "userName": "Ben Johnson",
+      "certificationName": "Terraform Associate",
+      "uploadedDate": "2024-12-19T08:54:11Z",
+      "documentUrl": "/uploads/terraform-2024.pdf",
+      "status": "pending-verification"
+    },
+    {
+      "id": "ucert-018",
+      "userId": "user-013",
+      "userName": "Jennifer Liu",
+      "certificationName": "Terraform Associate",
+      "uploadedDate": "2024-12-12T14:18:39Z",
+      "documentUrl": "/uploads/terraform-liu-2024.pdf",
+      "status": "pending-verification"
+    },
+    {
+      "id": "ucert-007",
+      "userId": "user-005",
+      "userName": "Aisha Patel",
+      "certificationName": "Terraform Associate",
+      "uploadedDate": "2024-12-05T14:22:51Z",
+      "documentUrl": "/uploads/terraform-patel.pdf",
+      "status": "verified"
+    }
+  ]
+}

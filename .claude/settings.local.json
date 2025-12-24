@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(timeout /t 5 /nobreak)",
+      "Bash(npm run dev:*)",
+      "mcp__playwright__browser_navigate",
+      "Bash(dir:*)",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_take_screenshot",
+      "Bash(cp:*)",
+      "mcp__playwright__browser_close",
+      "Bash(timeout /t 8 /nobreak)",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_tabs",
+      "mcp__playwright__browser_resize",
+      "Bash(npm install:*)"
+    ]
+  }
+}

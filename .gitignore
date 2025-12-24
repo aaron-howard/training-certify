@@ -1,23 +1,14 @@
-# OS files
+node_modules
 .DS_Store
-**/.DS_Store
-
-# Dependencies
-node_modules/
-
-# Build output
-dist/
-
-# IDE
-.idea/
-*.swp
-*.swo
-
-# Environment
+dist
+dist-ssr
+*.local
+count.txt
 .env
-.env.local
-.env.*.local
-
-# Logs
-*.log
-npm-debug.log*
+.nitro
+.tanstack
+.wrangler
+.output
+.vinxi
+todos.json
+nul

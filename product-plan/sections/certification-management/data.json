@@ -1,0 +1,112 @@
+{
+  "_meta": {
+    "models": {
+      "userCertifications": "Each user certification represents a certification you've obtained and are tracking. It includes your certification details, expiration dates, status, and uploaded proof documents.",
+      "certifications": "The certification definitions from the catalog, including the official name, vendor, and renewal cycle information.",
+      "vendors": "The organizations that issue certifications, such as AWS, Microsoft, (ISC)², CompTIA, and others."
+    },
+    "relationships": [
+      "Each UserCertification belongs to you and references a Certification from the catalog",
+      "Each Certification is issued by a Vendor (like AWS or Microsoft)",
+      "UserCertifications track your personal details like expiration dates and uploaded documents, while Certifications contain the official metadata"
+    ]
+  },
+  "userCertifications": [
+    {
+      "id": "uc-001",
+      "certificationId": "cert-aws-saa",
+      "certificationName": "AWS Certified Solutions Architect - Associate",
+      "vendorName": "Amazon Web Services",
+      "certificationNumber": "AWS-SAA-2024-789456",
+      "issueDate": "2024-03-15",
+      "expirationDate": "2027-03-15",
+      "status": "active",
+      "documentUrl": "/uploads/aws-saa-certificate.pdf",
+      "verifiedAt": "2024-03-15T14:30:00Z"
+    },
+    {
+      "id": "uc-002",
+      "certificationId": "cert-azure-admin",
+      "certificationName": "Microsoft Certified: Azure Administrator Associate",
+      "vendorName": "Microsoft",
+      "certificationNumber": "AZ104-2024-112233",
+      "issueDate": "2024-01-10",
+      "expirationDate": "2026-01-10",
+      "status": "expiring",
+      "documentUrl": "/uploads/azure-admin-certificate.pdf",
+      "verifiedAt": "2024-01-10T09:15:00Z"
+    },
+    {
+      "id": "uc-003",
+      "certificationId": "cert-cissp",
+      "certificationName": "Certified Information Systems Security Professional (CISSP)",
+      "vendorName": "(ISC)²",
+      "certificationNumber": "CISSP-987654",
+      "issueDate": "2022-06-20",
+      "expirationDate": "2028-06-20",
+      "status": "active",
+      "documentUrl": "/uploads/cissp-certificate.pdf",
+      "verifiedAt": "2022-06-20T16:45:00Z"
+    },
+    {
+      "id": "uc-004",
+      "certificationId": "cert-aws-dev",
+      "certificationName": "AWS Certified Developer - Associate",
+      "vendorName": "Amazon Web Services",
+      "certificationNumber": "AWS-DEV-2022-445566",
+      "issueDate": "2022-08-05",
+      "expirationDate": "2025-08-05",
+      "status": "expired",
+      "documentUrl": "/uploads/aws-dev-certificate.pdf",
+      "verifiedAt": "2022-08-05T11:20:00Z"
+    },
+    {
+      "id": "uc-005",
+      "certificationId": "cert-secplus",
+      "certificationName": "CompTIA Security+",
+      "vendorName": "CompTIA",
+      "certificationNumber": "COMP001234567SEC",
+      "issueDate": "2023-03-12",
+      "expirationDate": "2026-03-12",
+      "status": "expiring",
+      "documentUrl": "/uploads/secplus-certificate.pdf",
+      "verifiedAt": "2023-03-12T13:00:00Z"
+    },
+    {
+      "id": "uc-006",
+      "certificationId": "cert-pmp",
+      "certificationName": "Project Management Professional (PMP)",
+      "vendorName": "Project Management Institute",
+      "certificationNumber": "PMP-8877665",
+      "issueDate": "2023-09-18",
+      "expirationDate": "2026-09-18",
+      "status": "active",
+      "documentUrl": "/uploads/pmp-certificate.pdf",
+      "verifiedAt": "2023-09-18T10:30:00Z"
+    },
+    {
+      "id": "uc-007",
+      "certificationId": "cert-cism",
+      "certificationName": "Certified Information Security Manager (CISM)",
+      "vendorName": "ISACA",
+      "certificationNumber": "CISM-334455",
+      "issueDate": "2021-11-08",
+      "expirationDate": "2024-11-08",
+      "status": "expired",
+      "documentUrl": "/uploads/cism-certificate.pdf",
+      "verifiedAt": "2021-11-08T15:45:00Z"
+    },
+    {
+      "id": "uc-008",
+      "certificationId": "cert-azure-sec",
+      "certificationName": "Microsoft Certified: Azure Security Engineer Associate",
+      "vendorName": "Microsoft",
+      "certificationNumber": "AZ500-2024-998877",
+      "issueDate": "2024-05-22",
+      "expirationDate": "2027-05-22",
+      "status": "active",
+      "documentUrl": "/uploads/azure-sec-certificate.pdf",
+      "verifiedAt": "2024-05-22T08:20:00Z"
+    }
+  ]
+}
