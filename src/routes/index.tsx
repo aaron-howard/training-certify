@@ -1,16 +1,19 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Award, Users, Shield, BookOpen, ChevronRight } from 'lucide-react'
+import { useUser } from '@clerk/tanstack-react-start'
 
 export const Route = createFileRoute('/')({
   component: DashboardPage,
 })
 
 function DashboardPage() {
+  const { user, isLoaded } = useUser()
+
   return (
     <div className="space-y-10">
       <div className="space-y-2">
         <h1 className="text-4xl font-extrabold text-slate-900 dark:text-slate-50 tracking-tight">
-          Welcome back, <Link to="/user-profile" className="text-blue-600 dark:text-blue-400 hover:underline">Marcus</Link>
+          Welcome back, <Link to="/user-profile" className="text-blue-600 dark:text-blue-400 hover:underline">{isLoaded && user ? user.firstName : 'Friend'}</Link>
         </h1>
         <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl">
           Everything looks great. You have 2 certifications expiring soon and 88% team compliance.

@@ -24,20 +24,22 @@ export function UserMenu() {
                     >
                         <User className="w-5 h-5" />
                     </Link>
-                    <button
+                    <Link
+                        to="/notifications" // Using notifications as a proxy for "Info/Alerts" or just linking to a help route if it existed
                         className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
                         aria-label="Help"
                         title="Help"
                     >
                         <HelpCircle className="w-5 h-5" />
-                    </button>
-                    <button
+                    </Link>
+                    <Link
+                        to="/user-profile" // Linking settings to profile for now since it contains account settings
                         className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
                         aria-label="Settings"
                         title="Settings"
                     >
                         <Settings className="w-5 h-5" />
-                    </button>
+                    </Link>
 
                     <SignOutButton>
                         <button

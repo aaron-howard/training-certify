@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { MainNav } from './MainNav'
 import { UserMenu } from './UserMenu'
 import { Menu, X } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 
 export interface NavigationItem {
     label: string
@@ -42,14 +43,14 @@ export function AppShell({ children }: AppShellProps) {
                                 <Menu className="w-5 h-5 text-slate-700 dark:text-slate-300" />
                             )}
                         </button>
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <Link to="/" className="flex items-center gap-2 group">
+                            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center group-hover:bg-blue-700 transition-colors">
                                 <span className="text-white font-bold text-lg">T</span>
                             </div>
                             <div className="font-semibold text-lg text-slate-900 dark:text-slate-100 hidden sm:block">
                                 Training-Certify
                             </div>
-                        </div>
+                        </Link>
                     </div>
 
                     {/* Right: User menu */}
