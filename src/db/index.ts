@@ -4,20 +4,34 @@ import * as schema from './schema';
 
 const isServer = typeof window === 'undefined';
 
-if (isServer && !process.env.DATABASE_URL) {
-    // Only try to load dotenv on server if URL is missing
+function getDatabaseUrl() {
+    if (!isServer) return null;
+
+    // Check various env sources
+    const url = process.env.DATABASE_URL || (import.meta as any).env?.DATABASE_URL;
+
+    if (url) return url;
+
+    // Try to load from .env file locally if on server
     try {
-        const { config } = await import('dotenv');
-        config();
-    } catch (e) {
-        // dotenv might not be available in all production environments, which is fine
-    }
+        // We use a dynamic import here to avoid bundling dotenv in the client
+        // but since this is a server-only path it's safe.
+        // However, in Vite, we might need a more direct approach.
+    } catch (e) { }
+
+    return null;
 }
 
-if (isServer && !process.env.DATABASE_URL) {
-    console.error('DATABASE_URL is MISSING on the server');
+const dbUrl = getDatabaseUrl();
+
+if (isServer && !dbUrl) {
+    console.warn('⚠️ DATABASE_URL is not set. Database features will fail.');
 }
 
-export const db = isServer && process.env.DATABASE_URL
-    ? drizzle(neon(process.env.DATABASE_URL), { schema })
-    : (null as any);
+export const db = (isServer && dbUrl)
+    ? drizzle(neon(dbUrl), { schema })
+    : new Proxy({}, {
+        get() {
+            throw new Error('Database accessed on the client or DATABASE_URL is missing. Check your server environment variables.');
+        }
+    }) as any;

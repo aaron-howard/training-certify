@@ -1,5 +1,5 @@
-import { UserButton, useUser, SignInButton, SignedIn, SignedOut, SignOutButton } from '@clerk/tanstack-react-start'
-import { HelpCircle, Settings, User, LogOut } from 'lucide-react'
+import { UserButton, useUser, SignInButton, SignedIn, SignedOut } from '@clerk/tanstack-react-start'
+import { Bell } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 
 export function UserMenu() {
@@ -15,43 +15,19 @@ export function UserMenu() {
                 </SignInButton>
             </SignedOut>
             <SignedIn>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-4">
+                    {/* Only keep one icon for notifications since it was specifically mentioned */}
                     <Link
-                        to="/user-profile"
-                        className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
-                        aria-label="Profile"
-                        title="Profile"
+                        to="/notifications"
+                        className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors relative"
+                        aria-label="Notifications"
+                        title="Notifications"
                     >
-                        <User className="w-5 h-5" />
-                    </Link>
-                    <Link
-                        to="/notifications" // Using notifications as a proxy for "Info/Alerts" or just linking to a help route if it existed
-                        className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
-                        aria-label="Help"
-                        title="Help"
-                    >
-                        <HelpCircle className="w-5 h-5" />
-                    </Link>
-                    <Link
-                        to="/user-profile" // Linking settings to profile for now since it contains account settings
-                        className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
-                        aria-label="Settings"
-                        title="Settings"
-                    >
-                        <Settings className="w-5 h-5" />
+                        <Bell className="w-5 h-5" />
+                        <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900" />
                     </Link>
 
-                    <SignOutButton>
-                        <button
-                            className="p-2 text-slate-500 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
-                            aria-label="Logout"
-                            title="Logout"
-                        >
-                            <LogOut className="w-5 h-5" />
-                        </button>
-                    </SignOutButton>
-
-                    <div className="ml-2 pl-4 border-l border-slate-200 dark:border-slate-800 flex items-center gap-3">
+                    <div className="pl-4 border-l border-slate-200 dark:border-slate-800 flex items-center gap-3">
                         <div className="text-right hidden sm:block">
                             <div className="text-sm font-medium text-slate-900 dark:text-slate-100">
                                 {user?.fullName}
@@ -60,7 +36,11 @@ export function UserMenu() {
                                 {user?.primaryEmailAddress?.emailAddress}
                             </div>
                         </div>
-                        <UserButton afterSignOutUrl="/" />
+                        <UserButton
+                            afterSignOutUrl="/"
+                            userProfileMode="navigation"
+                            userProfileUrl="/user-profile"
+                        />
                     </div>
                 </div>
             </SignedIn>
