@@ -2,7 +2,7 @@ import { HeadContent, Scripts, createRootRouteWithContext, Outlet, useRouter, Li
 import { QueryClient } from '@tanstack/react-query'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
-import { ClerkProvider } from '@clerk/tanstack-react-start'
+import { ClerkProvider, useAuth, RedirectToSignIn } from '@clerk/tanstack-react-start'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { AppShell } from '../components/shell/AppShell'
 
@@ -93,6 +93,20 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  const { isLoaded, isSignedIn } = useAuth()
+  const router = useRouter()
+  const path = router.state.location.pathname
+
+  const isAuthPage = path.startsWith('/sign-in') || path.startsWith('/sign-up')
+
+  if (!isLoaded) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>
+  }
+
+  if (!isSignedIn && !isAuthPage) {
+    return <RedirectToSignIn />
+  }
+
   return (
     <AppShell>
       <Outlet />

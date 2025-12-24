@@ -1,5 +1,5 @@
-import { UserButton, useUser, SignInButton, SignedIn, SignedOut } from '@clerk/tanstack-react-start'
-import { HelpCircle, Settings, User } from 'lucide-react'
+import { UserButton, useUser, SignInButton, SignedIn, SignedOut, SignOutButton } from '@clerk/tanstack-react-start'
+import { HelpCircle, Settings, User, LogOut } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 
 export function UserMenu() {
@@ -38,6 +38,17 @@ export function UserMenu() {
                     >
                         <Settings className="w-5 h-5" />
                     </button>
+
+                    <SignOutButton>
+                        <button
+                            className="p-2 text-slate-500 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+                            aria-label="Logout"
+                            title="Logout"
+                        >
+                            <LogOut className="w-5 h-5" />
+                        </button>
+                    </SignOutButton>
+
                     <div className="ml-2 pl-4 border-l border-slate-200 dark:border-slate-800 flex items-center gap-3">
                         <div className="text-right hidden sm:block">
                             <div className="text-sm font-medium text-slate-900 dark:text-slate-100">
