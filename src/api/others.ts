@@ -59,7 +59,7 @@ export const getNotifications = createServerFn({ method: 'GET' })
             const result = await db.select().from(notifications).orderBy(desc(notifications.timestamp)).limit(20)
 
             console.log(`Found ${result.length} notifications`)
-            return result.map(n => ({
+            return result.map((n: any) => ({
                 id: n.id,
                 title: n.title,
                 message: n.description || '',
