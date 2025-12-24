@@ -175,6 +175,8 @@ export function CertificationManagement({
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                             <input
+                                id="certification-search"
+                                name="certification-search"
                                 type="text"
                                 placeholder="Search by certification name or vendor..."
                                 value={searchQuery}
@@ -360,6 +362,8 @@ function CertificationRow({
                     </button>
                     <div className="relative">
                         <input
+                            id={`proof-upload-${certification.id}`}
+                            name="proof-upload"
                             type="file"
                             className="absolute inset-0 opacity-0 cursor-pointer"
                             onChange={(e) => alert(`Uploaded: ${e.target.files?.[0]?.name}`)}

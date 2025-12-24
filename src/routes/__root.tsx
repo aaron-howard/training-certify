@@ -2,9 +2,11 @@ import { HeadContent, Scripts, createRootRouteWithContext, Outlet, useRouter, Li
 import { QueryClient } from '@tanstack/react-query'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
-import { ClerkProvider, useAuth, RedirectToSignIn } from '@clerk/tanstack-react-start'
+import { ClerkProvider, useAuth, RedirectToSignIn, useUser } from '@clerk/tanstack-react-start'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { AppShell } from '../components/shell/AppShell'
+import { useEffect } from 'react'
+import { ensureUser } from '../api/users'
 
 import appCss from '../styles.css?url'
 
@@ -94,10 +96,28 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { isLoaded, isSignedIn } = useAuth()
+  const { user } = useUser()
   const router = useRouter()
   const path = router.state.location.pathname
 
   const isAuthPage = path.startsWith('/sign-in') || path.startsWith('/sign-up')
+
+  useEffect(() => {
+    if (isSignedIn && user) {
+      ensureUser({
+        data: {
+          id: user.id,
+          name: `${user.firstName} ${user.lastName}`.trim() || user.username || 'User',
+          email: user.emailAddresses[0]?.emailAddress || '',
+          avatarUrl: user.imageUrl
+        }
+      }).then(res => {
+        console.log('👤 [Client] User synced with DB:', res.role)
+      }).catch(err => {
+        console.error('❌ [Client] Sync failed:', err)
+      })
+    }
+  }, [isSignedIn, user])
 
   if (!isLoaded) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>

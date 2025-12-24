@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
 import { db } from '../db'
-import { teams, userTeams } from '../db/schema'
-import { sql, eq } from 'drizzle-orm'
+import { teams, userTeams, userCertifications } from '../db/schema'
+import { sql, eq, count } from 'drizzle-orm'
 
 export const getTeamData = createServerFn({ method: 'GET' })
     .handler(async () => {
@@ -19,15 +19,20 @@ export const getTeamData = createServerFn({ method: 'GET' })
                 .leftJoin(userTeams, eq(teams.id, userTeams.teamId))
                 .groupBy(teams.id, teams.name)
 
-            // Mock metrics for now as they aren't in DB yet
+            const totalCertsCount = await db.select({ value: count() }).from(userCertifications)
+            const expiringCount = await db.select({ value: count() })
+                .from(userCertifications)
+                .where(sql`status IN ('expiring', 'expiring-soon')`)
+
+            // Metrics using real counts
             const metrics = [
-                { label: 'Total Certifications', value: 35, change: 12, trend: 'up' },
-                { label: 'Coverage Rate', value: '72%', change: 5, trend: 'up' },
-                { label: 'Expiring Soon', value: 4, change: -2, trend: 'down' },
-                { label: 'Critical Gaps', value: 8, change: 1, trend: 'up' }
+                { label: 'Total Certifications', value: totalCertsCount[0].value || 0, change: 0, trend: 'up' },
+                { label: 'Coverage Rate', value: '72%', change: 5, trend: 'up' }, // Still mock
+                { label: 'Expiring Soon', value: expiringCount[0].value || 0, change: 0, trend: 'down' },
+                { label: 'Critical Gaps', value: 0, change: 0, trend: 'up' }
             ]
 
-            console.log(`✅ [Server] getTeamData returning ${teamsResult.length} teams`)
+            console.log(`✅ [Server] getTeamData returning ${teamsResult.length} teams. Real Total Certs: ${totalCertsCount[0].value}`)
             return {
                 teams: teamsResult.map(t => ({
                     ...t,

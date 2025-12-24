@@ -1,13 +1,33 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Award, Users, Shield, BookOpen, ChevronRight } from 'lucide-react'
 import { useUser } from '@clerk/tanstack-react-start'
+import { useQuery } from '@tanstack/react-query'
+import { getDashboardStats } from '../api/others'
 
 export const Route = createFileRoute('/')({
   component: DashboardPage,
+  loader: async ({ context }) => {
+    const { queryClient } = context as any
+    await queryClient.ensureQueryData({
+      queryKey: ['dashboardStats'],
+      queryFn: async () => {
+        const res = await getDashboardStats()
+        return res ?? { activeCerts: 0, expiringSoon: 0, complianceRate: 0 }
+      },
+    })
+  },
 })
 
 function DashboardPage() {
   const { user, isLoaded } = useUser()
+
+  const { data: stats = { activeCerts: 0, expiringSoon: 0, complianceRate: 0 } } = useQuery({
+    queryKey: ['dashboardStats'],
+    queryFn: async () => {
+      const res = await getDashboardStats()
+      return res ?? { activeCerts: 0, expiringSoon: 0, complianceRate: 0 }
+    },
+  })
 
   return (
     <div className="space-y-10">
@@ -16,7 +36,7 @@ function DashboardPage() {
           Welcome back, <Link to="/user-profile" className="text-blue-600 dark:text-blue-400 hover:underline">{isLoaded && user ? user.firstName : 'Friend'}</Link>
         </h1>
         <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl">
-          Everything looks great. You have 2 certifications expiring soon and 88% team compliance.
+          Everything looks great. You have {stats.expiringSoon} certifications expiring soon and {stats.complianceRate}% team compliance.
         </p>
       </div>
 
@@ -63,9 +83,9 @@ function DashboardPage() {
           <BookOpen className="w-6 h-6 text-slate-400" />
           <span className="font-semibold text-slate-700 dark:text-slate-300">Cert Catalog</span>
         </Link>
-        <Link to="/notifications" className="bg-slate-50 dark:bg-slate-950 p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors flex items-center gap-4">
+        <Link to="/certification-management" className="bg-slate-50 dark:bg-slate-950 p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors flex items-center gap-4">
           <Award className="w-6 h-6 text-slate-400" />
-          <span className="font-semibold text-slate-700 dark:text-slate-300">Active Certs: 35</span>
+          <span className="font-semibold text-slate-700 dark:text-slate-300">Active Certs: {stats.activeCerts}</span>
         </Link>
       </div>
     </div >

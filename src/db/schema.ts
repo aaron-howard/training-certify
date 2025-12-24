@@ -1,7 +1,7 @@
 import { pgTable, text, integer, timestamp, boolean, uuid, pgEnum } from 'drizzle-orm/pg-core';
 
 // Enums for various statuses and types
-export const roleEnum = pgEnum('role', ['Developer', 'Manager', 'Architect', 'SRE', 'Security Engineer', 'PM', 'Executive', 'Auditor']);
+export const roleEnum = pgEnum('role', ['Admin', 'User', 'Manager', 'Executive']);
 export const certificationStatusEnum = pgEnum('certification_status', ['active', 'expiring', 'expiring-soon', 'expired']);
 export const certificationCategoryEnum = pgEnum('certification_category', ['Cloud', 'Security', 'Networking', 'Data', 'Project Management']);
 export const certificationDifficultyEnum = pgEnum('certification_difficulty', ['Beginner', 'Intermediate', 'Advanced', 'Expert']);
@@ -13,7 +13,7 @@ export const users = pgTable('users', {
     id: text('id').primaryKey(), // Clerk ID
     name: text('name').notNull(),
     email: text('email').notNull().unique(),
-    role: text('role').notNull(), // Using text for simplicity with enum fallback in code
+    role: text('role').notNull().default('User'), // Use text for storage, but we'll enforce the values in code/enum
     avatarUrl: text('avatar_url'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
