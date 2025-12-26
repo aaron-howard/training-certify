@@ -3,14 +3,14 @@ const isServer = typeof window === 'undefined';
 export const ENV = {
     isServer,
     DATABASE_URL: undefined as string | undefined,
-    CLERK_PUBLISHABLE_KEY: (import.meta as any).env?.VITE_CLERK_PUBLISHABLE_KEY as string | undefined,
+    CLERK_PUBLISHABLE_KEY: (import.meta as any).env?.VITE_CLERK_PUBLISHABLE_KEY ?? (import.meta as any).env?.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY as string | undefined,
     CLERK_SECRET_KEY: undefined as string | undefined,
 };
 
 if (isServer) {
     const processEnv = process.env;
     ENV.DATABASE_URL = processEnv.DATABASE_URL || processEnv.VITE_DATABASE_URL;
-    ENV.CLERK_PUBLISHABLE_KEY = processEnv.CLERK_PUBLISHABLE_KEY || processEnv.VITE_CLERK_PUBLISHABLE_KEY || ENV.CLERK_PUBLISHABLE_KEY;
+    ENV.CLERK_PUBLISHABLE_KEY = processEnv.CLERK_PUBLISHABLE_KEY || processEnv.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || processEnv.VITE_CLERK_PUBLISHABLE_KEY || ENV.CLERK_PUBLISHABLE_KEY;
     ENV.CLERK_SECRET_KEY = processEnv.CLERK_SECRET_KEY || processEnv.VITE_CLERK_SECRET_KEY;
 
     try {
