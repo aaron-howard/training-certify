@@ -1,5 +1,4 @@
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
+// src/db/index.ts
 import * as schema from './schema';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -7,13 +6,10 @@ import { ENV } from '../lib/env';
 
 const isServer = typeof window === 'undefined';
 
-function getDatabaseUrl() {
-    if (!isServer) return null;
-
-    // 1. Try centralized ENV (handles process.env and import.meta.env)
+/** Resolve DATABASE_URL from ENV or .env files. */
+function getDatabaseUrl(): string | undefined {
+    if (!isServer) return undefined;
     let url = ENV.DATABASE_URL;
-
-    // 2. Manual file read fallback (only on server if first check failed)
     if (!url) {
         const envFiles = ['.env.local', '.env'];
         for (const file of envFiles) {
@@ -35,22 +31,36 @@ function getDatabaseUrl() {
                     }
                     if (url) break;
                 }
-            } catch (e) { }
+            } catch { }
         }
     }
-
     return url;
 }
 
-const dbUrl = getDatabaseUrl();
+let db: any = null;
+let initPromise: Promise<any> | null = null;
 
 if (isServer) {
-    console.log('⚙️ [DB Init]', {
-        hasDbUrl: !!dbUrl,
-        urlPrefix: dbUrl ? dbUrl.substring(0, 20) + '...' : 'none',
-    });
+    initPromise = (async () => {
+        const { Pool } = await import('pg');
+        const { drizzle } = await import('drizzle-orm/node-postgres');
+        const dbUrl = getDatabaseUrl();
+        if (dbUrl) {
+            db = drizzle(new Pool({ connectionString: dbUrl }), { schema });
+        }
+        console.log('⚙️ [DB Init]', {
+            hasDbUrl: !!dbUrl,
+            urlPrefix: dbUrl ? dbUrl.substring(0, 20) + '...' : 'none',
+        });
+        return db;
+    })();
 }
 
-export const db = (isServer && dbUrl)
-    ? drizzle(neon(dbUrl), { schema })
-    : null;
+/** Async helper to obtain the DB instance. */
+export const getDb = async (): Promise<any> => {
+    if (db) return db;
+    if (initPromise) await initPromise;
+    return db;
+};
+
+export { db };
