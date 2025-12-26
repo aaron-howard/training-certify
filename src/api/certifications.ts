@@ -21,7 +21,7 @@ export const getUserCertifications = createServerFn({ method: 'GET' })
                 return [];
             }
             const result = await db.select().from(userCertifications);
-            const mapped = result.map((cert: any) => ({
+            const mapped = result.map((cert) => ({
                 ...cert,
                 verifiedAt: cert.verifiedAt?.toISOString() || '',
                 status: (cert.status || 'active') as UserCertification['status'],
@@ -34,11 +34,34 @@ export const getUserCertifications = createServerFn({ method: 'GET' })
         }
     });
 
+interface CreateCertificationInput {
+    userId?: string;
+    certificationId?: string;
+    certificationName?: string;
+    vendorName?: string;
+    certificationNumber?: string;
+    issueDate?: string;
+    expirationDate?: string;
+    status?: string;
+    daysUntilExpiration?: number;
+    documentUrl?: string;
+    verifiedAt?: string | Date;
+}
+
 export const createCertification = createServerFn({ method: 'POST' })
-    .inputValidator((data: any) => data)
+    .inputValidator((data: unknown): CreateCertificationInput => {
+        if (typeof data === 'object' && data !== null) {
+            return data as CreateCertificationInput;
+        }
+        throw new Error('Invalid input data');
+    })
     .handler(async ({ data }) => {
         try {
             const db = await resolveDb();
+            const verifiedAtValue = data.verifiedAt 
+                ? (typeof data.verifiedAt === 'string' ? new Date(data.verifiedAt) : data.verifiedAt)
+                : new Date();
+            
             const result = await db.insert(userCertifications).values({
                 userId: data.userId || 'user-001',
                 certificationId: data.certificationId || 'manual',
@@ -50,7 +73,7 @@ export const createCertification = createServerFn({ method: 'POST' })
                 status: data.status || 'active',
                 daysUntilExpiration: data.daysUntilExpiration,
                 documentUrl: data.documentUrl || '',
-                verifiedAt: data.verifiedAt ? new Date(data.verifiedAt) : new Date(),
+                verifiedAt: verifiedAtValue,
             }).returning();
 
             if (!result || result.length === 0) throw new Error('Failed to create certification record');
@@ -66,16 +89,38 @@ export const createCertification = createServerFn({ method: 'POST' })
         }
     });
 
+interface UpdateCertificationInput {
+    id: string;
+    updates: {
+        userId?: string;
+        certificationId?: string;
+        certificationName?: string;
+        vendorName?: string;
+        certificationNumber?: string;
+        issueDate?: string;
+        expirationDate?: string;
+        status?: string;
+        daysUntilExpiration?: number;
+        documentUrl?: string;
+        verifiedAt?: string | Date;
+    };
+}
+
 export const updateCertification = createServerFn({ method: 'POST' })
-    .inputValidator((data: { id: string; updates: any }) => data)
+    .inputValidator((data: unknown): UpdateCertificationInput => {
+        if (typeof data === 'object' && data !== null && 'id' in data && 'updates' in data) {
+            return data as UpdateCertificationInput;
+        }
+        throw new Error('Invalid input data');
+    })
     .handler(async ({ data }) => {
         try {
             const db = await resolveDb();
             const { id, updates } = data;
             const { verifiedAt, ...rest } = updates;
-            const updateData: any = { ...rest };
+            const updateData: Record<string, unknown> = { ...rest };
             if (verifiedAt) {
-                updateData.verifiedAt = new Date(verifiedAt);
+                updateData.verifiedAt = typeof verifiedAt === 'string' ? new Date(verifiedAt) : verifiedAt;
             }
             if ('updatedAt' in updateData) {
                 delete updateData.updatedAt;

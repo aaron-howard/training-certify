@@ -14,10 +14,11 @@ if (isServer) {
     ENV.CLERK_SECRET_KEY = processEnv.CLERK_SECRET_KEY || processEnv.VITE_CLERK_SECRET_KEY;
 
     try {
-        // Use synchronous require to avoid top-level await issues in some environments
-        // and ensure the values are available IMMEDIATELY for the exports.
-        // We use a guard to prevent the bundler from seeing this on the client.
+        // Use dynamic imports with server-only check to prevent bundler from including
+        // Node.js modules in client bundle. Vite will externalize these automatically.
         if (!ENV.DATABASE_URL || !ENV.CLERK_PUBLISHABLE_KEY) {
+            // Dynamic imports are only executed on server, so bundler won't include
+            // these modules in client bundle
             const fs = await import('node:fs');
             const path = await import('node:path');
             const envFiles = ['.env.local', '.env'];

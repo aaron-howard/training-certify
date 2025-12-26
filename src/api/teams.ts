@@ -1,10 +1,11 @@
 import { createServerFn } from '@tanstack/react-start'
-import { db } from '../db'
+import { getDb } from '../db'
 import { teams, userTeams, userCertifications } from '../db/schema'
 import { sql, eq, count } from 'drizzle-orm'
 
 export const getTeamData = createServerFn({ method: 'GET' })
     .handler(async () => {
+        const db = await getDb()
         try {
             if (!db) {
                 console.log('⚠️ [Server] getTeamData: DB is null')
@@ -34,7 +35,7 @@ export const getTeamData = createServerFn({ method: 'GET' })
 
             console.log(`✅ [Server] getTeamData returning ${teamsResult.length} teams. Real Total Certs: ${totalCertsCount[0].value}`)
             return {
-                teams: teamsResult.map(t => ({
+                teams: teamsResult.map((t) => ({
                     ...t,
                     coverage: Math.floor(Math.random() * 40) + 60 // Mock coverage for now
                 })),

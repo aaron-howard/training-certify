@@ -77,7 +77,7 @@ function TeamManagementPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                            {teamData.teams.map((team) => (
+                            {teamData.teams.map((team: { id: string; name: string; memberCount: number; coverage: number }) => (
                                 <tr key={team.id} className="hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
                                     <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-50">{team.name}</td>
                                     <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{team.memberCount}</td>

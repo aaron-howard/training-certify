@@ -39,7 +39,7 @@ function NotificationsPage() {
             </div>
 
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm divide-y divide-slate-200 dark:divide-slate-800">
-                {notifications.map((notif) => (
+                {notifications.map((notif: { id: string; title: string; message: string; date: string; type: string; read: boolean }) => (
                     <div key={notif.id} className={`p-6 flex gap-4 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors ${!notif.read ? 'border-l-4 border-l-blue-600' : ''}`}>
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${notif.type === 'alert' ? 'bg-red-50 text-red-600 dark:bg-red-950/30' : 'bg-blue-50 text-blue-600 dark:bg-blue-950/30'
                             }`}>

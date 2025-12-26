@@ -1,10 +1,11 @@
 import { createServerFn } from '@tanstack/react-start'
-import { db } from '../db'
+import { getDb } from '../db'
 import { certifications, auditLogs, notifications, userCertifications, users } from '../db/schema'
 import { desc, count, sql, eq } from 'drizzle-orm'
 
 export const getCatalog = createServerFn({ method: 'GET' })
     .handler(async () => {
+        const db = await getDb()
         try {
             if (!db) {
                 console.log('⚠️ [Server] getCatalog: DB is null')
@@ -12,7 +13,7 @@ export const getCatalog = createServerFn({ method: 'GET' })
             }
             const result = await db.select().from(certifications)
             const mapped = {
-                certifications: result.map((c: any) => ({
+                certifications: result.map((c) => ({
                     id: c.id,
                     name: c.name,
                     vendor: c.vendorName,
@@ -29,6 +30,7 @@ export const getCatalog = createServerFn({ method: 'GET' })
 
 export const getComplianceData = createServerFn({ method: 'GET' })
     .handler(async () => {
+        const db = await getDb()
         try {
             console.log('🚀 [Server] getComplianceData called')
             if (!db) {
@@ -43,12 +45,12 @@ export const getComplianceData = createServerFn({ method: 'GET' })
 
             console.log(`✅ [Server] Found ${logs.length} audit logs`)
             return {
-                auditLogs: logs.map((l: any) => ({
+                auditLogs: logs.map((l) => ({
                     id: l.id,
                     user: 'System',
                     action: l.action,
                     date: l.timestamp.toISOString().split('T')[0],
-                    status: 'verified'
+                    status: 'verified' as const
                 })),
                 stats: { complianceRate: 88, totalAudits: logs.length, issuesFound: 1 }
             }
@@ -60,6 +62,7 @@ export const getComplianceData = createServerFn({ method: 'GET' })
 
 export const getNotifications = createServerFn({ method: 'GET' })
     .handler(async () => {
+        const db = await getDb()
         try {
             console.log('🚀 [Server] getNotifications called')
             if (!db) {
@@ -70,11 +73,11 @@ export const getNotifications = createServerFn({ method: 'GET' })
             const result = await db.select().from(notifications).orderBy(desc(notifications.timestamp)).limit(20)
 
             console.log(`✅ [Server] Found ${result.length} notifications`)
-            return result.map((n: any) => ({
+            return result.map((n) => ({
                 id: n.id,
                 title: n.title,
                 message: n.description || '',
-                type: n.severity === 'critical' ? 'alert' : 'info',
+                type: n.severity === 'critical' ? 'alert' as const : 'info' as const,
                 date: n.timestamp.toISOString().split('T')[0],
                 read: n.isRead
             }))
@@ -86,6 +89,7 @@ export const getNotifications = createServerFn({ method: 'GET' })
 
 export const getDashboardStats = createServerFn({ method: 'GET' })
     .handler(async () => {
+        const db = await getDb()
         try {
             console.log('🚀 [Server] getDashboardStats called')
             if (!db) {
@@ -112,8 +116,9 @@ export const getDashboardStats = createServerFn({ method: 'GET' })
     })
 
 export const createCatalogCertification = createServerFn({ method: 'POST' })
-    .inputValidator((data: { cert: any; adminId: string }) => data)
+    .inputValidator((data: { cert: Record<string, unknown>; adminId: string }) => data)
     .handler(async ({ data }) => {
+        const db = await getDb()
         try {
             if (!db) throw new Error('Database not available')
 
@@ -123,15 +128,17 @@ export const createCatalogCertification = createServerFn({ method: 'POST' })
                 throw new Error('Unauthorized')
             }
 
-            const result = await db.insert(certifications).values({
-                id: data.cert.id,
-                name: data.cert.name,
-                vendorId: data.cert.vendorId,
-                vendorName: data.cert.vendorName,
-                category: data.cert.category,
-                difficulty: data.cert.difficulty,
-                description: data.cert.description,
-            }).returning()
+            const certData = {
+                id: String(data.cert.id),
+                name: String(data.cert.name),
+                vendorId: String(data.cert.vendorId),
+                vendorName: String(data.cert.vendorName),
+                category: data.cert.category ? String(data.cert.category) : undefined,
+                difficulty: data.cert.difficulty ? String(data.cert.difficulty) : undefined,
+                description: data.cert.description ? String(data.cert.description) : undefined,
+            };
+            
+            const result = await db.insert(certifications).values(certData).returning()
 
             return result[0]
         } catch (error) {
@@ -141,8 +148,9 @@ export const createCatalogCertification = createServerFn({ method: 'POST' })
     })
 
 export const updateCatalogCertification = createServerFn({ method: 'POST' })
-    .inputValidator((data: { id: string; updates: any; adminId: string }) => data)
+    .inputValidator((data: { id: string; updates: Record<string, unknown>; adminId: string }) => data)
     .handler(async ({ data }) => {
+        const db = await getDb()
         try {
             if (!db) throw new Error('Database not available')
 
@@ -167,6 +175,7 @@ export const updateCatalogCertification = createServerFn({ method: 'POST' })
 export const deleteCatalogCertification = createServerFn({ method: 'POST' })
     .inputValidator((data: { id: string; adminId: string }) => data)
     .handler(async ({ data }) => {
+        const db = await getDb()
         try {
             if (!db) throw new Error('Database not available')
 
@@ -186,6 +195,7 @@ export const deleteCatalogCertification = createServerFn({ method: 'POST' })
 
 export const seedCatalog = createServerFn({ method: 'POST' })
     .handler(async () => {
+        const db = await getDb()
         try {
             if (!db) throw new Error('Database not available')
 

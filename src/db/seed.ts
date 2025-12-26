@@ -66,7 +66,7 @@ async function main() {
         }
     ];
     for (const cert of certs) {
-        await db.insert(schema.certifications).values(cert as any).onConflictDoNothing();
+        await db.insert(schema.certifications).values(cert).onConflictDoNothing();
     }
 
     // 5. Seed User Certifications

@@ -1,5 +1,6 @@
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
+import { Pool } from 'pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import * as schema from '../src/db/schema';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import 'dotenv/config';
@@ -29,43 +30,68 @@ async function testConnection() {
                         }
                     }
                 }
-            } catch (e) { }
+            } catch (e) {
+                // Ignore file read errors
+            }
             if (url) break;
         }
     }
 
     if (!url) {
         console.error('❌ No DATABASE_URL found!');
+        console.error('💡 Tip: Set DATABASE_URL in .env file or environment variable');
+        console.error('💡 Example: postgresql://postgres:password@localhost:5432/devdb');
         process.exit(1);
     }
 
-    console.log(`🔗 URL Prefix: ${url.substring(0, 20)}...`);
+    console.log(`🔗 URL Prefix: ${url.substring(0, 30)}...`);
 
     try {
-        const sql = neon(url);
-        const db = drizzle(sql);
+        const pool = new Pool({
+            connectionString: url,
+            max: 10,
+            idleTimeoutMillis: 30000,
+            connectionTimeoutMillis: 5000,
+        });
 
-        console.log('📡 Sending query: SELECT 1...');
-        const result = await sql`SELECT 1 as test`;
-        console.log('✅ Connection successful!', result);
+        // Initialize drizzle (db variable not used but kept for future queries)
+        drizzle(pool, { schema });
+
+        console.log('📡 Testing connection...');
+        const client = await pool.connect();
+        console.log('✅ Connection successful!');
 
         console.log('📊 Checking for tables...');
-        const tables = await sql`
+        const tablesResult = await client.query(`
             SELECT table_name 
             FROM information_schema.tables 
             WHERE table_schema = 'public'
-        `;
-        console.log('📁 Available tables:', tables.map(t => t.table_name));
+            ORDER BY table_name
+        `);
+        const tableNames = tablesResult.rows.map((row: { table_name: string }) => row.table_name);
+        console.log('📁 Available tables:', tableNames);
 
-        if (tables.length === 0) {
+        if (tableNames.length === 0) {
             console.warn('⚠️ No tables found in the public schema. You might need to run migrations.');
+            console.warn('💡 Run: npx drizzle-kit push');
+        } else {
+            console.log(`✅ Found ${tableNames.length} table(s)`);
         }
 
-    } catch (error: any) {
+        client.release();
+        await pool.end();
+        console.log('✅ Test completed successfully!');
+    } catch (error: unknown) {
         console.error('❌ Connection failed!');
-        console.error('Error Message:', error.message);
-        console.error('Error Code:', error.code);
-        if (error.message.includes('SSL')) {
+        if (error instanceof Error) {
+            console.error('Error Message:', error.message);
+            if ('code' in error) {
+                console.error('Error Code:', error.code);
+            }
+        } else {
+            console.error('Unknown error:', error);
+        }
+        if (error instanceof Error && error.message.includes('SSL')) {
             console.error('💡 Tip: Try adding ?sslmode=require to your connection string.');
         }
         process.exit(1);

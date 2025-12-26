@@ -1,13 +1,14 @@
 import { createServerFn } from '@tanstack/react-start'
-import { getDb } from '../db'
+// getDb will be imported dynamically inside handlers
 import { users } from '../db/schema'
 import { eq } from 'drizzle-orm'
 
 export const ensureUser = createServerFn({ method: 'POST' })
     .inputValidator((data: { id: string; name: string; email: string; avatarUrl?: string }) => data)
     .handler(async ({ data }) => {
-        const db = await getDb()
-        if (!db) throw new Error('Database not available')
+        const { getDb } = await import('../db');
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
         try {
             // Check if user exists
             const existing = await db.select().from(users).where(eq(users.id, data.id)).limit(1)
@@ -37,8 +38,9 @@ export const ensureUser = createServerFn({ method: 'POST' })
 export const updateUserRole = createServerFn({ method: 'POST' })
     .inputValidator((data: { userId: string; role: 'Admin' | 'User' | 'Manager' | 'Executive'; adminId: string }) => data)
     .handler(async ({ data }) => {
-        const db = await getDb()
-        if (!db) throw new Error('Database not available')
+        const { getDb } = await import('../db');
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
         try {
             // Check if requester is Admin
             const requester = await db.select().from(users).where(eq(users.id, data.adminId)).limit(1)
@@ -61,8 +63,9 @@ export const updateUserRole = createServerFn({ method: 'POST' })
 export const makeMeAdmin = createServerFn({ method: 'POST' })
     .inputValidator((data: { userId: string }) => data)
     .handler(async ({ data }) => {
-        const db = await getDb()
-        if (!db) throw new Error('Database not available')
+        const { getDb } = await import('../db');
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
         try {
             const result = await db.update(users)
                 .set({ role: 'Admin', updatedAt: new Date() })

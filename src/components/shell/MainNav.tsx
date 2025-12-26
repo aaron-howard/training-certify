@@ -38,10 +38,10 @@ export function MainNav({ items }: MainNavProps) {
             <li key={item.href}>
               <Link
                 to={item.href}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 [&.active]:bg-blue-50 dark:[&.active]:bg-blue-950 [&.active]:text-blue-700 dark:[&.active]:text-blue-300"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 [&.active]:bg-blue-50 dark:[&.active]:bg-blue-950 [&.active]:text-blue-700 dark:[&.active]:text-blue-300 group"
               >
                 {icon && (
-                  <span className="text-slate-500 dark:text-slate-400 [[.active]_&]:text-blue-600 [[.active]_&]:dark:text-blue-400">
+                  <span className="text-slate-500 dark:text-slate-400 group-[.active]:text-blue-600 group-[.active]:dark:text-blue-400">
                     {icon}
                   </span>
                 )}
