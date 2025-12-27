@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { testDbConnection } from '../api/db-test'
+import { testDbConnection } from '../api/db-test.server'
 
 export const Route = createFileRoute('/db-health')({
     component: DbHealthPage,

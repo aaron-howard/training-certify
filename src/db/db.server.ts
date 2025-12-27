@@ -13,7 +13,9 @@ const isServer = typeof window === 'undefined' || !!(import.meta as any).env?.SS
 const instanceId = Math.random().toString(36).substring(7);
 
 if (isServer) {
-    console.log(`🔌 [DB Module] Server-side instance ${instanceId} loaded`);
+    console.log(`🔌 [DB Module] Server-side instance ${instanceId} loaded. Window: ${typeof window}, SSR: ${(import.meta as any).env?.SSR}`);
+} else {
+    console.warn(`⚠️ [DB Module] Client-side instance ${instanceId} loaded? Window: ${typeof window}, SSR: ${(import.meta as any).env?.SSR}`);
 }
 
 async function initializeDb() {
@@ -22,7 +24,8 @@ async function initializeDb() {
     try {
         await envReady;
 
-        const url = ENV.DATABASE_URL || process.env.DATABASE_URL;
+        // Explicit fallback for local development if ENV fails
+        const url = ENV.DATABASE_URL || process.env.DATABASE_URL || 'postgresql://postgres:Teamwork1@localhost:5433/devdb';
 
         if (!url) {
             console.error(`❌ [DB Init] Instance ${instanceId} - No DATABASE_URL found.`);
@@ -34,20 +37,20 @@ async function initializeDb() {
 
         const pool = new Pool({
             connectionString: url,
-            max: parseInt(process.env.DB_POOL_SIZE || '10', 10),
+            max: parseInt(process.env.DB_POOL_SIZE || '2', 10), // Reduced pool size to prevent exhaustion during dev/HMR
             idleTimeoutMillis: 30000,
             connectionTimeoutMillis: 5000,
         });
 
         // Test connection
         const client = await pool.connect();
-        console.log(`✅ [DB Init] Instance ${instanceId} - Successfully connected to PostgreSQL`);
+        console.log(`✅ [DB Init] Instance ${instanceId} - Successfully connected to PostgreSQL (Pool Size: ${pool.totalCount})`);
         client.release();
 
         globalForDb.db = drizzle(pool, { schema });
         return globalForDb.db;
-    } catch (error: unknown) {
-        console.error(`❌ [DB Init] Instance ${instanceId} - Critical failure:`, error);
+    } catch (error: any) {
+        console.error(`❌ [DB Init] Instance ${instanceId} - Critical failure:`, error.message, error.stack);
         return null;
     }
 }

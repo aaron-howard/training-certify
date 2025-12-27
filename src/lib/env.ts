@@ -6,109 +6,111 @@ interface EnvType {
     DATABASE_URL: string | undefined;
     CLERK_PUBLISHABLE_KEY: string | undefined;
     CLERK_SECRET_KEY: string | undefined;
+    // Add other keys as needed
 }
 
+// Global cache to store the *result* of the parsing, not the object itself.
+// This ensures that even if module instances are different, they can fetch the same data.
 const globalForEnv = globalThis as unknown as {
-    ENV: EnvType | undefined;
-    envReady: Promise<void> | undefined;
+    parsedEnv: Record<string, string> | undefined;
+    envLoadingPromise: Promise<Record<string, string>> | undefined;
 };
 
-export const ENV: EnvType = globalForEnv.ENV || {
+// Initialize the local ENV object for this module instance
+export const ENV: EnvType = {
     isServer,
     DATABASE_URL: undefined,
-    CLERK_PUBLISHABLE_KEY: (import.meta as any).env?.VITE_CLERK_PUBLISHABLE_KEY ?? (import.meta as any).env?.CLERK_PUBLISHABLE_KEY as string | undefined,
+    CLERK_PUBLISHABLE_KEY: undefined,
     CLERK_SECRET_KEY: undefined,
 };
 
-if (isServer && !globalForEnv.ENV) {
-    globalForEnv.ENV = ENV;
+// Client-side hydration
+if (!isServer && typeof window !== 'undefined' && (window as any).__ENV__) {
+    Object.assign(ENV, (window as any).__ENV__);
 }
 
-export const envReady = isServer ? (globalForEnv.envReady || (globalForEnv.envReady = (async () => {
-    const processEnv = process.env;
+export const envReady = isServer ? (async () => {
+    // 1. If we already have parsed data globally, populate this instance and return.
+    if (globalForEnv.parsedEnv) {
+        Object.assign(ENV, globalForEnv.parsedEnv);
+        return;
+    }
 
-    // Primary check: standard environment variables
-    ENV.DATABASE_URL = processEnv.DATABASE_URL || processEnv.VITE_DATABASE_URL;
+    // 2. If a load is in progress, wait for it, then populate.
+    if (globalForEnv.envLoadingPromise) {
+        const result = await globalForEnv.envLoadingPromise;
+        Object.assign(ENV, result);
+        return;
+    }
 
-    // Check all possible variants for Publishable Key
-    ENV.CLERK_PUBLISHABLE_KEY =
-        processEnv.CLERK_PUBLISHABLE_KEY ||
-        processEnv.VITE_CLERK_PUBLISHABLE_KEY ||
-        processEnv.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-        ENV.CLERK_PUBLISHABLE_KEY;
+    // 3. Otherwise, perform the load.
+    globalForEnv.envLoadingPromise = (async () => {
+        const processEnv = process.env;
+        const loaded: Record<string, string> = {};
 
-    // Check all possible variants for Secret Key
-    ENV.CLERK_SECRET_KEY =
-        processEnv.CLERK_SECRET_KEY ||
-        processEnv.VITE_CLERK_SECRET_KEY;
+        // A. Process Env Vars
+        loaded.DATABASE_URL = processEnv.DATABASE_URL || processEnv.VITE_DATABASE_URL || '';
 
-    try {
-        // Fallback: Manually parse .env files if variables are missing
-        if (!ENV.DATABASE_URL || !ENV.CLERK_PUBLISHABLE_KEY || !ENV.CLERK_SECRET_KEY) {
-            const fs = await import('node:fs');
-            const path = await import('node:path');
-            const envFiles = ['.env.local', '.env'];
+        // Clerk Key Search
+        loaded.CLERK_PUBLISHABLE_KEY =
+            processEnv.CLERK_PUBLISHABLE_KEY ||
+            processEnv.VITE_CLERK_PUBLISHABLE_KEY ||
+            processEnv.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+            '';
 
-            for (const file of envFiles) {
-                const fullPath = path.resolve(process.cwd(), file);
-                if (fs.existsSync(fullPath)) {
-                    const content = fs.readFileSync(fullPath, 'utf8');
-                    const lines = content.split(/\r?\n/);
-                    for (const line of lines) {
-                        const trimmed = line.trim();
-                        if (!trimmed || trimmed.startsWith('#')) continue;
+        loaded.CLERK_SECRET_KEY =
+            processEnv.CLERK_SECRET_KEY ||
+            processEnv.VITE_CLERK_SECRET_KEY ||
+            '';
 
-                        const match = trimmed.match(/^([^=]+)=(.*)$/);
-                        if (match) {
-                            const key = match[1].trim();
-                            const val = match[2].trim().replace(/["']/g, '');
+        // B. File Fallback (.env.local, .env)
+        if (!loaded.DATABASE_URL || !loaded.CLERK_PUBLISHABLE_KEY || !loaded.CLERK_SECRET_KEY) {
+            try {
+                const fs = await import('node:fs');
+                const path = await import('node:path');
+                const envFiles = ['.env.local', '.env'];
 
-                            // Database URL
-                            if (!ENV.DATABASE_URL && (key === 'DATABASE_URL' || key === 'VITE_DATABASE_URL')) {
-                                ENV.DATABASE_URL = val;
-                            }
+                for (const file of envFiles) {
+                    const filePath = path.resolve(process.cwd(), file);
+                    if (fs.existsSync(filePath)) {
+                        const content = fs.readFileSync(filePath, 'utf-8');
+                        const lines = content.split(/\r?\n/);
+                        for (const line of lines) {
+                            const trimmed = line.trim();
+                            if (!trimmed || trimmed.startsWith('#')) continue;
+                            const match = trimmed.match(/^([^=]+)=(.*)$/);
+                            if (match) {
+                                const key = match[1].trim();
+                                const val = match[2].trim().replace(/^["']|["']$/g, '');
 
-                            // Publishable Key
-                            if (!ENV.CLERK_PUBLISHABLE_KEY &&
-                                (key === 'CLERK_PUBLISHABLE_KEY' ||
-                                    key === 'VITE_CLERK_PUBLISHABLE_KEY' ||
-                                    key === 'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY' ||
-                                    key === 'REACT_APP_CLERK_PUBLISHABLE_KEY')) {
-                                ENV.CLERK_PUBLISHABLE_KEY = val;
-                            }
-
-                            // Secret Key
-                            if (!ENV.CLERK_SECRET_KEY &&
-                                (key === 'CLERK_SECRET_KEY' ||
-                                    key === 'VITE_CLERK_SECRET_KEY')) {
-                                ENV.CLERK_SECRET_KEY = val;
+                                if (!loaded.DATABASE_URL && (key === 'DATABASE_URL' || key === 'VITE_DATABASE_URL')) loaded.DATABASE_URL = val;
+                                if (!loaded.CLERK_PUBLISHABLE_KEY && (key === 'CLERK_PUBLISHABLE_KEY' || key === 'VITE_CLERK_PUBLISHABLE_KEY')) loaded.CLERK_PUBLISHABLE_KEY = val;
+                                if (!loaded.CLERK_SECRET_KEY && (key === 'CLERK_SECRET_KEY' || key === 'VITE_CLERK_SECRET_KEY')) loaded.CLERK_SECRET_KEY = val;
                             }
                         }
                     }
                 }
-                if (ENV.DATABASE_URL && ENV.CLERK_PUBLISHABLE_KEY && ENV.CLERK_SECRET_KEY) break;
+            } catch (e) {
+                console.error('⚠️ [ENV] Failed during dynamic parsing:', e);
             }
         }
 
-        // Final Fallback for Local Development
-        if (!ENV.DATABASE_URL) {
-            console.warn('⚠️ [ENV] DATABASE_URL not found in environment or files. Using local Docker default.');
-            ENV.DATABASE_URL = 'postgresql://postgres:password@localhost:5432/devdb';
+        // C. Final Fallback (Hardcoded for local dev)
+        if (!loaded.DATABASE_URL) {
+            console.warn('⚠️ [ENV] DATABASE_URL not found. Using local fallback.');
+            loaded.DATABASE_URL = 'postgresql://postgres:Teamwork1@localhost:5433/devdb';
         }
-    } catch (e) {
-        console.error('⚠️ [ENV] Failed during dynamic parsing:', e);
-    }
 
-    console.log('💎 [ENV Final]', {
-        db: ENV.DATABASE_URL ? '✅ ok' : '❌ missing',
-        clerkPk: ENV.CLERK_PUBLISHABLE_KEY ? '✅ ok' : '❌ missing',
-        clerkSk: ENV.CLERK_SECRET_KEY ? '✅ ok' : '❌ missing',
-        cwd: process.cwd(),
-    });
-})())) : (() => {
-    // Client-side: Try to pick up injected environment variables
-    if (typeof window !== 'undefined' && (window as any).__ENV__) {
-        Object.assign(ENV, (window as any).__ENV__);
-    }
-    return Promise.resolve();
-})();
+        console.log('💎 [ENV Final]', {
+            db: loaded.DATABASE_URL ? '✅ ok' : '❌ missing',
+        });
+
+        return loaded;
+    })();
+
+    // Await the promise we just created (or found) and populate local ENV
+    const result = await globalForEnv.envLoadingPromise;
+    globalForEnv.parsedEnv = result; // Cache result
+    Object.assign(ENV, result); // Update THIS instance
+
+})() : Promise.resolve();

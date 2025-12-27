@@ -45,15 +45,34 @@ function CatalogPage() {
         enabled: !!user
     })
 
-    const { data: catalog, isLoading } = useQuery({
+    const { data: catalog, isLoading, error } = useQuery({
         queryKey: ['catalog'],
         queryFn: async () => {
+            console.log('🔍 [Catalog] Calling RPCs...');
+
+            // Debug Call
+            try {
+                const { checkRpc } = await import('../api/debug.server');
+                const debugRes = await checkRpc();
+                console.log('🔍 [Catalog] RPC Result:', debugRes);
+            } catch (e) {
+                console.error('❌ [Catalog] RPC Check Failed:', e);
+            }
+
             const res = await getCatalog()
             return res ?? { certifications: [] }
         },
     })
 
+    if (error) {
+        console.error('DEBUG: useQuery Error:', error);
+    }
+
     const isAdmin = dbUser?.role === 'Admin'
+
+    console.log('DEBUG: catalog.tsx render cycle')
+    console.log('DEBUG: isLoading:', isLoading)
+    console.log('DEBUG: catalog data:', catalog)
     console.log('DEBUG: dbUser:', dbUser)
     console.log('DEBUG: Clerk User ID:', user?.id)
     console.log('DEBUG: isAdmin:', isAdmin)
