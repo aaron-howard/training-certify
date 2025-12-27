@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Search, ExternalLink, Plus, Edit, Trash2, Database, ShieldCheck } from 'lucide-react'
+import { Search, ExternalLink, Plus, Edit, Trash2, Database, ShieldCheck, RefreshCw } from 'lucide-react'
 import { useUser } from '@clerk/tanstack-react-start'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getCatalog, deleteCatalogCertification, seedCatalog } from '../api/others'
+import { getCatalog, deleteCatalogCertification, seedCatalog, syncCatalog } from '../api/others'
 import { ensureUser, makeMeAdmin } from '../api/users'
 
 export const Route = createFileRoute('/catalog')({
@@ -54,6 +54,9 @@ function CatalogPage() {
     })
 
     const isAdmin = dbUser?.role === 'Admin'
+    console.log('DEBUG: dbUser:', dbUser)
+    console.log('DEBUG: Clerk User ID:', user?.id)
+    console.log('DEBUG: isAdmin:', isAdmin)
 
     // Mutations
     const seedMutation = useMutation({
@@ -68,7 +71,24 @@ function CatalogPage() {
 
     const promoteMutation = useMutation({
         mutationFn: (vars: { userId: string }) => makeMeAdmin({ data: vars }),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['dbUser'] })
+        onSuccess: (data) => {
+            console.log('DEBUG: Promotion Success:', data)
+            queryClient.invalidateQueries({ queryKey: ['dbUser'] })
+            alert(`Promotion requested successfully! Server response role: ${data?.role}`)
+        },
+        onError: (err) => {
+            console.error('DEBUG: Promotion Error:', err)
+            alert(`Promotion failed: ${err.message}`)
+        }
+    })
+
+    const syncMutation = useMutation({
+        mutationFn: (vars: { adminId: string; limit?: number }) => syncCatalog({ data: vars }),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ['catalog'] })
+            alert(`Sync complete! Processed ${data.count} certifications.`)
+        },
+        onError: (err) => alert(`Sync failed: ${err.message}`)
     })
 
     const handleSeed = () => {
@@ -80,6 +100,15 @@ function CatalogPage() {
     const handleDelete = (id: string) => {
         if (confirm('Delete this certification from the catalog?')) {
             deleteMutation.mutate({ id, adminId: user?.id || '' })
+        }
+    }
+
+    const handleSync = () => {
+        if (confirm('Sync catalog with ITExams? This might take a while.')) {
+            // Limiting to 5 vendors for safety/demo purposes if needed, 
+            // but the user wants "all" eventually. 
+            // Let's do 10 for now to show it works without being too slow.
+            syncMutation.mutate({ adminId: user?.id || '', limit: 10 })
         }
     }
 
@@ -127,6 +156,14 @@ function CatalogPage() {
                                     className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2 text-sm"
                                 >
                                     <Database className="w-4 h-4" /> Seed
+                                </button>
+                                <button
+                                    onClick={handleSync}
+                                    disabled={syncMutation.isPending}
+                                    className="px-4 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-900 transition-colors flex items-center gap-2 text-sm disabled:opacity-50"
+                                >
+                                    <RefreshCw className={Boolean(syncMutation.isPending) ? "w-4 h-4 animate-spin" : "w-4 h-4"} />
+                                    {syncMutation.isPending ? 'Syncing...' : 'Sync ITExams'}
                                 </button>
                                 <button
                                     onClick={() => alert('Add Form Modal To Be Implemented')}

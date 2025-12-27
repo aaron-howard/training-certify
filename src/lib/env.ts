@@ -7,18 +7,14 @@ export const ENV = {
     CLERK_SECRET_KEY: undefined as string | undefined,
 };
 
-if (isServer) {
+export const envReady = isServer ? (async () => {
     const processEnv = process.env;
     ENV.DATABASE_URL = processEnv.DATABASE_URL || processEnv.VITE_DATABASE_URL;
     ENV.CLERK_PUBLISHABLE_KEY = processEnv.CLERK_PUBLISHABLE_KEY || processEnv.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || processEnv.VITE_CLERK_PUBLISHABLE_KEY || ENV.CLERK_PUBLISHABLE_KEY;
     ENV.CLERK_SECRET_KEY = processEnv.CLERK_SECRET_KEY || processEnv.VITE_CLERK_SECRET_KEY;
 
     try {
-        // Use dynamic imports with server-only check to prevent bundler from including
-        // Node.js modules in client bundle. Vite will externalize these automatically.
         if (!ENV.DATABASE_URL || !ENV.CLERK_PUBLISHABLE_KEY) {
-            // Dynamic imports are only executed on server, so bundler won't include
-            // these modules in client bundle
             const fs = await import('node:fs');
             const path = await import('node:path');
             const envFiles = ['.env.local', '.env'];
@@ -32,7 +28,6 @@ if (isServer) {
                         const trimmed = line.trim();
                         if (!trimmed || trimmed.startsWith('#')) continue;
 
-                        // Use regex to catch "KEY = VALUE", "KEY=VALUE", etc.
                         const match = trimmed.match(/^([^=]+)=(.*)$/);
                         if (match) {
                             const key = match[1].trim();
@@ -54,12 +49,13 @@ if (isServer) {
             }
         }
     } catch (e) {
-        // Fallback for non-node environments
+        console.error('⚠️ [ENV] Failed during dynamic parsing:', e);
     }
 
     console.log('💎 [ENV Final]', {
         db: ENV.DATABASE_URL ? '✅ ok' : '❌ missing',
         clerkPk: ENV.CLERK_PUBLISHABLE_KEY ? '✅ ok' : '❌ missing',
         clerkSk: ENV.CLERK_SECRET_KEY ? '✅ ok' : '❌ missing',
+        cwd: process.cwd(),
     });
-}
+})() : Promise.resolve();

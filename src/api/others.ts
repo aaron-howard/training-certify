@@ -2,6 +2,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { getDb } from '../db'
 import { certifications, auditLogs, notifications, userCertifications, users } from '../db/schema'
 import { desc, count, sql, eq } from 'drizzle-orm'
+import { syncCatalogFromITExams } from '../lib/ingestion.server'
 
 export const getCatalog = createServerFn({ method: 'GET' })
     .handler(async () => {
@@ -137,7 +138,7 @@ export const createCatalogCertification = createServerFn({ method: 'POST' })
                 difficulty: data.cert.difficulty ? String(data.cert.difficulty) : undefined,
                 description: data.cert.description ? String(data.cert.description) : undefined,
             };
-            
+
             const result = await db.insert(certifications).values(certData).returning()
 
             return result[0]
@@ -217,6 +218,38 @@ export const seedCatalog = createServerFn({ method: 'POST' })
             return { success: true, count: certsToSeed.length }
         } catch (error) {
             console.error('❌ [Server] Seeding failed:', error)
+            throw error
+        }
+    })
+
+export const syncCatalog = createServerFn({ method: 'POST' })
+    .inputValidator((data: { adminId: string; limit?: number }) => data)
+    .handler(async ({ data }) => {
+        const db = await getDb()
+        try {
+            if (!db) throw new Error('Database not available')
+
+            // Role Check
+            const requester = await db.select().from(users).where(eq(users.id, data.adminId)).limit(1)
+            if (!requester.length || requester[0].role !== 'Admin') {
+                throw new Error('Unauthorized')
+            }
+
+            console.log('🔄 [Server] Triggering ITExams Sync...')
+            const result = await syncCatalogFromITExams(data.limit)
+
+            // Log the action
+            await db.insert(auditLogs).values({
+                userId: data.adminId,
+                action: 'Sync Catalog',
+                resourceType: 'Certification',
+                resourceId: 'ITExams',
+                details: `Synced ${result.totalProcessed} certifications from ITExams`
+            })
+
+            return { success: true, count: result.totalProcessed }
+        } catch (error) {
+            console.error('❌ [Server] Sync failed:', error)
             throw error
         }
     })
