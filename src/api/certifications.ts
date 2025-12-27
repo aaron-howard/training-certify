@@ -1,12 +1,11 @@
-// src/api/certifications.ts
 import { createServerFn } from '@tanstack/react-start';
-import { getDb } from '../db';
 import { userCertifications } from '../db/schema';
 import { eq } from 'drizzle-orm';
 import type { UserCertification } from '../types';
 
 /** Helper to obtain DB instance for each request */
 async function resolveDb() {
+    const { getDb } = await import('../db/index.server');
     const db = await getDb();
     if (!db) throw new Error('Database not available');
     return db;
@@ -15,7 +14,7 @@ async function resolveDb() {
 export const getUserCertifications = createServerFn({ method: 'GET' })
     .handler(async () => {
         try {
-            const db = await getDb();
+            const db = await resolveDb();
             if (!db) {
                 console.log('⚠️ [Server] DB is null, returning empty user certifications');
                 return [];
@@ -58,10 +57,10 @@ export const createCertification = createServerFn({ method: 'POST' })
     .handler(async ({ data }) => {
         try {
             const db = await resolveDb();
-            const verifiedAtValue = data.verifiedAt 
+            const verifiedAtValue = data.verifiedAt
                 ? (typeof data.verifiedAt === 'string' ? new Date(data.verifiedAt) : data.verifiedAt)
                 : new Date();
-            
+
             const result = await db.insert(userCertifications).values({
                 userId: data.userId || 'user-001',
                 certificationId: data.certificationId || 'manual',

@@ -2,11 +2,12 @@ import { createServerFn } from '@tanstack/react-start'
 // getDb will be imported dynamically inside handlers
 import { users } from '../db/schema'
 import { eq } from 'drizzle-orm'
+// We use dynamic imports inside handlers to ensure server-only execution
 
 export const ensureUser = createServerFn({ method: 'POST' })
     .inputValidator((data: { id: string; name: string; email: string; avatarUrl?: string }) => data)
     .handler(async ({ data }) => {
-        const { getDb } = await import('../db');
+        const { getDb } = await import('../db/index.server');
         const db = await getDb();
         if (!db) throw new Error('Database not available');
         try {
@@ -38,7 +39,7 @@ export const ensureUser = createServerFn({ method: 'POST' })
 export const updateUserRole = createServerFn({ method: 'POST' })
     .inputValidator((data: { userId: string; role: 'Admin' | 'User' | 'Manager' | 'Executive'; adminId: string }) => data)
     .handler(async ({ data }) => {
-        const { getDb } = await import('../db');
+        const { getDb } = await import('../db/index.server');
         const db = await getDb();
         if (!db) throw new Error('Database not available');
         try {
@@ -63,7 +64,7 @@ export const updateUserRole = createServerFn({ method: 'POST' })
 export const makeMeAdmin = createServerFn({ method: 'POST' })
     .inputValidator((data: { userId: string }) => data)
     .handler(async ({ data }) => {
-        const { getDb } = await import('../db');
+        const { getDb } = await import('../db/index.server');
         const db = await getDb();
         if (!db) throw new Error('Database not available');
         try {

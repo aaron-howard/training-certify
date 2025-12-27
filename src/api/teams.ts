@@ -1,10 +1,10 @@
 import { createServerFn } from '@tanstack/react-start'
-import { getDb } from '../db'
 import { teams, userTeams, userCertifications } from '../db/schema'
 import { sql, eq, count } from 'drizzle-orm'
 
 export const getTeamData = createServerFn({ method: 'GET' })
     .handler(async () => {
+        const { getDb } = await import('../db/index.server');
         const db = await getDb()
         try {
             if (!db) {

@@ -3,7 +3,10 @@ import * as schema from './schema';
 import { ENV, envReady } from '../lib/env';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
-const isServer = typeof window === 'undefined';
+const isServer = typeof window === 'undefined' || !!(import.meta as any).env?.SSR;
+const instanceId = Math.random().toString(36).substring(7);
+
+console.log(`🔌 [DB Module] Instance ${instanceId} loaded (isServer: ${isServer})`);
 
 let db: NodePgDatabase<typeof schema> | null = null;
 let initPromise: Promise<NodePgDatabase<typeof schema> | null> | null = null;
@@ -13,7 +16,7 @@ async function initializeDb() {
     if (db) return db;
 
     try {
-        console.log('🚀 [DB Init] Starting initialization...');
+        console.log(`🚀 [DB Init] Instance ${instanceId} starting initialization...`);
         await envReady;
 
         // 1. Resolve URL
@@ -79,16 +82,19 @@ async function initializeDb() {
 /** Async helper to obtain the DB instance. */
 export const getDb = async (): Promise<NodePgDatabase<typeof schema> | null> => {
     // If we have a DB, return it.
-    if (db) return db;
+    if (db) {
+        console.log(`✅ [DB getDb] Instance ${instanceId} returning existing DB`);
+        return db;
+    }
 
     // If on server, ensure we try to initialize.
     if (isServer) {
+        console.log(`🚀 [DB getDb] Instance ${instanceId} needs initialization`);
         // If we have a pending promise, wait for it.
         if (initPromise) {
+            console.log(`⏳ [DB getDb] Instance ${instanceId} waiting for pending initPromise`);
             const result = await initPromise;
-            // If the pending promise resulted in success, return it.
             if (result) return result;
-            // If it failed (returned null), clear it so we can try again.
             initPromise = null;
         }
 
@@ -97,7 +103,8 @@ export const getDb = async (): Promise<NodePgDatabase<typeof schema> | null> => 
         const result = await initPromise;
         return result;
     }
+    console.warn(`⚠️ [DB getDb] Instance ${instanceId} called on non-server environment`);
     return null;
 };
 
-export { db };
+export { db, instanceId };

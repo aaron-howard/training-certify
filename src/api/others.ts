@@ -1,12 +1,13 @@
 import { createServerFn } from '@tanstack/react-start'
-import { getDb } from '../db'
 import { certifications, auditLogs, notifications, userCertifications, users } from '../db/schema'
 import { desc, count, sql, eq } from 'drizzle-orm'
 import { syncCatalogFromITExams } from '../lib/ingestion.server'
 
 export const getCatalog = createServerFn({ method: 'GET' })
     .handler(async () => {
+        const { getDb, instanceId } = await import('../db/index.server');
         const db = await getDb()
+        console.log(`🚀 [Server] getCatalog called (DB Instance: ${instanceId})`)
         try {
             if (!db) {
                 console.log('⚠️ [Server] getCatalog: DB is null')
@@ -31,6 +32,7 @@ export const getCatalog = createServerFn({ method: 'GET' })
 
 export const getComplianceData = createServerFn({ method: 'GET' })
     .handler(async () => {
+        const { getDb } = await import('../db/index.server');
         const db = await getDb()
         try {
             console.log('🚀 [Server] getComplianceData called')
@@ -63,6 +65,7 @@ export const getComplianceData = createServerFn({ method: 'GET' })
 
 export const getNotifications = createServerFn({ method: 'GET' })
     .handler(async () => {
+        const { getDb } = await import('../db/index.server');
         const db = await getDb()
         try {
             console.log('🚀 [Server] getNotifications called')
@@ -90,6 +93,7 @@ export const getNotifications = createServerFn({ method: 'GET' })
 
 export const getDashboardStats = createServerFn({ method: 'GET' })
     .handler(async () => {
+        const { getDb } = await import('../db/index.server');
         const db = await getDb()
         try {
             console.log('🚀 [Server] getDashboardStats called')
@@ -119,6 +123,7 @@ export const getDashboardStats = createServerFn({ method: 'GET' })
 export const createCatalogCertification = createServerFn({ method: 'POST' })
     .inputValidator((data: { cert: Record<string, unknown>; adminId: string }) => data)
     .handler(async ({ data }) => {
+        const { getDb } = await import('../db/index.server');
         const db = await getDb()
         try {
             if (!db) throw new Error('Database not available')
@@ -151,6 +156,7 @@ export const createCatalogCertification = createServerFn({ method: 'POST' })
 export const updateCatalogCertification = createServerFn({ method: 'POST' })
     .inputValidator((data: { id: string; updates: Record<string, unknown>; adminId: string }) => data)
     .handler(async ({ data }) => {
+        const { getDb } = await import('../db/index.server');
         const db = await getDb()
         try {
             if (!db) throw new Error('Database not available')
@@ -176,6 +182,7 @@ export const updateCatalogCertification = createServerFn({ method: 'POST' })
 export const deleteCatalogCertification = createServerFn({ method: 'POST' })
     .inputValidator((data: { id: string; adminId: string }) => data)
     .handler(async ({ data }) => {
+        const { getDb } = await import('../db/index.server');
         const db = await getDb()
         try {
             if (!db) throw new Error('Database not available')
@@ -196,6 +203,7 @@ export const deleteCatalogCertification = createServerFn({ method: 'POST' })
 
 export const seedCatalog = createServerFn({ method: 'POST' })
     .handler(async () => {
+        const { getDb } = await import('../db/index.server');
         const db = await getDb()
         try {
             if (!db) throw new Error('Database not available')
@@ -225,6 +233,7 @@ export const seedCatalog = createServerFn({ method: 'POST' })
 export const syncCatalog = createServerFn({ method: 'POST' })
     .inputValidator((data: { adminId: string; limit?: number }) => data)
     .handler(async ({ data }) => {
+        const { getDb } = await import('../db/index.server');
         const db = await getDb()
         try {
             if (!db) throw new Error('Database not available')

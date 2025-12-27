@@ -1,5 +1,4 @@
 
-import { getDb } from '../db';
 import { certifications } from '../db/schema';
 
 const BASE_URL = 'https://www.itexams.com';
@@ -112,6 +111,7 @@ export async function fetchExams(vendor: VendorInfo): Promise<ExamInfo[]> {
  * @param limitVendors Optional limit for development/testing
  */
 export async function syncCatalogFromITExams(limitVendors?: number) {
+    const { getDb } = await import('../db/index.server');
     const db = await getDb();
     if (!db) throw new Error('Database not available');
 
