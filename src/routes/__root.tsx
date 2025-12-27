@@ -6,7 +6,7 @@ import { ClerkProvider, useAuth, RedirectToSignIn, useUser } from '@clerk/tansta
 import { QueryClientProvider } from '@tanstack/react-query'
 import { AppShell } from '../components/shell/AppShell'
 import { useEffect } from 'react'
-import { ensureUser } from '../api/users'
+import { ensureUser } from '../api/users.server'
 import { ENV } from '../lib/env'
 
 import appCss from '../styles.css?url'
@@ -66,12 +66,17 @@ export const Route = createRootRouteWithContext<{
 function RootDocument({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const queryClient = router.options.context?.queryClient ?? new QueryClient()
-    const isDevelopment = (import.meta as any).env?.DEV ?? false
+  const isDevelopment = (import.meta as any).env?.DEV ?? false
 
   return (
     <html lang="en">
       <head>
         <HeadContent />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.__ENV__ = { CLERK_PUBLISHABLE_KEY: ${JSON.stringify(ENV.CLERK_PUBLISHABLE_KEY)} };`,
+          }}
+        />
       </head>
       <body>
         <ClerkProvider publishableKey={ENV.CLERK_PUBLISHABLE_KEY}>

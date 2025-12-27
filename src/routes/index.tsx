@@ -2,7 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { Award, Users, Shield, BookOpen, ChevronRight } from 'lucide-react'
 import { useUser } from '@clerk/tanstack-react-start'
 import { useQuery } from '@tanstack/react-query'
-import { getDashboardStats } from '../api/others'
+import { getDashboardStats } from '../api/others.server'
 
 export const Route = createFileRoute('/')({
   component: DashboardPage,

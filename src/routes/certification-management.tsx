@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { getUserCertifications, createCertification, updateCertification, deleteCertification } from '../api/certifications'
+import { getUserCertifications, createCertification, updateCertification, deleteCertification } from '../api/certifications.server'
 import { CertificationManagement } from '../components/sections/certification-management/CertificationManagement'
 import { useUser } from '@clerk/tanstack-react-start'
 

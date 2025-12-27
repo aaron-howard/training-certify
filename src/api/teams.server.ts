@@ -4,7 +4,7 @@ import { sql, eq, count } from 'drizzle-orm'
 
 export const getTeamData = createServerFn({ method: 'GET' })
     .handler(async () => {
-        const { getDb } = await import('../db/index.server');
+        const { getDb } = await import('../db/db.server');
         const db = await getDb()
         try {
             if (!db) {

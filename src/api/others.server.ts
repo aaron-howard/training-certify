@@ -5,16 +5,13 @@ import { syncCatalogFromITExams } from '../lib/ingestion.server'
 
 export const getCatalog = createServerFn({ method: 'GET' })
     .handler(async () => {
-        const { getDb, instanceId } = await import('../db/index.server');
-        const db = await getDb()
-        console.log(`🚀 [Server] getCatalog called (DB Instance: ${instanceId})`)
+        const { getDb, instanceId } = await import('../db/db.server');
+        const db = await getDb();
+        if (!db) throw new Error(`Database not available (Server Instance: ${instanceId})`);
+
         try {
-            if (!db) {
-                console.log('⚠️ [Server] getCatalog: DB is null')
-                return { certifications: [] }
-            }
             const result = await db.select().from(certifications)
-            const mapped = {
+            return {
                 certifications: result.map((c) => ({
                     id: c.id,
                     name: c.name,
@@ -22,8 +19,6 @@ export const getCatalog = createServerFn({ method: 'GET' })
                     level: c.difficulty
                 }))
             }
-            console.log(`✅ [Server] getCatalog returning ${mapped.certifications.length} items`)
-            return mapped
         } catch (error) {
             console.error('Failed to fetch catalog:', error)
             return { certifications: [] }
@@ -32,21 +27,16 @@ export const getCatalog = createServerFn({ method: 'GET' })
 
 export const getComplianceData = createServerFn({ method: 'GET' })
     .handler(async () => {
-        const { getDb } = await import('../db/index.server');
-        const db = await getDb()
-        try {
-            console.log('🚀 [Server] getComplianceData called')
-            if (!db) {
-                console.log('⚠️ [Server] getComplianceData: DB is null')
-                return { auditLogs: [], stats: { complianceRate: 0, totalAudits: 0, issuesFound: 0 } }
-            }
+        const { getDb } = await import('../db/db.server');
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
 
+        try {
             const logs = await db.select()
                 .from(auditLogs)
                 .orderBy(desc(auditLogs.timestamp))
                 .limit(10)
 
-            console.log(`✅ [Server] Found ${logs.length} audit logs`)
             return {
                 auditLogs: logs.map((l) => ({
                     id: l.id,
@@ -65,18 +55,12 @@ export const getComplianceData = createServerFn({ method: 'GET' })
 
 export const getNotifications = createServerFn({ method: 'GET' })
     .handler(async () => {
-        const { getDb } = await import('../db/index.server');
-        const db = await getDb()
+        const { getDb } = await import('../db/db.server');
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
+
         try {
-            console.log('🚀 [Server] getNotifications called')
-            if (!db) {
-                console.log('⚠️ [Server] DB is null')
-                return []
-            }
-
             const result = await db.select().from(notifications).orderBy(desc(notifications.timestamp)).limit(20)
-
-            console.log(`✅ [Server] Found ${result.length} notifications`)
             return result.map((n) => ({
                 id: n.id,
                 title: n.title,
@@ -93,22 +77,17 @@ export const getNotifications = createServerFn({ method: 'GET' })
 
 export const getDashboardStats = createServerFn({ method: 'GET' })
     .handler(async () => {
-        const { getDb } = await import('../db/index.server');
-        const db = await getDb()
-        try {
-            console.log('🚀 [Server] getDashboardStats called')
-            if (!db) {
-                console.log('⚠️ [Server] getDashboardStats: DB is null')
-                return { activeCerts: 0, expiringSoon: 0, complianceRate: 0 }
-            }
+        const { getDb } = await import('../db/db.server');
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
 
+        try {
             const activeResult = await db.select({ value: count() }).from(userCertifications).where(sql`status IN ('active', 'expiring', 'expiring-soon')`)
             const expiringResult = await db.select({ value: count() }).from(userCertifications).where(sql`status IN ('expiring', 'expiring-soon')`)
 
             const activeCerts = Number(activeResult[0].value)
             const expiringSoon = Number(expiringResult[0].value)
 
-            console.log(`✅ [Server] Dashboard metrics calculated: Active=${activeCerts}, Expiring=${expiringSoon}`)
             return {
                 activeCerts,
                 expiringSoon,
@@ -123,11 +102,11 @@ export const getDashboardStats = createServerFn({ method: 'GET' })
 export const createCatalogCertification = createServerFn({ method: 'POST' })
     .inputValidator((data: { cert: Record<string, unknown>; adminId: string }) => data)
     .handler(async ({ data }) => {
-        const { getDb } = await import('../db/index.server');
-        const db = await getDb()
-        try {
-            if (!db) throw new Error('Database not available')
+        const { getDb } = await import('../db/db.server');
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
 
+        try {
             // Role Check
             const requester = await db.select().from(users).where(eq(users.id, data.adminId)).limit(1)
             if (!requester.length || requester[0].role !== 'Admin') {
@@ -145,7 +124,6 @@ export const createCatalogCertification = createServerFn({ method: 'POST' })
             };
 
             const result = await db.insert(certifications).values(certData).returning()
-
             return result[0]
         } catch (error) {
             console.error('❌ [Server] Failed to create catalog cert:', error)
@@ -156,11 +134,11 @@ export const createCatalogCertification = createServerFn({ method: 'POST' })
 export const updateCatalogCertification = createServerFn({ method: 'POST' })
     .inputValidator((data: { id: string; updates: Record<string, unknown>; adminId: string }) => data)
     .handler(async ({ data }) => {
-        const { getDb } = await import('../db/index.server');
-        const db = await getDb()
-        try {
-            if (!db) throw new Error('Database not available')
+        const { getDb } = await import('../db/db.server');
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
 
+        try {
             // Role Check
             const requester = await db.select().from(users).where(eq(users.id, data.adminId)).limit(1)
             if (!requester.length || requester[0].role !== 'Admin') {
@@ -182,11 +160,11 @@ export const updateCatalogCertification = createServerFn({ method: 'POST' })
 export const deleteCatalogCertification = createServerFn({ method: 'POST' })
     .inputValidator((data: { id: string; adminId: string }) => data)
     .handler(async ({ data }) => {
-        const { getDb } = await import('../db/index.server');
-        const db = await getDb()
-        try {
-            if (!db) throw new Error('Database not available')
+        const { getDb } = await import('../db/db.server');
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
 
+        try {
             // Role Check
             const requester = await db.select().from(users).where(eq(users.id, data.adminId)).limit(1)
             if (!requester.length || requester[0].role !== 'Admin') {
@@ -203,11 +181,11 @@ export const deleteCatalogCertification = createServerFn({ method: 'POST' })
 
 export const seedCatalog = createServerFn({ method: 'POST' })
     .handler(async () => {
-        const { getDb } = await import('../db/index.server');
-        const db = await getDb()
-        try {
-            if (!db) throw new Error('Database not available')
+        const { getDb } = await import('../db/db.server');
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
 
+        try {
             const certsToSeed = [
                 { id: 'ms-az-104', name: 'Microsoft Azure Administrator', vendorId: 'msft', vendorName: 'Microsoft', category: 'Cloud', difficulty: 'Intermediate', description: 'Exam AZ-104: Microsoft Azure Administrator' },
                 { id: 'ms-az-305', name: 'Azure Solutions Architect Expert', vendorId: 'msft', vendorName: 'Microsoft', category: 'Cloud', difficulty: 'Expert', description: 'Exam AZ-305: Designing Microsoft Azure Infrastructure Solutions' },
@@ -233,11 +211,11 @@ export const seedCatalog = createServerFn({ method: 'POST' })
 export const syncCatalog = createServerFn({ method: 'POST' })
     .inputValidator((data: { adminId: string; limit?: number }) => data)
     .handler(async ({ data }) => {
-        const { getDb } = await import('../db/index.server');
-        const db = await getDb()
-        try {
-            if (!db) throw new Error('Database not available')
+        const { getDb } = await import('../db/db.server');
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
 
+        try {
             // Role Check
             const requester = await db.select().from(users).where(eq(users.id, data.adminId)).limit(1)
             if (!requester.length || requester[0].role !== 'Admin') {

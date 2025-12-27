@@ -1,20 +1,50 @@
+// src/lib/env.ts
 const isServer = typeof window === 'undefined';
 
-export const ENV = {
-    isServer,
-    DATABASE_URL: undefined as string | undefined,
-    CLERK_PUBLISHABLE_KEY: (import.meta as any).env?.VITE_CLERK_PUBLISHABLE_KEY ?? (import.meta as any).env?.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY as string | undefined,
-    CLERK_SECRET_KEY: undefined as string | undefined,
+interface EnvType {
+    isServer: boolean;
+    DATABASE_URL: string | undefined;
+    CLERK_PUBLISHABLE_KEY: string | undefined;
+    CLERK_SECRET_KEY: string | undefined;
+}
+
+const globalForEnv = globalThis as unknown as {
+    ENV: EnvType | undefined;
+    envReady: Promise<void> | undefined;
 };
 
-export const envReady = isServer ? (async () => {
+export const ENV: EnvType = globalForEnv.ENV || {
+    isServer,
+    DATABASE_URL: undefined,
+    CLERK_PUBLISHABLE_KEY: (import.meta as any).env?.VITE_CLERK_PUBLISHABLE_KEY ?? (import.meta as any).env?.CLERK_PUBLISHABLE_KEY as string | undefined,
+    CLERK_SECRET_KEY: undefined,
+};
+
+if (isServer && !globalForEnv.ENV) {
+    globalForEnv.ENV = ENV;
+}
+
+export const envReady = isServer ? (globalForEnv.envReady || (globalForEnv.envReady = (async () => {
     const processEnv = process.env;
+
+    // Primary check: standard environment variables
     ENV.DATABASE_URL = processEnv.DATABASE_URL || processEnv.VITE_DATABASE_URL;
-    ENV.CLERK_PUBLISHABLE_KEY = processEnv.CLERK_PUBLISHABLE_KEY || processEnv.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || processEnv.VITE_CLERK_PUBLISHABLE_KEY || ENV.CLERK_PUBLISHABLE_KEY;
-    ENV.CLERK_SECRET_KEY = processEnv.CLERK_SECRET_KEY || processEnv.VITE_CLERK_SECRET_KEY;
+
+    // Check all possible variants for Publishable Key
+    ENV.CLERK_PUBLISHABLE_KEY =
+        processEnv.CLERK_PUBLISHABLE_KEY ||
+        processEnv.VITE_CLERK_PUBLISHABLE_KEY ||
+        processEnv.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+        ENV.CLERK_PUBLISHABLE_KEY;
+
+    // Check all possible variants for Secret Key
+    ENV.CLERK_SECRET_KEY =
+        processEnv.CLERK_SECRET_KEY ||
+        processEnv.VITE_CLERK_SECRET_KEY;
 
     try {
-        if (!ENV.DATABASE_URL || !ENV.CLERK_PUBLISHABLE_KEY) {
+        // Fallback: Manually parse .env files if variables are missing
+        if (!ENV.DATABASE_URL || !ENV.CLERK_PUBLISHABLE_KEY || !ENV.CLERK_SECRET_KEY) {
             const fs = await import('node:fs');
             const path = await import('node:path');
             const envFiles = ['.env.local', '.env'];
@@ -33,20 +63,37 @@ export const envReady = isServer ? (async () => {
                             const key = match[1].trim();
                             const val = match[2].trim().replace(/["']/g, '');
 
+                            // Database URL
                             if (!ENV.DATABASE_URL && (key === 'DATABASE_URL' || key === 'VITE_DATABASE_URL')) {
                                 ENV.DATABASE_URL = val;
                             }
-                            if (!ENV.CLERK_PUBLISHABLE_KEY && (key === 'CLERK_PUBLISHABLE_KEY' || key === 'VITE_CLERK_PUBLISHABLE_KEY' || key === 'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY')) {
+
+                            // Publishable Key
+                            if (!ENV.CLERK_PUBLISHABLE_KEY &&
+                                (key === 'CLERK_PUBLISHABLE_KEY' ||
+                                    key === 'VITE_CLERK_PUBLISHABLE_KEY' ||
+                                    key === 'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY' ||
+                                    key === 'REACT_APP_CLERK_PUBLISHABLE_KEY')) {
                                 ENV.CLERK_PUBLISHABLE_KEY = val;
                             }
-                            if (!ENV.CLERK_SECRET_KEY && (key === 'CLERK_SECRET_KEY' || key === 'VITE_CLERK_SECRET_KEY')) {
+
+                            // Secret Key
+                            if (!ENV.CLERK_SECRET_KEY &&
+                                (key === 'CLERK_SECRET_KEY' ||
+                                    key === 'VITE_CLERK_SECRET_KEY')) {
                                 ENV.CLERK_SECRET_KEY = val;
                             }
                         }
                     }
                 }
-                if (ENV.DATABASE_URL && ENV.CLERK_PUBLISHABLE_KEY) break;
+                if (ENV.DATABASE_URL && ENV.CLERK_PUBLISHABLE_KEY && ENV.CLERK_SECRET_KEY) break;
             }
+        }
+
+        // Final Fallback for Local Development
+        if (!ENV.DATABASE_URL) {
+            console.warn('⚠️ [ENV] DATABASE_URL not found in environment or files. Using local Docker default.');
+            ENV.DATABASE_URL = 'postgresql://postgres:password@localhost:5432/devdb';
         }
     } catch (e) {
         console.error('⚠️ [ENV] Failed during dynamic parsing:', e);
@@ -58,4 +105,10 @@ export const envReady = isServer ? (async () => {
         clerkSk: ENV.CLERK_SECRET_KEY ? '✅ ok' : '❌ missing',
         cwd: process.cwd(),
     });
-})() : Promise.resolve();
+})())) : (() => {
+    // Client-side: Try to pick up injected environment variables
+    if (typeof window !== 'undefined' && (window as any).__ENV__) {
+        Object.assign(ENV, (window as any).__ENV__);
+    }
+    return Promise.resolve();
+})();

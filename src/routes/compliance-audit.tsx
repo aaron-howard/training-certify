@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { getComplianceData } from '../api/others'
+import { getComplianceData } from '../api/others.server'
 import { Shield, FileCheck, AlertCircle, History } from 'lucide-react'
 
 export const Route = createFileRoute('/compliance-audit')({

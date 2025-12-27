@@ -2,8 +2,8 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Search, ExternalLink, Plus, Edit, Trash2, Database, ShieldCheck, RefreshCw } from 'lucide-react'
 import { useUser } from '@clerk/tanstack-react-start'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getCatalog, deleteCatalogCertification, seedCatalog, syncCatalog } from '../api/others'
-import { ensureUser, makeMeAdmin } from '../api/users'
+import { getCatalog, deleteCatalogCertification, seedCatalog, syncCatalog } from '../api/others.server'
+import { ensureUser, makeMeAdmin } from '../api/users.server'
 
 export const Route = createFileRoute('/catalog')({
     component: CatalogPage,

@@ -111,7 +111,7 @@ export async function fetchExams(vendor: VendorInfo): Promise<ExamInfo[]> {
  * @param limitVendors Optional limit for development/testing
  */
 export async function syncCatalogFromITExams(limitVendors?: number) {
-    const { getDb } = await import('../db/index.server');
+    const { getDb } = await import('../db/db.server');
     const db = await getDb();
     if (!db) throw new Error('Database not available');
 

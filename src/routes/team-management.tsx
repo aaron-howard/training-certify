@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { getTeamData } from '../api/teams'
+import { getTeamData } from '../api/teams.server'
 // No unused icons
 
 export const Route = createFileRoute('/team-management')({

@@ -1,13 +1,15 @@
 import 'dotenv/config';
 import { defineConfig } from 'drizzle-kit';
 
+if (!process.env.DATABASE_URL) {
+    console.warn('⚠️ DATABASE_URL is not set in environment variables. Drizzle Kit might fail.');
+}
+
 export default defineConfig({
-    // ──► Put generated SQL files in src/db/migrations
     out: './src/db/migrations',
     schema: './src/db/schema.ts',
     dialect: 'postgresql',
-    // No `driver` property – Drizzle will use the native pg driver automatically
     dbCredentials: {
-        url: process.env.DATABASE_URL!,   // reads from .env (local DB)
+        url: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/devdb',
     },
 });

@@ -3,22 +3,13 @@ import { userCertifications } from '../db/schema';
 import { eq } from 'drizzle-orm';
 import type { UserCertification } from '../types';
 
-/** Helper to obtain DB instance for each request */
-async function resolveDb() {
-    const { getDb } = await import('../db/index.server');
-    const db = await getDb();
-    if (!db) throw new Error('Database not available');
-    return db;
-}
-
 export const getUserCertifications = createServerFn({ method: 'GET' })
     .handler(async () => {
+        const { getDb, instanceId } = await import('../db/db.server');
+        const db = await getDb();
+        if (!db) throw new Error(`Database not available (Server Instance: ${instanceId})`);
+
         try {
-            const db = await resolveDb();
-            if (!db) {
-                console.log('⚠️ [Server] DB is null, returning empty user certifications');
-                return [];
-            }
             const result = await db.select().from(userCertifications);
             const mapped = result.map((cert) => ({
                 ...cert,
@@ -55,8 +46,11 @@ export const createCertification = createServerFn({ method: 'POST' })
         throw new Error('Invalid input data');
     })
     .handler(async ({ data }) => {
+        const { getDb } = await import('../db/db.server');
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
+
         try {
-            const db = await resolveDb();
             const verifiedAtValue = data.verifiedAt
                 ? (typeof data.verifiedAt === 'string' ? new Date(data.verifiedAt) : data.verifiedAt)
                 : new Date();
@@ -113,8 +107,11 @@ export const updateCertification = createServerFn({ method: 'POST' })
         throw new Error('Invalid input data');
     })
     .handler(async ({ data }) => {
+        const { getDb } = await import('../db/db.server');
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
+
         try {
-            const db = await resolveDb();
             const { id, updates } = data;
             const { verifiedAt, ...rest } = updates;
             const updateData: Record<string, unknown> = { ...rest };
@@ -144,8 +141,11 @@ export const updateCertification = createServerFn({ method: 'POST' })
 export const deleteCertification = createServerFn({ method: 'POST' })
     .inputValidator((data: string) => data)
     .handler(async ({ data: id }) => {
+        const { getDb } = await import('../db/db.server');
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
+
         try {
-            const db = await resolveDb();
             await db.delete(userCertifications).where(eq(userCertifications.id, id));
             return { success: true };
         } catch (error) {
@@ -153,4 +153,3 @@ export const deleteCertification = createServerFn({ method: 'POST' })
             throw error;
         }
     });
-

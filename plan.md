@@ -2,19 +2,17 @@
 
 ## Overview
 
-This plan addresses all identified issues across security, authentication/authorization, database configuration, environment handling, error/logging consistency, type safety, and performance. Work is sequenced to secure production first, then improve robustness and maintainability.
+This plan addresses all identified issues across security, authentication/authorization, database configuration, environment handling, error/logging consistency, type safety, and performance. Work is sequenced to secure the application, then improve robustness and maintainability for local development.
 
 ## Phases & Tasks
 
-### Phase 1: Secure Production Environment (Day 1)
-- Remove committed secrets and protect env files
-  - Delete `.env.production` from git and history; update `.gitignore` to exclude `.env*` (keep `.env.example`).
-  - Rotate all exposed secrets: Neon `DATABASE_URL`/password, Clerk keys.
-  - Move secrets to Vercel Project Settings → Environment Variables (Prod/Preview/Dev).
-- Vercel compatibility & DevTools
-  - Disable DevTools in production using `import.meta.env.DEV` guards.
-- Serverless DB pooling hygiene
-  - Reduce pg Pool `max` to `1` for serverless; use Neon's pgbouncer/pooler URL (e.g., `...?pgbouncer=true`).
+### Phase 1: Secure Development Environment (Day 1)
+- Protect env files
+  - Update `.gitignore` to ensure all `.env*` files are excluded (keep `.env.example`).
+- DevTools Configuration
+  - Disable DevTools in production builds using `import.meta.env.DEV` guards.
+- Database Connection Hygiene
+  - Standardize on `pg` Pool configuration for local PostgreSQL instance in Docker.
 
 ### Phase 2: Server-Side AuthN/AuthZ (Day 1–2)
 - Add `src/lib/auth.ts`
@@ -61,33 +59,30 @@ This plan addresses all identified issues across security, authentication/author
 - Component optimization
   - Wrap expensive components in `React.memo` and use `useCallback` for handlers.
 - Environment-tuned pool
-  - Allow pool size override via env for non-serverless dev contexts.
+  - Allow pool size override via env for local dev contexts.
 
 ## Milestone Deliverables
-- Production secrets removed from repo; rotated and configured in Vercel.
+- Project configured for local-only development using Docker.
 - All API endpoints enforce server-side auth; user-specific row-level data access.
 - Zod validation for all inputs; `any` eliminated in public props/contexts.
 - Consistent `ApiResponse<T>` error handling; centralized logger.
-- DB pooling corrected for Vercel; transactions for multi-step mutations; health check endpoint.
+- DB pooling configured for local PostgreSQL; transactions for multi-step mutations; health check endpoint.
 - React Query defaults and component memoization in place.
 
 ## Risk & Mitigation
-- Auth rollout risk: stage via feature flags or deploy after thorough QA in Preview.
-- Secret rotation impact: coordinate downtime window; verify database migrations and connections.
+- Auth rollout risk: stage via feature flags or deploy after thorough QA locally.
 - Refactor scope creep: prioritize endpoints with sensitive data first; track progress per route.
 
 ## Optional Enhancements
 - Add Sentry for error/performance monitoring.
 - Implement rate limiting and CORS hardening for server functions.
 - Add E2E tests (Playwright) for critical flows (auth, CRUD ops, role changes).
-- Document deployment SOP and incident response.
 
 ## Sequencing Summary
-1. Secure prod (secrets, DevTools, pool) → 2. Server auth → 3. Types/validation → 4. Errors/logging → 5. DB/env → 6. Performance.
+1. Secure dev (DevTools, pool) → 2. Server auth → 3. Types/validation → 4. Errors/logging → 5. DB/env → 6. Performance.
 
 ## Quick Checks Post-Implementation
 - Verify authenticated requests return only the caller’s data.
 - Confirm admin-only actions are blocked for non-admins.
-- Ensure Vercel production uses environment variables (no file reads).
 - Validate DB pool does not exceed limits under load.
 - Confirm reduced log volume and structured error logs.

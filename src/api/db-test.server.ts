@@ -3,7 +3,7 @@ import { users } from '../db/schema'
 
 export const testDbConnection = createServerFn({ method: 'GET' })
     .handler(async () => {
-        const { getDb } = await import('../db/index.server');
+        const { getDb } = await import('../db/db.server');
         const db = await getDb()
         if (!db) {
             return { success: false, error: 'Database not available' }

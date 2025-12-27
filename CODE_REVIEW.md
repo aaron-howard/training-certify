@@ -8,19 +8,17 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 
 ## 🔴 Critical Issues
 
-### 1. Database Test Script Uses Wrong Driver
-**File:** `scripts/test-db.ts`
-**Issue:** The test script imports `@neondatabase/serverless` and `drizzle-orm/neon-http`, but the actual application uses `pg` and `drizzle-orm/node-postgres`. This creates inconsistency and the script won't work with the local PostgreSQL setup.
+### 1. Database Driver Consistency
+**File:** `scripts/test-db.ts`, `src/db/index.server.ts`
+**Issue:** Previously, some scripts used Neon-specific drivers. The application now correctly uses `pg` and `drizzle-orm/node-postgres` for local development.
 
-**Impact:** Database connection testing will fail, misleading developers about database connectivity.
-
-**Recommendation:** Update the test script to use the same database driver as the application (`pg`).
+**Status:** ✅ Fixed. All database interactions now use the standard `pg` driver compatible with the local Docker PostgreSQL instance.
 
 ---
 
 ### 2. Missing TypeScript Types for Database Instance
-**File:** `src/db/index.ts`
-**Issue:** The database instance is typed as `any`, which defeats TypeScript's type safety and makes the codebase less maintainable.
+**File:** `src/db/index.server.ts`
+**Issue:** The database instance was previously typed as `any`, which defeats TypeScript's type safety and makes the codebase less maintainable.
 
 **Impact:** 
 - No type checking for database queries
@@ -93,7 +91,7 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 **Issue:** Heavy reliance on `any` type defeats TypeScript's purpose.
 
 **Examples:**
-- `src/db/index.ts`: `let db: any = null`
+- `src/db/index.server.ts`: `let db: any = null`
 - `src/api/certifications.ts`: Multiple `any` types in validators and mappers
 - Route files: `context as any`
 
@@ -102,7 +100,7 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 ---
 
 ### Database Connection Error Handling
-**File:** `src/db/index.ts`
+**File:** `src/db/index.server.ts`
 **Issue:** Database initialization can return `null` but callers may not handle this properly.
 
 **Impact:** Potential runtime errors when database is unavailable.
@@ -181,10 +179,9 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 
 ## 🔧 Quick Fixes Needed
 
-1. **Database Test Script:** Change from Neon to PostgreSQL driver
-2. **Missing Dependency:** Add `date-fns` to package.json
-3. **Type Definitions:** Add proper types for database instance
-4. **Route Types:** Fix implicit `any` types in map callbacks
+1. **Missing Dependency:** Add `date-fns` to package.json
+2. **Type Definitions:** Add proper types for database instance
+3. **Route Types:** Fix implicit `any` types in map callbacks
 
 ---
 
@@ -194,7 +191,7 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 - **`any` Types Found:** 57 instances
 - **Unused Variables:** 10+ instances
 - **Missing Dependencies:** 1 (`date-fns`)
-- **Database Driver Mismatch:** 1 file (`scripts/test-db.ts`)
+- **Database Driver Mismatch:** 0 (All updated to `pg`)
 
 ---
 
@@ -223,7 +220,7 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 
 ### Fixed Issues
 
-1. **✅ Database Test Script** - Updated to use `pg` driver instead of Neon
+1. **✅ Database Consistency** - Updated to use `pg` driver exclusively for local Docker.
 2. **✅ Database Type Definitions** - Added proper `NodePgDatabase<typeof schema>` types
 3. **✅ Missing Dependency** - Added `date-fns` to package.json
 4. **✅ TypeScript `any` Types** - Replaced many `any` types with proper types:
@@ -238,11 +235,11 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 1. **Schema Enums** - Enums are defined but not used in schema (requires migration)
    - This is a design decision that can be addressed later
    - Current text fields work but don't enforce enum values at DB level
-   
+    
 2. **Product Plan Files** - Some TypeScript errors in `product-plan/` directory
    - These are export/template files, not part of the main application
    - Will be resolved when `date-fns` is installed: `npm install`
-   
+    
 3. **Entry Files** - Framework-specific type issues in `entry-client.tsx` and `entry-server.tsx`
    - May be framework version compatibility issues
    - Application appears to work despite these type errors
@@ -253,14 +250,7 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 - **TypeScript Errors Fixed:** ~15 critical errors
 - **`any` Types Removed:** ~20 instances
 - **New Dependencies:** 1 (`date-fns`)
-- **Database Driver Fixed:** 1 file (`scripts/test-db.ts`)
-
-### To Complete Setup
-
-1. Run `npm install` to install `date-fns`
-2. Run `npm run check` to verify code formatting and linting
-3. Test database connection: `npx tsx scripts/test-db.ts`
-4. Verify application builds: `npm run build`
+- **Database Driver Fixed:** All files updated to `pg`
 
 ---
 
@@ -270,31 +260,10 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 
 The application builds successfully! All critical TypeScript errors have been resolved.
 
-### Build Warnings (Non-Critical)
-
-1. **CSS Selector Warnings** - Fixed
-   - Issue: Tailwind CSS parser warning about `[[.active]_&]` selector syntax
-   - Fix: Updated to use `group` pattern with `group-[.active]:` for cleaner CSS
-   - File: `src/components/shell/MainNav.tsx`
-
-2. **Node.js Module Externalization** - Expected Behavior
-   - Vite correctly externalizes `node:fs` and `node:path` for browser compatibility
-   - These modules are only used server-side and are properly guarded
-   - File: `src/lib/env.ts`
-   - Status: Working as intended, no action needed
-
-3. **Library Unused Imports** - Library-Level
-   - Unused imports in `@tanstack/router-core` modules
-   - These are in third-party library code, not our codebase
-   - Status: Can be ignored
-
 ### Build Output Summary
 
-- ✅ Client build: Successful (434.29 kB main bundle, gzipped: 133.47 kB)
+- ✅ Client build: Successful
 - ✅ SSR build: Successful
 - ✅ Nitro build: Successful
 - ✅ All assets generated correctly
 - ✅ No blocking errors
-
-The application is ready for deployment!
-
