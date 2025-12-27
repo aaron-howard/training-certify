@@ -2,20 +2,16 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { Award, Users, Shield, BookOpen, ChevronRight } from 'lucide-react'
 import { useUser } from '@clerk/tanstack-react-start'
 import { useQuery } from '@tanstack/react-query'
-import { getDashboardStats } from '../api/others.server'
+
+// Use fetch API instead of server imports
+const fetchDashboardStats = async () => {
+  const res = await fetch('/api/dashboard')
+  if (!res.ok) return { activeCerts: 0, expiringSoon: 0, complianceRate: 0 }
+  return res.json()
+}
 
 export const Route = createFileRoute('/')({
   component: DashboardPage,
-  loader: async ({ context }) => {
-    const { queryClient } = context as any
-    await queryClient.ensureQueryData({
-      queryKey: ['dashboardStats'],
-      queryFn: async () => {
-        const res = await getDashboardStats()
-        return res ?? { activeCerts: 0, expiringSoon: 0, complianceRate: 0 }
-      },
-    })
-  },
 })
 
 function DashboardPage() {
@@ -23,10 +19,7 @@ function DashboardPage() {
 
   const { data: stats = { activeCerts: 0, expiringSoon: 0, complianceRate: 0 } } = useQuery({
     queryKey: ['dashboardStats'],
-    queryFn: async () => {
-      const res = await getDashboardStats()
-      return res ?? { activeCerts: 0, expiringSoon: 0, complianceRate: 0 }
-    },
+    queryFn: fetchDashboardStats,
   })
 
   return (
@@ -88,6 +81,6 @@ function DashboardPage() {
           <span className="font-semibold text-slate-700 dark:text-slate-300">Active Certs: {stats.activeCerts}</span>
         </Link>
       </div>
-    </div >
+    </div>
   )
 }

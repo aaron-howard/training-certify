@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { testDbConnection } from '../api/db-test.server'
 
 export const Route = createFileRoute('/db-health')({
     component: DbHealthPage,
@@ -9,7 +8,10 @@ export const Route = createFileRoute('/db-health')({
 function DbHealthPage() {
     const { data: health, isLoading, error } = useQuery({
         queryKey: ['dbHealth'],
-        queryFn: () => testDbConnection(),
+        queryFn: async () => {
+            const { testDbConnection } = await import('../api/db-test.server')
+            return testDbConnection()
+        },
     })
 
     return (

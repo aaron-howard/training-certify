@@ -19,6 +19,14 @@ import { Route as ComplianceAuditRouteImport } from './routes/compliance-audit'
 import { Route as CertificationManagementRouteImport } from './routes/certification-management'
 import { Route as CatalogRouteImport } from './routes/catalog'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiUsersRouteImport } from './routes/api.users'
+import { Route as ApiSyncRouteImport } from './routes/api.sync'
+import { Route as ApiSeedRouteImport } from './routes/api.seed'
+import { Route as ApiNotificationsRouteImport } from './routes/api.notifications'
+import { Route as ApiDashboardRouteImport } from './routes/api.dashboard'
+import { Route as ApiComplianceRouteImport } from './routes/api.compliance'
+import { Route as ApiCertificationsRouteImport } from './routes/api.certifications'
+import { Route as ApiCatalogRouteImport } from './routes/api.catalog'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
@@ -77,6 +85,46 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiUsersRoute = ApiUsersRouteImport.update({
+  id: '/api/users',
+  path: '/api/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSyncRoute = ApiSyncRouteImport.update({
+  id: '/api/sync',
+  path: '/api/sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSeedRoute = ApiSeedRouteImport.update({
+  id: '/api/seed',
+  path: '/api/seed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiNotificationsRoute = ApiNotificationsRouteImport.update({
+  id: '/api/notifications',
+  path: '/api/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDashboardRoute = ApiDashboardRouteImport.update({
+  id: '/api/dashboard',
+  path: '/api/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiComplianceRoute = ApiComplianceRouteImport.update({
+  id: '/api/compliance',
+  path: '/api/compliance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCertificationsRoute = ApiCertificationsRouteImport.update({
+  id: '/api/certifications',
+  path: '/api/certifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCatalogRoute = ApiCatalogRouteImport.update({
+  id: '/api/catalog',
+  path: '/api/catalog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
   id: '/demo/start/server-funcs',
   path: '/demo/start/server-funcs',
@@ -124,6 +172,14 @@ export interface FileRoutesByFullPath {
   '/sign-up': typeof SignUpRoute
   '/team-management': typeof TeamManagementRoute
   '/user-profile': typeof UserProfileRoute
+  '/api/catalog': typeof ApiCatalogRoute
+  '/api/certifications': typeof ApiCertificationsRoute
+  '/api/compliance': typeof ApiComplianceRoute
+  '/api/dashboard': typeof ApiDashboardRoute
+  '/api/notifications': typeof ApiNotificationsRoute
+  '/api/seed': typeof ApiSeedRoute
+  '/api/sync': typeof ApiSyncRoute
+  '/api/users': typeof ApiUsersRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
@@ -143,6 +199,14 @@ export interface FileRoutesByTo {
   '/sign-up': typeof SignUpRoute
   '/team-management': typeof TeamManagementRoute
   '/user-profile': typeof UserProfileRoute
+  '/api/catalog': typeof ApiCatalogRoute
+  '/api/certifications': typeof ApiCertificationsRoute
+  '/api/compliance': typeof ApiComplianceRoute
+  '/api/dashboard': typeof ApiDashboardRoute
+  '/api/notifications': typeof ApiNotificationsRoute
+  '/api/seed': typeof ApiSeedRoute
+  '/api/sync': typeof ApiSyncRoute
+  '/api/users': typeof ApiUsersRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
@@ -163,6 +227,14 @@ export interface FileRoutesById {
   '/sign-up': typeof SignUpRoute
   '/team-management': typeof TeamManagementRoute
   '/user-profile': typeof UserProfileRoute
+  '/api/catalog': typeof ApiCatalogRoute
+  '/api/certifications': typeof ApiCertificationsRoute
+  '/api/compliance': typeof ApiComplianceRoute
+  '/api/dashboard': typeof ApiDashboardRoute
+  '/api/notifications': typeof ApiNotificationsRoute
+  '/api/seed': typeof ApiSeedRoute
+  '/api/sync': typeof ApiSyncRoute
+  '/api/users': typeof ApiUsersRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
@@ -184,6 +256,14 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/team-management'
     | '/user-profile'
+    | '/api/catalog'
+    | '/api/certifications'
+    | '/api/compliance'
+    | '/api/dashboard'
+    | '/api/notifications'
+    | '/api/seed'
+    | '/api/sync'
+    | '/api/users'
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
@@ -203,6 +283,14 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/team-management'
     | '/user-profile'
+    | '/api/catalog'
+    | '/api/certifications'
+    | '/api/compliance'
+    | '/api/dashboard'
+    | '/api/notifications'
+    | '/api/seed'
+    | '/api/sync'
+    | '/api/users'
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
@@ -222,6 +310,14 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/team-management'
     | '/user-profile'
+    | '/api/catalog'
+    | '/api/certifications'
+    | '/api/compliance'
+    | '/api/dashboard'
+    | '/api/notifications'
+    | '/api/seed'
+    | '/api/sync'
+    | '/api/users'
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
@@ -242,6 +338,14 @@ export interface RootRouteChildren {
   SignUpRoute: typeof SignUpRoute
   TeamManagementRoute: typeof TeamManagementRoute
   UserProfileRoute: typeof UserProfileRoute
+  ApiCatalogRoute: typeof ApiCatalogRoute
+  ApiCertificationsRoute: typeof ApiCertificationsRoute
+  ApiComplianceRoute: typeof ApiComplianceRoute
+  ApiDashboardRoute: typeof ApiDashboardRoute
+  ApiNotificationsRoute: typeof ApiNotificationsRoute
+  ApiSeedRoute: typeof ApiSeedRoute
+  ApiSyncRoute: typeof ApiSyncRoute
+  ApiUsersRoute: typeof ApiUsersRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
   DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute
@@ -323,6 +427,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/users': {
+      id: '/api/users'
+      path: '/api/users'
+      fullPath: '/api/users'
+      preLoaderRoute: typeof ApiUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sync': {
+      id: '/api/sync'
+      path: '/api/sync'
+      fullPath: '/api/sync'
+      preLoaderRoute: typeof ApiSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/seed': {
+      id: '/api/seed'
+      path: '/api/seed'
+      fullPath: '/api/seed'
+      preLoaderRoute: typeof ApiSeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/notifications': {
+      id: '/api/notifications'
+      path: '/api/notifications'
+      fullPath: '/api/notifications'
+      preLoaderRoute: typeof ApiNotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/dashboard': {
+      id: '/api/dashboard'
+      path: '/api/dashboard'
+      fullPath: '/api/dashboard'
+      preLoaderRoute: typeof ApiDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/compliance': {
+      id: '/api/compliance'
+      path: '/api/compliance'
+      fullPath: '/api/compliance'
+      preLoaderRoute: typeof ApiComplianceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/certifications': {
+      id: '/api/certifications'
+      path: '/api/certifications'
+      fullPath: '/api/certifications'
+      preLoaderRoute: typeof ApiCertificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/catalog': {
+      id: '/api/catalog'
+      path: '/api/catalog'
+      fullPath: '/api/catalog'
+      preLoaderRoute: typeof ApiCatalogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/start/server-funcs': {
       id: '/demo/start/server-funcs'
       path: '/demo/start/server-funcs'
@@ -386,6 +546,14 @@ const rootRouteChildren: RootRouteChildren = {
   SignUpRoute: SignUpRoute,
   TeamManagementRoute: TeamManagementRoute,
   UserProfileRoute: UserProfileRoute,
+  ApiCatalogRoute: ApiCatalogRoute,
+  ApiCertificationsRoute: ApiCertificationsRoute,
+  ApiComplianceRoute: ApiComplianceRoute,
+  ApiDashboardRoute: ApiDashboardRoute,
+  ApiNotificationsRoute: ApiNotificationsRoute,
+  ApiSeedRoute: ApiSeedRoute,
+  ApiSyncRoute: ApiSyncRoute,
+  ApiUsersRoute: ApiUsersRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,
   DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,

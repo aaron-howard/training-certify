@@ -1,113 +1,159 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Search, ExternalLink, Plus, Edit, Trash2, Database, ShieldCheck, RefreshCw } from 'lucide-react'
+import { Search, ExternalLink, Plus, Edit, Trash2, Database, ShieldCheck, RefreshCw, X } from 'lucide-react'
 import { useUser } from '@clerk/tanstack-react-start'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getCatalog, deleteCatalogCertification, seedCatalog, syncCatalog } from '../api/others.server'
-import { ensureUser, makeMeAdmin } from '../api/users.server'
+import { useState, useMemo } from 'react'
+import { usePermissions } from '../hooks/usePermissions'
+
+// API fetch functions (using traditional fetch instead of broken createServerFn)
+const fetchCatalog = async () => {
+    const res = await fetch('/api/catalog')
+    if (!res.ok) throw new Error('Failed to fetch catalog')
+    return res.json()
+}
+
+const fetchEnsureUser = async (data: { id: string; name: string; email: string; avatarUrl?: string }) => {
+    const res = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    if (!res.ok) throw new Error('Failed to sync user')
+    return res.json()
+}
 
 export const Route = createFileRoute('/catalog')({
     component: CatalogPage,
-    loader: async ({ context }) => {
-        try {
-            const { queryClient } = context as any
-            await queryClient.ensureQueryData({
-                queryKey: ['catalog'],
-                queryFn: async () => {
-                    const data = await getCatalog()
-                    return data ?? { certifications: [] }
-                },
-            })
-        } catch (error) {
-            console.error('Error loading catalog data:', error)
-        }
-    },
+    // Note: No SSR loader - fetch with relative URLs doesn't work server-side
 })
+
 
 function CatalogPage() {
     const { user } = useUser()
     const queryClient = useQueryClient()
+    const [searchQuery, setSearchQuery] = useState('')
+    const [showAddModal, setShowAddModal] = useState(false)
+    const [newCert, setNewCert] = useState({ id: '', name: '', vendorName: '', difficulty: 'Intermediate' })
 
     // Sync/Get User Role
     const { data: dbUser } = useQuery({
         queryKey: ['dbUser', user?.id],
         queryFn: async () => {
             if (!user) return null
-            const res = await ensureUser({
-                data: {
-                    id: user.id,
-                    name: user.fullName || 'User',
-                    email: user.emailAddresses[0]?.emailAddress || '',
-                    avatarUrl: user.imageUrl
-                }
+            return fetchEnsureUser({
+                id: user.id,
+                name: user.fullName || 'User',
+                email: user.emailAddresses[0]?.emailAddress || '',
+                avatarUrl: user.imageUrl
             })
-            return res
         },
         enabled: !!user
     })
 
     const { data: catalog, isLoading, error } = useQuery({
         queryKey: ['catalog'],
-        queryFn: async () => {
-            console.log('🔍 [Catalog] Calling RPCs...');
-
-            // Debug Call
-            try {
-                const { checkRpc } = await import('../api/debug.server');
-                const debugRes = await checkRpc();
-                console.log('🔍 [Catalog] RPC Result:', debugRes);
-            } catch (e) {
-                console.error('❌ [Catalog] RPC Check Failed:', e);
-            }
-
-            const res = await getCatalog()
-            return res ?? { certifications: [] }
-        },
+        queryFn: fetchCatalog,
     })
 
     if (error) {
         console.error('DEBUG: useQuery Error:', error);
     }
 
+    // Get permissions based on role
+    const permissions = usePermissions(dbUser?.role)
     const isAdmin = dbUser?.role === 'Admin'
 
-    console.log('DEBUG: catalog.tsx render cycle')
-    console.log('DEBUG: isLoading:', isLoading)
-    console.log('DEBUG: catalog data:', catalog)
-    console.log('DEBUG: dbUser:', dbUser)
-    console.log('DEBUG: Clerk User ID:', user?.id)
-    console.log('DEBUG: isAdmin:', isAdmin)
+    // Filter certifications based on search
+    const filteredCertifications = useMemo(() => {
+        if (!catalog?.certifications) return []
+        if (!searchQuery.trim()) return catalog.certifications
+        const query = searchQuery.toLowerCase()
+        return catalog.certifications.filter((cert: any) =>
+            cert.name?.toLowerCase().includes(query) ||
+            cert.vendor?.toLowerCase().includes(query) ||
+            cert.level?.toLowerCase().includes(query)
+        )
+    }, [catalog?.certifications, searchQuery])
 
     // Mutations
     const seedMutation = useMutation({
-        mutationFn: () => seedCatalog({ data: undefined }),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['catalog'] })
+        mutationFn: async () => {
+            const res = await fetch('/api/seed', { method: 'POST' })
+            if (!res.ok) throw new Error('Failed to seed catalog')
+            return res.json()
+        },
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ['catalog'] })
+            alert(`Seeded ${data.added} certifications (${data.skipped} already existed)`)
+        },
+        onError: (err: any) => alert(`Seed failed: ${err.message}`)
     })
 
     const deleteMutation = useMutation({
-        mutationFn: (vars: { id: string; adminId: string }) => deleteCatalogCertification({ data: vars }),
+        mutationFn: async (vars: { id: string }) => {
+            const res = await fetch(`/api/catalog?action=delete&id=${vars.id}`, { method: 'DELETE' })
+            if (!res.ok) throw new Error('Failed to delete')
+            return res.json()
+        },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['catalog'] })
     })
 
     const promoteMutation = useMutation({
-        mutationFn: (vars: { userId: string }) => makeMeAdmin({ data: vars }),
-        onSuccess: (data) => {
-            console.log('DEBUG: Promotion Success:', data)
-            queryClient.invalidateQueries({ queryKey: ['dbUser'] })
-            alert(`Promotion requested successfully! Server response role: ${data?.role}`)
+        mutationFn: async (vars: { userId: string }) => {
+            const res = await fetch('/api/users', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: vars.userId, role: 'Admin' })
+            })
+            if (!res.ok) throw new Error('Failed to promote user')
+            return res.json()
         },
-        onError: (err) => {
-            console.error('DEBUG: Promotion Error:', err)
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ['dbUser'] })
+            alert(`You are now an ${data.role}!`)
+        },
+        onError: (err: any) => {
             alert(`Promotion failed: ${err.message}`)
         }
     })
 
     const syncMutation = useMutation({
-        mutationFn: (vars: { adminId: string; limit?: number }) => syncCatalog({ data: vars }),
+        mutationFn: async (vars: { limit?: number }) => {
+            const res = await fetch('/api/sync', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ limit: vars.limit || 10 })
+            })
+            if (!res.ok) throw new Error('Failed to sync')
+            return res.json()
+        },
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['catalog'] })
-            alert(`Sync complete! Processed ${data.count} certifications.`)
+            alert(`Synced ${data.synced} certifications! ${data.message}`)
         },
-        onError: (err) => alert(`Sync failed: ${err.message}`)
+        onError: (err: any) => alert(`Sync failed: ${err.message}`)
+    })
+
+    const addCertMutation = useMutation({
+        mutationFn: async (certData: { id: string; name: string; vendorName: string; difficulty: string }) => {
+            const res = await fetch('/api/catalog', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(certData)
+            })
+            if (!res.ok) {
+                const err = await res.json()
+                throw new Error(err.error || 'Failed to add certification')
+            }
+            return res.json()
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['catalog'] })
+            setShowAddModal(false)
+            setNewCert({ id: '', name: '', vendorName: '', difficulty: 'Intermediate' })
+            alert('Certification added successfully!')
+        },
+        onError: (err: any) => alert(`Add failed: ${err.message}`)
     })
 
     const handleSeed = () => {
@@ -118,16 +164,13 @@ function CatalogPage() {
 
     const handleDelete = (id: string) => {
         if (confirm('Delete this certification from the catalog?')) {
-            deleteMutation.mutate({ id, adminId: user?.id || '' })
+            deleteMutation.mutate({ id })
         }
     }
 
     const handleSync = () => {
         if (confirm('Sync catalog with ITExams? This might take a while.')) {
-            // Limiting to 5 vendors for safety/demo purposes if needed, 
-            // but the user wants "all" eventually. 
-            // Let's do 10 for now to show it works without being too slow.
-            syncMutation.mutate({ adminId: user?.id || '', limit: 10 })
+            syncMutation.mutate({ limit: 10 })
         }
     }
 
@@ -153,6 +196,8 @@ function CatalogPage() {
                             name="catalog-search"
                             type="text"
                             placeholder="Search certifications..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full pl-10 pr-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                         />
                     </div>
@@ -185,7 +230,7 @@ function CatalogPage() {
                                     {syncMutation.isPending ? 'Syncing...' : 'Sync ITExams'}
                                 </button>
                                 <button
-                                    onClick={() => alert('Add Form Modal To Be Implemented')}
+                                    onClick={() => setShowAddModal(true)}
                                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 text-sm"
                                 >
                                     <Plus className="w-4 h-4" /> Add New
@@ -197,7 +242,7 @@ function CatalogPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {catalog?.certifications.map((cert: any) => (
+                {filteredCertifications.map((cert: any) => (
                     <div key={cert.id} className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group relative">
                         {/* Admin Actions */}
                         {isAdmin && (
@@ -233,6 +278,87 @@ function CatalogPage() {
                     </div>
                 ))}
             </div>
+
+            {/* Add New Certification Modal */}
+            {showAddModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white dark:bg-slate-900 rounded-xl p-6 w-full max-w-md shadow-xl">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">Add New Certification</h2>
+                            <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-slate-600">
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+                        <form onSubmit={(e) => {
+                            e.preventDefault()
+                            addCertMutation.mutate(newCert)
+                        }} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Certification ID</label>
+                                <input
+                                    type="text"
+                                    value={newCert.id}
+                                    onChange={(e) => setNewCert({ ...newCert, id: e.target.value })}
+                                    placeholder="e.g., az-500"
+                                    required
+                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Name</label>
+                                <input
+                                    type="text"
+                                    value={newCert.name}
+                                    onChange={(e) => setNewCert({ ...newCert, name: e.target.value })}
+                                    placeholder="e.g., Azure Security Engineer Associate"
+                                    required
+                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Vendor</label>
+                                <input
+                                    type="text"
+                                    value={newCert.vendorName}
+                                    onChange={(e) => setNewCert({ ...newCert, vendorName: e.target.value })}
+                                    placeholder="e.g., Microsoft"
+                                    required
+                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Difficulty</label>
+                                <select
+                                    value={newCert.difficulty}
+                                    onChange={(e) => setNewCert({ ...newCert, difficulty: e.target.value })}
+                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950"
+                                >
+                                    <option value="Beginner">Beginner</option>
+                                    <option value="Intermediate">Intermediate</option>
+                                    <option value="Advanced">Advanced</option>
+                                    <option value="Expert">Expert</option>
+                                </select>
+                            </div>
+                            <div className="flex gap-3 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowAddModal(false)}
+                                    className="flex-1 px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-950"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={addCertMutation.isPending}
+                                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                                >
+                                    {addCertMutation.isPending ? 'Adding...' : 'Add Certification'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

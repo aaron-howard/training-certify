@@ -1,33 +1,22 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { getComplianceData } from '../api/others.server'
 import { Shield, FileCheck, AlertCircle, History } from 'lucide-react'
+
+// Use fetch API instead of server imports
+const fetchComplianceData = async () => {
+    const res = await fetch('/api/compliance')
+    if (!res.ok) return { auditLogs: [], stats: { complianceRate: 0, totalAudits: 0, issuesFound: 0 } }
+    return res.json()
+}
 
 export const Route = createFileRoute('/compliance-audit')({
     component: ComplianceAuditPage,
-    loader: async ({ context }) => {
-        try {
-            const { queryClient } = context as any
-            await queryClient.ensureQueryData({
-                queryKey: ['complianceData'],
-                queryFn: async () => {
-                    const data = await getComplianceData()
-                    return data ?? { auditLogs: [], stats: { complianceRate: 0, totalAudits: 0, issuesFound: 0 } }
-                },
-            })
-        } catch (error) {
-            console.error('Error loading compliance data:', error)
-        }
-    },
 })
 
 function ComplianceAuditPage() {
     const { data: compliance, isLoading } = useQuery({
         queryKey: ['complianceData'],
-        queryFn: async () => {
-            const res = await getComplianceData()
-            return res ?? { auditLogs: [], stats: { complianceRate: 0, totalAudits: 0, issuesFound: 0 } }
-        },
+        queryFn: fetchComplianceData,
     })
 
     if (isLoading) return <div className="p-8">Loading compliance data...</div>
@@ -76,22 +65,26 @@ function ComplianceAuditPage() {
                     <h3 className="font-semibold text-slate-900 dark:text-slate-100">Audit Trail</h3>
                 </div>
                 <div className="divide-y divide-slate-200 dark:divide-slate-800">
-                    {compliance?.auditLogs.map((log: any) => (
-                        <div key={log.id} className="px-6 py-4 flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
-                            <div className="flex gap-4 items-center">
-                                <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-500 font-bold">
-                                    {log.user.charAt(0)}
+                    {compliance?.auditLogs?.length === 0 ? (
+                        <div className="px-6 py-8 text-center text-slate-500">No audit logs yet.</div>
+                    ) : (
+                        compliance?.auditLogs.map((log: any) => (
+                            <div key={log.id} className="px-6 py-4 flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
+                                <div className="flex gap-4 items-center">
+                                    <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-500 font-bold">
+                                        {log.user.charAt(0)}
+                                    </div>
+                                    <div>
+                                        <div className="font-medium text-slate-900 dark:text-slate-50">{log.action}</div>
+                                        <div className="text-sm text-slate-500">{log.user} • {log.date}</div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <div className="font-medium text-slate-900 dark:text-slate-50">{log.action}</div>
-                                    <div className="text-sm text-slate-500">{log.user} • {log.date}</div>
-                                </div>
+                                <span className={`text-xs px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider ${log.status === 'verified' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/30'}`}>
+                                    {log.status}
+                                </span>
                             </div>
-                            <span className={`text-xs px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider ${log.status === 'verified' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/30'}`}>
-                                {log.status}
-                            </span>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
             </div>
         </div>

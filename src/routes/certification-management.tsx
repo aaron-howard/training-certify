@@ -1,21 +1,35 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { getUserCertifications, createCertification, updateCertification, deleteCertification } from '../api/certifications.server'
 import { CertificationManagement } from '../components/sections/certification-management/CertificationManagement'
 import { useUser } from '@clerk/tanstack-react-start'
 
+// Use fetch API instead of server imports
+const fetchUserCertifications = async (userId: string) => {
+    const res = await fetch(`/api/certifications?userId=${userId}`)
+    if (!res.ok) return []
+    return res.json()
+}
+
+const createCertification = async (data: any) => {
+    const res = await fetch('/api/certifications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    if (!res.ok) throw new Error('Failed to create certification')
+    return res.json()
+}
+
+const deleteCertification = async (id: string) => {
+    const res = await fetch(`/api/certifications?id=${id}`, {
+        method: 'DELETE'
+    })
+    if (!res.ok) throw new Error('Failed to delete certification')
+    return res.json()
+}
+
 export const Route = createFileRoute('/certification-management')({
     component: CertificationManagementPage,
-    loader: async ({ context }) => {
-        const { queryClient } = context as any
-        await queryClient.ensureQueryData({
-            queryKey: ['userCertifications'],
-            queryFn: async () => {
-                const data = await getUserCertifications()
-                return data ?? []
-            },
-        })
-    },
 })
 
 function CertificationManagementPage() {
@@ -23,20 +37,16 @@ function CertificationManagementPage() {
     const { user } = useUser()
 
     const { data: certs } = useQuery({
-        queryKey: ['userCertifications'],
+        queryKey: ['userCertifications', user?.id],
         queryFn: async () => {
-            const res = await getUserCertifications()
-            return res ?? []
+            if (!user?.id) return []
+            return fetchUserCertifications(user.id)
         },
+        enabled: !!user?.id
     })
 
     const createMutation = useMutation({
         mutationFn: createCertification,
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['userCertifications'] }),
-    })
-
-    const updateMutation = useMutation({
-        mutationFn: updateCertification,
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['userCertifications'] }),
     })
 
@@ -47,22 +57,19 @@ function CertificationManagementPage() {
 
     const handleCreate = (data: any) => {
         createMutation.mutate({
-            data: {
-                ...data,
-                userId: user?.id || 'unknown'
-            }
+            ...data,
+            userId: user?.id || 'unknown'
         })
     }
 
     const handleEdit = (id: string, updates: any) => {
-        updateMutation.mutate({
-            data: { id, updates }
-        })
+        // TODO: Implement update
+        console.log('Edit', id, updates)
     }
 
     const handleDelete = (id: string) => {
         if (confirm('Are you sure you want to delete this certification?')) {
-            deleteMutation.mutate({ data: id })
+            deleteMutation.mutate(id)
         }
     }
 

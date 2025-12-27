@@ -1,12 +1,9 @@
 import { HeadContent, Scripts, createRootRouteWithContext, Outlet, useRouter, Link } from '@tanstack/react-router'
 import { QueryClient } from '@tanstack/react-query'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
 import { ClerkProvider, useAuth, RedirectToSignIn, useUser } from '@clerk/tanstack-react-start'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { AppShell } from '../components/shell/AppShell'
 import { useEffect } from 'react'
-import { ensureUser } from '../api/users.server'
 import { ENV } from '../lib/env'
 
 import appCss from '../styles.css?url'
@@ -66,7 +63,6 @@ export const Route = createRootRouteWithContext<{
 function RootDocument({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const queryClient = router.options.context?.queryClient ?? new QueryClient()
-  const isDevelopment = (import.meta as any).env?.DEV ?? false
 
   return (
     <html lang="en">
@@ -82,19 +78,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <ClerkProvider publishableKey={ENV.CLERK_PUBLISHABLE_KEY}>
           <QueryClientProvider client={queryClient}>
             {children}
-            {isDevelopment && (
-              <TanStackDevtools
-                config={{
-                  position: 'bottom-right',
-                }}
-                plugins={[
-                  {
-                    name: 'Tanstack Router',
-                    render: <TanStackRouterDevtoolsPanel />,
-                  },
-                ]}
-              />
-            )}
           </QueryClientProvider>
         </ClerkProvider>
         <Scripts />
@@ -113,20 +96,28 @@ function RootComponent() {
 
   useEffect(() => {
     if (isSignedIn && user) {
-      ensureUser({
-        data: {
+      // Use fetch API instead of broken createServerFn
+      fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           id: user.id,
           name: `${user.firstName} ${user.lastName}`.trim() || user.username || 'User',
           email: user.emailAddresses[0]?.emailAddress || '',
           avatarUrl: user.imageUrl
-        }
-      }).then((res: any) => {
-        console.log('👤 [Client] User synced with DB:', res.role)
-      }).catch((err: any) => {
-        console.error('❌ [Client] Sync failed:', err)
+        })
       })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log('👤 [Client] User synced with DB:', data.role)
+        })
+        .catch((err) => {
+          console.error('❌ [Client] Sync failed:', err)
+        })
     }
   }, [isSignedIn, user])
+
+
 
   if (!isLoaded) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>
