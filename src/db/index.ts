@@ -45,9 +45,9 @@ async function initializeDb() {
         // 4. Create Pool and Drizzle instance
         const pool = new Pool({
             connectionString: url,
-            // Add some basic connection settings for stability
-            max: 10,
-            idleTimeoutMillis: 30000,
+            // Serverless-friendly pool configuration: single connection by default
+            max: parseInt(process.env.DB_POOL_SIZE || '1', 10),
+            idleTimeoutMillis: 10000,
             connectionTimeoutMillis: 5000,
         });
 

@@ -66,6 +66,7 @@ export const Route = createRootRouteWithContext<{
 function RootDocument({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const queryClient = router.options.context?.queryClient ?? new QueryClient()
+    const isDevelopment = (import.meta as any).env?.DEV ?? false
 
   return (
     <html lang="en">
@@ -76,17 +77,19 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <ClerkProvider publishableKey={ENV.CLERK_PUBLISHABLE_KEY}>
           <QueryClientProvider client={queryClient}>
             {children}
-            <TanStackDevtools
-              config={{
-                position: 'bottom-right',
-              }}
-              plugins={[
-                {
-                  name: 'Tanstack Router',
-                  render: <TanStackRouterDevtoolsPanel />,
-                },
-              ]}
-            />
+            {isDevelopment && (
+              <TanStackDevtools
+                config={{
+                  position: 'bottom-right',
+                }}
+                plugins={[
+                  {
+                    name: 'Tanstack Router',
+                    render: <TanStackRouterDevtoolsPanel />,
+                  },
+                ]}
+              />
+            )}
           </QueryClientProvider>
         </ClerkProvider>
         <Scripts />
