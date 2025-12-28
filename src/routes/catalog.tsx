@@ -301,7 +301,7 @@ function CatalogPage() {
                                     onChange={(e) => setNewCert({ ...newCert, id: e.target.value })}
                                     placeholder="e.g., az-500"
                                     required
-                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950"
+                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
                                 />
                             </div>
                             <div>
@@ -312,7 +312,7 @@ function CatalogPage() {
                                     onChange={(e) => setNewCert({ ...newCert, name: e.target.value })}
                                     placeholder="e.g., Azure Security Engineer Associate"
                                     required
-                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950"
+                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
                                 />
                             </div>
                             <div>
@@ -323,7 +323,7 @@ function CatalogPage() {
                                     onChange={(e) => setNewCert({ ...newCert, vendorName: e.target.value })}
                                     placeholder="e.g., Microsoft"
                                     required
-                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950"
+                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
                                 />
                             </div>
                             <div>
@@ -331,7 +331,7 @@ function CatalogPage() {
                                 <select
                                     value={newCert.difficulty}
                                     onChange={(e) => setNewCert({ ...newCert, difficulty: e.target.value })}
-                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950"
+                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100"
                                 >
                                     <option value="Beginner">Beginner</option>
                                     <option value="Intermediate">Intermediate</option>

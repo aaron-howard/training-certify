@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { getDb } from '../db/db.server'
 import { notifications } from '../db/schema'
+import { eq, desc } from 'drizzle-orm'
 
 export const Route = createFileRoute('/api/notifications')({
     server: {
@@ -13,7 +14,12 @@ export const Route = createFileRoute('/api/notifications')({
                         return json({ error: 'Database not available' }, { status: 500 })
                     }
 
-                    const result = await db.select().from(notifications).limit(50)
+                    // Filter out dismissed notifications and order by newest first
+                    const result = await db.select()
+                        .from(notifications)
+                        .where(eq(notifications.isDismissed, false))
+                        .orderBy(desc(notifications.timestamp))
+                        .limit(50)
                     return json(result.map(n => ({
                         id: n.id,
                         title: n.title,

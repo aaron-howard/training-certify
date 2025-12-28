@@ -7,6 +7,20 @@ import { eq } from 'drizzle-orm'
 export const Route = createFileRoute('/api/users')({
   server: {
     handlers: {
+      // GET all users
+      GET: async () => {
+        try {
+          const db = await getDb()
+          if (!db) {
+            return json({ error: 'Database not available' }, { status: 500 })
+          }
+          const allUsers = await db.select().from(users)
+          return json(allUsers)
+        } catch (error) {
+          console.error('❌ [API] Failed to fetch users:', error)
+          return json([])
+        }
+      },
       POST: async ({ request }) => {
         try {
           const data = await request.json()

@@ -20,9 +20,13 @@ import { Route as CertificationManagementRouteImport } from './routes/certificat
 import { Route as CatalogRouteImport } from './routes/catalog'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiUsersRouteImport } from './routes/api.users'
+import { Route as ApiTeamsRouteImport } from './routes/api.teams'
+import { Route as ApiTeamMembersRouteImport } from './routes/api.team-members'
 import { Route as ApiSyncRouteImport } from './routes/api.sync'
 import { Route as ApiSeedRouteImport } from './routes/api.seed'
 import { Route as ApiNotificationsRouteImport } from './routes/api.notifications'
+import { Route as ApiNotificationSettingsRouteImport } from './routes/api.notification-settings'
+import { Route as ApiExportRouteImport } from './routes/api.export'
 import { Route as ApiDashboardRouteImport } from './routes/api.dashboard'
 import { Route as ApiComplianceRouteImport } from './routes/api.compliance'
 import { Route as ApiCertificationsRouteImport } from './routes/api.certifications'
@@ -90,6 +94,16 @@ const ApiUsersRoute = ApiUsersRouteImport.update({
   path: '/api/users',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTeamsRoute = ApiTeamsRouteImport.update({
+  id: '/api/teams',
+  path: '/api/teams',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTeamMembersRoute = ApiTeamMembersRouteImport.update({
+  id: '/api/team-members',
+  path: '/api/team-members',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSyncRoute = ApiSyncRouteImport.update({
   id: '/api/sync',
   path: '/api/sync',
@@ -103,6 +117,16 @@ const ApiSeedRoute = ApiSeedRouteImport.update({
 const ApiNotificationsRoute = ApiNotificationsRouteImport.update({
   id: '/api/notifications',
   path: '/api/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiNotificationSettingsRoute = ApiNotificationSettingsRouteImport.update({
+  id: '/api/notification-settings',
+  path: '/api/notification-settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiExportRoute = ApiExportRouteImport.update({
+  id: '/api/export',
+  path: '/api/export',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiDashboardRoute = ApiDashboardRouteImport.update({
@@ -176,9 +200,13 @@ export interface FileRoutesByFullPath {
   '/api/certifications': typeof ApiCertificationsRoute
   '/api/compliance': typeof ApiComplianceRoute
   '/api/dashboard': typeof ApiDashboardRoute
+  '/api/export': typeof ApiExportRoute
+  '/api/notification-settings': typeof ApiNotificationSettingsRoute
   '/api/notifications': typeof ApiNotificationsRoute
   '/api/seed': typeof ApiSeedRoute
   '/api/sync': typeof ApiSyncRoute
+  '/api/team-members': typeof ApiTeamMembersRoute
+  '/api/teams': typeof ApiTeamsRoute
   '/api/users': typeof ApiUsersRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -203,9 +231,13 @@ export interface FileRoutesByTo {
   '/api/certifications': typeof ApiCertificationsRoute
   '/api/compliance': typeof ApiComplianceRoute
   '/api/dashboard': typeof ApiDashboardRoute
+  '/api/export': typeof ApiExportRoute
+  '/api/notification-settings': typeof ApiNotificationSettingsRoute
   '/api/notifications': typeof ApiNotificationsRoute
   '/api/seed': typeof ApiSeedRoute
   '/api/sync': typeof ApiSyncRoute
+  '/api/team-members': typeof ApiTeamMembersRoute
+  '/api/teams': typeof ApiTeamsRoute
   '/api/users': typeof ApiUsersRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -231,9 +263,13 @@ export interface FileRoutesById {
   '/api/certifications': typeof ApiCertificationsRoute
   '/api/compliance': typeof ApiComplianceRoute
   '/api/dashboard': typeof ApiDashboardRoute
+  '/api/export': typeof ApiExportRoute
+  '/api/notification-settings': typeof ApiNotificationSettingsRoute
   '/api/notifications': typeof ApiNotificationsRoute
   '/api/seed': typeof ApiSeedRoute
   '/api/sync': typeof ApiSyncRoute
+  '/api/team-members': typeof ApiTeamMembersRoute
+  '/api/teams': typeof ApiTeamsRoute
   '/api/users': typeof ApiUsersRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -260,9 +296,13 @@ export interface FileRouteTypes {
     | '/api/certifications'
     | '/api/compliance'
     | '/api/dashboard'
+    | '/api/export'
+    | '/api/notification-settings'
     | '/api/notifications'
     | '/api/seed'
     | '/api/sync'
+    | '/api/team-members'
+    | '/api/teams'
     | '/api/users'
     | '/demo/api/names'
     | '/demo/start/api-request'
@@ -287,9 +327,13 @@ export interface FileRouteTypes {
     | '/api/certifications'
     | '/api/compliance'
     | '/api/dashboard'
+    | '/api/export'
+    | '/api/notification-settings'
     | '/api/notifications'
     | '/api/seed'
     | '/api/sync'
+    | '/api/team-members'
+    | '/api/teams'
     | '/api/users'
     | '/demo/api/names'
     | '/demo/start/api-request'
@@ -314,9 +358,13 @@ export interface FileRouteTypes {
     | '/api/certifications'
     | '/api/compliance'
     | '/api/dashboard'
+    | '/api/export'
+    | '/api/notification-settings'
     | '/api/notifications'
     | '/api/seed'
     | '/api/sync'
+    | '/api/team-members'
+    | '/api/teams'
     | '/api/users'
     | '/demo/api/names'
     | '/demo/start/api-request'
@@ -342,9 +390,13 @@ export interface RootRouteChildren {
   ApiCertificationsRoute: typeof ApiCertificationsRoute
   ApiComplianceRoute: typeof ApiComplianceRoute
   ApiDashboardRoute: typeof ApiDashboardRoute
+  ApiExportRoute: typeof ApiExportRoute
+  ApiNotificationSettingsRoute: typeof ApiNotificationSettingsRoute
   ApiNotificationsRoute: typeof ApiNotificationsRoute
   ApiSeedRoute: typeof ApiSeedRoute
   ApiSyncRoute: typeof ApiSyncRoute
+  ApiTeamMembersRoute: typeof ApiTeamMembersRoute
+  ApiTeamsRoute: typeof ApiTeamsRoute
   ApiUsersRoute: typeof ApiUsersRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
@@ -434,6 +486,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiUsersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/teams': {
+      id: '/api/teams'
+      path: '/api/teams'
+      fullPath: '/api/teams'
+      preLoaderRoute: typeof ApiTeamsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/team-members': {
+      id: '/api/team-members'
+      path: '/api/team-members'
+      fullPath: '/api/team-members'
+      preLoaderRoute: typeof ApiTeamMembersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/sync': {
       id: '/api/sync'
       path: '/api/sync'
@@ -453,6 +519,20 @@ declare module '@tanstack/react-router' {
       path: '/api/notifications'
       fullPath: '/api/notifications'
       preLoaderRoute: typeof ApiNotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/notification-settings': {
+      id: '/api/notification-settings'
+      path: '/api/notification-settings'
+      fullPath: '/api/notification-settings'
+      preLoaderRoute: typeof ApiNotificationSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/export': {
+      id: '/api/export'
+      path: '/api/export'
+      fullPath: '/api/export'
+      preLoaderRoute: typeof ApiExportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/dashboard': {
@@ -550,9 +630,13 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCertificationsRoute: ApiCertificationsRoute,
   ApiComplianceRoute: ApiComplianceRoute,
   ApiDashboardRoute: ApiDashboardRoute,
+  ApiExportRoute: ApiExportRoute,
+  ApiNotificationSettingsRoute: ApiNotificationSettingsRoute,
   ApiNotificationsRoute: ApiNotificationsRoute,
   ApiSeedRoute: ApiSeedRoute,
   ApiSyncRoute: ApiSyncRoute,
+  ApiTeamMembersRoute: ApiTeamMembersRoute,
+  ApiTeamsRoute: ApiTeamsRoute,
   ApiUsersRoute: ApiUsersRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,
