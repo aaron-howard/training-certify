@@ -240,3 +240,27 @@ export const syncCatalog = createServerFn({ method: 'POST' })
             throw error
         }
     })
+export const clearCatalog = createServerFn({ method: 'POST' })
+    .inputValidator((data: { adminId: string }) => data)
+    .handler(async ({ data }) => {
+        const { getDb } = await import('../db/db.server');
+        const db = await getDb();
+        if (!db) throw new Error('Database not available');
+
+        try {
+            // Role Check
+            const requester = await db.select().from(users).where(eq(users.id, data.adminId)).limit(1)
+            if (!requester.length || requester[0].role !== 'Admin') {
+                throw new Error('Unauthorized')
+            }
+
+            console.log('⚠️ [Server] Clearing catalog...')
+            await db.delete(userCertifications);
+            await db.delete(certifications);
+
+            return { success: true }
+        } catch (error) {
+            console.error('❌ [Server] Clearing failed:', error)
+            throw error
+        }
+    })

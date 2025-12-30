@@ -19,6 +19,45 @@ export interface ExamInfo {
 const isServer = typeof window === 'undefined';
 
 /**
+ * List of prefixes for retired legacy Microsoft exams.
+ */
+const RETIRED_LEGACY_PREFIXES = ['70-', '74-', '77-', '98-', 'MB2-', 'MB3-', 'MB4-', 'MB5-', 'MB6-'];
+
+/**
+ * Specifically retired role-based exams or others from the image.
+ */
+const RETIRED_SPECIFIC_CODES = [
+    'AZ-100', 'AZ-101', 'AZ-102', 'AZ-103',
+    'AZ-200', 'AZ-201', 'AZ-202', 'AZ-203',
+    'AZ-300', 'AZ-301', 'AZ-302', 'AZ-303', 'AZ-304',
+    'AI-100', 'AZ-600', 'AZ-720',
+    'MS-100', 'MS-101', 'MS-200', 'MS-201', 'MS-202', 'MS-300', 'MS-301', 'MS-600', 'MS-740',
+    'MD-100', 'MD-101',
+    'MB-200', 'MB-400', 'MB-600', 'MB-900', 'MB-901'
+];
+
+/**
+ * Checks if a certification should be skipped because it is retired.
+ */
+function isRetiredExam(vendorId: string, code: string): boolean {
+    if (vendorId.toLowerCase() !== 'microsoft' && vendorId.toLowerCase() !== 'msft') {
+        return false;
+    }
+
+    const upperCode = code.toUpperCase();
+
+    if (RETIRED_LEGACY_PREFIXES.some(prefix => upperCode.startsWith(prefix))) {
+        return true;
+    }
+
+    if (RETIRED_SPECIFIC_CODES.some(retiredCode => upperCode === retiredCode.toUpperCase())) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * Fetches the list of all vendors from ITExams.
  */
 export async function fetchVendors(): Promise<VendorInfo[]> {
@@ -124,6 +163,11 @@ export async function syncCatalogFromITExams(limitVendors?: number) {
         const exams = await fetchExams(vendor);
 
         for (const exam of exams) {
+            if (isRetiredExam(exam.vendorId, exam.code)) {
+                console.log(`[Ingestion] Skipping retired exam: ${exam.code} (${exam.name})`);
+                continue;
+            }
+
             const certId = `${exam.vendorId}-${exam.code.toLowerCase()}`.replace(/\s+/g, '-');
 
             const certData = {

@@ -1,0 +1,78 @@
+ExamCode,ExamTitle,Vendor,Level,Subject,Product,Roles,Time Limit,Price
+GH-200,GitHub Actions,GitHub,Intermediate,DevOps,GitHub,Administrator,120 min,$200
+GH-300,GitHub Administration,GitHub,Intermediate,DevOps,GitHub,Administrator,120 min,$200
+,GitHub Advanced Security,GitHub,Intermediate,Security,GitHub,Administrator,120 min,$200
+,GitHub Copilot,GitHub,Intermediate,DevOps,GitHub,App Maker,120 min,$200
+GH-900,GitHub Foundations,GitHub,Beginner,DevOps,GitHub,Administrator,90 min,$99
+MS-102,Microsoft 365 Certified: Administrator Expert,Microsoft,Advanced,Modern Workplace,Microsoft 365,Administrator,150 min,$165
+,Microsoft 365 Certified: Collaboration Communications Systems Engineer Associate,Microsoft,Intermediate,Modern Workplace,Microsoft 365,Administrator,120 min,$165
+,Microsoft 365 Certified: Copilot and Agent Administration Fundamentals (beta),Microsoft,Beginner,Modern Workplace,Azure,Administrator,90 min,$99
+,Microsoft 365 Certified: Endpoint Administrator Associate,Microsoft,Intermediate,Modern Workplace,Microsoft 365,Administrator,120 min,$165
+,Microsoft 365 Certified: Fundamentals,Microsoft,Beginner,Modern Workplace,Office 365,Administrator,90 min,$99
+,Microsoft 365 Certified: Teams Administrator Associate,Microsoft,Intermediate,Modern Workplace,Microsoft 365,Administrator,120 min,$165
+,Microsoft Certified Educator,Microsoft,Intermediate,Cloud,Windows,Business User,120 min,$165
+,Microsoft Certified: AI Business Professional (beta),Microsoft,Beginner,AI,Azure,Administrator,90 min,$99
+,Microsoft Certified: AI Transformation Leader (beta),Microsoft,Beginner,AI,Microsoft Power Platform,Business Leader,90 min,$99
+,Microsoft Certified: Agentic AI Business Solutions Architect (beta),Microsoft,Advanced,AI,Microsoft Power Platform,Solution Architect,150 min,$165
+,Microsoft Certified: Azure AI Engineer Associate,Microsoft,Intermediate,AI,Azure,AI Engineer,120 min,$165
+AI-900,Microsoft Certified: Azure AI Fundamentals,Microsoft,Beginner,AI,Azure,AI Engineer,90 min,$99
+AZ-104,Microsoft Certified: Azure Administrator Associate,Microsoft,Intermediate,Cloud,Azure,Administrator,120 min,$165
+,Microsoft Certified: Azure Cosmos DB Developer Specialty,Microsoft,Intermediate,Cloud,Azure,Developer,120 min,$165
+DP-900,Microsoft Certified: Azure Data Fundamentals,Microsoft,Beginner,Data,Azure,Data Engineer,90 min,$99
+,Microsoft Certified: Azure Data Scientist Associate,Microsoft,Intermediate,Data,Azure,Data Scientist,120 min,$165
+,Microsoft Certified: Azure Database Administrator Associate,Microsoft,Intermediate,Data,Azure,Database Administrator,120 min,$165
+AZ-204,Microsoft Certified: Azure Developer Associate,Microsoft,Intermediate,Cloud,Azure,Developer,120 min,$165
+AZ-900,Microsoft Certified: Azure Fundamentals,Microsoft,Beginner,Cloud,Azure,Administrator,90 min,$99
+AZ-700,Microsoft Certified: Azure Network Engineer Associate,Microsoft,Intermediate,Cloud,Azure,Network Engineer,120 min,$165
+AZ-500,Microsoft Certified: Azure Security Engineer Associate,Microsoft,Intermediate,Security,Azure,Security Engineer,120 min,$165
+AZ-305,Microsoft Certified: Azure Solutions Architect Expert,Microsoft,Advanced,Cloud,Azure,Solution Architect,150 min,$165
+,Microsoft Certified: Azure Virtual Desktop Specialty,Microsoft,Intermediate,Cloud,Azure,Administrator,120 min,$165
+,Microsoft Certified: Azure for SAP Workloads Specialty,Microsoft,Intermediate,Cloud,Azure,Solution Architect,120 min,$165
+SC-100,Microsoft Certified: Cybersecurity Architect Expert,Microsoft,Advanced,Security,Microsoft Defender,Administrator,150 min,$165
+AZ-400,Microsoft Certified: DevOps Engineer Expert,Microsoft,Advanced,Cloud,Azure,DevOps Engineer,150 min,$165
+,Microsoft Certified: Dynamics 365 Business Central Developer Associate,Microsoft,Intermediate,Business Applications,Dynamics 365,Business Analyst,120 min,$165
+PL-200,Microsoft Certified: Dynamics 365 Business Central Functional Consultant Associate,Microsoft,Intermediate,Business Applications,Dynamics 365,Functional Consultant,120 min,$165
+,Microsoft Certified: Dynamics 365 Customer Experience Analyst Associate,Microsoft,Intermediate,Data,Dynamics,Business Analyst,120 min,$165
+MB-910,Microsoft Certified: Dynamics 365 Fundamentals (CRM),Microsoft,Beginner,Business Applications,Dynamics 365,Business Owner,90 min,$99
+MB-920,Microsoft Certified: Dynamics 365 Fundamentals (ERP),Microsoft,Beginner,Business Applications,Dynamics 365,Business Owner,90 min,$99
+MB-335,Microsoft Certified: Dynamics 365 Supply Chain Management Functional Consultant Expert,Microsoft,Advanced,Business Applications,Dynamics 365,Functional Consultant,150 min,$165
+,Microsoft Certified: Dynamics 365: Finance and Operations Apps Developer Associate,Microsoft,Intermediate,Business Applications,Dynamics 365,Developer,120 min,$165
+MB-700,Microsoft Certified: Dynamics 365: Finance and Operations Apps Solution Architect Expert,Microsoft,Advanced,Business Applications,Dynamics 365,Functional Consultant,150 min,$165
+,Microsoft Certified: Fabric Analytics Engineer Associate,Microsoft,Intermediate,Cloud,Microsoft Fabric,Data Engineer,120 min,$165
+,Microsoft Certified: Fabric Data Engineer Associate,Microsoft,Intermediate,Data,Microsoft Fabric,Data Engineer,120 min,$165
+SC-300,Microsoft Certified: Identity and Access Administrator Associate,Microsoft,Intermediate,Security,Azure,Security Engineer,120 min,$165
+SC-400,Microsoft Certified: Information Security Administrator Associate,Microsoft,Intermediate,Security,Microsoft 365,Administrator,120 min,$165
+,Microsoft Certified: Power Automate RPA Developer Associate,Microsoft,Intermediate,Power Platform,Microsoft Power Platform,Developer,120 min,$165
+PL-300,Microsoft Certified: Power BI Data Analyst Associate,Microsoft,Intermediate,Data,Microsoft Power Platform,Data Analyst,120 min,$165
+PL-400,Microsoft Certified: Power Platform Developer Associate,Microsoft,Intermediate,Power Platform,Microsoft Power Platform,Developer,120 min,$165
+PL-900,Microsoft Certified: Power Platform Fundamentals,Microsoft,Beginner,Power Platform,Microsoft Power Platform,App Maker,90 min,$99
+PL-600,Microsoft Certified: Power Platform Solution Architect Expert,Microsoft,Advanced,Power Platform,Dynamics 365,Developer,150 min,$165
+SC-200,Microsoft Certified: Security Operations Analyst Associate,Microsoft,Intermediate,Security,Azure,Security Operations Analyst,120 min,$165
+SC-900,"Microsoft Certified: Security, Compliance, and Identity Fundamentals",Microsoft,Beginner,Security,Azure,Security Engineer,90 min,$99
+"AZ-800, AZ-801",Microsoft Certified: Windows Server Hybrid Administrator Associate,Microsoft,Intermediate,Cloud,Microsoft Entra,Administrator,120 min,$165
+"77-726, 77-728, 77-729",Microsoft Office Specialist: 2016 Master,Microsoft,Advanced,Cloud,Office,Business User,150 min,$165
+,Microsoft Office Specialist: Access (Office 2016),Microsoft,Intermediate,Cloud,Access,Business User,120 min,$165
+,Microsoft Office Specialist: Access Expert (Office 2019),Microsoft,Advanced,Cloud,Access,Business User,150 min,$165
+MO-110,Microsoft Office Specialist: Associate (Microsoft 365 Apps),Microsoft,Intermediate,Modern Workplace,PowerPoint,Business User,120 min,$165
+"MO-100, MO-200, MO-300",Microsoft Office Specialist: Associate (Office 2019),Microsoft,Intermediate,Cloud,Office,Business User,120 min,$165
+,Microsoft Office Specialist: Excel (Office 2016),Microsoft,Intermediate,Cloud,Excel,Business User,120 min,$165
+,Microsoft Office Specialist: Excel Associate (Microsoft 365 Apps),Microsoft,Intermediate,Modern Workplace,Excel,Business User,120 min,$165
+,Microsoft Office Specialist: Excel Associate (Office 2019),Microsoft,Intermediate,Cloud,Excel,Business User,120 min,$165
+,Microsoft Office Specialist: Excel Expert (Microsoft 365 Apps),Microsoft,Advanced,Modern Workplace,Excel,Business User,150 min,$165
+,Microsoft Office Specialist: Excel Expert (Office 2016),Microsoft,Advanced,Cloud,Excel,Business User,150 min,$165
+,Microsoft Office Specialist: Excel Expert (Office 2019),Microsoft,Advanced,Cloud,Excel,Business User,150 min,$165
+,Microsoft Office Specialist: Excel for Accounting Associate,Microsoft,Intermediate,Cloud,Excel,Business User,120 min,$165
+,Microsoft Office Specialist: Excel for Business Finance Associate,Microsoft,Intermediate,Cloud,Excel,Business User,120 min,$165
+MO-211,Microsoft Office Specialist: Expert (Microsoft 365 Apps),Microsoft,Advanced,Modern Workplace,Word,Business User,150 min,$165
+"MO-101, MO-201, MO-500",Microsoft Office Specialist: Expert (Office 2019),Microsoft,Advanced,Cloud,Office,Business User,150 min,$165
+,Microsoft Office Specialist: Outlook (Office 2016),Microsoft,Intermediate,Cloud,Outlook,Business User,120 min,$165
+,Microsoft Office Specialist: Outlook Associate (Office 2019),Microsoft,Intermediate,Cloud,Outlook,Business User,120 min,$165
+,Microsoft Office Specialist: PowerPoint (Office 2016),Microsoft,Intermediate,Power Platform,PowerPoint,Business User,120 min,$165
+,Microsoft Office Specialist: PowerPoint Associate (Microsoft 365 Apps),Microsoft,Intermediate,Modern Workplace,PowerPoint,Business User,120 min,$165
+,Microsoft Office Specialist: PowerPoint Associate (Office 2019),Microsoft,Intermediate,Power Platform,PowerPoint,Business User,120 min,$165
+,Microsoft Office Specialist: Word (Office 2016),Microsoft,Intermediate,Cloud,Word,Business User,120 min,$165
+,Microsoft Office Specialist: Word Associate (Microsoft 365 Apps),Microsoft,Intermediate,Modern Workplace,Word,Business User,120 min,$165
+,Microsoft Office Specialist: Word Associate (Office 2019),Microsoft,Intermediate,Cloud,Word,Business User,120 min,$165
+,Microsoft Office Specialist: Word Expert (Microsoft 365 Apps),Microsoft,Advanced,Modern Workplace,Word,Business User,150 min,$165
+,Microsoft Office Specialist: Word Expert (Office 2016),Microsoft,Advanced,Cloud,Word,Business User,150 min,$165
+,Microsoft Office Specialist: Word Expert (Office 2019),Microsoft,Advanced,Cloud,Word,Business User,150 min,$165
