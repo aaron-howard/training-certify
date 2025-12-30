@@ -20,7 +20,10 @@ export const Route = createFileRoute('/api/catalog')({
               id: c.id,
               name: c.name,
               vendor: c.vendorName,
-              level: c.difficulty
+              level: c.difficulty,
+              price: c.price,
+              category: c.category,
+              description: c.description
             }))
           })
         } catch (error) {
@@ -70,6 +73,7 @@ export const Route = createFileRoute('/api/catalog')({
             vendorName: data.vendorName,
             category: data.category || 'Cloud',
             difficulty: data.difficulty || 'Intermediate',
+            price: data.price || null,
             description: data.description || null
           }).returning()
 

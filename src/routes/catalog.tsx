@@ -35,7 +35,8 @@ function CatalogPage() {
     const [vendorFilter, setVendorFilter] = useState('All')
     const [difficultyFilter, setDifficultyFilter] = useState('All')
     const [showAddModal, setShowAddModal] = useState(false)
-    const [newCert, setNewCert] = useState({ id: '', name: '', vendorName: '', difficulty: 'Intermediate' })
+    const [selectedCert, setSelectedCert] = useState<any>(null)
+    const [newCert, setNewCert] = useState({ id: '', name: '', vendorName: '', difficulty: 'Intermediate', price: '', category: 'Cloud', description: '' })
 
     // Sync/Get User Role
     const { data: dbUser } = useQuery({
@@ -171,7 +172,7 @@ function CatalogPage() {
     })
 
     const addCertMutation = useMutation({
-        mutationFn: async (certData: { id: string; name: string; vendorName: string; difficulty: string }) => {
+        mutationFn: async (certData: { id: string; name: string; vendorName: string; difficulty: string; price: string; category: string; description: string }) => {
             const res = await fetch('/api/catalog', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -186,7 +187,7 @@ function CatalogPage() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['catalog'] })
             setShowAddModal(false)
-            setNewCert({ id: '', name: '', vendorName: '', difficulty: 'Intermediate' })
+            setNewCert({ id: '', name: '', vendorName: '', difficulty: 'Intermediate', price: '', category: 'Cloud', description: '' })
             alert('Certification added successfully!')
         },
         onError: (err: any) => alert(`Add failed: ${err.message}`)
@@ -235,38 +236,38 @@ function CatalogPage() {
                                 placeholder="Search certifications..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-9 pr-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full pl-9 pr-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                             />
                         </div>
 
                         <select
                             value={vendorFilter}
                             onChange={(e) => setVendorFilter(e.target.value)}
-                            className="px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                            className="px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm outline-none focus:ring-2 focus:ring-blue-500"
                         >
-                            {vendors.map(v => <option key={v} value={v}>{v === 'All' ? 'All Vendors' : v}</option>)}
+                            {vendors.map(v => <option key={v} value={v} className="dark:bg-slate-900">{v === 'All' ? 'All Vendors' : v}</option>)}
                         </select>
 
                         <select
                             value={difficultyFilter}
                             onChange={(e) => setDifficultyFilter(e.target.value)}
-                            className="px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                            className="px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm outline-none focus:ring-2 focus:ring-blue-500"
                         >
-                            <option value="All">All Levels</option>
-                            <option value="Beginner">Beginner</option>
-                            <option value="Intermediate">Intermediate</option>
-                            <option value="Advanced">Advanced</option>
-                            <option value="Expert">Expert</option>
+                            <option value="All" className="dark:bg-slate-900">All Levels</option>
+                            <option value="Beginner" className="dark:bg-slate-900">Beginner</option>
+                            <option value="Intermediate" className="dark:bg-slate-900">Intermediate</option>
+                            <option value="Advanced" className="dark:bg-slate-900">Advanced</option>
+                            <option value="Expert" className="dark:bg-slate-900">Expert</option>
                         </select>
 
                         <select
                             value={sortBy}
                             onChange={(e) => setSortBy(e.target.value)}
-                            className="px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500"
+                            className="px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500"
                         >
-                            <option value="name">Sort by Name</option>
-                            <option value="vendor">Sort by Vendor</option>
-                            <option value="level">Sort by Difficulty</option>
+                            <option value="name" className="dark:bg-slate-900">Sort by Name</option>
+                            <option value="vendor" className="dark:bg-slate-900">Sort by Vendor</option>
+                            <option value="level" className="dark:bg-slate-900">Sort by Difficulty</option>
                         </select>
                     </div>
 
@@ -331,10 +332,18 @@ function CatalogPage() {
                             <span className="text-xs font-semibold px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded">
                                 {cert.level}
                             </span>
+                            {cert.price && (
+                                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                                    {cert.price}
+                                </span>
+                            )}
                         </div>
                         <h3 className="font-bold text-lg text-slate-900 dark:text-slate-50 mb-1 group-hover:text-blue-600 transition-colors line-clamp-2">{cert.name}</h3>
                         <p className="text-sm text-slate-500 mb-6">{cert.vendor}</p>
-                        <button className="w-full py-2 bg-slate-50 dark:bg-slate-950 hover:bg-blue-600 hover:text-white border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2">
+                        <button
+                            onClick={() => setSelectedCert(cert)}
+                            className="w-full py-2 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2"
+                        >
                             View Requirements <ExternalLink className="w-4 h-4" />
                         </button>
                     </div>
@@ -400,6 +409,40 @@ function CatalogPage() {
                                     <option value="Expert">Expert</option>
                                 </select>
                             </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Category</label>
+                                <select
+                                    value={newCert.category}
+                                    onChange={(e) => setNewCert({ ...newCert, category: e.target.value })}
+                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
+                                >
+                                    <option value="Cloud">Cloud</option>
+                                    <option value="Security">Security</option>
+                                    <option value="Networking">Networking</option>
+                                    <option value="Data">Data</option>
+                                    <option value="Project Management">Project Management</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Description / Requirements</label>
+                                <textarea
+                                    value={newCert.description}
+                                    onChange={(e) => setNewCert({ ...newCert, description: e.target.value })}
+                                    placeholder="Enter exam requirements or description..."
+                                    rows={3}
+                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Price</label>
+                                <input
+                                    type="text"
+                                    value={newCert.price}
+                                    onChange={(e) => setNewCert({ ...newCert, price: e.target.value })}
+                                    placeholder="e.g., $165"
+                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 outline-none"
+                                />
+                            </div>
                             <div className="flex gap-3 pt-2">
                                 <button
                                     type="button"
@@ -417,6 +460,80 @@ function CatalogPage() {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {selectedCert && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white dark:bg-slate-900 rounded-xl w-full max-w-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+                        {/* Modal Header */}
+                        <div className="bg-slate-50 dark:bg-slate-800/50 p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-start">
+                            <div>
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center text-blue-600 font-bold shrink-0">
+                                        {selectedCert.vendor?.charAt(0)}
+                                    </div>
+                                    <div>
+                                        <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50 leading-tight">{selectedCert.name}</h2>
+                                        <p className="text-sm text-slate-500">{selectedCert.vendor}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onClick={() => setSelectedCert(null)} className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+                                <X className="w-6 h-6" />
+                            </button>
+                        </div>
+
+                        {/* Modal Body */}
+                        <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div className="p-3 bg-slate-50 dark:bg-slate-800/30 rounded-lg border border-slate-100 dark:border-slate-800">
+                                    <p className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Difficulty</p>
+                                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">{selectedCert.level}</p>
+                                </div>
+                                <div className="p-3 bg-slate-50 dark:bg-slate-800/30 rounded-lg border border-slate-100 dark:border-slate-800">
+                                    <p className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Category</p>
+                                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">{selectedCert.category || 'N/A'}</p>
+                                </div>
+                                <div className="p-3 bg-slate-50 dark:bg-slate-800/30 rounded-lg border border-slate-100 dark:border-slate-800">
+                                    <p className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Exam Price</p>
+                                    <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">{selectedCert.price || 'Contact Vendor'}</p>
+                                </div>
+                                <div className="p-3 bg-slate-50 dark:bg-slate-800/30 rounded-lg border border-slate-100 dark:border-slate-800">
+                                    <p className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Code</p>
+                                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 uppercase">{selectedCert.id}</p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 mb-2 flex items-center gap-2">
+                                    Details & Requirements
+                                </h3>
+                                <div className="p-4 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-800">
+                                    {selectedCert.description ? (
+                                        <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-wrap">
+                                            {selectedCert.description}
+                                        </p>
+                                    ) : (
+                                        <p className="text-sm text-slate-400 italic">No specific requirements listed for this certification yet.</p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div className="p-6 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800 flex gap-3">
+                            <button
+                                onClick={() => setSelectedCert(null)}
+                                className="flex-1 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors"
+                            >
+                                Close
+                            </button>
+                            <button className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                                Official Site <ExternalLink className="w-4 h-4" />
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

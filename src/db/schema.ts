@@ -47,6 +47,7 @@ export const certifications = pgTable('certifications', {
     difficulty: text('difficulty'),
     validityPeriod: text('validity_period'),
     renewalCycle: integer('renewal_cycle'), // in months
+    price: text('price'),
     description: text('description'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
 });
