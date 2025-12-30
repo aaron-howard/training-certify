@@ -3,7 +3,6 @@ import { Search, ExternalLink, Plus, Edit, Trash2, Database, ShieldCheck, Refres
 import { useUser } from '@clerk/tanstack-react-start'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, useMemo } from 'react'
-import { usePermissions } from '../hooks/usePermissions'
 
 // API fetch functions (using traditional fetch instead of broken createServerFn)
 const fetchCatalog = async () => {
@@ -32,6 +31,9 @@ function CatalogPage() {
     const { user } = useUser()
     const queryClient = useQueryClient()
     const [searchQuery, setSearchQuery] = useState('')
+    const [sortBy, setSortBy] = useState('name') // name, vendor, level
+    const [vendorFilter, setVendorFilter] = useState('All')
+    const [difficultyFilter, setDifficultyFilter] = useState('All')
     const [showAddModal, setShowAddModal] = useState(false)
     const [newCert, setNewCert] = useState({ id: '', name: '', vendorName: '', difficulty: 'Intermediate' })
 
@@ -60,20 +62,54 @@ function CatalogPage() {
     }
 
     // Get permissions based on role
-    const permissions = usePermissions(dbUser?.role)
     const isAdmin = dbUser?.role === 'Admin'
 
-    // Filter certifications based on search
+    // List of unique vendors for filtering
+    const vendors = useMemo(() => {
+        if (!catalog?.certifications) return ['All']
+        const uniqueVendors = Array.from(new Set(catalog.certifications.map((c: any) => c.vendor))) as string[]
+        return ['All', ...uniqueVendors.sort()]
+    }, [catalog?.certifications])
+
+    // Filter and Sort certifications
     const filteredCertifications = useMemo(() => {
         if (!catalog?.certifications) return []
-        if (!searchQuery.trim()) return catalog.certifications
-        const query = searchQuery.toLowerCase()
-        return catalog.certifications.filter((cert: any) =>
-            cert.name?.toLowerCase().includes(query) ||
-            cert.vendor?.toLowerCase().includes(query) ||
-            cert.level?.toLowerCase().includes(query)
-        )
-    }, [catalog?.certifications, searchQuery])
+
+        let processed = [...catalog.certifications]
+
+        // 1. Text Search
+        if (searchQuery.trim()) {
+            const query = searchQuery.toLowerCase()
+            processed = processed.filter((cert: any) =>
+                cert.name?.toLowerCase().includes(query) ||
+                cert.vendor?.toLowerCase().includes(query) ||
+                cert.level?.toLowerCase().includes(query)
+            )
+        }
+
+        // 2. Vendor Filter
+        if (vendorFilter !== 'All') {
+            processed = processed.filter((cert: any) => cert.vendor === vendorFilter)
+        }
+
+        // 3. Difficulty Filter
+        if (difficultyFilter !== 'All') {
+            processed = processed.filter((cert: any) => cert.level === difficultyFilter)
+        }
+
+        // 4. Sorting
+        processed.sort((a: any, b: any) => {
+            if (sortBy === 'name') return a.name.localeCompare(b.name)
+            if (sortBy === 'vendor') return a.vendor.localeCompare(b.vendor)
+            if (sortBy === 'level') {
+                const ranks: Record<string, number> = { 'Beginner': 1, 'Intermediate': 2, 'Advanced': 3, 'Expert': 4 }
+                return (ranks[a.level] || 0) - (ranks[b.level] || 0)
+            }
+            return 0
+        })
+
+        return processed
+    }, [catalog?.certifications, searchQuery, sortBy, vendorFilter, difficultyFilter])
 
     // Mutations
     const seedMutation = useMutation({
@@ -183,55 +219,88 @@ function CatalogPage() {
 
     return (
         <div className="space-y-8">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50">Certification Catalog</h1>
                     <p className="text-slate-600 dark:text-slate-400">Browse official certifications from top vendors.</p>
                 </div>
-                <div className="flex gap-4 items-center">
-                    <div className="relative flex-1 max-w-md">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                        <input
-                            id="catalog-search"
-                            name="catalog-search"
-                            type="text"
-                            placeholder="Search certifications..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
-                        />
+
+                <div className="flex flex-wrap items-center gap-4">
+                    <div className="flex flex-wrap items-center gap-3">
+                        <div className="relative min-w-[240px]">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <input
+                                id="catalog-search"
+                                type="text"
+                                placeholder="Search certifications..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full pl-9 pr-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                            />
+                        </div>
+
+                        <select
+                            value={vendorFilter}
+                            onChange={(e) => setVendorFilter(e.target.value)}
+                            className="px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            {vendors.map(v => <option key={v} value={v}>{v === 'All' ? 'All Vendors' : v}</option>)}
+                        </select>
+
+                        <select
+                            value={difficultyFilter}
+                            onChange={(e) => setDifficultyFilter(e.target.value)}
+                            className="px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="All">All Levels</option>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                            <option value="Expert">Expert</option>
+                        </select>
+
+                        <select
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                            className="px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="name">Sort by Name</option>
+                            <option value="vendor">Sort by Vendor</option>
+                            <option value="level">Sort by Difficulty</option>
+                        </select>
                     </div>
 
-                    {/* Admin Tools */}
-                    <div className="flex gap-2">
+                    <div className="h-8 w-px bg-slate-200 dark:bg-slate-800 hidden md:block" />
+
+                    <div className="flex items-center gap-2">
                         {!isAdmin && (
                             <button
                                 onClick={handlePromote}
-                                className="px-4 py-2 text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors flex items-center gap-1"
+                                className="px-4 py-2 text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center gap-1.5"
                                 title="Dev Only: Make me Admin"
                             >
-                                <ShieldCheck className="w-4 h-4" /> Become Admin
+                                <ShieldCheck className="w-3.5 h-3.5" /> Become Admin
                             </button>
                         )}
                         {isAdmin && (
                             <>
                                 <button
                                     onClick={handleSeed}
-                                    className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2 text-sm"
+                                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
                                 >
                                     <Database className="w-4 h-4" /> Seed
                                 </button>
                                 <button
                                     onClick={handleSync}
                                     disabled={syncMutation.isPending}
-                                    className="px-4 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-900 transition-colors flex items-center gap-2 text-sm disabled:opacity-50"
+                                    className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium disabled:opacity-50"
                                 >
-                                    <RefreshCw className={Boolean(syncMutation.isPending) ? "w-4 h-4 animate-spin" : "w-4 h-4"} />
+                                    <RefreshCw className={syncMutation.isPending ? "w-4 h-4 animate-spin" : "w-4 h-4"} />
                                     {syncMutation.isPending ? 'Syncing...' : 'Sync ITExams'}
                                 </button>
                                 <button
                                     onClick={() => setShowAddModal(true)}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 text-sm"
+                                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
                                 >
                                     <Plus className="w-4 h-4" /> Add New
                                 </button>
@@ -244,19 +313,12 @@ function CatalogPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredCertifications.map((cert: any) => (
                     <div key={cert.id} className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group relative">
-                        {/* Admin Actions */}
                         {isAdmin && (
                             <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button
-                                    onClick={() => alert('Edit Form To Be Implemented')}
-                                    className="p-1.5 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 text-slate-600 hover:text-blue-600"
-                                >
+                                <button onClick={() => alert('Edit Form To Be Implemented')} className="p-1.5 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 text-slate-600 hover:text-blue-600">
                                     <Edit className="w-3.5 h-3.5" />
                                 </button>
-                                <button
-                                    onClick={() => handleDelete(cert.id)}
-                                    className="p-1.5 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 text-slate-600 hover:text-red-600"
-                                >
+                                <button onClick={() => handleDelete(cert.id)} className="p-1.5 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 text-slate-600 hover:text-red-600">
                                     <Trash2 className="w-3.5 h-3.5" />
                                 </button>
                             </div>
@@ -264,13 +326,13 @@ function CatalogPage() {
 
                         <div className="flex justify-between items-start mb-4">
                             <div className="w-12 h-12 bg-blue-50 dark:bg-blue-950/30 rounded-lg flex items-center justify-center text-blue-600 font-bold">
-                                {cert.vendor.charAt(0)}
+                                {cert.vendor?.charAt(0)}
                             </div>
                             <span className="text-xs font-semibold px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded">
                                 {cert.level}
                             </span>
                         </div>
-                        <h3 className="font-bold text-lg text-slate-900 dark:text-slate-50 mb-1 group-hover:text-blue-600 transition-colors">{cert.name}</h3>
+                        <h3 className="font-bold text-lg text-slate-900 dark:text-slate-50 mb-1 group-hover:text-blue-600 transition-colors line-clamp-2">{cert.name}</h3>
                         <p className="text-sm text-slate-500 mb-6">{cert.vendor}</p>
                         <button className="w-full py-2 bg-slate-50 dark:bg-slate-950 hover:bg-blue-600 hover:text-white border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2">
                             View Requirements <ExternalLink className="w-4 h-4" />
@@ -279,9 +341,8 @@ function CatalogPage() {
                 ))}
             </div>
 
-            {/* Add New Certification Modal */}
             {showAddModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white dark:bg-slate-900 rounded-xl p-6 w-full max-w-md shadow-xl">
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">Add New Certification</h2>
@@ -301,7 +362,7 @@ function CatalogPage() {
                                     onChange={(e) => setNewCert({ ...newCert, id: e.target.value })}
                                     placeholder="e.g., az-500"
                                     required
-                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
+                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 outline-none"
                                 />
                             </div>
                             <div>
@@ -312,7 +373,7 @@ function CatalogPage() {
                                     onChange={(e) => setNewCert({ ...newCert, name: e.target.value })}
                                     placeholder="e.g., Azure Security Engineer Associate"
                                     required
-                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
+                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 outline-none"
                                 />
                             </div>
                             <div>
@@ -323,7 +384,7 @@ function CatalogPage() {
                                     onChange={(e) => setNewCert({ ...newCert, vendorName: e.target.value })}
                                     placeholder="e.g., Microsoft"
                                     required
-                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
+                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 outline-none"
                                 />
                             </div>
                             <div>
@@ -331,7 +392,7 @@ function CatalogPage() {
                                 <select
                                     value={newCert.difficulty}
                                     onChange={(e) => setNewCert({ ...newCert, difficulty: e.target.value })}
-                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100"
+                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
                                 >
                                     <option value="Beginner">Beginner</option>
                                     <option value="Intermediate">Intermediate</option>
@@ -343,14 +404,14 @@ function CatalogPage() {
                                 <button
                                     type="button"
                                     onClick={() => setShowAddModal(false)}
-                                    className="flex-1 px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-950"
+                                    className="flex-1 px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-950 text-sm font-medium transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={addCertMutation.isPending}
-                                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                                    className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 text-sm font-medium transition-colors"
                                 >
                                     {addCertMutation.isPending ? 'Adding...' : 'Add Certification'}
                                 </button>

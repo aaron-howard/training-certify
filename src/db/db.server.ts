@@ -25,7 +25,7 @@ async function initializeDb() {
         await envReady;
 
         // Explicit fallback for local development if ENV fails
-        const url = ENV.DATABASE_URL || process.env.DATABASE_URL || 'postgresql://postgres:Teamwork1@localhost:5433/devdb';
+        const url = ENV.DATABASE_URL || process.env.DATABASE_URL || 'postgresql://postgres:password@127.0.0.1:5433/devdb';
 
         if (!url) {
             console.error(`❌ [DB Init] Instance ${instanceId} - No DATABASE_URL found.`);

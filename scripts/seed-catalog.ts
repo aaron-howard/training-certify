@@ -20,7 +20,7 @@ async function main() {
     console.log(`📂 Reading certifications from ${csvPath}...`);
     const content = fs.readFileSync(csvPath, 'utf-8');
     const lines = content.split('\n').filter(line => line.trim() !== '');
-    
+
     // Skip header
     const dataLines = lines.slice(1);
     const totalLines = dataLines.length;
@@ -39,22 +39,30 @@ async function main() {
     let errorCount = 0;
 
     for (let i = 0; i < toProcess; i++) {
-        const line = dataLines[i];
-        // Basic CSV parsing (splitting by comma, but handling potential commas in quotes)
-        // This is a simple regex for CSV parsing
-        const matches = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-        
-        if (!matches || matches.length < 3) {
+        const line = dataLines[i].replace(/\r$/, '');
+
+        // Robust CSV parsing
+        const parts: string[] = [];
+        let current = '';
+        let inQuotes = false;
+        for (let char of line) {
+            if (char === '"') inQuotes = !inQuotes;
+            else if (char === ',' && !inQuotes) {
+                parts.push(current.trim().replace(/^"|"$/g, ''));
+                current = '';
+            } else {
+                current += char;
+            }
+        }
+        parts.push(current.trim().replace(/^"|"$/g, ''));
+
+        if (parts.length < 3) {
             console.warn(`[Line ${i + 2}] Skipping invalid line: ${line}`);
             skippedCount++;
             continue;
         }
 
-        const [examCodeRaw, examTitleRaw, vendorRaw, difficultyRaw] = matches.map(m => m.replace(/^"|"$/g, '').trim());
-        
-        const id = examCodeRaw;
-        const name = examTitleRaw;
-        const vendorName = vendorRaw;
+        const [id, name, vendorName, difficultyRaw] = parts;
         const difficulty = difficultyRaw || 'Intermediate';
         const vendorId = vendorName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
@@ -67,7 +75,7 @@ async function main() {
                 difficulty,
                 category: 'Cloud', // Defaulting to Cloud as per schema requirements if not provided
             }).onConflictDoNothing();
-            
+
             addedCount++;
             if (addedCount % 100 === 0) {
                 console.log(`✅ Processed ${addedCount} records...`);

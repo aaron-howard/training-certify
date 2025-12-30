@@ -49,7 +49,11 @@ export const envReady = isServer ? (async () => {
         const loaded: Record<string, string> = {};
 
         // A. Process Env Vars
-        loaded.DATABASE_URL = processEnv.DATABASE_URL || processEnv.VITE_DATABASE_URL || '';
+        let dbSource = 'fallback';
+        if (processEnv.DATABASE_URL || processEnv.VITE_DATABASE_URL) {
+            loaded.DATABASE_URL = (processEnv.DATABASE_URL || processEnv.VITE_DATABASE_URL) as string;
+            dbSource = 'process.env';
+        }
 
         // Clerk Key Search
         loaded.CLERK_PUBLISHABLE_KEY =
@@ -71,22 +75,33 @@ export const envReady = isServer ? (async () => {
                 const envFiles = ['.env.local', '.env'];
 
                 for (const file of envFiles) {
-                    const filePath = path.resolve(process.cwd(), file);
-                    if (fs.existsSync(filePath)) {
-                        const content = fs.readFileSync(filePath, 'utf-8');
-                        const lines = content.split(/\r?\n/);
-                        for (const line of lines) {
-                            const trimmed = line.trim();
-                            if (!trimmed || trimmed.startsWith('#')) continue;
-                            const match = trimmed.match(/^([^=]+)=(.*)$/);
-                            if (match) {
-                                const key = match[1].trim();
-                                const val = match[2].trim().replace(/^["']|["']$/g, '');
+                    const searchPaths = [
+                        path.resolve(process.cwd(), file),
+                        path.resolve(process.cwd(), '..', file)
+                    ];
 
-                                if (!loaded.DATABASE_URL && (key === 'DATABASE_URL' || key === 'VITE_DATABASE_URL')) loaded.DATABASE_URL = val;
-                                if (!loaded.CLERK_PUBLISHABLE_KEY && (key === 'CLERK_PUBLISHABLE_KEY' || key === 'VITE_CLERK_PUBLISHABLE_KEY')) loaded.CLERK_PUBLISHABLE_KEY = val;
-                                if (!loaded.CLERK_SECRET_KEY && (key === 'CLERK_SECRET_KEY' || key === 'VITE_CLERK_SECRET_KEY')) loaded.CLERK_SECRET_KEY = val;
+                    for (const filePath of searchPaths) {
+                        if (fs.existsSync(filePath)) {
+                            const content = fs.readFileSync(filePath, 'utf-8');
+                            const lines = content.split(/\r?\n/);
+                            for (const line of lines) {
+                                const trimmed = line.trim();
+                                if (!trimmed || trimmed.startsWith('#')) continue;
+                                const match = trimmed.match(/^([^=]+)=(.*)$/);
+                                if (match) {
+                                    const key = match[1].trim();
+                                    const val = match[2].trim().replace(/^["']|["']$/g, '');
+
+                                    if (!loaded.DATABASE_URL && (key === 'DATABASE_URL' || key === 'VITE_DATABASE_URL')) {
+                                        loaded.DATABASE_URL = val;
+                                        dbSource = file;
+                                    }
+                                    if (!loaded.CLERK_PUBLISHABLE_KEY && (key === 'CLERK_PUBLISHABLE_KEY' || key === 'VITE_CLERK_PUBLISHABLE_KEY')) loaded.CLERK_PUBLISHABLE_KEY = val;
+                                    if (!loaded.CLERK_SECRET_KEY && (key === 'CLERK_SECRET_KEY' || key === 'VITE_CLERK_SECRET_KEY')) loaded.CLERK_SECRET_KEY = val;
+                                }
                             }
+                            // If we found a file and loaded something, we can stop for this specific filename type? 
+                            // Actually, let's keep it simple: any found file contributes.
                         }
                     }
                 }
@@ -98,12 +113,25 @@ export const envReady = isServer ? (async () => {
         // C. Final Fallback (Hardcoded for local dev)
         if (!loaded.DATABASE_URL) {
             console.warn('⚠️ [ENV] DATABASE_URL not found. Using local fallback.');
-            loaded.DATABASE_URL = 'postgresql://postgres:Teamwork1@localhost:5433/devdb';
+            loaded.DATABASE_URL = 'postgresql://postgres:password@127.0.0.1:5433/devdb';
         }
 
-        console.log('💎 [ENV Final]', {
-            db: loaded.DATABASE_URL ? '✅ ok' : '❌ missing',
-        });
+        try {
+            const url = new URL(loaded.DATABASE_URL);
+            console.log('💎 [ENV Final]', {
+                source: dbSource,
+                db: '✅ ok',
+                host: url.hostname,
+                port: url.port ? url.port : '5432 (default)',
+                dbName: url.pathname
+            });
+        } catch (e) {
+            console.log('💎 [ENV Final]', {
+                source: dbSource,
+                db: loaded.DATABASE_URL ? '✅ ok' : '❌ missing',
+                parseError: 'Failed to parse URL'
+            });
+        }
 
         return loaded;
     })();

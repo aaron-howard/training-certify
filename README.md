@@ -4,12 +4,12 @@ A modern web application for managing training certifications, built with TanSta
 
 ## Local Development Setup
 
-This project is configured for local development using Docker for the PostgreSQL database.
+This project uses a local PostgreSQL database.
 
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) (Latest LTS)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) or Docker Engine
+- [PostgreSQL](https://www.postgresql.org/) (Local installation)
 
 ### Getting Started
 
@@ -19,21 +19,17 @@ This project is configured for local development using Docker for the PostgreSQL
     npm install
     ```
 3.  **Set up environment variables**:
-    Create a `.env.local` file in the root directory (copy `.env.example` if available) and ensure `DATABASE_URL` points to your local Docker instance:
+    Create a `.env.local` file in the root directory (copy `.env.example` if available) and ensure `DATABASE_URL` points to your local PostgreSQL instance:
     ```env
     DATABASE_URL="postgresql://postgres:password@localhost:5432/devdb"
     VITE_CLERK_PUBLISHABLE_KEY="your_clerk_publishable_key"
     CLERK_SECRET_KEY="your_clerk_secret_key"
     ```
-4.  **Start the database**:
-    ```bash
-    docker compose up -d
-    ```
-5.  **Run database migrations**:
+4.  **Run database migrations**:
     ```bash
     npx drizzle-kit push
     ```
-6.  **Run the development server**:
+5.  **Run the development server**:
     ```bash
     npm run dev
     ```
