@@ -2,7 +2,6 @@ import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { getDb } from '../db/db.server'
 import { userCertifications } from '../db/schema'
-import { eq } from 'drizzle-orm'
 
 export const Route = createFileRoute('/api/dashboard')({
     server: {
@@ -22,10 +21,14 @@ export const Route = createFileRoute('/api/dashboard')({
                         return c.daysUntilExpiration <= 30 && c.daysUntilExpiration > 0
                     }).length
 
+                    const complianceRate = allCerts.length > 0
+                        ? Math.round((activeCerts / allCerts.length) * 100)
+                        : 0
+
                     return json({
                         activeCerts,
                         expiringSoon,
-                        complianceRate: 98 // Mock value
+                        complianceRate
                     })
                 } catch (error) {
                     console.error('[API Dashboard] Error:', error)

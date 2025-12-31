@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Search, ExternalLink, Plus, Edit, Trash2, Database, ShieldCheck, RefreshCw, X } from 'lucide-react'
+import { Search, ExternalLink, Plus, Edit, Trash2, Database, ShieldCheck, X } from 'lucide-react'
 import { useUser } from '@clerk/tanstack-react-start'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, useMemo } from 'react'
@@ -34,6 +34,7 @@ function CatalogPage() {
     const [sortBy, setSortBy] = useState('name') // name, vendor, level
     const [vendorFilter, setVendorFilter] = useState('All')
     const [difficultyFilter, setDifficultyFilter] = useState('All')
+    const [categoryFilter, setCategoryFilter] = useState('All')
     const [showAddModal, setShowAddModal] = useState(false)
     const [selectedCert, setSelectedCert] = useState<any>(null)
     const [newCert, setNewCert] = useState({ id: '', name: '', vendorName: '', difficulty: 'Intermediate', price: '', category: 'Cloud', description: '' })
@@ -69,7 +70,14 @@ function CatalogPage() {
     const vendors = useMemo(() => {
         if (!catalog?.certifications) return ['All']
         const uniqueVendors = Array.from(new Set(catalog.certifications.map((c: any) => c.vendor))) as string[]
-        return ['All', ...uniqueVendors.sort()]
+        return ['All', ...uniqueVendors.filter(Boolean).sort()]
+    }, [catalog?.certifications])
+
+    // List of unique categories for filtering
+    const categories = useMemo(() => {
+        if (!catalog?.certifications) return ['All']
+        const uniqueCategories = Array.from(new Set(catalog.certifications.map((c: any) => c.category))) as string[]
+        return ['All', ...uniqueCategories.filter(Boolean).sort()]
     }, [catalog?.certifications])
 
     // Filter and Sort certifications
@@ -98,6 +106,11 @@ function CatalogPage() {
             processed = processed.filter((cert: any) => cert.level === difficultyFilter)
         }
 
+        // 4. Category Filter
+        if (categoryFilter !== 'All') {
+            processed = processed.filter((cert: any) => cert.category === categoryFilter)
+        }
+
         // 4. Sorting
         processed.sort((a: any, b: any) => {
             if (sortBy === 'name') return a.name.localeCompare(b.name)
@@ -110,7 +123,7 @@ function CatalogPage() {
         })
 
         return processed
-    }, [catalog?.certifications, searchQuery, sortBy, vendorFilter, difficultyFilter])
+    }, [catalog?.certifications, searchQuery, sortBy, vendorFilter, difficultyFilter, categoryFilter])
 
     // Mutations
     const seedMutation = useMutation({
@@ -154,22 +167,6 @@ function CatalogPage() {
         }
     })
 
-    const syncMutation = useMutation({
-        mutationFn: async (vars: { limit?: number }) => {
-            const res = await fetch('/api/sync', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ limit: vars.limit || 10 })
-            })
-            if (!res.ok) throw new Error('Failed to sync')
-            return res.json()
-        },
-        onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ['catalog'] })
-            alert(`Synced ${data.synced} certifications! ${data.message}`)
-        },
-        onError: (err: any) => alert(`Sync failed: ${err.message}`)
-    })
 
     const addCertMutation = useMutation({
         mutationFn: async (certData: { id: string; name: string; vendorName: string; difficulty: string; price: string; category: string; description: string }) => {
@@ -205,11 +202,6 @@ function CatalogPage() {
         }
     }
 
-    const handleSync = () => {
-        if (confirm('Sync catalog with ITExams? This might take a while.')) {
-            syncMutation.mutate({ limit: 10 })
-        }
-    }
 
     const handlePromote = () => {
         promoteMutation.mutate({ userId: user?.id || '' })
@@ -261,6 +253,14 @@ function CatalogPage() {
                         </select>
 
                         <select
+                            value={categoryFilter}
+                            onChange={(e) => setCategoryFilter(e.target.value)}
+                            className="px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            {categories.map(c => <option key={c} value={c} className="dark:bg-slate-900">{c === 'All' ? 'All Categories' : c}</option>)}
+                        </select>
+
+                        <select
                             value={sortBy}
                             onChange={(e) => setSortBy(e.target.value)}
                             className="px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500"
@@ -290,14 +290,6 @@ function CatalogPage() {
                                     className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
                                 >
                                     <Database className="w-4 h-4" /> Seed
-                                </button>
-                                <button
-                                    onClick={handleSync}
-                                    disabled={syncMutation.isPending}
-                                    className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium disabled:opacity-50"
-                                >
-                                    <RefreshCw className={syncMutation.isPending ? "w-4 h-4 animate-spin" : "w-4 h-4"} />
-                                    {syncMutation.isPending ? 'Syncing...' : 'Sync ITExams'}
                                 </button>
                                 <button
                                     onClick={() => setShowAddModal(true)}
@@ -330,13 +322,8 @@ function CatalogPage() {
                                 {cert.vendor?.charAt(0)}
                             </div>
                             <span className="text-xs font-semibold px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded">
-                                {cert.level}
+                                {cert.category || 'Cloud'}
                             </span>
-                            {cert.price && (
-                                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                                    {cert.price}
-                                </span>
-                            )}
                         </div>
                         <h3 className="font-bold text-lg text-slate-900 dark:text-slate-50 mb-1 group-hover:text-blue-600 transition-colors line-clamp-2">{cert.name}</h3>
                         <p className="text-sm text-slate-500 mb-6">{cert.vendor}</p>

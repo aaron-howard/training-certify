@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { getDb } from '../db/db.server'
-import { teams, userTeams, userCertifications, users } from '../db/schema'
+import { teams, userTeams, userCertifications } from '../db/schema'
 import { sql, eq, count } from 'drizzle-orm'
 
 export const Route = createFileRoute('/api/teams')({
@@ -20,12 +20,41 @@ export const Route = createFileRoute('/api/teams')({
                         name: teams.name,
                         description: teams.description,
                         managerId: teams.managerId,
-                        memberCount: sql<number>`count(${userTeams.userId})`.mapWith(Number)
                     })
                         .from(teams)
-                        .leftJoin(userTeams, eq(teams.id, userTeams.teamId))
-                        .groupBy(teams.id, teams.name, teams.description, teams.managerId)
 
+
+                    const result = []
+                    let totalCoverageSum = 0
+
+                    for (const team of teamsResult) {
+                        const members = await db.select({ userId: userTeams.userId })
+                            .from(userTeams)
+                            .where(eq(userTeams.teamId, team.id))
+
+                        const memberCount = members.length
+                        let coverage = 0
+
+                        if (memberCount > 0) {
+                            // Calculate how many members have at least one certification
+                            const memberIds = members.map(m => m.userId)
+                            const membersWithCerts = await db.select({ userId: userCertifications.userId })
+                                .from(userCertifications)
+                                .where(sql`${userCertifications.userId} IN ${memberIds}`)
+                                .groupBy(userCertifications.userId)
+
+                            coverage = Math.round((membersWithCerts.length / memberCount) * 100)
+                        }
+
+                        totalCoverageSum += coverage
+                        result.push({
+                            ...team,
+                            memberCount,
+                            coverage
+                        })
+                    }
+
+                    const overallCoverage = result.length > 0 ? Math.round(totalCoverageSum / result.length) : 0
                     const totalCertsCount = await db.select({ value: count() }).from(userCertifications)
                     const expiringCount = await db.select({ value: count() })
                         .from(userCertifications)
@@ -33,16 +62,13 @@ export const Route = createFileRoute('/api/teams')({
 
                     const metrics = [
                         { label: 'Total Certifications', value: totalCertsCount[0]?.value || 0, change: 0, trend: 'up' },
-                        { label: 'Coverage Rate', value: '72%', change: 5, trend: 'up' },
+                        { label: 'Coverage Rate', value: `${overallCoverage}%`, change: 0, trend: 'up' },
                         { label: 'Expiring Soon', value: expiringCount[0]?.value || 0, change: 0, trend: 'down' },
                         { label: 'Critical Gaps', value: 0, change: 0, trend: 'up' }
                     ]
 
                     return json({
-                        teams: teamsResult.map((t) => ({
-                            ...t,
-                            coverage: Math.floor(Math.random() * 40) + 60
-                        })),
+                        teams: result,
                         metrics
                     })
                 } catch (error) {

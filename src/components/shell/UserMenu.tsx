@@ -1,9 +1,24 @@
 import { UserButton, useUser, SignInButton, SignedIn, SignedOut } from '@clerk/tanstack-react-start'
 import { Bell } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
 
 export function UserMenu() {
     const { user } = useUser()
+
+    const { data: unreadNotifications = [] } = useQuery({
+        queryKey: ['notifications', 'unread', user?.id],
+        queryFn: async () => {
+            const res = await fetch('/api/notifications')
+            if (!res.ok) return []
+            const data = await res.json()
+            return data.filter((n: any) => !n.read)
+        },
+        enabled: !!user?.id,
+        refetchInterval: 30000 // Refetch every 30 seconds
+    })
+
+    const hasUnread = unreadNotifications.length > 0
 
     return (
         <div className="flex items-center gap-2">
@@ -24,7 +39,9 @@ export function UserMenu() {
                         title="Notifications"
                     >
                         <Bell className="w-5 h-5" />
-                        <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900" />
+                        {hasUnread && (
+                            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900" />
+                        )}
                     </Link>
 
                     <div className="pl-4 border-l border-slate-200 dark:border-slate-800 flex items-center gap-3">

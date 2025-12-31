@@ -22,7 +22,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiUsersRouteImport } from './routes/api.users'
 import { Route as ApiTeamsRouteImport } from './routes/api.teams'
 import { Route as ApiTeamMembersRouteImport } from './routes/api.team-members'
-import { Route as ApiSyncRouteImport } from './routes/api.sync'
 import { Route as ApiSeedRouteImport } from './routes/api.seed'
 import { Route as ApiNotificationsRouteImport } from './routes/api.notifications'
 import { Route as ApiNotificationSettingsRouteImport } from './routes/api.notification-settings'
@@ -102,11 +101,6 @@ const ApiTeamsRoute = ApiTeamsRouteImport.update({
 const ApiTeamMembersRoute = ApiTeamMembersRouteImport.update({
   id: '/api/team-members',
   path: '/api/team-members',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiSyncRoute = ApiSyncRouteImport.update({
-  id: '/api/sync',
-  path: '/api/sync',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSeedRoute = ApiSeedRouteImport.update({
@@ -204,7 +198,6 @@ export interface FileRoutesByFullPath {
   '/api/notification-settings': typeof ApiNotificationSettingsRoute
   '/api/notifications': typeof ApiNotificationsRoute
   '/api/seed': typeof ApiSeedRoute
-  '/api/sync': typeof ApiSyncRoute
   '/api/team-members': typeof ApiTeamMembersRoute
   '/api/teams': typeof ApiTeamsRoute
   '/api/users': typeof ApiUsersRoute
@@ -235,7 +228,6 @@ export interface FileRoutesByTo {
   '/api/notification-settings': typeof ApiNotificationSettingsRoute
   '/api/notifications': typeof ApiNotificationsRoute
   '/api/seed': typeof ApiSeedRoute
-  '/api/sync': typeof ApiSyncRoute
   '/api/team-members': typeof ApiTeamMembersRoute
   '/api/teams': typeof ApiTeamsRoute
   '/api/users': typeof ApiUsersRoute
@@ -267,7 +259,6 @@ export interface FileRoutesById {
   '/api/notification-settings': typeof ApiNotificationSettingsRoute
   '/api/notifications': typeof ApiNotificationsRoute
   '/api/seed': typeof ApiSeedRoute
-  '/api/sync': typeof ApiSyncRoute
   '/api/team-members': typeof ApiTeamMembersRoute
   '/api/teams': typeof ApiTeamsRoute
   '/api/users': typeof ApiUsersRoute
@@ -300,7 +291,6 @@ export interface FileRouteTypes {
     | '/api/notification-settings'
     | '/api/notifications'
     | '/api/seed'
-    | '/api/sync'
     | '/api/team-members'
     | '/api/teams'
     | '/api/users'
@@ -331,7 +321,6 @@ export interface FileRouteTypes {
     | '/api/notification-settings'
     | '/api/notifications'
     | '/api/seed'
-    | '/api/sync'
     | '/api/team-members'
     | '/api/teams'
     | '/api/users'
@@ -362,7 +351,6 @@ export interface FileRouteTypes {
     | '/api/notification-settings'
     | '/api/notifications'
     | '/api/seed'
-    | '/api/sync'
     | '/api/team-members'
     | '/api/teams'
     | '/api/users'
@@ -394,7 +382,6 @@ export interface RootRouteChildren {
   ApiNotificationSettingsRoute: typeof ApiNotificationSettingsRoute
   ApiNotificationsRoute: typeof ApiNotificationsRoute
   ApiSeedRoute: typeof ApiSeedRoute
-  ApiSyncRoute: typeof ApiSyncRoute
   ApiTeamMembersRoute: typeof ApiTeamMembersRoute
   ApiTeamsRoute: typeof ApiTeamsRoute
   ApiUsersRoute: typeof ApiUsersRoute
@@ -498,13 +485,6 @@ declare module '@tanstack/react-router' {
       path: '/api/team-members'
       fullPath: '/api/team-members'
       preLoaderRoute: typeof ApiTeamMembersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/sync': {
-      id: '/api/sync'
-      path: '/api/sync'
-      fullPath: '/api/sync'
-      preLoaderRoute: typeof ApiSyncRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/seed': {
@@ -634,7 +614,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiNotificationSettingsRoute: ApiNotificationSettingsRoute,
   ApiNotificationsRoute: ApiNotificationsRoute,
   ApiSeedRoute: ApiSeedRoute,
-  ApiSyncRoute: ApiSyncRoute,
   ApiTeamMembersRoute: ApiTeamMembersRoute,
   ApiTeamsRoute: ApiTeamsRoute,
   ApiUsersRoute: ApiUsersRoute,

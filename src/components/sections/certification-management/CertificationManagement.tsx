@@ -3,7 +3,8 @@ import type {
     UserCertification,
     CertificationStatus
 } from '../../../types'
-import { Search, Plus, ChevronDown, Calendar, AlertCircle, CheckCircle2, XCircle, Edit, Trash2, FileText } from 'lucide-react'
+import { Search, Plus, ChevronDown, Calendar, AlertCircle, CheckCircle2, XCircle, Edit, Trash2, FileText, X } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
 
 export interface CertificationManagementProps {
     userCertifications: UserCertification[]
@@ -24,6 +25,27 @@ export function CertificationManagement({
     const [statusFilter, setStatusFilter] = useState<CertificationStatus | 'all'>('all')
     const [sortBy, setSortBy] = useState<'expiration' | 'name'>('expiration')
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+    const [showAddModal, setShowAddModal] = useState(false)
+
+    // Form state for new certification
+    const [formData, setFormData] = useState({
+        certificationId: '',
+        certificationNumber: '',
+        issueDate: new Date().toISOString().split('T')[0],
+        expirationDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    })
+
+    // Fetch catalog for the selection dropdown
+    const { data: catalogData } = useQuery({
+        queryKey: ['catalog'],
+        queryFn: async () => {
+            const res = await fetch('/api/catalog')
+            if (!res.ok) return { certifications: [] }
+            return res.json()
+        }
+    })
+
+    const catalog = catalogData?.certifications || []
 
     const normalizedCertifications = useMemo(() => {
         // Deduplicate and enrich with dynamic status
@@ -116,13 +138,7 @@ export function CertificationManagement({
                         </p>
                     </div>
                     <button
-                        onClick={() => onCreate?.({
-                            certificationName: 'New Certification',
-                            vendorName: 'Vendor',
-                            certificationNumber: 'NEW-123',
-                            issueDate: new Date().toISOString().split('T')[0],
-                            expirationDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                        })}
+                        onClick={() => setShowAddModal(true)}
                         className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg font-medium transition-colors shadow-sm hover:shadow-md"
                     >
                         <Plus className="w-5 h-5" />
@@ -290,6 +306,100 @@ export function CertificationManagement({
                     </div>
                 )}
             </div>
+            {/* Add Certification Modal */}
+            {showAddModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white dark:bg-slate-900 rounded-xl p-6 w-full max-w-md shadow-xl">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">Add Certification</h2>
+                            <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-slate-600">
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+                        <form onSubmit={(e) => {
+                            e.preventDefault()
+                            const selected = catalog.find((c: any) => c.id === formData.certificationId)
+                            if (selected) {
+                                onCreate?.({
+                                    ...formData,
+                                    certificationName: selected.name,
+                                    vendorName: selected.vendor
+                                })
+                                setShowAddModal(false)
+                                setFormData({
+                                    certificationId: '',
+                                    certificationNumber: '',
+                                    issueDate: new Date().toISOString().split('T')[0],
+                                    expirationDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                                })
+                            }
+                        }} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Select Certification</label>
+                                <select
+                                    value={formData.certificationId}
+                                    onChange={(e) => setFormData({ ...formData, certificationId: e.target.value })}
+                                    required
+                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 text-sm"
+                                >
+                                    <option value="">Select from catalog...</option>
+                                    {catalog.map((c: any) => (
+                                        <option key={c.id} value={c.id}>{c.vendor}: {c.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Certification Number</label>
+                                <input
+                                    type="text"
+                                    value={formData.certificationNumber}
+                                    onChange={(e) => setFormData({ ...formData, certificationNumber: e.target.value })}
+                                    placeholder="e.g., AWS-123456"
+                                    required
+                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 text-sm"
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Issue Date</label>
+                                    <input
+                                        type="date"
+                                        value={formData.issueDate}
+                                        onChange={(e) => setFormData({ ...formData, issueDate: e.target.value })}
+                                        required
+                                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Expiry Date</label>
+                                    <input
+                                        type="date"
+                                        value={formData.expirationDate}
+                                        onChange={(e) => setFormData({ ...formData, expirationDate: e.target.value })}
+                                        required
+                                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100"
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex gap-3 pt-4 text-sm">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowAddModal(false)}
+                                    className="flex-1 px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-950 text-slate-700 dark:text-slate-300"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                                >
+                                    Add Certification
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
