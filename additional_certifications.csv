@@ -1,0 +1,62 @@
+ExamCode,ExamTitle,Vendor,Level,Subject,Product,Roles,Time Limit,Price
+ANS-C01,Amazon Certified Advanced Networking - Specialty,Amazon,Professional,Cloud,AWS,Network Engineer,170 min,$300
+AIF-C01,Amazon Certified AI Practitioner,Amazon,Beginner,AI,AWS,AI Engineer,90 min,$100
+DOP-C02,AWS Certified DevOps Engineer - Professional,Amazon,Professional,DevOps,AWS,DevOps Engineer,180 min,$300
+DVA-C02,AWS Certified Developer - Associate,Amazon,Associate,Cloud,AWS,Developer,130 min,$150
+SAA-C03,AWS Certified Solutions Architect - Associate,Amazon,Associate,Cloud,AWS,Solution Architect,130 min,$150
+SAP-C02,AWS Certified Solutions Architect - Professional,Amazon,Professional,Cloud,AWS,Solution Architect,180 min,$300
+SCS-C02,AWS Certified Security - Specialty,Amazon,Professional,Security,AWS,Security Engineer,170 min,$300
+SOA-C02,AWS Certified SysOps Administrator - Associate,Amazon,Associate,Cloud,AWS,Administrator,130 min,$150
+CLF-C02,AWS Certified Cloud Practitioner,Amazon,Beginner,Cloud,AWS,Administrator,90 min,$100
+220-1101,CompTIA A+ Core 1,CompTIA,Beginner,IT,CompTIA,Support Technician,90 min,$246
+220-1102,CompTIA A+ Core 2,CompTIA,Beginner,IT,CompTIA,Support Technician,90 min,$246
+N10-008,CompTIA Network+,CompTIA,Beginner,Networking,CompTIA,Network Engineer,90 min,$358
+SY0-701,CompTIA Security+,CompTIA,Beginner,Security,CompTIA,Security Engineer,90 min,$392
+CV0-003,CompTIA Cloud+,CompTIA,Intermediate,Cloud,CompTIA,Administrator,90 min,$358
+CS0-003,CompTIA CySA+,CompTIA,Intermediate,Security,CompTIA,Security Analyst,165 min,$392
+PT0-002,CompTIA PenTest+,CompTIA,Intermediate,Security,CompTIA,Penetration Tester,165 min,$392
+CAS-004,CompTIA Advanced Security Practitioner (CASP+),CompTIA,Advanced,Security,CompTIA,Security Architect,165 min,$494
+AZ-900,Microsoft Azure Fundamentals,Microsoft,Beginner,Cloud,Azure,Administrator,85 min,$99
+AZ-104,Microsoft Azure Administrator,Microsoft,Intermediate,Cloud,Azure,Administrator,120 min,$165
+AZ-204,Microsoft Azure Developer,Microsoft,Intermediate,Cloud,Azure,Developer,120 min,$165
+AZ-305,Microsoft Azure Solutions Architect Expert,Microsoft,Advanced,Cloud,Azure,Solution Architect,120 min,$165
+AZ-400,Microsoft Azure DevOps Engineer Expert,Microsoft,Advanced,DevOps,Azure,DevOps Engineer,120 min,$165
+AZ-500,Microsoft Azure Security Engineer Associate,Microsoft,Intermediate,Security,Azure,Security Engineer,120 min,$165
+AZ-700,Microsoft Azure Network Engineer Associate,Microsoft,Intermediate,Networking,Azure,Network Engineer,120 min,$165
+SC-100,Microsoft Cybersecurity Architect Expert,Microsoft,Advanced,Security,Azure,Security Architect,120 min,$165
+SC-200,Microsoft Security Operations Analyst,Microsoft,Intermediate,Security,Azure,Security Operations Analyst,120 min,$165
+SC-300,Microsoft Identity and Access Administrator,Microsoft,Intermediate,Security,Azure,Security Engineer,120 min,$165
+SC-400,Microsoft Information Protection Administrator,Microsoft,Intermediate,Security,Azure,Administrator,120 min,$165
+SC-900,Microsoft Security Compliance and Identity Fundamentals,Microsoft,Beginner,Security,Azure,Administrator,60 min,$99
+PL-900,Microsoft Power Platform Fundamentals,Microsoft,Beginner,Power Platform,Power Platform,Administrator,60 min,$99
+PL-100,Microsoft Power Platform App Maker,Microsoft,Intermediate,Power Platform,Power Platform,App Maker,120 min,$165
+PL-200,Microsoft Power Platform Functional Consultant,Microsoft,Intermediate,Power Platform,Power Platform,Functional Consultant,120 min,$165
+PL-300,Microsoft Power BI Data Analyst,Microsoft,Intermediate,Data,Power Platform,Data Analyst,120 min,$165
+PL-400,Microsoft Power Platform Developer,Microsoft,Intermediate,Power Platform,Power Platform,Developer,120 min,$165
+PL-600,Microsoft Power Platform Solution Architect,Microsoft,Advanced,Power Platform,Power Platform,Solution Architect,120 min,$165
+MB-910,Microsoft Dynamics 365 Fundamentals (CRM),Microsoft,Beginner,Dynamics 365,Dynamics 365,Administrator,60 min,$99
+MB-920,Microsoft Dynamics 365 Fundamentals (ERP),Microsoft,Beginner,Dynamics 365,Dynamics 365,Administrator,60 min,$99
+MS-102,Microsoft 365 Administrator Expert,Microsoft,Advanced,Modern Workplace,Microsoft 365,Administrator,120 min,$165
+MS-900,Microsoft 365 Fundamentals,Microsoft,Beginner,Modern Workplace,Microsoft 365,Administrator,60 min,$99
+AI-900,Microsoft Azure AI Fundamentals,Microsoft,Beginner,AI,Azure,AI Engineer,60 min,$99
+AI-102,Microsoft Azure AI Engineer Associate,Microsoft,Intermediate,AI,Azure,AI Engineer,120 min,$165
+DP-900,Microsoft Azure Data Fundamentals,Microsoft,Beginner,Data,Azure,Data Engineer,60 min,$99
+DP-100,Microsoft Azure Data Scientist Associate,Microsoft,Intermediate,Data,Azure,Data Scientist,120 min,$165
+DP-203,Microsoft Azure Data Engineer Associate,Microsoft,Intermediate,Data,Azure,Data Engineer,120 min,$165
+DP-300,Microsoft Azure Database Administrator Associate,Microsoft,Intermediate,Data,Azure,Database Administrator,120 min,$165
+DP-420,Microsoft Azure Cosmos DB Developer Specialty,Microsoft,Intermediate,Data,Azure,Developer,120 min,$165
+DP-500,Microsoft Azure Enterprise Data Analyst Associate,Microsoft,Intermediate,Data,Azure,Data Analyst,120 min,$165
+DP-600,Microsoft Fabric Analytics Engineer Associate,Microsoft,Intermediate,Data,Fabric,Data Engineer,120 min,$165
+350-401,ENCOR - Implementing Cisco Enterprise Network Core Technologies,Cisco,Professional,Networking,Enterprise,Network Engineer,120 min,$400
+200-301,CCNA - Implementing and Administering Cisco Solutions,Cisco,Associate,Networking,Enterprise,Network Engineer,120 min,$300
+100-490,CCT Routing and Switching,Cisco,Beginner,Networking,Enterprise,Field Technician,90 min,$125
+350-101,CLCOR - Implementing Cisco Collaboration Core Technologies,Cisco,Professional,Collaboration,Collaboration,Network Engineer,120 min,$400
+350-501,SPCOR - Implementing Cisco Service Provider Network Core Technologies,Cisco,Professional,Service Provider,Service Provider,Network Engineer,120 min,$400
+350-601,DCCOR - Implementing Cisco Data Center Core Technologies,Cisco,Professional,Data Center,Data Center,Network Engineer,120 min,$400
+350-701,SCOR - Implementing Cisco Security Core Technologies,Cisco,Professional,Security,Security,Security Engineer,120 min,$400
+350-801,CLCOR - Implementing Cisco Collaboration Core Technologies,Cisco,Professional,Collaboration,Collaboration,Network Engineer,120 min,$400
+350-901,DEVCOR - Developing Applications Using Cisco Core Platforms and APIs,Cisco,Professional,DevNet,DevNet,Developer,120 min,$400
+200-901,DEVASC - Developing Applications and Automating Workflows using Cisco Platforms,Cisco,Associate,DevNet,DevNet,Developer,120 min,$300
+200-201,CBROPS - Understanding Cisco Cybersecurity Operations Fundamentals,Cisco,Associate,Security,Security,Security Analyst,120 min,$300
+CCIE,CCIE Enterprise Infrastructure,Cisco,Expert,Networking,Enterprise,Network Architect,480 min,$1600
+CCDE,Cisco Certified Design Expert,Cisco,Expert,Design,Enterprise,Network Architect,480 min,$1600
