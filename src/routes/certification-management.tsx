@@ -28,6 +28,16 @@ const deleteCertification = async (id: string) => {
     return res.json()
 }
 
+const uploadProof = async ({ id, proof }: { id: string, proof: any }) => {
+    const res = await fetch('/api/certifications', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'addProof', id, proof })
+    })
+    if (!res.ok) throw new Error('Failed to upload proof')
+    return res.json()
+}
+
 export const Route = createFileRoute('/certification-management')({
     component: CertificationManagementPage,
 })
@@ -55,6 +65,11 @@ function CertificationManagementPage() {
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['userCertifications'] }),
     })
 
+    const uploadMutation = useMutation({
+        mutationFn: uploadProof,
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['userCertifications'] }),
+    })
+
     const handleCreate = (data: any) => {
         createMutation.mutate({
             ...data,
@@ -73,13 +88,28 @@ function CertificationManagementPage() {
         }
     }
 
+    const handleUpload = (id: string, file: File) => {
+        // In a real app, you'd upload the file to S3/Blob storage first
+        // Here we'll simulate it by sending the filename
+        uploadMutation.mutate({
+            id,
+            proof: {
+                fileName: file.name,
+                fileUrl: URL.createObjectURL(file) // Mock URL for local preview
+            }
+        })
+    }
+
     return (
         <CertificationManagement
             userCertifications={certs || []}
             onCreate={handleCreate}
             onEdit={handleEdit}
             onDelete={handleDelete}
-            onView={(id) => console.log('View', id)}
+            onView={() => {
+                // The component handles opening the modal internally
+            }}
+            onUploadProof={handleUpload}
         />
     )
 }

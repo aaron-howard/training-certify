@@ -6,23 +6,35 @@ import { userCertifications } from '../db/schema'
 export const Route = createFileRoute('/api/dashboard')({
     server: {
         handlers: {
-            GET: async () => {
+            GET: async ({ request }) => {
                 try {
+                    const url = new URL(request.url)
+                    const userId = url.searchParams.get('userId')
                     const db = await getDb()
                     if (!db) {
                         return json({ error: 'Database not available' }, { status: 500 })
                     }
 
-                    // Get counts
-                    const allCerts = await db.select().from(userCertifications)
-                    const activeCerts = allCerts.filter(c => c.status === 'active').length
-                    const expiringSoon = allCerts.filter(c => {
-                        if (!c.daysUntilExpiration) return false
-                        return c.daysUntilExpiration <= 30 && c.daysUntilExpiration > 0
+                    // Get certs (filtered by userId if provided)
+                    let query = db.select().from(userCertifications)
+                    if (userId) {
+                        // Import eq if not already present, but I'll use simple filter since it's fetching all anyway
+                    }
+
+                    const allCerts = await query
+                    const filteredCerts = userId
+                        ? allCerts.filter(c => c.userId === userId)
+                        : allCerts
+
+                    const activeCerts = filteredCerts.filter(c => c.status === 'active').length
+                    const expiringSoon = filteredCerts.filter(c => {
+                        // Status is pre-calculated by my logic in other places, 
+                        // but let's ensure it's accurate here.
+                        return c.status === 'expiring' || c.status === 'expiring-soon'
                     }).length
 
-                    const complianceRate = allCerts.length > 0
-                        ? Math.round((activeCerts / allCerts.length) * 100)
+                    const complianceRate = filteredCerts.length > 0
+                        ? Math.round((activeCerts / filteredCerts.length) * 100)
                         : 0
 
                     return json({

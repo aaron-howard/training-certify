@@ -3,7 +3,7 @@ import type {
     UserCertification,
     CertificationStatus
 } from '../../../types'
-import { Search, Plus, ChevronDown, Calendar, AlertCircle, CheckCircle2, XCircle, Edit, Trash2, FileText, X } from 'lucide-react'
+import { Search, Plus, ChevronDown, Calendar, AlertCircle, CheckCircle2, XCircle, Edit, Trash2, FileText, X, Shield } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 
 export interface CertificationManagementProps {
@@ -12,6 +12,7 @@ export interface CertificationManagementProps {
     onEdit?: (id: string, data: any) => void
     onDelete?: (id: string) => void
     onView?: (id: string) => void
+    onUploadProof?: (id: string, file: File) => void
 }
 
 export function CertificationManagement({
@@ -20,12 +21,14 @@ export function CertificationManagement({
     onEdit,
     onDelete,
     onView,
+    onUploadProof,
 }: CertificationManagementProps) {
     const [searchQuery, setSearchQuery] = useState('')
     const [statusFilter, setStatusFilter] = useState<CertificationStatus | 'all'>('all')
     const [sortBy, setSortBy] = useState<'expiration' | 'name'>('expiration')
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
     const [showAddModal, setShowAddModal] = useState(false)
+    const [viewingCertId, setViewingCertId] = useState<string | null>(null)
 
     // Form state for new certification
     const [formData, setFormData] = useState({
@@ -45,9 +48,22 @@ export function CertificationManagement({
         }
     })
 
+    // Fetch detailed cert info when viewing
+    const { data: detailedCert, isLoading: isLoadingDetails } = useQuery({
+        queryKey: ['certDetails', viewingCertId],
+        queryFn: async () => {
+            if (!viewingCertId) return null
+            const res = await fetch(`/api/certifications?id=${viewingCertId}`)
+            if (!res.ok) return null
+            return res.json()
+        },
+        enabled: !!viewingCertId
+    })
+
     const catalog = catalogData?.certifications || []
 
     const normalizedCertifications = useMemo(() => {
+        // ... existing normalizedCertifications logic
         // Deduplicate and enrich with dynamic status
         const unique = Array.from(new Map(userCertifications.map(c => [c.id, c])).values())
 
@@ -71,6 +87,7 @@ export function CertificationManagement({
     }, [userCertifications])
 
     const filteredCertifications = useMemo(() => {
+        // ... existing filteredCertifications logic
         let filtered = [...normalizedCertifications]
 
         if (searchQuery) {
@@ -107,6 +124,7 @@ export function CertificationManagement({
     }, [normalizedCertifications, searchQuery, statusFilter, sortBy, sortOrder])
 
     const statusCounts = useMemo(() => {
+        // ... existing statusCounts logic
         return {
             all: normalizedCertifications.length,
             active: normalizedCertifications.filter(c => c.status === 'active').length,
@@ -116,6 +134,7 @@ export function CertificationManagement({
     }, [normalizedCertifications])
 
     const handleSort = (field: 'expiration' | 'name') => {
+        // ... existing handleSort logic
         if (sortBy === field) {
             setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
         } else {
@@ -124,8 +143,14 @@ export function CertificationManagement({
         }
     }
 
+    const handleViewDetails = (id: string) => {
+        setViewingCertId(id)
+        onView?.(id)
+    }
+
     return (
         <div className="max-w-7xl mx-auto">
+// ... existing JSX starts here
             {/* Header */}
             <div className="mb-8">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -265,7 +290,8 @@ export function CertificationManagement({
                                     certification={cert}
                                     onEdit={onEdit}
                                     onDelete={onDelete}
-                                    onView={onView}
+                                    onView={handleViewDetails}
+                                    onUploadProof={onUploadProof}
                                 />
                             ))}
                         </tbody>
@@ -291,10 +317,10 @@ export function CertificationManagement({
                         key={cert.id}
                         certification={cert}
                         onEdit={onEdit}
-                        onView={onView}
+                        onView={handleViewDetails}
                     />
                 ))}
-
+// ... existing mobile card empty state
                 {filteredCertifications.length === 0 && (
                     <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-8 text-center">
                         <FileText className="w-12 h-12 text-slate-300 dark:text-slate-700 mx-auto mb-3" />
@@ -306,7 +332,19 @@ export function CertificationManagement({
                     </div>
                 )}
             </div>
+
+            {/* Details Modal */}
+            {viewingCertId && (
+                <ViewDetailsModal
+                    isOpen={!!viewingCertId}
+                    onClose={() => setViewingCertId(null)}
+                    cert={detailedCert}
+                    loading={isLoadingDetails}
+                />
+            )}
+
             {/* Add Certification Modal */}
+// ... existing Add Modal
             {showAddModal && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white dark:bg-slate-900 rounded-xl p-6 w-full max-w-md shadow-xl">
@@ -409,12 +447,15 @@ function CertificationRow({
     onEdit,
     onDelete,
     onView,
+    onUploadProof,
 }: {
     certification: UserCertification
     onEdit?: (id: string, data: any) => void
     onDelete?: (id: string) => void
     onView?: (id: string) => void
+    onUploadProof?: (id: string, file: File) => void
 }) {
+    // ... existing CertificationRow logic
     const daysUntilExpiration = certification.expirationDate
         ? Math.ceil((new Date(certification.expirationDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
         : null
@@ -467,6 +508,7 @@ function CertificationRow({
                     <button
                         onClick={() => onView?.(certification.id)}
                         className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400"
+                        title="View Details"
                     >
                         <FileText className="w-4 h-4" />
                     </button>
@@ -476,7 +518,10 @@ function CertificationRow({
                             name="proof-upload"
                             type="file"
                             className="absolute inset-0 opacity-0 cursor-pointer"
-                            onChange={(e) => alert(`Uploaded: ${e.target.files?.[0]?.name}`)}
+                            onChange={(e) => {
+                                const file = e.target.files?.[0]
+                                if (file) onUploadProof?.(certification.id, file)
+                            }}
                         />
                         <button
                             className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400"
@@ -488,12 +533,14 @@ function CertificationRow({
                     <button
                         onClick={() => onEdit?.(certification.id, certification)}
                         className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400"
+                        title="Edit"
                     >
                         <Edit className="w-4 h-4" />
                     </button>
                     <button
                         onClick={() => onDelete?.(certification.id)}
                         className="p-2 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-colors text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400"
+                        title="Delete"
                     >
                         <Trash2 className="w-4 h-4" />
                     </button>
@@ -502,6 +549,108 @@ function CertificationRow({
         </tr>
     )
 }
+
+function ViewDetailsModal({ isOpen, onClose, cert, loading }: { isOpen: boolean, onClose: () => void, cert: any, loading: boolean }) {
+    if (!isOpen) return null
+
+    return (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4">
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-6 w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50">Certification Details</h2>
+                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
+                        <X className="w-6 h-6" />
+                    </button>
+                </div>
+
+                {loading ? (
+                    <div className="py-12 text-center text-slate-500">Loading details...</div>
+                ) : cert ? (
+                    <div className="space-y-8">
+                        {/* Summary Grid */}
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                            <div>
+                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Certification</label>
+                                <p className="text-slate-900 dark:text-slate-50 font-medium">{cert.certificationName}</p>
+                            </div>
+                            <div>
+                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Vendor</label>
+                                <p className="text-slate-900 dark:text-slate-50 font-medium">{cert.vendorName}</p>
+                            </div>
+                            <div>
+                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Number</label>
+                                <p className="text-slate-900 dark:text-slate-50 font-mono text-sm">{cert.certificationNumber || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Issue Date</label>
+                                <p className="text-slate-900 dark:text-slate-50">{cert.issueDate ? new Date(cert.issueDate).toLocaleDateString() : 'N/A'}</p>
+                            </div>
+                            <div>
+                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Expiry Date</label>
+                                <p className="text-slate-900 dark:text-slate-50">{cert.expirationDate ? new Date(cert.expirationDate).toLocaleDateString() : 'Never'}</p>
+                            </div>
+                            <div>
+                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</label>
+                                <div className="mt-1"><StatusBadge status={cert.status} /></div>
+                            </div>
+                        </div>
+
+                        {/* Proofs Section */}
+                        <div className="border-t border-slate-100 dark:border-slate-800 pt-6">
+                            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-50 mb-4 flex items-center gap-2">
+                                <Shield className="w-5 h-5 text-blue-500" />
+                                Evidence & Proofs
+                            </h3>
+
+                            {cert.proofs && cert.proofs.length > 0 ? (
+                                <ul className="space-y-3">
+                                    {cert.proofs.map((proof: any) => (
+                                        <li key={proof.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg">
+                                            <div className="flex items-center gap-3">
+                                                <div className="p-2 bg-blue-100 dark:bg-blue-900/40 text-blue-600 rounded">
+                                                    <FileText className="w-4 h-4" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm font-medium text-slate-900 dark:text-slate-50">{proof.fileName}</p>
+                                                    <p className="text-xs text-slate-500">Uploaded {new Date(proof.uploadedAt).toLocaleDateString()}</p>
+                                                </div>
+                                            </div>
+                                            <a
+                                                href={proof.fileUrl}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="text-sm text-blue-600 hover:underline font-medium"
+                                            >
+                                                View
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <div className="text-center py-8 bg-slate-50 dark:bg-slate-950 rounded-lg border border-dashed border-slate-200 dark:border-slate-800">
+                                    <AlertCircle className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                                    <p className="text-sm text-slate-500">No proof documents uploaded yet.</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="py-12 text-center text-red-500">Error loading certification data.</div>
+                )}
+
+                <div className="mt-8 flex justify-end">
+                    <button
+                        onClick={onClose}
+                        className="px-6 py-2 bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 rounded-lg font-medium"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+}
+// ... CertificationCard remains largely similar, but wire up onView to its handlers too if desired
 
 function CertificationCard({
     certification,

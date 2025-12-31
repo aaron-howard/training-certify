@@ -44,7 +44,7 @@ export const Route = createFileRoute('/api/users')({
             name: data.name,
             email: data.email,
             avatarUrl: data.avatarUrl,
-            role: 'User'
+            role: data.role || 'User'
           }).returning()
 
           return json(result[0], { status: 201 })

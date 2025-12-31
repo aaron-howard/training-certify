@@ -26,6 +26,7 @@ export const Route = createFileRoute('/api/teams')({
 
                     const result = []
                     let totalCoverageSum = 0
+                    const allMemberIds = new Set<string>()
 
                     for (const team of teamsResult) {
                         const members = await db.select({ userId: userTeams.userId })
@@ -33,10 +34,10 @@ export const Route = createFileRoute('/api/teams')({
                             .where(eq(userTeams.teamId, team.id))
 
                         const memberCount = members.length
-                        let coverage = 0
+                        members.forEach(m => allMemberIds.add(m.userId))
 
+                        let coverage = 0
                         if (memberCount > 0) {
-                            // Calculate how many members have at least one certification
                             const memberIds = members.map(m => m.userId)
                             const membersWithCerts = await db.select({ userId: userCertifications.userId })
                                 .from(userCertifications)
@@ -55,15 +56,26 @@ export const Route = createFileRoute('/api/teams')({
                     }
 
                     const overallCoverage = result.length > 0 ? Math.round(totalCoverageSum / result.length) : 0
-                    const totalCertsCount = await db.select({ value: count() }).from(userCertifications)
-                    const expiringCount = await db.select({ value: count() })
-                        .from(userCertifications)
-                        .where(sql`status IN ('expiring', 'expiring-soon')`)
+                    const memberIdsArray = Array.from(allMemberIds)
+
+                    let totalCerts = 0
+                    let expiringSoonCerts = 0
+
+                    if (memberIdsArray.length > 0) {
+                        const scopedCerts = await db.select()
+                            .from(userCertifications)
+                            .where(sql`${userCertifications.userId} IN ${memberIdsArray}`)
+
+                        totalCerts = scopedCerts.length
+                        expiringSoonCerts = scopedCerts.filter(c =>
+                            c.status === 'expiring' || c.status === 'expiring-soon'
+                        ).length
+                    }
 
                     const metrics = [
-                        { label: 'Total Certifications', value: totalCertsCount[0]?.value || 0, change: 0, trend: 'up' },
+                        { label: 'Total Certifications', value: totalCerts, change: 0, trend: 'up' },
                         { label: 'Coverage Rate', value: `${overallCoverage}%`, change: 0, trend: 'up' },
-                        { label: 'Expiring Soon', value: expiringCount[0]?.value || 0, change: 0, trend: 'down' },
+                        { label: 'Expiring Soon', value: expiringSoonCerts, change: 0, trend: 'down' },
                         { label: 'Critical Gaps', value: 0, change: 0, trend: 'up' }
                     ]
 

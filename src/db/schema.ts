@@ -1,7 +1,7 @@
 import { pgTable, text, integer, timestamp, boolean, uuid, pgEnum } from 'drizzle-orm/pg-core';
 
 // Enums for various statuses and types
-export const roleEnum = pgEnum('role', ['Admin', 'User', 'Manager', 'Executive']);
+export const roleEnum = pgEnum('role', ['Admin', 'User', 'Manager', 'Executive', 'Auditor']);
 export const certificationStatusEnum = pgEnum('certification_status', ['active', 'expiring', 'expiring-soon', 'expired']);
 export const certificationCategoryEnum = pgEnum('certification_category', ['Cloud', 'Security', 'Networking', 'Data', 'Project Management']);
 export const certificationDifficultyEnum = pgEnum('certification_difficulty', ['Beginner', 'Intermediate', 'Advanced', 'Expert']);
@@ -83,6 +83,15 @@ export const notifications = pgTable('notifications', {
     isDismissed: boolean('is_dismissed').default(false).notNull(),
     certificationId: text('certification_id'),
     userCertificationId: uuid('user_certification_id'),
+});
+
+// User Certification Proofs (Evidence documents)
+export const userCertificationProofs = pgTable('user_certification_proofs', {
+    id: uuid('id').defaultRandom().primaryKey(),
+    userCertificationId: uuid('user_certification_id').notNull().references(() => userCertifications.id),
+    fileName: text('file_name').notNull(),
+    fileUrl: text('file_url').notNull(),
+    uploadedAt: timestamp('uploaded_at').defaultNow().notNull(),
 });
 
 // Audit Logs

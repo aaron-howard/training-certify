@@ -4,8 +4,10 @@ import { useUser } from '@clerk/tanstack-react-start'
 import { useQuery } from '@tanstack/react-query'
 
 // Use fetch API instead of server imports
-const fetchDashboardStats = async () => {
-  const res = await fetch('/api/dashboard')
+const fetchDashboardStats = async (userId?: string) => {
+  const url = new URL('/api/dashboard', window.location.origin)
+  if (userId) url.searchParams.set('userId', userId)
+  const res = await fetch(url.toString())
   if (!res.ok) return { activeCerts: 0, expiringSoon: 0, complianceRate: 0 }
   return res.json()
 }
@@ -18,8 +20,9 @@ function DashboardPage() {
   const { user, isLoaded } = useUser()
 
   const { data: stats = { activeCerts: 0, expiringSoon: 0, complianceRate: 0 } } = useQuery({
-    queryKey: ['dashboardStats'],
-    queryFn: fetchDashboardStats,
+    queryKey: ['dashboardStats', user?.id],
+    queryFn: () => fetchDashboardStats(user?.id),
+    enabled: isLoaded
   })
 
   return (

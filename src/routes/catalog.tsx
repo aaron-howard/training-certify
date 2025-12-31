@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Search, ExternalLink, Plus, Edit, Trash2, Database, ShieldCheck, X } from 'lucide-react'
+import { Search, ExternalLink, Plus, Edit, Trash2, Database, X } from 'lucide-react'
 import { useUser } from '@clerk/tanstack-react-start'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, useMemo } from 'react'
@@ -148,24 +148,6 @@ function CatalogPage() {
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['catalog'] })
     })
 
-    const promoteMutation = useMutation({
-        mutationFn: async (vars: { userId: string }) => {
-            const res = await fetch('/api/users', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: vars.userId, role: 'Admin' })
-            })
-            if (!res.ok) throw new Error('Failed to promote user')
-            return res.json()
-        },
-        onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ['dbUser'] })
-            alert(`You are now an ${data.role}!`)
-        },
-        onError: (err: any) => {
-            alert(`Promotion failed: ${err.message}`)
-        }
-    })
 
 
     const addCertMutation = useMutation({
@@ -203,9 +185,6 @@ function CatalogPage() {
     }
 
 
-    const handlePromote = () => {
-        promoteMutation.mutate({ userId: user?.id || '' })
-    }
 
     if (isLoading) return <div className="p-8">Loading catalog...</div>
     if (!catalog) return <div className="p-8 text-slate-600">Catalog unavailable at the moment.</div>
@@ -274,15 +253,6 @@ function CatalogPage() {
                     <div className="h-8 w-px bg-slate-200 dark:bg-slate-800 hidden md:block" />
 
                     <div className="flex items-center gap-2">
-                        {!isAdmin && (
-                            <button
-                                onClick={handlePromote}
-                                className="px-4 py-2 text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center gap-1.5"
-                                title="Dev Only: Make me Admin"
-                            >
-                                <ShieldCheck className="w-3.5 h-3.5" /> Become Admin
-                            </button>
-                        )}
                         {isAdmin && (
                             <>
                                 <button

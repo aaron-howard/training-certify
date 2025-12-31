@@ -255,6 +255,7 @@ function TeamManagementPage() {
                 <MemberManagementModal
                     teamId={showMemberModal}
                     teamName={teamData.teams?.find((t: any) => t.id === showMemberModal)?.name || 'Team'}
+                    isAdmin={isAdmin}
                     onClose={() => setShowMemberModal(null)}
                 />
             )}
@@ -263,12 +264,13 @@ function TeamManagementPage() {
 }
 
 // Member Management Modal Component
-function MemberManagementModal({ teamId, teamName, onClose }: { teamId: string; teamName: string; onClose: () => void }) {
+function MemberManagementModal({ teamId, teamName, isAdmin, onClose }: { teamId: string; teamName: string; isAdmin: boolean; onClose: () => void }) {
     const queryClient = useQueryClient()
     const [selectedUserId, setSelectedUserId] = useState('')
     const [showInviteForm, setShowInviteForm] = useState(false)
     const [newUserName, setNewUserName] = useState('')
     const [newUserEmail, setNewUserEmail] = useState('')
+    const [newUserRole, setNewUserRole] = useState('User')
 
     // Fetch all users to add them to teams
     const { data: allUsers = [] } = useQuery({
@@ -292,7 +294,7 @@ function MemberManagementModal({ teamId, teamName, onClose }: { teamId: string; 
 
     // Create a new user and add to team
     const createUserMutation = useMutation({
-        mutationFn: async (userData: { name: string; email: string }) => {
+        mutationFn: async (userData: { name: string; email: string; role: string }) => {
             // Generate a unique ID for the new user
             const newUserId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
 
@@ -303,7 +305,8 @@ function MemberManagementModal({ teamId, teamName, onClose }: { teamId: string; 
                 body: JSON.stringify({
                     id: newUserId,
                     name: userData.name,
-                    email: userData.email
+                    email: userData.email,
+                    role: userData.role
                 })
             })
             if (!createRes.ok) throw new Error('Failed to create user')
@@ -363,6 +366,22 @@ function MemberManagementModal({ teamId, teamName, onClose }: { teamId: string; 
         }
     })
 
+    const updateUserRoleMutation = useMutation({
+        mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
+            const res = await fetch('/api/users', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: userId, role })
+            })
+            if (!res.ok) throw new Error('Failed to update user role')
+            return res.json()
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['teamMembers', teamId] })
+            queryClient.invalidateQueries({ queryKey: ['allUsers'] })
+        }
+    })
+
     // Filter out users who are already members
     const memberIds = new Set(teamMembers.map((m: any) => m.id))
     const availableUsers = allUsers.filter((u: any) => !memberIds.has(u.id))
@@ -370,7 +389,11 @@ function MemberManagementModal({ teamId, teamName, onClose }: { teamId: string; 
     const handleInviteSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         if (newUserName.trim() && newUserEmail.trim()) {
-            createUserMutation.mutate({ name: newUserName.trim(), email: newUserEmail.trim() })
+            createUserMutation.mutate({
+                name: newUserName.trim(),
+                email: newUserEmail.trim(),
+                role: newUserRole
+            })
         }
     }
 
@@ -417,6 +440,19 @@ function MemberManagementModal({ teamId, teamName, onClose }: { teamId: string; 
                                     required
                                     className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 text-sm"
                                 />
+                            </div>
+                            <div>
+                                <select
+                                    value={newUserRole}
+                                    onChange={(e) => setNewUserRole(e.target.value)}
+                                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 text-sm"
+                                >
+                                    <option value="User">User Role</option>
+                                    <option value="Manager">Manager Role</option>
+                                    <option value="Executive">Executive Role</option>
+                                    <option value="Auditor">Auditor Role</option>
+                                    <option value="Admin">Admin Role</option>
+                                </select>
                             </div>
                             <button
                                 type="submit"
@@ -479,7 +515,24 @@ function MemberManagementModal({ teamId, teamName, onClose }: { teamId: string; 
                                         )}
                                         <div>
                                             <div className="font-medium text-slate-900 dark:text-slate-100">{member.name}</div>
-                                            <div className="text-xs text-slate-500">{member.email}</div>
+                                            <div className="text-xs text-slate-500 mb-1">{member.email}</div>
+                                            {isAdmin ? (
+                                                <select
+                                                    value={member.role || 'User'}
+                                                    onChange={(e) => updateUserRoleMutation.mutate({ userId: member.id, role: e.target.value })}
+                                                    className="text-xs border border-slate-200 dark:border-slate-800 rounded-md bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 p-0.5"
+                                                >
+                                                    <option value="User">User</option>
+                                                    <option value="Manager">Manager</option>
+                                                    <option value="Executive">Executive</option>
+                                                    <option value="Auditor">Auditor</option>
+                                                    <option value="Admin">Admin</option>
+                                                </select>
+                                            ) : (
+                                                <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                                                    {member.role || 'User'}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                     <button
