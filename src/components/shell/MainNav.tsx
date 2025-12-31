@@ -2,11 +2,11 @@ import React from 'react'
 import { Link } from '@tanstack/react-router'
 import {
   Award,
-  Users,
-  Shield,
-  BookOpen,
   Bell,
-  User
+  BookOpen,
+  Shield,
+  User,
+  Users
 } from 'lucide-react'
 
 export interface NavigationItem {
@@ -15,7 +15,7 @@ export interface NavigationItem {
 }
 
 export interface MainNavProps {
-  items: NavigationItem[]
+  items: Array<NavigationItem>
 }
 
 const iconMap: Record<string, React.ReactNode> = {

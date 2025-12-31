@@ -1,5 +1,5 @@
 
-import { fetchVendors, fetchExams } from '../src/lib/ingestion.server';
+import { fetchExams, fetchVendors } from '../src/lib/ingestion.server';
 
 async function main() {
     console.log('🧪 Testing ITExams Scraping...');

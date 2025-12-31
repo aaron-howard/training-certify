@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
-import { userCertifications } from '../db/schema';
 import { eq } from 'drizzle-orm';
+import { userCertifications } from '../db/schema';
 import type { UserCertification } from '../types';
 
 export const getUserCertifications = createServerFn({ method: 'GET' })
@@ -15,7 +15,7 @@ export const getUserCertifications = createServerFn({ method: 'GET' })
                 ...cert,
                 verifiedAt: cert.verifiedAt?.toISOString() || '',
                 status: (cert.status || 'active') as UserCertification['status'],
-            })) as UserCertification[];
+            })) as Array<UserCertification>;
             console.log(`✅ [Server] Returning ${mapped.length} user certifications`);
             return mapped;
         } catch (error) {
@@ -69,7 +69,6 @@ export const createCertification = createServerFn({ method: 'POST' })
                 verifiedAt: verifiedAtValue,
             }).returning();
 
-            if (!result || result.length === 0) throw new Error('Failed to create certification record');
             const newCert = result[0];
             return {
                 ...newCert,
@@ -125,7 +124,6 @@ export const updateCertification = createServerFn({ method: 'POST' })
                 .set({ ...updateData, updatedAt: new Date() })
                 .where(eq(userCertifications.id, id))
                 .returning();
-            if (!result || result.length === 0) return null;
             const updatedCert = result[0];
             return {
                 ...updatedCert,

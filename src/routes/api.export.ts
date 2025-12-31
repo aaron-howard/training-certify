@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
+import { eq, sql } from 'drizzle-orm'
 import { getDb } from '../db/db.server'
-import { teams, userTeams, userCertifications, users, certifications } from '../db/schema'
-import { sql, eq } from 'drizzle-orm'
+import { certifications, teams, userCertifications, userTeams, users } from '../db/schema'
 
 export const Route = createFileRoute('/api/export')({
     server: {

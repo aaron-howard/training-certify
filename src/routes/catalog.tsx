@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Search, ExternalLink, Plus, Edit, Trash2, Database, X } from 'lucide-react'
+import { Database, Edit, ExternalLink, Plus, Search, Trash2, X } from 'lucide-react'
 import { useUser } from '@clerk/tanstack-react-start'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useState, useMemo } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMemo, useState } from 'react'
 
 // API fetch functions (using traditional fetch instead of broken createServerFn)
 const fetchCatalog = async () => {
@@ -69,14 +69,14 @@ function CatalogPage() {
     // List of unique vendors for filtering
     const vendors = useMemo(() => {
         if (!catalog?.certifications) return ['All']
-        const uniqueVendors = Array.from(new Set(catalog.certifications.map((c: any) => c.vendor))) as string[]
+        const uniqueVendors = Array.from(new Set(catalog.certifications.map((c: any) => c.vendor)))
         return ['All', ...uniqueVendors.filter(Boolean).sort()]
     }, [catalog?.certifications])
 
     // List of unique categories for filtering
     const categories = useMemo(() => {
         if (!catalog?.certifications) return ['All']
-        const uniqueCategories = Array.from(new Set(catalog.certifications.map((c: any) => c.category))) as string[]
+        const uniqueCategories = Array.from(new Set(catalog.certifications.map((c: any) => c.category)))
         return ['All', ...uniqueCategories.filter(Boolean).sort()]
     }, [catalog?.certifications])
 

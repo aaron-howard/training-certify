@@ -15,7 +15,7 @@ export const Route = createFileRoute('/api/compliance')({
 
                     const logs = await db.select().from(auditLogs).limit(50)
                     const totalAudits = logs.length
-                    const issuesFound = logs.filter((l) => l.action?.includes('issue') || l.action?.includes('failed')).length
+                    const issuesFound = logs.filter((l) => l.action.includes('issue') || l.action.includes('failed')).length
 
                     return json({
                         auditLogs: logs.map(l => ({

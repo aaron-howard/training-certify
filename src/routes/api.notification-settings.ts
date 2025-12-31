@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
+import { eq } from 'drizzle-orm'
 import { getDb } from '../db/db.server'
 import { notifications } from '../db/schema'
-import { eq, and } from 'drizzle-orm'
 
 // Default notification categories
 const defaultCategories = [
@@ -16,10 +16,9 @@ export const Route = createFileRoute('/api/notification-settings')({
     server: {
         handlers: {
             // GET notification settings/categories
-            GET: async ({ request }) => {
+            GET: ({ request: _request }) => {
                 try {
-                    const url = new URL(request.url)
-                    const userId = url.searchParams.get('userId')
+                    // Return default categories (in production, would fetch from DB)
 
                     // Return default categories (in production, would fetch from DB)
                     return json({

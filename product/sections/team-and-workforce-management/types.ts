@@ -15,7 +15,7 @@ export interface User {
   name: string
   email: string
   role: 'Developer' | 'Manager' | 'Architect' | 'SRE' | 'Security Engineer' | 'PM' | 'Executive' | 'Auditor'
-  teamIds: string[]
+  teamIds: Array<string>
   avatarUrl: string | null
 }
 
@@ -24,7 +24,7 @@ export interface Certification {
   name: string
   vendor: string
   renewalCycle: number
-  audience: string[]
+  audience: Array<string>
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced'
 }
 
@@ -48,7 +48,7 @@ export interface TeamMetrics {
   expiringIn90Days: number
   expired: number
   gapCount: number
-  topGaps: string[]
+  topGaps: Array<string>
 }
 
 export interface CertificationRequirement {
@@ -69,14 +69,14 @@ export interface ProjectedGap {
 
 export interface HiringRecommendation {
   role: string
-  certifications: string[]
+  certifications: Array<string>
   rationale: string
   priority: 'low' | 'medium' | 'high'
 }
 
 export interface TrainingPriority {
   certificationId: string
-  targetEmployees: string[]
+  targetEmployees: Array<string>
   estimatedCost: number
   estimatedDuration: number
   priority: 'low' | 'medium' | 'high'
@@ -84,9 +84,9 @@ export interface TrainingPriority {
 
 export interface WorkforcePlanningInsight {
   teamId: string
-  projectedGaps: ProjectedGap[]
-  hiringRecommendations: HiringRecommendation[]
-  trainingPriorities: TrainingPriority[]
+  projectedGaps: Array<ProjectedGap>
+  hiringRecommendations: Array<HiringRecommendation>
+  trainingPriorities: Array<TrainingPriority>
 }
 
 // =============================================================================
@@ -95,24 +95,24 @@ export interface WorkforcePlanningInsight {
 
 export interface TeamWorkforceManagementProps {
   /** List of teams in the organization */
-  teams: Team[]
+  teams: Array<Team>
   /** All users in the organization */
-  users: User[]
+  users: Array<User>
   /** All user certifications */
-  userCertifications: UserCertification[]
+  userCertifications: Array<UserCertification>
   /** Certification catalog */
-  certifications: Certification[]
+  certifications: Array<Certification>
   /** Team-level metrics for dashboard */
-  teamMetrics: TeamMetrics[]
+  teamMetrics: Array<TeamMetrics>
   /** Certification requirements by team and role */
-  certificationRequirements: CertificationRequirement[]
+  certificationRequirements: Array<CertificationRequirement>
   /** Workforce planning insights and recommendations */
-  workforcePlanningInsights: WorkforcePlanningInsight[]
+  workforcePlanningInsights: Array<WorkforcePlanningInsight>
 
   /** Called when user wants to view detailed team information */
   onViewTeamDetails?: (teamId: string) => void
   /** Called when user wants to compare multiple teams */
-  onCompareTeams?: (teamIds: string[]) => void
+  onCompareTeams?: (teamIds: Array<string>) => void
   /** Called when user wants to view workforce planning for a team */
   onViewWorkforcePlanning?: (teamId: string) => void
   /** Called when user wants to set certification requirements for a role/team */

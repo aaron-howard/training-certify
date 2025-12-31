@@ -1,10 +1,10 @@
-import type { Team, TeamMetrics, Certification } from '@/../product/sections/team-and-workforce-management/types'
 import { AlertTriangle, TrendingDown } from 'lucide-react'
+import type { Certification, Team, TeamMetrics } from '@/../product/sections/team-and-workforce-management/types'
 
 interface GapAlertsProps {
-  teams: Team[]
-  teamMetrics: TeamMetrics[]
-  certifications: Certification[]
+  teams: Array<Team>
+  teamMetrics: Array<TeamMetrics>
+  certifications: Array<Certification>
 }
 
 export function GapAlerts({ teams, teamMetrics, certifications }: GapAlertsProps) {
@@ -15,10 +15,10 @@ export function GapAlerts({ teams, teamMetrics, certifications }: GapAlertsProps
     type: 'gap' | 'expired' | 'expiring'
     severity: 'high' | 'medium' | 'low'
     message: string
-    certificationNames: string[]
+    certificationNames: Array<string>
   }
 
-  const alerts: Alert[] = []
+  const alerts: Array<Alert> = []
 
   teamMetrics.forEach(metrics => {
     const team = teams.find(t => t.id === metrics.teamId)
@@ -126,7 +126,7 @@ interface AlertCardProps {
     type: 'gap' | 'expired' | 'expiring'
     severity: 'high' | 'medium' | 'low'
     message: string
-    certificationNames: string[]
+    certificationNames: Array<string>
   }
 }
 

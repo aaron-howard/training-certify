@@ -48,7 +48,7 @@ export interface ComplianceMetrics {
     last30Days: number
     last90Days: number
   }
-  complianceByTeam: ComplianceByTeam[]
+  complianceByTeam: Array<ComplianceByTeam>
 }
 
 export interface ComplianceReportGeneratedBy {
@@ -90,13 +90,13 @@ export interface PendingVerification {
 
 export interface ComplianceAuditProps {
   /** Complete audit log of all certification-related activities */
-  auditLogs: AuditLog[]
+  auditLogs: Array<AuditLog>
   /** Organization-wide compliance metrics and status */
   complianceMetrics: ComplianceMetrics
   /** Generated and pending compliance reports */
-  complianceReports: ComplianceReport[]
+  complianceReports: Array<ComplianceReport>
   /** Certifications pending verification */
-  pendingVerifications: PendingVerification[]
+  pendingVerifications: Array<PendingVerification>
 
   /** Called when user wants to view details of an audit log entry */
   onViewAuditDetails?: (auditLogId: string) => void

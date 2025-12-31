@@ -1,10 +1,10 @@
 
 import 'dotenv/config';
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
+import { sql } from 'drizzle-orm';
 import { getDb } from '../src/db/db.server';
 import { certifications } from '../src/db/schema';
-import { sql } from 'drizzle-orm';
 
 async function main() {
     const csvPath = path.resolve(process.cwd(), 'microsoft_certifications_seed.csv');
@@ -37,7 +37,7 @@ async function main() {
         const line = dataLines[i].replace(/\r$/, '');
 
         // Robust CSV parsing
-        const parts: string[] = [];
+        const parts: Array<string> = [];
         let current = '';
         let inQuotes = false;
         for (let j = 0; j < line.length; j++) {
@@ -65,7 +65,7 @@ async function main() {
             continue;
         }
 
-        let [examCode, examTitle, vendor, level, subject, product, roles, timeLimit, price] = parts;
+        const [examCode, examTitle, vendor, level, subject, product, roles, timeLimit, price] = parts;
 
         const vendorId = vendor.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 

@@ -1,4 +1,4 @@
-import { UserButton, useUser, SignInButton, SignedIn, SignedOut } from '@clerk/tanstack-react-start'
+import { SignInButton, SignedIn, SignedOut, UserButton, useUser } from '@clerk/tanstack-react-start'
 import { Bell } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'

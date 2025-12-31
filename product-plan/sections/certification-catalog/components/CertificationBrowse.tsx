@@ -1,8 +1,8 @@
-import type { CertificationCatalogProps } from '@/../product/sections/certification-catalog/types'
 import { useState } from 'react'
 import { Search, SlidersHorizontal } from 'lucide-react'
 import { CertificationCard } from './CertificationCard'
 import { FilterPanel } from './FilterPanel'
+import type { CertificationCatalogProps } from '@/../product/sections/certification-catalog/types'
 
 export function CertificationBrowse({
   certifications,

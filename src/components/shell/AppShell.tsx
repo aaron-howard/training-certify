@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { MainNav } from './MainNav'
-import { UserMenu } from './UserMenu'
 import { Menu, X } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import { MainNav } from './MainNav'
+import { UserMenu } from './UserMenu'
 
 export interface NavigationItem {
     label: string
@@ -13,7 +13,7 @@ export interface AppShellProps {
     children: React.ReactNode
 }
 
-const navigationItems: NavigationItem[] = [
+const navigationItems: Array<NavigationItem> = [
     { label: 'Certification Management', href: '/certification-management' },
     { label: 'Team & Workforce Management', href: '/team-management' },
     { label: 'Compliance & Audit', href: '/compliance-audit' },

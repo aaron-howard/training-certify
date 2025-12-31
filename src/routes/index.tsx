@@ -1,5 +1,5 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { Award, Users, Shield, BookOpen, ChevronRight } from 'lucide-react'
+import { Link, createFileRoute } from '@tanstack/react-router'
+import { Award, BookOpen, ChevronRight, Shield, Users } from 'lucide-react'
 import { useUser } from '@clerk/tanstack-react-start'
 import { useQuery } from '@tanstack/react-query'
 

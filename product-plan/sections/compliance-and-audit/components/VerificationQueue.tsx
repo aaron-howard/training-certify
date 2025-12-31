@@ -1,9 +1,9 @@
-import type { PendingVerification } from '@/../product/sections/compliance-and-audit/types'
-import { CheckCircle, XCircle, FileText, Clock } from 'lucide-react'
+import { CheckCircle, Clock, FileText, XCircle } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
+import type { PendingVerification } from '@/../product/sections/compliance-and-audit/types'
 
 interface VerificationQueueProps {
-  pendingVerifications: PendingVerification[]
+  pendingVerifications: Array<PendingVerification>
   onVerify?: (certificationId: string, approved: boolean) => void
   onViewDocument?: (documentUrl: string) => void
 }

@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { UserProfile } from '@clerk/tanstack-react-start'
 import { ArrowLeft } from 'lucide-react'
 

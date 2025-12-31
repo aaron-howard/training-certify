@@ -1,13 +1,13 @@
-import { useState, useMemo } from 'react'
-import type {
-    UserCertification,
-    CertificationStatus
-} from '../../../types'
-import { Search, Plus, ChevronDown, Calendar, AlertCircle, CheckCircle2, XCircle, Edit, Trash2, FileText, X, Shield } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { AlertCircle, Calendar, CheckCircle2, ChevronDown, Edit, FileText, Plus, Search, Shield, Trash2, X, XCircle } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
+import type {
+    CertificationStatus,
+    UserCertification
+} from '../../../types'
 
 export interface CertificationManagementProps {
-    userCertifications: UserCertification[]
+    userCertifications: Array<UserCertification>
     onCreate?: (data: any) => void
     onEdit?: (id: string, data: any) => void
     onDelete?: (id: string) => void

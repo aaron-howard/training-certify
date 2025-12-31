@@ -1,8 +1,8 @@
-import type { NotificationsAlertsProps } from '@/../product/sections/notifications-and-alerts/types'
 import { useState } from 'react'
 import { Bell, Settings as SettingsIcon } from 'lucide-react'
 import { NotificationCard } from './NotificationCard'
 import { NotificationSettings } from './NotificationSettings'
+import type { NotificationsAlertsProps } from '@/../product/sections/notifications-and-alerts/types'
 
 export function NotificationsDashboard({
   notifications,

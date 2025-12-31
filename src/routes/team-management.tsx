@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useUser } from '@clerk/tanstack-react-start'
 import { useState } from 'react'
-import { Plus, Trash2, UserPlus, UserMinus, Download, X } from 'lucide-react'
+import { Download, Plus, Trash2, UserMinus, UserPlus, X } from 'lucide-react'
 import { usePermissions } from '../hooks/usePermissions'
 
 const fetchTeams = async () => {

@@ -1,10 +1,10 @@
 
 import 'dotenv/config';
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
+import { sql } from 'drizzle-orm';
 import { getDb } from '../src/db/db.server';
 import { certifications } from '../src/db/schema';
-import { sql } from 'drizzle-orm';
 
 async function main() {
     const csvPath = path.resolve(process.cwd(), 'itexams_certifications.csv');
@@ -42,10 +42,10 @@ async function main() {
         const line = dataLines[i].replace(/\r$/, '');
 
         // Robust CSV parsing
-        const parts: string[] = [];
+        const parts: Array<string> = [];
         let current = '';
         let inQuotes = false;
-        for (let char of line) {
+        for (const char of line) {
             if (char === '"') inQuotes = !inQuotes;
             else if (char === ',' && !inQuotes) {
                 parts.push(current.trim().replace(/^"|"$/g, ''));

@@ -1,9 +1,9 @@
-import type { AuditLog } from '@/../product/sections/compliance-and-audit/types'
-import { Upload, RefreshCw, Trash2, CheckCircle, UserPlus, Clock, TrendingUp } from 'lucide-react'
+import { CheckCircle, Clock, RefreshCw, Trash2, TrendingUp, Upload, UserPlus } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
+import type { AuditLog } from '@/../product/sections/compliance-and-audit/types'
 
 interface RecentActivityFeedProps {
-  auditLogs: AuditLog[]
+  auditLogs: Array<AuditLog>
   recentActivity: {
     last7Days: number
     last30Days: number

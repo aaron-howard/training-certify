@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
+import { desc, eq } from 'drizzle-orm'
 import { getDb } from '../db/db.server'
 import { notifications } from '../db/schema'
-import { eq, desc } from 'drizzle-orm'
 
 export const Route = createFileRoute('/api/notifications')({
     server: {

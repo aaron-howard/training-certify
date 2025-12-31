@@ -1,18 +1,18 @@
-import type { CertificationDetailProps } from '@/../product/sections/certification-catalog/types'
 import {
+  AlertCircle,
   ArrowLeft,
-  Plus,
-  Star,
-  Users,
+  Award,
+  BookOpen,
+  CheckCircle2,
   Clock,
   DollarSign,
   FileText,
-  CheckCircle2,
-  AlertCircle,
-  BookOpen,
-  Award,
+  Plus,
   RefreshCw,
+  Star,
+  Users,
 } from 'lucide-react'
+import type { CertificationDetailProps } from '@/../product/sections/certification-catalog/types'
 
 export function CertificationDetail({
   certification,

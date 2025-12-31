@@ -1,8 +1,8 @@
-import type { TeamWorkforceManagementProps } from '@/../product/sections/team-and-workforce-management/types'
+import { AlertTriangle, Target, TrendingUp, Users } from 'lucide-react'
 import { TeamMetricsCard } from './TeamMetricsCard'
 import { CoverageHeatmap } from './CoverageHeatmap'
 import { GapAlerts } from './GapAlerts'
-import { TrendingUp, Users, AlertTriangle, Target } from 'lucide-react'
+import type { TeamWorkforceManagementProps } from '@/../product/sections/team-and-workforce-management/types'
 
 /**
  * Competency Dashboard - Primary landing view for Team & Workforce Management

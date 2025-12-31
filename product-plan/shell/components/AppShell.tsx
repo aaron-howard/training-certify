@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
+import { Menu, X } from 'lucide-react'
 import { MainNav } from './MainNav'
 import { UserMenu } from './UserMenu'
-import { Menu, X } from 'lucide-react'
 
 export interface NavigationItem {
   label: string
@@ -18,7 +18,7 @@ export interface User {
 
 export interface AppShellProps {
   children: React.ReactNode
-  navigationItems: NavigationItem[]
+  navigationItems: Array<NavigationItem>
   user?: User
   onNavigate?: (href: string) => void
   onLogout?: () => void

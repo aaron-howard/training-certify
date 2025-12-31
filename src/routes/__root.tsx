@@ -1,12 +1,12 @@
-import { HeadContent, Scripts, createRootRouteWithContext, Outlet, useRouter, Link } from '@tanstack/react-router'
-import { QueryClient } from '@tanstack/react-query'
-import { ClerkProvider, useAuth, RedirectToSignIn, useUser } from '@clerk/tanstack-react-start'
+import { HeadContent, Link, Outlet, Scripts, createRootRouteWithContext, useRouter } from '@tanstack/react-router'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { AppShell } from '../components/shell/AppShell'
+import { ClerkProvider, RedirectToSignIn, useAuth, useUser } from '@clerk/tanstack-react-start'
 import { useEffect } from 'react'
+import { AppShell } from '../components/shell/AppShell'
 import { ENV } from '../lib/env'
-
 import appCss from '../styles.css?url'
+
+import type { QueryClient } from '@tanstack/react-query'
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
@@ -62,7 +62,7 @@ export const Route = createRootRouteWithContext<{
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   const router = useRouter()
-  const queryClient = router.options.context?.queryClient ?? new QueryClient()
+  const queryClient = router.options.context.queryClient
 
   return (
     <html lang="en">

@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { Shield, FileCheck, AlertCircle, History } from 'lucide-react'
+import { AlertCircle, FileCheck, History, Shield } from 'lucide-react'
 
 // Use fetch API instead of server imports
 const fetchComplianceData = async () => {

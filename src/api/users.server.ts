@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
-import { users } from '../db/schema'
 import { eq } from 'drizzle-orm'
+import { users } from '../db/schema'
 
 export const ensureUser = createServerFn({ method: 'POST' })
     .inputValidator((data: { id: string; name: string; email: string; avatarUrl?: string }) => data)

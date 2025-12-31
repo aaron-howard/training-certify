@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useUser } from '@clerk/tanstack-react-start'
 import { useState } from 'react'
-import { Info, AlertTriangle, MoreHorizontal, Settings, X, Bell, BellOff } from 'lucide-react'
+import { AlertTriangle, Bell, BellOff, Info, MoreHorizontal, Settings, X } from 'lucide-react'
 
 const fetchNotifications = async () => {
     const res = await fetch('/api/notifications')

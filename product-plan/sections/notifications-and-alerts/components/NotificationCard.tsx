@@ -1,15 +1,15 @@
-import type { Notification } from '@/../product/sections/notifications-and-alerts/types'
 import {
   AlertTriangle,
   Bell,
-  Users,
-  Shield,
+  Clock,
   Mail,
   MailOpen,
-  X,
-  Clock
+  Shield,
+  Users,
+  X
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
+import type { Notification } from '@/../product/sections/notifications-and-alerts/types'
 
 interface NotificationCardProps {
   notification: Notification
@@ -31,7 +31,7 @@ export function NotificationCard({
       'team-member-alert': Users,
       'compliance-warning': Shield,
     }
-    const Icon = icons[type as keyof typeof icons] || Bell
+    const Icon = icons[type as keyof typeof icons]
     return Icon
   }
 
@@ -59,11 +59,10 @@ export function NotificationCard({
 
   return (
     <div
-      className={`relative bg-white dark:bg-slate-900 border rounded-xl overflow-hidden transition-all hover:shadow-lg ${
-        notification.isRead
+      className={`relative bg-white dark:bg-slate-900 border rounded-xl overflow-hidden transition-all hover:shadow-lg ${notification.isRead
           ? 'border-slate-200 dark:border-slate-800'
           : 'border-blue-300 dark:border-blue-700 shadow-md shadow-blue-500/10'
-      }`}
+        }`}
     >
       {/* Unread Indicator */}
       {!notification.isRead && (
@@ -82,11 +81,10 @@ export function NotificationCard({
             {/* Header */}
             <div className="flex items-start justify-between gap-3 mb-2">
               <div className="flex-1">
-                <h3 className={`font-semibold mb-1 ${
-                  notification.isRead
+                <h3 className={`font-semibold mb-1 ${notification.isRead
                     ? 'text-slate-700 dark:text-slate-300'
                     : 'text-slate-900 dark:text-slate-100'
-                }`}>
+                  }`}>
                   {notification.title}
                 </h3>
                 <div className="flex items-center gap-2 flex-wrap">

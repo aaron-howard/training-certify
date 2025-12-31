@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { CertificationManagement } from '../components/sections/certification-management/CertificationManagement'
 import { useUser } from '@clerk/tanstack-react-start'
+import { CertificationManagement } from '../components/sections/certification-management/CertificationManagement'
 
 // Use fetch API instead of server imports
 const fetchUserCertifications = async (userId: string) => {

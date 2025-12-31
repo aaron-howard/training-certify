@@ -60,7 +60,7 @@ function isRetiredExam(vendorId: string, code: string): boolean {
 /**
  * Fetches the list of all vendors from ITExams.
  */
-export async function fetchVendors(): Promise<VendorInfo[]> {
+export async function fetchVendors(): Promise<Array<VendorInfo>> {
     if (!isServer) {
         console.warn('[Ingestion] fetchVendors called on client. Skipping.');
         return [];
@@ -78,7 +78,7 @@ export async function fetchVendors(): Promise<VendorInfo[]> {
         const doc = dom.window.document;
 
         const vendorLinks = doc.querySelectorAll('.allExams__vendors a');
-        const vendors: VendorInfo[] = [];
+        const vendors: Array<VendorInfo> = [];
 
         vendorLinks.forEach((link: any) => {
             const name = link.textContent?.trim() || '';
@@ -100,7 +100,7 @@ export async function fetchVendors(): Promise<VendorInfo[]> {
 /**
  * Fetches exams for a specific vendor.
  */
-export async function fetchExams(vendor: VendorInfo): Promise<ExamInfo[]> {
+export async function fetchExams(vendor: VendorInfo): Promise<Array<ExamInfo>> {
     if (!isServer) {
         console.warn('[Ingestion] fetchExams called on client. Skipping.');
         return [];
@@ -119,7 +119,7 @@ export async function fetchExams(vendor: VendorInfo): Promise<ExamInfo[]> {
         const doc = dom.window.document;
 
         const examElements = doc.querySelectorAll('.allExams__exam a');
-        const exams: ExamInfo[] = [];
+        const exams: Array<ExamInfo> = [];
 
         examElements.forEach((el: any) => {
             const strongTag = el.querySelector('strong');

@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
-import { teams, userTeams, userCertifications } from '../db/schema'
-import { sql, eq, count } from 'drizzle-orm'
+import { count, eq, sql } from 'drizzle-orm'
+import { teams, userCertifications, userTeams } from '../db/schema'
 
 export const getTeamData = createServerFn({ method: 'GET' })
     .handler(async () => {

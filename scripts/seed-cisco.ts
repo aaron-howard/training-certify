@@ -1,7 +1,7 @@
 
 import 'dotenv/config';
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { getDb } from '../src/db/db.server';
 import { certifications } from '../src/db/schema';
 
@@ -36,7 +36,7 @@ async function main() {
         const line = dataLines[i].replace(/\r$/, '');
 
         // Robust CSV parsing
-        const parts: string[] = [];
+        const parts: Array<string> = [];
         let current = '';
         let inQuotes = false;
         for (let j = 0; j < line.length; j++) {

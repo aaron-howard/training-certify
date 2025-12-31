@@ -59,7 +59,7 @@ export interface NotificationSettings {
 
 export interface NotificationsAlertsProps {
   /** The list of notifications to display */
-  notifications: Notification[]
+  notifications: Array<Notification>
   /** User's notification settings and preferences */
   settings: NotificationSettings
   /** Called when user marks a notification as read */

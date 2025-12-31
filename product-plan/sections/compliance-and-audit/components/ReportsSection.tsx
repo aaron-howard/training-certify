@@ -1,9 +1,9 @@
-import type { ComplianceReport, ComplianceReportDateRange } from '@/../product/sections/compliance-and-audit/types'
-import { FileText, Download, Clock, CheckCircle2, Loader2, AlertTriangle, Plus } from 'lucide-react'
+import { AlertTriangle, CheckCircle2, Clock, Download, FileText, Loader2, Plus } from 'lucide-react'
 import { format } from 'date-fns'
+import type { ComplianceReport, ComplianceReportDateRange } from '@/../product/sections/compliance-and-audit/types'
 
 interface ReportsSectionProps {
-  reports: ComplianceReport[]
+  reports: Array<ComplianceReport>
   onGenerateReport?: (reportType: 'audit-trail-export' | 'certification-status' | 'compliance-summary', dateRange?: ComplianceReportDateRange) => void
   onDownloadReport?: (reportId: string) => void
   onExportAuditTrail?: (dateRange: ComplianceReportDateRange, format: 'pdf' | 'csv') => void

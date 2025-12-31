@@ -11,13 +11,13 @@ export interface ExamInfo {
 }
 
 export interface Prerequisites {
-  required: string[]
-  recommended: string[]
+  required: Array<string>
+  recommended: Array<string>
 }
 
 export interface RenewalRequirements {
   cycle: string
-  options: string[]
+  options: Array<string>
 }
 
 export interface Certification {
@@ -29,7 +29,7 @@ export interface Certification {
   category: 'Cloud' | 'Security' | 'Networking' | 'Data' | 'Project Management'
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert'
   validityPeriod: string
-  intendedAudience: string[]
+  intendedAudience: Array<string>
   description: string
   prerequisites: Prerequisites
   examInfo: ExamInfo
@@ -50,9 +50,9 @@ export interface Vendor {
 
 export interface CertificationCatalogProps {
   /** The list of certifications to display in the catalog */
-  certifications: Certification[]
+  certifications: Array<Certification>
   /** Optional list of vendors for filtering */
-  vendors?: Vendor[]
+  vendors?: Array<Vendor>
   /** Called when user clicks to view full certification details */
   onViewDetails?: (certificationId: string) => void
   /** Called when user wants to add a certification to their profile */

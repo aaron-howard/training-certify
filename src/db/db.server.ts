@@ -1,6 +1,6 @@
 // src/db/index.server.ts
-import * as schema from './schema';
 import { ENV, envReady } from '../lib/env';
+import * as schema from './schema';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 // Prevent multiple instances in development using globalThis

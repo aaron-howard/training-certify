@@ -2,8 +2,8 @@
 import 'dotenv/config';
 import { Pool } from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import * as schema from '../src/db/schema';
 import { desc } from 'drizzle-orm';
+import * as schema from '../src/db/schema';
 
 async function main() {
     if (!process.env.DATABASE_URL) {

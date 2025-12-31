@@ -1,11 +1,11 @@
-import type { ComplianceAuditProps } from '@/../product/sections/compliance-and-audit/types'
+import { Clock, FileText, Shield, TrendingUp } from 'lucide-react'
 import { ComplianceMetricsOverview } from './ComplianceMetricsOverview'
 import { RecentActivityFeed } from './RecentActivityFeed'
 import { UpcomingDeadlines } from './UpcomingDeadlines'
 import { AuditTrailTable } from './AuditTrailTable'
 import { ReportsSection } from './ReportsSection'
 import { VerificationQueue } from './VerificationQueue'
-import { Shield, FileText, Clock, TrendingUp } from 'lucide-react'
+import type { ComplianceAuditProps } from '@/../product/sections/compliance-and-audit/types'
 
 /**
  * Compliance Dashboard - Primary view for Compliance & Audit section

@@ -1,8 +1,8 @@
 
 import 'dotenv/config';
+import { inArray } from 'drizzle-orm';
 import { getDb } from '../src/db/db.server';
 import { certifications } from '../src/db/schema';
-import { inArray } from 'drizzle-orm';
 
 async function main() {
     console.log('🔍 Starting Catalog Deduplication...');
@@ -42,7 +42,7 @@ async function main() {
     }
 
     const idsToDelete = new Set<string>();
-    const duplicateInfos: string[] = [];
+    const duplicateInfos: Array<string> = [];
 
     const processGroup = (group: typeof allCerts, type: string, key: string) => {
         if (group.length <= 1) return;

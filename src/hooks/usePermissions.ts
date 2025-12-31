@@ -111,15 +111,15 @@ const rolePermissions: Record<Role, Permissions> = {
 
 export function usePermissions(role: Role | string | undefined | null): Permissions {
     return useMemo(() => {
-        const validRole = (role as Role) || 'User'
-        return rolePermissions[validRole] || rolePermissions.User
+        const validRole = role as Role
+        return rolePermissions[validRole]
     }, [role])
 }
 
 // Helper to check if a role is at least a certain level
 export function isAtLeastRole(currentRole: Role | string | undefined, requiredRole: Role): boolean {
-    const roleHierarchy: Role[] = ['User', 'Auditor', 'Manager', 'Admin']
-    const currentIndex = roleHierarchy.indexOf((currentRole as Role) || 'User')
+    const roleHierarchy: Array<Role> = ['User', 'Auditor', 'Manager', 'Admin']
+    const currentIndex = roleHierarchy.indexOf(currentRole as Role)
     const requiredIndex = roleHierarchy.indexOf(requiredRole)
     return currentIndex >= requiredIndex
 }

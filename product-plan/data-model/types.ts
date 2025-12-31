@@ -18,7 +18,7 @@ export interface User {
   name: string
   email: string
   role: 'Developer' | 'Manager' | 'Architect' | 'SRE' | 'Security Engineer' | 'PM' | 'Executive' | 'Auditor'
-  teamIds: string[]
+  teamIds: Array<string>
   avatarUrl: string | null
 }
 
@@ -36,11 +36,11 @@ export interface Certification {
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert'
   validityPeriod: string
   renewalCycle: number // in months
-  intendedAudience: string[]
+  intendedAudience: Array<string>
   description: string
   prerequisites: {
-    required: string[]
-    recommended: string[]
+    required: Array<string>
+    recommended: Array<string>
   }
   examInfo: {
     format: string
@@ -51,7 +51,7 @@ export interface Certification {
   }
   renewalRequirements: {
     cycle: string
-    options: string[]
+    options: Array<string>
   }
   holderCount: number
 }
@@ -167,7 +167,7 @@ export interface TeamMetrics {
   expiringIn90Days: number
   expired: number
   gapCount: number
-  topGaps: string[]
+  topGaps: Array<string>
 }
 
 /**
@@ -201,11 +201,11 @@ export interface ComplianceMetrics {
     last30Days: number
     last90Days: number
   }
-  complianceByTeam: {
+  complianceByTeam: Array<{
     teamId: string
     teamName: string
     compliancePercentage: number
-  }[]
+  }>
 }
 
 /**
@@ -237,25 +237,25 @@ export interface NotificationSettings {
  */
 export interface WorkforcePlanningInsight {
   teamId: string
-  projectedGaps: {
+  projectedGaps: Array<{
     certificationId: string
     reason: string
     impactLevel: 'low' | 'medium' | 'high'
     projectedDate: string
-  }[]
-  hiringRecommendations: {
+  }>
+  hiringRecommendations: Array<{
     role: string
-    certifications: string[]
+    certifications: Array<string>
     rationale: string
     priority: 'low' | 'medium' | 'high'
-  }[]
-  trainingPriorities: {
+  }>
+  trainingPriorities: Array<{
     certificationId: string
-    targetEmployees: string[]
+    targetEmployees: Array<string>
     estimatedCost: number
     estimatedDuration: number
     priority: 'low' | 'medium' | 'high'
-  }[]
+  }>
 }
 
 /**

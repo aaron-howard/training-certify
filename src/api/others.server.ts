@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
-import { certifications, auditLogs, notifications, userCertifications, users } from '../db/schema'
-import { desc, count, sql, eq } from 'drizzle-orm'
+import { count, desc, eq, sql } from 'drizzle-orm'
+import { auditLogs, certifications, notifications, userCertifications, users } from '../db/schema'
 import { syncCatalogFromITExams } from '../lib/ingestion.server'
 
 export const getCatalog = createServerFn({ method: 'GET' })

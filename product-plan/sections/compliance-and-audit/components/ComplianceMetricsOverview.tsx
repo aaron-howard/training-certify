@@ -1,5 +1,5 @@
+import { CheckCircle2, Clock, Minus, Shield, TrendingDown, TrendingUp } from 'lucide-react'
 import type { ComplianceMetrics } from '@/../product/sections/compliance-and-audit/types'
-import { TrendingUp, TrendingDown, Minus, Shield, CheckCircle2, Clock } from 'lucide-react'
 
 interface ComplianceMetricsOverviewProps {
   metrics: ComplianceMetrics

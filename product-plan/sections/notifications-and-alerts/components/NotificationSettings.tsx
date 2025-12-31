@@ -1,11 +1,11 @@
-import type {
-  NotificationSettings as Settings,
-  NotificationFrequency,
-  NotificationChannels,
-  NotificationPreferences,
-} from '@/../product/sections/notifications-and-alerts/types'
 import { useState } from 'react'
-import { X, Bell, Mail, Smartphone, Calendar } from 'lucide-react'
+import { Bell, Calendar, Mail, Smartphone, X } from 'lucide-react'
+import type {
+  NotificationChannels,
+  NotificationFrequency,
+  NotificationPreferences,
+  NotificationSettings as Settings,
+} from '@/../product/sections/notifications-and-alerts/types'
 
 interface NotificationSettingsProps {
   settings: Settings
@@ -40,7 +40,7 @@ export function NotificationSettings({
 
   const handlePreferenceToggle = (pref: keyof NotificationPreferences) => {
     if (pref === 'digestFrequency') return
-    const updated = { ...preferences, [pref]: !preferences[pref as 'teamAlerts' | 'complianceWarnings' | 'digestEnabled'] }
+    const updated = { ...preferences, [pref]: !preferences[pref] }
     setPreferences(updated)
     onUpdatePreferences?.(updated)
   }

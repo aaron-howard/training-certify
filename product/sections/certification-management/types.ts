@@ -54,7 +54,7 @@ export interface CertificationFormData {
  */
 export interface CertificationManagementProps {
   /** The list of user certifications to display */
-  userCertifications: UserCertification[]
+  userCertifications: Array<UserCertification>
   /** Called when user wants to add a new certification */
   onCreate?: (data: CertificationFormData) => void
   /** Called when user wants to edit a certification */

@@ -1,17 +1,17 @@
 import type {
-  Team,
   Certification,
-  UserCertification,
-  User,
   CertificationRequirement,
+  Team,
+  User,
+  UserCertification,
 } from '@/../product/sections/team-and-workforce-management/types'
 
 interface CoverageHeatmapProps {
-  teams: Team[]
-  certifications: Certification[]
-  userCertifications: UserCertification[]
-  users: User[]
-  certificationRequirements: CertificationRequirement[]
+  teams: Array<Team>
+  certifications: Array<Certification>
+  userCertifications: Array<UserCertification>
+  users: Array<User>
+  certificationRequirements: Array<CertificationRequirement>
 }
 
 export function CoverageHeatmap({

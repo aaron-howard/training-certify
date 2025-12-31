@@ -1,5 +1,5 @@
-import type { Certification } from '@/../product/sections/certification-catalog/types'
 import { Eye, Plus, Star, Users } from 'lucide-react'
+import type { Certification } from '@/../product/sections/certification-catalog/types'
 
 interface CertificationCardProps {
   certification: Certification

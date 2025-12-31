@@ -1,5 +1,5 @@
+import { AlertCircle, CheckCircle2, Clock, TrendingUp, Users } from 'lucide-react'
 import type { Team, TeamMetrics } from '@/../product/sections/team-and-workforce-management/types'
-import { Users, TrendingUp, AlertCircle, CheckCircle2, Clock } from 'lucide-react'
 
 interface TeamMetricsCardProps {
   team: Team

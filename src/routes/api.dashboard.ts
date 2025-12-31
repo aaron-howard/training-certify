@@ -16,7 +16,7 @@ export const Route = createFileRoute('/api/dashboard')({
                     }
 
                     // Get certs (filtered by userId if provided)
-                    let query = db.select().from(userCertifications)
+                    const query = db.select().from(userCertifications)
                     if (userId) {
                         // Import eq if not already present, but I'll use simple filter since it's fetching all anyway
                     }

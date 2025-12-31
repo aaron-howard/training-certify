@@ -1,7 +1,7 @@
 interface FilterPanelProps {
   vendors: Array<{ id: string; name: string }>
-  categories: string[]
-  difficulties: string[]
+  categories: Array<string>
+  difficulties: Array<string>
   selectedVendor: string
   selectedCategory: string
   selectedDifficulty: string

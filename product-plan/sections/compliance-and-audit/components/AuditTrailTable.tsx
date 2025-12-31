@@ -1,10 +1,10 @@
-import type { AuditLog } from '@/../product/sections/compliance-and-audit/types'
-import { Search, Filter, Eye, Download } from 'lucide-react'
+import { Download, Eye, Filter, Search } from 'lucide-react'
 import { format } from 'date-fns'
 import { useState } from 'react'
+import type { AuditLog } from '@/../product/sections/compliance-and-audit/types'
 
 interface AuditTrailTableProps {
-  auditLogs: AuditLog[]
+  auditLogs: Array<AuditLog>
   onViewDetails?: (auditLogId: string) => void
   onFilter?: (filters: {
     userId?: string

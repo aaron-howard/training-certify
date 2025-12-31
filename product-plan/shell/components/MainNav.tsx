@@ -1,15 +1,15 @@
 import React from 'react'
 import {
   Award,
-  Users,
-  Shield,
+  Bell,
   BookOpen,
-  Bell
+  Shield,
+  Users
 } from 'lucide-react'
 import type { NavigationItem } from './AppShell'
 
 export interface MainNavProps {
-  items: NavigationItem[]
+  items: Array<NavigationItem>
   onNavigate?: (href: string) => void
 }
 
