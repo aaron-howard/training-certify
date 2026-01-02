@@ -8,6 +8,7 @@ export const Route = createFileRoute('/api/compliance')({
         handlers: {
             GET: async () => {
                 try {
+                    console.log('📋 [API Compliance] Fetching compliance data')
                     const db = await getDb()
                     if (!db) {
                         return json({ error: 'Database not available' }, { status: 500 })

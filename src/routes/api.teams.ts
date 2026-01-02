@@ -57,7 +57,7 @@ export const Route = createFileRoute('/api/teams')({
 
                                 const actualMembersWithCert = await db.select({ userId: userCertifications.userId })
                                     .from(userCertifications)
-                                    .where(sql`${userCertifications.userId} IN ${memberIds} AND ${userCertifications.certificationId} = ${req.certificationId}`)
+                                    .where(sql`${userCertifications.userId} IN (${sql.join(memberIds)}) AND ${userCertifications.certificationId} = ${req.certificationId}`)
                                     .groupBy(userCertifications.userId)
 
                                 const count = actualMembersWithCert.length

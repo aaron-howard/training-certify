@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-export type Role = 'Admin' | 'Manager' | 'Auditor' | 'User'
+export type Role = 'Admin' | 'Manager' | 'Executive' | 'Auditor' | 'User'
 
 export interface Permissions {
     // Dashboard
@@ -89,6 +89,24 @@ const rolePermissions: Record<Role, Permissions> = {
         canManageNotificationCategories: false,
         canManageOwnNotificationSettings: true,
     },
+    Executive: {
+        canViewDashboard: true,
+        canManageOwnCerts: true,
+        canViewAllCerts: true,
+        canViewTeam: true,
+        canManageTeam: false,
+        canCreateTeam: false,
+        canDeleteTeam: false,
+        canViewCatalog: true,
+        canManageCatalog: false,
+        canSeedCatalog: false,
+        canSyncCatalog: false,
+        canViewAuditLogs: true,
+        canManageUsers: false,
+        canPromoteUsers: false,
+        canManageNotificationCategories: false,
+        canManageOwnNotificationSettings: true,
+    },
     User: {
         canViewDashboard: true,
         canManageOwnCerts: true,
@@ -111,14 +129,15 @@ const rolePermissions: Record<Role, Permissions> = {
 
 export function usePermissions(role: Role | string | undefined | null): Permissions {
     return useMemo(() => {
-        const validRole = role as Role
-        return rolePermissions[validRole]
+        const r = (role as Role) || 'User'
+        console.log(`🛡️ [Permissions] Calculating for role: ${r}`)
+        return rolePermissions[r] || rolePermissions['User']
     }, [role])
 }
 
 // Helper to check if a role is at least a certain level
 export function isAtLeastRole(currentRole: Role | string | undefined, requiredRole: Role): boolean {
-    const roleHierarchy: Array<Role> = ['User', 'Auditor', 'Manager', 'Admin']
+    const roleHierarchy: Array<Role> = ['User', 'Auditor', 'Executive', 'Manager', 'Admin']
     const currentIndex = roleHierarchy.indexOf(currentRole as Role)
     const requiredIndex = roleHierarchy.indexOf(requiredRole)
     return currentIndex >= requiredIndex

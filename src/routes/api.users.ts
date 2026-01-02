@@ -29,33 +29,35 @@ export const Route = createFileRoute('/api/users')({
 
         try {
           data = await request.json();
-          console.log('🔍 [API] Received user data:', data);
+          console.log('🔍 [API Users POST] Received user data:', data);
           db = await getDb();
 
           if (!db) {
+            console.error('❌ [API Users POST] Database not available');
             return json({ error: 'Database not available' }, { status: 500 });
           }
 
           // Check if user exists
           const existing = await db.select().from(users).where(eq(users.id, data.id)).limit(1);
           if (existing.length > 0) {
-            console.log(`✅ [API] User found: ${data.id} (${existing[0].role})`);
+            console.log(`✅ [API Users POST] User found: ${data.id} (${existing[0].role})`);
             return json(existing[0]);
           }
 
           // Create user
-          console.log(`🚀 [API] Creating new user: ${data.id}`);
+          const defaultRole = data.role || 'User';
+          console.log(`🚀 [API Users POST] Creating new user: ${data.id} with role: ${defaultRole}`);
           const result = await db.insert(users).values({
             id: data.id,
             name: data.name,
             email: data.email,
             avatarUrl: data.avatarUrl,
-            role: data.role || 'User',
+            role: defaultRole,
           }).returning();
 
           return json(result[0], { status: 201 });
         } catch (error) {
-          console.error('❌ [API] Failed to ensure user:', error);
+          console.error('❌ [API Users POST] Failed to ensure user:', error);
           const err: any = error;
 
           // Handle duplicate email case (same email, different ID)

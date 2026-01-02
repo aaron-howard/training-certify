@@ -2,15 +2,8 @@ import { Link, createFileRoute } from '@tanstack/react-router'
 import { Award, BookOpen, ChevronRight, Shield, Users } from 'lucide-react'
 import { useUser } from '@clerk/tanstack-react-start'
 import { useQuery } from '@tanstack/react-query'
-
-// Use fetch API instead of server imports
-const fetchDashboardStats = async (userId?: string) => {
-  const url = new URL('/api/dashboard', window.location.origin)
-  if (userId) url.searchParams.set('userId', userId)
-  const res = await fetch(url.toString())
-  if (!res.ok) return { activeCerts: 0, expiringSoon: 0, complianceRate: 0 }
-  return res.json()
-}
+import { ExecutiveDashboard } from '../components/dashboard/ExecutiveDashboard'
+import { usePermissions } from '../hooks/usePermissions'
 
 export const Route = createFileRoute('/')({
   component: DashboardPage,
@@ -19,17 +12,41 @@ export const Route = createFileRoute('/')({
 function DashboardPage() {
   const { user, isLoaded } = useUser()
 
-  const { data: stats = { activeCerts: 0, expiringSoon: 0, complianceRate: 0 } } = useQuery({
-    queryKey: ['dashboardStats', user?.id],
-    queryFn: () => fetchDashboardStats(user?.id),
-    enabled: isLoaded
+  const { data: dbUser } = useQuery({
+    queryKey: ['dbUser', user?.id],
+    queryFn: async () => {
+      const res = await fetch(`/api/users`)
+      if (!res.ok) return null
+      const allUsers = await res.json()
+      return allUsers.find((u: any) => u.id === user?.id) || null
+    },
+    enabled: !!user?.id
   })
+
+  const permissions = usePermissions(dbUser?.role)
+
+  const { data: stats = { activeCerts: 0, expiringSoon: 0, complianceRate: 0 } } = useQuery({
+    queryKey: ['dashboardStats', user?.id, dbUser?.role],
+    queryFn: async () => {
+      const url = new URL('/api/dashboard', window.location.origin)
+      if (user?.id) url.searchParams.set('userId', user.id)
+      if (dbUser?.role === 'Executive') url.searchParams.set('role', 'Executive')
+      const res = await fetch(url.toString())
+      if (!res.ok) return { activeCerts: 0, expiringSoon: 0, complianceRate: 0 }
+      return res.json()
+    },
+    enabled: isLoaded && (!!user?.id || dbUser?.role === 'Executive')
+  })
+
+  if (dbUser?.role === 'Executive') {
+    return <ExecutiveDashboard />
+  }
 
   return (
     <div className="space-y-10">
       <div className="space-y-2">
         <h1 className="text-4xl font-extrabold text-slate-900 dark:text-slate-50 tracking-tight">
-          Welcome back, <Link to="/user-profile" className="text-blue-600 dark:text-blue-400 hover:underline">{isLoaded && user ? user.firstName : 'Friend'}</Link>
+          Welcome back, <Link to="/user-profile/$" className="text-blue-600 dark:text-blue-400 hover:underline">{isLoaded && user ? user.firstName : 'Friend'}</Link>
         </h1>
         <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl">
           Everything looks great. You have {stats.expiringSoon} certifications expiring soon and {stats.complianceRate}% team compliance.

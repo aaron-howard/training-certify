@@ -36,7 +36,7 @@ export const ensureUser = createServerFn({ method: 'POST' })
     })
 
 export const updateUserRole = createServerFn({ method: 'POST' })
-    .inputValidator((data: { userId: string; role: 'Admin' | 'User' | 'Manager' | 'Executive'; adminId: string }) => data)
+    .inputValidator((data: { userId: string; role: 'Admin' | 'User' | 'Manager' | 'Executive' | 'Auditor'; adminId: string }) => data)
     .handler(async ({ data }) => {
         const { getDb } = await import('../db/db.server');
         const db = await getDb();

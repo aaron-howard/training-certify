@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Database, Edit, ExternalLink, Plus, Search, Trash2, UserPlus, X } from 'lucide-react'
+import { Edit, ExternalLink, Plus, Search, Trash2, UserPlus, X } from 'lucide-react'
 import { useUser } from '@clerk/tanstack-react-start'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
@@ -129,18 +129,6 @@ function CatalogPage() {
     }, [catalog?.certifications, searchQuery, sortBy, vendorFilter, difficultyFilter, categoryFilter])
 
     // Mutations
-    const seedMutation = useMutation({
-        mutationFn: async () => {
-            const res = await fetch('/api/seed', { method: 'POST' })
-            if (!res.ok) throw new Error('Failed to seed catalog')
-            return res.json()
-        },
-        onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ['catalog'] })
-            alert(`Seeded ${data.added} certifications (${data.skipped} already existed)`)
-        },
-        onError: (err: any) => alert(`Seed failed: ${err.message}`)
-    })
 
     const deleteMutation = useMutation({
         mutationFn: async (vars: { id: string }) => {
@@ -175,11 +163,6 @@ function CatalogPage() {
         onError: (err: any) => alert(`Add failed: ${err.message}`)
     })
 
-    const handleSeed = () => {
-        if (confirm('Seed Microsoft and ServiceNow certifications?')) {
-            seedMutation.mutate()
-        }
-    }
 
     const handleDelete = (id: string) => {
         if (confirm('Delete this certification from the catalog?')) {
@@ -258,12 +241,6 @@ function CatalogPage() {
                     <div className="flex items-center gap-2">
                         {isAdmin && (
                             <>
-                                <button
-                                    onClick={handleSeed}
-                                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
-                                >
-                                    <Database className="w-4 h-4" /> Seed
-                                </button>
                                 <button
                                     onClick={() => setShowAddModal(true)}
                                     className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
