@@ -10,6 +10,16 @@ const fetchUserCertifications = async (userId: string) => {
     return res.json()
 }
 
+const fetchEnsureUser = async (data: { id: string; name: string; email: string; avatarUrl?: string }) => {
+    const res = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    if (!res.ok) throw new Error('Failed to sync user')
+    return res.json()
+}
+
 const createCertification = async (data: any) => {
     const res = await fetch('/api/certifications', {
         method: 'POST',
@@ -38,6 +48,16 @@ const uploadProof = async ({ id, proof }: { id: string, proof: any }) => {
     return res.json()
 }
 
+const updateCertification = async ({ id, updates }: { id: string, updates: any }) => {
+    const res = await fetch('/api/certifications', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'updateDetails', id, updates })
+    })
+    if (!res.ok) throw new Error('Failed to update certification')
+    return res.json()
+}
+
 export const Route = createFileRoute('/certification-management')({
     component: CertificationManagementPage,
 })
@@ -46,13 +66,29 @@ function CertificationManagementPage() {
     const queryClient = useQueryClient()
     const { user } = useUser()
 
+    // Sync user to database first
+    const { data: dbUser } = useQuery({
+        queryKey: ['dbUser', user?.id],
+        queryFn: async () => {
+            if (!user) return null
+            const fallbackEmail = user.emailAddresses[0]?.emailAddress || `${user.id}@example.com`;
+            return fetchEnsureUser({
+                id: user.id,
+                name: user.fullName || 'User',
+                email: fallbackEmail,
+                avatarUrl: user.imageUrl
+            })
+        },
+        enabled: !!user
+    })
+
     const { data: certs } = useQuery({
         queryKey: ['userCertifications', user?.id],
         queryFn: async () => {
             if (!user?.id) return []
             return fetchUserCertifications(user.id)
         },
-        enabled: !!user?.id
+        enabled: !!user?.id && !!dbUser // Wait for user to be synced
     })
 
     const createMutation = useMutation({
@@ -70,6 +106,11 @@ function CertificationManagementPage() {
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ['userCertifications'] }),
     })
 
+    const updateMutation = useMutation({
+        mutationFn: updateCertification,
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['userCertifications'] }),
+    })
+
     const handleCreate = (data: any) => {
         createMutation.mutate({
             ...data,
@@ -78,8 +119,7 @@ function CertificationManagementPage() {
     }
 
     const handleEdit = (id: string, updates: any) => {
-        // TODO: Implement update
-        console.log('Edit', id, updates)
+        updateMutation.mutate({ id, updates })
     }
 
     const handleDelete = (id: string) => {

@@ -61,4 +61,7 @@ The database schema is defined in `src/db/schema.ts`. We use Drizzle Kit for man
 
 ## Code Quality
 
-We follow strict TypeScript practices and use ESLint/Prettier to ensure code consistency. All API routes are protected and use Zod for input validation.
+We follow strict TypeScript practices and use ESLint/Prettier to ensure code consistency.
+
+> [!IMPORTANT]
+> API security and Zod validation are currently being implemented. While the foundation is in place, comprehensive server-side protection and strict schema validation are part of the active development plan (see `plan.md`).

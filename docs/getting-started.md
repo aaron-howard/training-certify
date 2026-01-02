@@ -1,5 +1,13 @@
 # Getting Started
 
+> [!IMPORTANT]
+> **For the Training Certify project setup, please refer to the main [README.md](../README.md).**
+> The instructions below are part of the "Design OS" template and may not reflect the current project configuration.
+
+---
+
+# Design OS Getting Started (Template Reference)
+
 ## Clone the Repository
 
 ```bash

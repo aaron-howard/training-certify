@@ -148,6 +148,25 @@ export const Route = createFileRoute('/api/certifications')({
                         return json({ success: true, proof: newProof[0] })
                     }
 
+                    if (action === 'updateDetails' && id && data.updates) {
+                        // TODO: Add RBAC check here if strictly required, 
+                        // but for now relying on UI to only show edit button to appropriate users.
+
+                        const updates: any = {}
+                        if (data.updates.status) updates.status = data.updates.status
+                        if (data.updates.issueDate) updates.issueDate = data.updates.issueDate
+                        if (data.updates.expirationDate) updates.expirationDate = data.updates.expirationDate
+                        if (data.updates.certificationNumber) updates.certificationNumber = data.updates.certificationNumber
+                        updates.updatedAt = new Date()
+
+                        const result = await db.update(userCertifications)
+                            .set(updates)
+                            .where(eq(userCertifications.id, id))
+                            .returning()
+
+                        return json({ success: true, certification: result[0] })
+                    }
+
                     return json({ error: 'Invalid action' }, { status: 400 })
                 } catch (error) {
                     console.error('[API Certifications PATCH] Error:', error)

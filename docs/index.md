@@ -1,5 +1,8 @@
 # What is Design OS?
 
+> [!NOTE]
+> This directory contains documentation for **Design OS**, the methodology used to scaffold this project. for **Training Certify** specific documentation, see `docs/architecture.md` and the root `README.md`.
+
 Design OS is the missing step between your product idea and your codebase.
 
 It's a product planning and design tool that helps you define your product vision, structure your data model, design your UI, and export production-ready components for implementation. Rather than jumping straight into code, you work through a guided process that captures what you're building and why—then hands off everything your coding agent needs to build it right.

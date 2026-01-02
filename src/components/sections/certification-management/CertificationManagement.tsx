@@ -29,6 +29,7 @@ export function CertificationManagement({
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
     const [showAddModal, setShowAddModal] = useState(false)
     const [viewingCertId, setViewingCertId] = useState<string | null>(null)
+    const [editingCert, setEditingCert] = useState<UserCertification | null>(null)
 
     // Form state for new certification
     const [formData, setFormData] = useState({
@@ -438,6 +439,19 @@ export function CertificationManagement({
                     </div>
                 </div>
             )}
+
+            {/* Edit Modal */}
+            {editingCert && (
+                <EditCertificationModal
+                    isOpen={!!editingCert}
+                    onClose={() => setEditingCert(null)}
+                    cert={editingCert}
+                    onSave={(updates) => {
+                        onEdit?.(editingCert.id, updates)
+                        setEditingCert(null)
+                    }}
+                />
+            )}
         </div>
     )
 }
@@ -646,6 +660,98 @@ function ViewDetailsModal({ isOpen, onClose, cert, loading }: { isOpen: boolean,
                         Close
                     </button>
                 </div>
+
+            </div>
+        </div>
+    )
+}
+
+function EditCertificationModal({ isOpen, onClose, cert, onSave }: { isOpen: boolean, onClose: () => void, cert: UserCertification, onSave: (data: any) => void }) {
+    const [formData, setFormData] = useState({
+        certificationNumber: cert.certificationNumber || '',
+        issueDate: cert.issueDate ? new Date(cert.issueDate).toISOString().split('T')[0] : '',
+        expirationDate: cert.expirationDate ? new Date(cert.expirationDate).toISOString().split('T')[0] : '',
+        status: cert.status
+    })
+
+    if (!isOpen) return null
+
+    return (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[70] p-4">
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-6 w-full max-w-md shadow-xl">
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">Edit Certification</h2>
+                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
+                        <X className="w-5 h-5" />
+                    </button>
+                </div>
+
+                <div className="mb-6">
+                    <h3 className="font-medium text-slate-900 dark:text-slate-50">{cert.certificationName}</h3>
+                    <p className="text-sm text-slate-500">{cert.vendorName}</p>
+                </div>
+
+                <form onSubmit={(e) => {
+                    e.preventDefault()
+                    onSave(formData)
+                }} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
+                        <select
+                            value={formData.status}
+                            onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+                            className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 text-sm"
+                        >
+                            <option value="active">Active</option>
+                            <option value="expiring">Expiring</option>
+                            <option value="expired">Expired</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Certification Number</label>
+                        <input
+                            type="text"
+                            value={formData.certificationNumber}
+                            onChange={(e) => setFormData({ ...formData, certificationNumber: e.target.value })}
+                            className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 text-sm"
+                        />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Issue Date</label>
+                            <input
+                                type="date"
+                                value={formData.issueDate}
+                                onChange={(e) => setFormData({ ...formData, issueDate: e.target.value })}
+                                className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Expiry Date</label>
+                            <input
+                                type="date"
+                                value={formData.expirationDate}
+                                onChange={(e) => setFormData({ ...formData, expirationDate: e.target.value })}
+                                className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100"
+                            />
+                        </div>
+                    </div>
+                    <div className="flex gap-3 pt-4 text-sm">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="flex-1 px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-950 text-slate-700 dark:text-slate-300"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                        >
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     )

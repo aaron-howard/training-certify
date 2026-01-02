@@ -7,12 +7,12 @@ This plan addresses all identified issues across security, authentication/author
 ## Phases & Tasks
 
 ### Phase 1: Secure Development Environment (Day 1)
-- Protect env files
-  - Update `.gitignore` to ensure all `.env*` files are excluded (keep `.env.example`).
+- [x] Protect env files
+  - [x] Update `.gitignore` to ensure all `.env*` files are excluded (keep `.env.example`).
 - DevTools Configuration
   - Disable DevTools in production builds using `import.meta.env.DEV` guards.
-- Database Connection Hygiene
-  - Standardize on `pg` Pool configuration for local PostgreSQL instance in Docker.
+- [x] Database Connection Hygiene
+  - [x] Standardize on `pg` Pool configuration for local PostgreSQL instance in Docker.
 
 ### Phase 2: Server-Side AuthN/AuthZ (Day 1–2)
 - Add `src/lib/auth.ts`
