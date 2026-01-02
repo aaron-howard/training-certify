@@ -1,11 +1,5 @@
 import React from 'react'
-import {
-  Award,
-  Bell,
-  BookOpen,
-  Shield,
-  Users
-} from 'lucide-react'
+import { Award, Bell, BookOpen, Shield, Users } from 'lucide-react'
 import type { NavigationItem } from './AppShell'
 
 export interface MainNavProps {
@@ -43,7 +37,13 @@ export function MainNav({ items, onNavigate }: MainNavProps) {
                 `}
               >
                 {icon && (
-                  <span className={item.isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'}>
+                  <span
+                    className={
+                      item.isActive
+                        ? 'text-blue-600 dark:text-blue-400'
+                        : 'text-slate-500 dark:text-slate-400'
+                    }
+                  >
                     {icon}
                   </span>
                 )}

@@ -20,7 +20,14 @@ export interface AuditLogAffectedResource {
 export interface AuditLog {
   id: string
   timestamp: string
-  action: 'upload' | 'renewal' | 'deletion' | 'verification' | 'assignment' | 'expiration' | 'update'
+  action:
+    | 'upload'
+    | 'renewal'
+    | 'deletion'
+    | 'verification'
+    | 'assignment'
+    | 'expiration'
+    | 'update'
   performedBy: AuditLogPerformedBy
   affectedResource: AuditLogAffectedResource
   details: string
@@ -110,7 +117,13 @@ export interface ComplianceAuditProps {
   /** Called when user wants to search audit logs */
   onSearchAuditLogs?: (searchTerm: string) => void
   /** Called when user wants to generate a new compliance report */
-  onGenerateReport?: (reportType: 'audit-trail-export' | 'certification-status' | 'compliance-summary', dateRange?: ComplianceReportDateRange) => void
+  onGenerateReport?: (
+    reportType:
+      | 'audit-trail-export'
+      | 'certification-status'
+      | 'compliance-summary',
+    dateRange?: ComplianceReportDateRange,
+  ) => void
   /** Called when user wants to download a completed report */
   onDownloadReport?: (reportId: string) => void
   /** Called when user wants to verify a certification */
@@ -118,7 +131,10 @@ export interface ComplianceAuditProps {
   /** Called when user wants to view certification document */
   onViewDocument?: (documentUrl: string) => void
   /** Called when user wants to export audit trail for a specific date range */
-  onExportAuditTrail?: (dateRange: ComplianceReportDateRange, format: 'pdf' | 'csv') => void
+  onExportAuditTrail?: (
+    dateRange: ComplianceReportDateRange,
+    format: 'pdf' | 'csv',
+  ) => void
   /** Called when user wants to view compliance details for a specific team */
   onViewTeamCompliance?: (teamId: string) => void
 }

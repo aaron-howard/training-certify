@@ -7,6 +7,7 @@ Implement the application shell with sidebar navigation, top bar with branding a
 ## Overview
 
 The shell uses a sidebar navigation pattern with:
+
 - Fixed left sidebar (240px wide) with section links
 - Top bar (64px tall) with logo and user menu
 - Responsive behavior: sidebar collapses to hamburger menu on mobile (<768px)

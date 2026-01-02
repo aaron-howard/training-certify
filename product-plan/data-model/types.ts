@@ -17,7 +17,15 @@ export interface User {
   id: string
   name: string
   email: string
-  role: 'Developer' | 'Manager' | 'Architect' | 'SRE' | 'Security Engineer' | 'PM' | 'Executive' | 'Auditor'
+  role:
+    | 'Developer'
+    | 'Manager'
+    | 'Architect'
+    | 'SRE'
+    | 'Security Engineer'
+    | 'PM'
+    | 'Executive'
+    | 'Auditor'
   teamIds: Array<string>
   avatarUrl: string | null
 }
@@ -105,7 +113,14 @@ export interface Vendor {
 export interface AuditLog {
   id: string
   timestamp: string
-  action: 'upload' | 'renewal' | 'deletion' | 'verification' | 'assignment' | 'expiration' | 'update'
+  action:
+    | 'upload'
+    | 'renewal'
+    | 'deletion'
+    | 'verification'
+    | 'assignment'
+    | 'expiration'
+    | 'update'
   performedBy: {
     userId: string
     name: string
@@ -130,7 +145,11 @@ export interface Notification {
   id: string
   userId: string
   userName: string
-  type: 'expiration-alert' | 'renewal-reminder' | 'team-member-alert' | 'compliance-warning'
+  type:
+    | 'expiration-alert'
+    | 'renewal-reminder'
+    | 'team-member-alert'
+    | 'compliance-warning'
   severity: 'critical' | 'warning' | 'info'
   title: string
   description: string
@@ -297,13 +316,45 @@ export interface PendingVerification {
 // Type Aliases
 // =============================================================================
 
-export type CertificationStatus = 'active' | 'expiring' | 'expiring-soon' | 'expired'
-export type NotificationType = 'expiration-alert' | 'renewal-reminder' | 'team-member-alert' | 'compliance-warning'
+export type CertificationStatus =
+  | 'active'
+  | 'expiring'
+  | 'expiring-soon'
+  | 'expired'
+export type NotificationType =
+  | 'expiration-alert'
+  | 'renewal-reminder'
+  | 'team-member-alert'
+  | 'compliance-warning'
 export type NotificationSeverity = 'critical' | 'warning' | 'info'
-export type AuditAction = 'upload' | 'renewal' | 'deletion' | 'verification' | 'assignment' | 'expiration' | 'update'
-export type UserRole = 'Developer' | 'Manager' | 'Architect' | 'SRE' | 'Security Engineer' | 'PM' | 'Executive' | 'Auditor'
-export type CertificationCategory = 'Cloud' | 'Security' | 'Networking' | 'Data' | 'Project Management'
-export type CertificationDifficulty = 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert'
+export type AuditAction =
+  | 'upload'
+  | 'renewal'
+  | 'deletion'
+  | 'verification'
+  | 'assignment'
+  | 'expiration'
+  | 'update'
+export type UserRole =
+  | 'Developer'
+  | 'Manager'
+  | 'Architect'
+  | 'SRE'
+  | 'Security Engineer'
+  | 'PM'
+  | 'Executive'
+  | 'Auditor'
+export type CertificationCategory =
+  | 'Cloud'
+  | 'Security'
+  | 'Networking'
+  | 'Data'
+  | 'Project Management'
+export type CertificationDifficulty =
+  | 'Beginner'
+  | 'Intermediate'
+  | 'Advanced'
+  | 'Expert'
 export type Priority = 'low' | 'medium' | 'high'
 export type RequirementPriority = 'required' | 'recommended'
 export type Trend = 'up' | 'down' | 'stable'

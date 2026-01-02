@@ -20,11 +20,18 @@
       "category": "Cloud",
       "difficulty": "Intermediate",
       "validityPeriod": "3 years",
-      "intendedAudience": ["Solution Architect", "Cloud Engineer", "DevOps Engineer"],
+      "intendedAudience": [
+        "Solution Architect",
+        "Cloud Engineer",
+        "DevOps Engineer"
+      ],
       "description": "The AWS Certified Solutions Architect - Associate certification validates your ability to design distributed systems on AWS. This certification demonstrates your expertise in designing cost-optimized, fault-tolerant, and scalable systems using AWS services.",
       "prerequisites": {
         "required": [],
-        "recommended": ["6-12 months of hands-on experience with AWS", "Understanding of core AWS services (EC2, S3, RDS, VPC)"]
+        "recommended": [
+          "6-12 months of hands-on experience with AWS",
+          "Understanding of core AWS services (EC2, S3, RDS, VPC)"
+        ]
       },
       "examInfo": {
         "format": "Multiple choice and multiple response",
@@ -52,11 +59,18 @@
       "category": "Cloud",
       "difficulty": "Beginner",
       "validityPeriod": "3 years",
-      "intendedAudience": ["Anyone new to cloud", "Business Analyst", "Project Manager", "Sales"],
+      "intendedAudience": [
+        "Anyone new to cloud",
+        "Business Analyst",
+        "Project Manager",
+        "Sales"
+      ],
       "description": "AWS Certified Cloud Practitioner is an entry-level certification that validates overall understanding of the AWS Cloud. This certification is ideal for individuals in technical, managerial, sales, purchasing, or financial roles who work with the AWS Cloud.",
       "prerequisites": {
         "required": [],
-        "recommended": ["Basic understanding of IT services and their uses in the AWS Cloud platform"]
+        "recommended": [
+          "Basic understanding of IT services and their uses in the AWS Cloud platform"
+        ]
       },
       "examInfo": {
         "format": "Multiple choice and multiple response",
@@ -86,8 +100,12 @@
       "intendedAudience": ["DevOps Engineer", "SRE", "Cloud Architect"],
       "description": "The AWS Certified DevOps Engineer - Professional certification validates technical expertise in provisioning, operating, and managing distributed application systems on the AWS platform. This certification demonstrates your ability to implement and manage continuous delivery systems and methodologies on AWS.",
       "prerequisites": {
-        "required": ["AWS Certified Developer - Associate OR AWS Certified SysOps Administrator - Associate"],
-        "recommended": ["2+ years of experience provisioning, operating, and managing AWS environments"]
+        "required": [
+          "AWS Certified Developer - Associate OR AWS Certified SysOps Administrator - Associate"
+        ],
+        "recommended": [
+          "2+ years of experience provisioning, operating, and managing AWS environments"
+        ]
       },
       "examInfo": {
         "format": "Multiple choice and multiple response",
@@ -114,11 +132,18 @@
       "category": "Cloud",
       "difficulty": "Intermediate",
       "validityPeriod": "2 years",
-      "intendedAudience": ["Cloud Administrator", "System Administrator", "DevOps Engineer"],
+      "intendedAudience": [
+        "Cloud Administrator",
+        "System Administrator",
+        "DevOps Engineer"
+      ],
       "description": "The Azure Administrator Associate certification validates your skills in implementing, managing, and monitoring an organization's Microsoft Azure environment. This includes managing cloud infrastructure services, applications, networks, and security.",
       "prerequisites": {
         "required": [],
-        "recommended": ["6+ months of hands-on experience with Azure administration", "Understanding of core Azure services, workloads, security, and governance"]
+        "recommended": [
+          "6+ months of hands-on experience with Azure administration",
+          "Understanding of core Azure services, workloads, security, and governance"
+        ]
       },
       "examInfo": {
         "format": "Multiple choice, case studies, and hands-on labs",
@@ -145,11 +170,17 @@
       "category": "Cloud",
       "difficulty": "Advanced",
       "validityPeriod": "2 years",
-      "intendedAudience": ["Solution Architect", "Cloud Architect", "Technical Lead"],
+      "intendedAudience": [
+        "Solution Architect",
+        "Cloud Architect",
+        "Technical Lead"
+      ],
       "description": "The Azure Solutions Architect Expert certification validates expertise in designing cloud and hybrid solutions that run on Microsoft Azure. This certification demonstrates advanced skills in compute, network, storage, and security.",
       "prerequisites": {
         "required": ["Microsoft Azure Administrator Associate certification"],
-        "recommended": ["Advanced experience with Azure administration, development, and DevOps processes"]
+        "recommended": [
+          "Advanced experience with Azure administration, development, and DevOps processes"
+        ]
       },
       "examInfo": {
         "format": "Multiple choice, case studies, and scenario-based questions",
@@ -176,11 +207,17 @@
       "category": "Cloud",
       "difficulty": "Advanced",
       "validityPeriod": "2 years",
-      "intendedAudience": ["Cloud Architect", "Solution Architect", "Technical Lead"],
+      "intendedAudience": [
+        "Cloud Architect",
+        "Solution Architect",
+        "Technical Lead"
+      ],
       "description": "The Google Cloud Professional Cloud Architect certification demonstrates your ability to design, develop, and manage robust, secure, scalable, highly available, and dynamic solutions to drive business objectives using Google Cloud technologies.",
       "prerequisites": {
         "required": [],
-        "recommended": ["3+ years of industry experience including 1+ years designing and managing solutions using Google Cloud"]
+        "recommended": [
+          "3+ years of industry experience including 1+ years designing and managing solutions using Google Cloud"
+        ]
       },
       "examInfo": {
         "format": "Multiple choice and multiple select",
@@ -206,11 +243,20 @@
       "category": "Security",
       "difficulty": "Advanced",
       "validityPeriod": "3 years",
-      "intendedAudience": ["Security Engineer", "Security Architect", "Security Manager", "CISO"],
+      "intendedAudience": [
+        "Security Engineer",
+        "Security Architect",
+        "Security Manager",
+        "CISO"
+      ],
       "description": "CISSP is an internationally recognized certification in information security. It demonstrates an advanced level of knowledge in designing, implementing, and managing cybersecurity programs. CISSP covers eight domains of security knowledge.",
       "prerequisites": {
-        "required": ["5 years of cumulative paid work experience in two or more of the eight domains of the CISSP CBK"],
-        "recommended": ["Bachelor's degree or additional certification can substitute for 1 year of experience"]
+        "required": [
+          "5 years of cumulative paid work experience in two or more of the eight domains of the CISSP CBK"
+        ],
+        "recommended": [
+          "Bachelor's degree or additional certification can substitute for 1 year of experience"
+        ]
       },
       "examInfo": {
         "format": "Computerized adaptive testing (CAT)",
@@ -237,11 +283,17 @@
       "category": "Security",
       "difficulty": "Beginner",
       "validityPeriod": "3 years",
-      "intendedAudience": ["Security Administrator", "Network Administrator", "Junior Security Engineer"],
+      "intendedAudience": [
+        "Security Administrator",
+        "Network Administrator",
+        "Junior Security Engineer"
+      ],
       "description": "CompTIA Security+ is a global certification that validates the baseline skills necessary to perform core security functions and pursue an IT security career. It covers essential principles for network security and risk management.",
       "prerequisites": {
         "required": [],
-        "recommended": ["CompTIA Network+ and 2 years of experience in IT administration with a security focus"]
+        "recommended": [
+          "CompTIA Network+ and 2 years of experience in IT administration with a security focus"
+        ]
       },
       "examInfo": {
         "format": "Multiple choice and performance-based",
@@ -268,11 +320,17 @@
       "category": "Networking",
       "difficulty": "Beginner",
       "validityPeriod": "3 years",
-      "intendedAudience": ["Network Administrator", "Network Technician", "Help Desk Technician"],
+      "intendedAudience": [
+        "Network Administrator",
+        "Network Technician",
+        "Help Desk Technician"
+      ],
       "description": "CompTIA Network+ validates the essential knowledge and skills needed to confidently design, configure, manage and troubleshoot wired and wireless networks. This certification covers networking concepts, infrastructure, operations, security, and troubleshooting.",
       "prerequisites": {
         "required": [],
-        "recommended": ["CompTIA A+ certification and 9-12 months of networking experience"]
+        "recommended": [
+          "CompTIA A+ certification and 9-12 months of networking experience"
+        ]
       },
       "examInfo": {
         "format": "Multiple choice and performance-based",
@@ -299,7 +357,12 @@
       "category": "Project Management",
       "difficulty": "Beginner",
       "validityPeriod": "Lifetime",
-      "intendedAudience": ["IT Service Manager", "Project Manager", "Business Analyst", "IT Professional"],
+      "intendedAudience": [
+        "IT Service Manager",
+        "Project Manager",
+        "Business Analyst",
+        "IT Professional"
+      ],
       "description": "ITIL 4 Foundation introduces modern IT service management concepts and provides a practical and flexible approach to support organizations on their journey to digital transformation. It covers key concepts of service management and the ITIL 4 service value system.",
       "prerequisites": {
         "required": [],
@@ -329,11 +392,17 @@
       "category": "Cloud",
       "difficulty": "Intermediate",
       "validityPeriod": "3 years",
-      "intendedAudience": ["Kubernetes Administrator", "DevOps Engineer", "Site Reliability Engineer"],
+      "intendedAudience": [
+        "Kubernetes Administrator",
+        "DevOps Engineer",
+        "Site Reliability Engineer"
+      ],
       "description": "The CKA certification demonstrates proficiency in managing Kubernetes clusters, including installation, configuration, management, and troubleshooting. This hands-on certification validates your ability to perform the responsibilities of Kubernetes administrators.",
       "prerequisites": {
         "required": [],
-        "recommended": ["Experience with command-line interface and container technologies"]
+        "recommended": [
+          "Experience with command-line interface and container technologies"
+        ]
       },
       "examInfo": {
         "format": "Performance-based (hands-on command line)",
@@ -344,9 +413,7 @@
       },
       "renewalRequirements": {
         "cycle": "3 years",
-        "options": [
-          "Retake and pass the current version of the CKA exam"
-        ]
+        "options": ["Retake and pass the current version of the CKA exam"]
       },
       "holderCount": 7
     },
@@ -359,10 +426,17 @@
       "category": "Security",
       "difficulty": "Advanced",
       "validityPeriod": "3 years",
-      "intendedAudience": ["Security Manager", "IT Manager", "Security Consultant", "CISO"],
+      "intendedAudience": [
+        "Security Manager",
+        "IT Manager",
+        "Security Consultant",
+        "CISO"
+      ],
       "description": "CISM certification indicates expertise in information security governance, risk management, incident management, and program development and management. CISM is designed for experienced security managers and those who have information security management responsibilities.",
       "prerequisites": {
-        "required": ["5 years of work experience in information security management"],
+        "required": [
+          "5 years of work experience in information security management"
+        ],
         "recommended": ["A combination of experience in multiple CISM domains"]
       },
       "examInfo": {
@@ -390,11 +464,17 @@
       "category": "Cloud",
       "difficulty": "Intermediate",
       "validityPeriod": "2 years",
-      "intendedAudience": ["DevOps Engineer", "Cloud Engineer", "Infrastructure Engineer"],
+      "intendedAudience": [
+        "DevOps Engineer",
+        "Cloud Engineer",
+        "Infrastructure Engineer"
+      ],
       "description": "The HashiCorp Certified: Terraform Associate certification validates your knowledge of basic concepts and skills in infrastructure automation using Terraform. This certification covers Terraform's purpose, workflow, and key features for infrastructure as code.",
       "prerequisites": {
         "required": [],
-        "recommended": ["Basic understanding of cloud infrastructure and experience using Terraform in production"]
+        "recommended": [
+          "Basic understanding of cloud infrastructure and experience using Terraform in production"
+        ]
       },
       "examInfo": {
         "format": "Multiple choice",
@@ -420,11 +500,18 @@
       "category": "Data",
       "difficulty": "Intermediate",
       "validityPeriod": "2 years",
-      "intendedAudience": ["Data Engineer", "Data Architect", "Database Administrator"],
+      "intendedAudience": [
+        "Data Engineer",
+        "Data Architect",
+        "Database Administrator"
+      ],
       "description": "The Azure Data Engineer Associate certification validates your ability to design and implement data management, monitoring, security, and privacy using Azure data services. This includes integrating, transforming, and consolidating data from structured and unstructured data systems.",
       "prerequisites": {
         "required": [],
-        "recommended": ["Experience with data processing and data engineering concepts", "Familiarity with Azure data services"]
+        "recommended": [
+          "Experience with data processing and data engineering concepts",
+          "Familiarity with Azure data services"
+        ]
       },
       "examInfo": {
         "format": "Multiple choice and case studies",
@@ -451,11 +538,18 @@
       "category": "Security",
       "difficulty": "Intermediate",
       "validityPeriod": "3 years",
-      "intendedAudience": ["Penetration Tester", "Security Analyst", "Ethical Hacker", "Security Consultant"],
+      "intendedAudience": [
+        "Penetration Tester",
+        "Security Analyst",
+        "Ethical Hacker",
+        "Security Consultant"
+      ],
       "description": "The Certified Ethical Hacker certification demonstrates knowledge of assessing the security of computer systems by looking for weaknesses and vulnerabilities using the same techniques as malicious hackers, but in a lawful and legitimate manner.",
       "prerequisites": {
         "required": [],
-        "recommended": ["2 years of work experience in information security OR attend official EC-Council training"]
+        "recommended": [
+          "2 years of work experience in information security OR attend official EC-Council training"
+        ]
       },
       "examInfo": {
         "format": "Multiple choice",

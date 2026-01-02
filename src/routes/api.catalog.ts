@@ -3,12 +3,21 @@ import { json } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 import { getDb } from '../db/db.server'
 import { certifications } from '../db/schema'
+import { requireRole } from '../lib/auth.server'
 
 export const Route = createFileRoute('/api/catalog')({
   server: {
     handlers: {
       GET: async () => {
         try {
+          await requireRole([
+            'Admin',
+            'Manager',
+            'Auditor',
+            'Executive',
+            'User',
+          ])
+
           const db = await getDb()
           if (!db) {
             return json({ error: 'Database not available' }, { status: 500 })
@@ -23,16 +32,21 @@ export const Route = createFileRoute('/api/catalog')({
               level: c.difficulty,
               price: c.price,
               category: c.category,
-              description: c.description
-            }))
+              description: c.description,
+            })),
           })
-        } catch (error) {
+        } catch (error: any) {
           console.error('Failed to fetch catalog:', error)
-          return json({ error: 'Failed to fetch catalog' }, { status: 500 })
+          return json(
+            { error: 'Forbidden or internal error', details: error.message },
+            { status: error.message.includes('Forbidden') ? 403 : 500 },
+          )
         }
       },
       DELETE: async ({ request }) => {
         try {
+          await requireRole(['Admin'])
+
           const url = new URL(request.url)
           const id = url.searchParams.get('id')
 
@@ -46,47 +60,63 @@ export const Route = createFileRoute('/api/catalog')({
           }
 
           await db.delete(certifications).where(eq(certifications.id, id))
-          console.log(`🗑️ [API] Deleted certification: ${id}`)
           return json({ success: true, deletedId: id })
-        } catch (error) {
+        } catch (error: any) {
           console.error('Failed to delete certification:', error)
-          return json({ error: 'Failed to delete certification' }, { status: 500 })
+          return json(
+            { error: 'Forbidden or internal error', details: error.message },
+            { status: error.message.includes('Forbidden') ? 403 : 500 },
+          )
         }
       },
       POST: async ({ request }) => {
         try {
+          await requireRole(['Admin'])
+
           const data = await request.json()
           const db = await getDb()
           if (!db) {
             return json({ error: 'Database not available' }, { status: 500 })
           }
 
-          // Validate required fields
           if (!data.id || !data.name || !data.vendorName) {
-            return json({ error: 'id, name, and vendorName are required' }, { status: 400 })
+            return json(
+              { error: 'id, name, and vendorName are required' },
+              { status: 400 },
+            )
           }
 
-          const result = await db.insert(certifications).values({
-            id: data.id,
-            name: data.name,
-            vendorId: data.vendorId || data.vendorName.toLowerCase().replace(/\s/g, '-'),
-            vendorName: data.vendorName,
-            category: data.category || 'Cloud',
-            difficulty: data.difficulty || 'Intermediate',
-            price: data.price || null,
-            description: data.description || null
-          }).returning()
+          const result = await db
+            .insert(certifications)
+            .values({
+              id: data.id,
+              name: data.name,
+              vendorId:
+                data.vendorId ||
+                data.vendorName.toLowerCase().replace(/\s/g, '-'),
+              vendorName: data.vendorName,
+              category: data.category || 'Cloud',
+              difficulty: data.difficulty || 'Intermediate',
+              price: data.price || null,
+              description: data.description || null,
+            })
+            .returning()
 
-          console.log(`✅ [API] Added certification: ${result[0].id}`)
           return json(result[0], { status: 201 })
         } catch (error: any) {
           if (error.code === '23505') {
-            return json({ error: 'Certification with this ID already exists' }, { status: 409 })
+            return json(
+              { error: 'Certification with this ID already exists' },
+              { status: 409 },
+            )
           }
           console.error('Failed to add certification:', error)
-          return json({ error: 'Failed to add certification' }, { status: 500 })
+          return json(
+            { error: 'Forbidden or internal error', details: error.message },
+            { status: error.message.includes('Forbidden') ? 403 : 500 },
+          )
         }
-      }
-    }
-  }
+      },
+    },
+  },
 })

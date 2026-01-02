@@ -1,41 +1,85 @@
-import { AlertTriangle, CheckCircle2, Clock, Download, FileText, Loader2, Plus } from 'lucide-react'
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  Download,
+  FileText,
+  Loader2,
+  Plus,
+} from 'lucide-react'
 import { format } from 'date-fns'
-import type { ComplianceReport, ComplianceReportDateRange } from '@/../product/sections/compliance-and-audit/types'
+import type {
+  ComplianceReport,
+  ComplianceReportDateRange,
+} from '@/../product/sections/compliance-and-audit/types'
 
 interface ReportsSectionProps {
   reports: Array<ComplianceReport>
-  onGenerateReport?: (reportType: 'audit-trail-export' | 'certification-status' | 'compliance-summary', dateRange?: ComplianceReportDateRange) => void
+  onGenerateReport?: (
+    reportType:
+      | 'audit-trail-export'
+      | 'certification-status'
+      | 'compliance-summary',
+    dateRange?: ComplianceReportDateRange,
+  ) => void
   onDownloadReport?: (reportId: string) => void
-  onExportAuditTrail?: (dateRange: ComplianceReportDateRange, format: 'pdf' | 'csv') => void
+  onExportAuditTrail?: (
+    dateRange: ComplianceReportDateRange,
+    format: 'pdf' | 'csv',
+  ) => void
 }
 
-export function ReportsSection({ reports, onGenerateReport, onDownloadReport }: ReportsSectionProps) {
+export function ReportsSection({
+  reports,
+  onGenerateReport,
+  onDownloadReport,
+}: ReportsSectionProps) {
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'completed': return <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-      case 'generating': return <Loader2 className="w-4 h-4 text-blue-600 dark:text-blue-400 animate-spin" />
-      case 'pending': return <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-      case 'failed': return <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
-      default: return <FileText className="w-4 h-4" />
+      case 'completed':
+        return (
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+        )
+      case 'generating':
+        return (
+          <Loader2 className="w-4 h-4 text-blue-600 dark:text-blue-400 animate-spin" />
+        )
+      case 'pending':
+        return <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+      case 'failed':
+        return (
+          <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+        )
+      default:
+        return <FileText className="w-4 h-4" />
     }
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300'
-      case 'generating': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
-      case 'pending': return 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'
-      case 'failed': return 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300'
-      default: return 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+      case 'completed':
+        return 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300'
+      case 'generating':
+        return 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+      case 'pending':
+        return 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'
+      case 'failed':
+        return 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300'
+      default:
+        return 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
     }
   }
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'audit-trail-export': return 'Audit Trail'
-      case 'certification-status': return 'Certification Status'
-      case 'compliance-summary': return 'Compliance Summary'
-      default: return type
+      case 'audit-trail-export':
+        return 'Audit Trail'
+      case 'certification-status':
+        return 'Certification Status'
+      case 'compliance-summary':
+        return 'Compliance Summary'
+      default:
+        return type
     }
   }
 
@@ -56,7 +100,7 @@ export function ReportsSection({ reports, onGenerateReport, onDownloadReport }: 
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {reports.map(report => (
+        {reports.map((report) => (
           <div
             key={report.id}
             className="border border-slate-200 dark:border-slate-700 rounded-lg p-5 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
@@ -70,7 +114,9 @@ export function ReportsSection({ reports, onGenerateReport, onDownloadReport }: 
                   <span className="text-xs px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded font-medium">
                     {getTypeLabel(report.type)}
                   </span>
-                  <span className={`text-xs px-2 py-0.5 rounded font-medium flex items-center gap-1 ${getStatusColor(report.status)}`}>
+                  <span
+                    className={`text-xs px-2 py-0.5 rounded font-medium flex items-center gap-1 ${getStatusColor(report.status)}`}
+                  >
                     {getStatusIcon(report.status)}
                     {report.status}
                   </span>
@@ -81,15 +127,20 @@ export function ReportsSection({ reports, onGenerateReport, onDownloadReport }: 
             <div className="text-xs text-slate-600 dark:text-slate-400 space-y-1 mb-4">
               <div>Generated by {report.generatedBy.name}</div>
               {report.generatedDate && (
-                <div>{format(new Date(report.generatedDate), 'MMM d, yyyy')}</div>
+                <div>
+                  {format(new Date(report.generatedDate), 'MMM d, yyyy')}
+                </div>
               )}
               {report.dateRange && (
                 <div>
-                  {format(new Date(report.dateRange.start), 'MMM d')} - {format(new Date(report.dateRange.end), 'MMM d, yyyy')}
+                  {format(new Date(report.dateRange.start), 'MMM d')} -{' '}
+                  {format(new Date(report.dateRange.end), 'MMM d, yyyy')}
                 </div>
               )}
               {report.fileSize && (
-                <div className="text-slate-500 dark:text-slate-500">{report.fileSize}</div>
+                <div className="text-slate-500 dark:text-slate-500">
+                  {report.fileSize}
+                </div>
               )}
             </div>
 

@@ -13,16 +13,34 @@ Training-Certify uses Google Fonts for all typography.
 - **Google Fonts**: https://fonts.google.com/specimen/Inter
 
 ```html
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+  rel="stylesheet"
+/>
 ```
 
 ```css
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
 }
 ```
 
@@ -35,11 +53,16 @@ h1, h2, h3, h4, h5, h6 {
 - **Google Fonts**: https://fonts.google.com/specimen/JetBrains+Mono
 
 ```html
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link
+  href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
+  rel="stylesheet"
+/>
 ```
 
 ```css
-code, pre, .font-mono {
+code,
+pre,
+.font-mono {
   font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
 }
 ```
@@ -49,9 +72,12 @@ code, pre, .font-mono {
 To import both fonts in a single request:
 
 ```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+  rel="stylesheet"
+/>
 ```
 
 ## Tailwind Configuration
@@ -107,9 +133,7 @@ Use Tailwind's typography utilities for consistent sizing:
 ### Body Text
 
 ```html
-<p class="text-base text-slate-600 dark:text-slate-400">
-  Regular body text
-</p>
+<p class="text-base text-slate-600 dark:text-slate-400">Regular body text</p>
 
 <p class="text-sm text-slate-600 dark:text-slate-400">
   Small text (descriptions, captions)
@@ -123,7 +147,9 @@ Use Tailwind's typography utilities for consistent sizing:
 ### Monospace
 
 ```html
-<code class="font-mono text-sm bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">
+<code
+  class="font-mono text-sm bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded"
+>
   certification-id-123
 </code>
 
@@ -211,7 +237,9 @@ Use Tailwind's typography utilities for consistent sizing:
 ### Button
 
 ```html
-<button class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700">
+<button
+  class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700"
+>
   Add Certification
 </button>
 ```
@@ -219,7 +247,9 @@ Use Tailwind's typography utilities for consistent sizing:
 ### Table Header
 
 ```html
-<th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-slate-100">
+<th
+  class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-slate-100"
+>
   Certification Name
 </th>
 ```
@@ -227,7 +257,9 @@ Use Tailwind's typography utilities for consistent sizing:
 ### Status Badge
 
 ```html
-<span class="px-2 py-1 text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded">
+<span
+  class="px-2 py-1 text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded"
+>
   Active
 </span>
 ```
@@ -235,9 +267,10 @@ Use Tailwind's typography utilities for consistent sizing:
 ## Performance Tips
 
 1. **Preconnect** to Google Fonts for faster loading:
+
    ```html
-   <link rel="preconnect" href="https://fonts.googleapis.com">
-   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link rel="preconnect" href="https://fonts.googleapis.com" />
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
    ```
 
 2. **Load only needed weights**: Only include 400, 500, 600, 700 for Inter and 400, 500 for JetBrains Mono

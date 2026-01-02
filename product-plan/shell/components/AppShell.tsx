@@ -100,9 +100,7 @@ export function AppShell({
       )}
 
       {/* Main Content */}
-      <main className="pt-16 lg:pl-60">
-        {children}
-      </main>
+      <main className="pt-16 lg:pl-60">{children}</main>
     </div>
   )
 }

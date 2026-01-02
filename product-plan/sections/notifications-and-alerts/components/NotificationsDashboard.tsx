@@ -15,7 +15,9 @@ export function NotificationsDashboard({
   onUpdateChannels,
   onUpdatePreferences,
 }: NotificationsAlertsProps) {
-  const [activeFilter, setActiveFilter] = useState<'all' | 'unread' | 'dismissed'>('all')
+  const [activeFilter, setActiveFilter] = useState<
+    'all' | 'unread' | 'dismissed'
+  >('all')
   const [showSettings, setShowSettings] = useState(false)
 
   const handleFilterChange = (filter: 'all' | 'unread' | 'dismissed') => {
@@ -31,7 +33,9 @@ export function NotificationsDashboard({
   })
 
   // Calculate counts for filters
-  const unreadCount = notifications.filter((n) => !n.isRead && !n.isDismissed).length
+  const unreadCount = notifications.filter(
+    (n) => !n.isRead && !n.isDismissed,
+  ).length
   const dismissedCount = notifications.filter((n) => n.isDismissed).length
 
   return (
@@ -93,11 +97,13 @@ export function NotificationsDashboard({
             >
               Unread
               {unreadCount > 0 && (
-                <span className={`ml-2 px-1.5 py-0.5 text-xs rounded ${
-                  activeFilter === 'unread'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
-                }`}>
+                <span
+                  className={`ml-2 px-1.5 py-0.5 text-xs rounded ${
+                    activeFilter === 'unread'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                  }`}
+                >
                   {unreadCount}
                 </span>
               )}
@@ -146,9 +152,12 @@ export function NotificationsDashboard({
                 {activeFilter === 'all' && 'No notifications yet'}
               </h3>
               <p className="text-slate-600 dark:text-slate-400">
-                {activeFilter === 'unread' && "You've read all your notifications."}
-                {activeFilter === 'dismissed' && "Dismissed notifications will appear here."}
-                {activeFilter === 'all' && "You'll see notifications about certification renewals and alerts here."}
+                {activeFilter === 'unread' &&
+                  "You've read all your notifications."}
+                {activeFilter === 'dismissed' &&
+                  'Dismissed notifications will appear here.'}
+                {activeFilter === 'all' &&
+                  "You'll see notifications about certification renewals and alerts here."}
               </p>
             </div>
           ) : (

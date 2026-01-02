@@ -1,13 +1,6 @@
 import React from 'react'
 import { Link } from '@tanstack/react-router'
-import {
-  Award,
-  Bell,
-  BookOpen,
-  Shield,
-  User,
-  Users
-} from 'lucide-react'
+import { Award, Bell, BookOpen, Shield, User, Users } from 'lucide-react'
 
 export interface NavigationItem {
   label: string

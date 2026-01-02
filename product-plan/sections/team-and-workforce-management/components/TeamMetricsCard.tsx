@@ -1,5 +1,14 @@
-import { AlertCircle, CheckCircle2, Clock, TrendingUp, Users } from 'lucide-react'
-import type { Team, TeamMetrics } from '@/../product/sections/team-and-workforce-management/types'
+import {
+  AlertCircle,
+  CheckCircle2,
+  Clock,
+  TrendingUp,
+  Users,
+} from 'lucide-react'
+import type {
+  Team,
+  TeamMetrics,
+} from '@/../product/sections/team-and-workforce-management/types'
 
 interface TeamMetricsCardProps {
   team: Team
@@ -8,12 +17,21 @@ interface TeamMetricsCardProps {
   onViewPlanning?: () => void
 }
 
-export function TeamMetricsCard({ team, metrics, onViewDetails, onViewPlanning }: TeamMetricsCardProps) {
+export function TeamMetricsCard({
+  team,
+  metrics,
+  onViewDetails,
+  onViewPlanning,
+}: TeamMetricsCardProps) {
   if (!metrics) {
     return (
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{team.name}</h3>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">No metrics available</p>
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+          {team.name}
+        </h3>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          No metrics available
+        </p>
       </div>
     )
   }
@@ -27,7 +45,8 @@ export function TeamMetricsCard({ team, metrics, onViewDetails, onViewPlanning }
   const coverageColor = getCoverageColor(metrics.coveragePercentage)
 
   const coverageColorClasses = {
-    emerald: 'from-emerald-500 to-emerald-600 dark:from-emerald-400 dark:to-emerald-500',
+    emerald:
+      'from-emerald-500 to-emerald-600 dark:from-emerald-400 dark:to-emerald-500',
     amber: 'from-amber-500 to-amber-600 dark:from-amber-400 dark:to-amber-500',
     rose: 'from-rose-500 to-rose-600 dark:from-rose-400 dark:to-rose-500',
   }
@@ -38,7 +57,10 @@ export function TeamMetricsCard({ team, metrics, onViewDetails, onViewPlanning }
     rose: 'bg-rose-50 dark:bg-rose-950/30',
   }
 
-  const totalExpiring = metrics.expiringIn30Days + metrics.expiringIn60Days + metrics.expiringIn90Days
+  const totalExpiring =
+    metrics.expiringIn30Days +
+    metrics.expiringIn60Days +
+    metrics.expiringIn90Days
 
   return (
     <div className="group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 hover:shadow-xl hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-300">
@@ -48,20 +70,30 @@ export function TeamMetricsCard({ team, metrics, onViewDetails, onViewPlanning }
           <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
             {team.name}
           </h3>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{team.description}</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            {team.description}
+          </p>
           <div className="flex items-center gap-2 mt-2">
             <Users className="w-4 h-4 text-slate-400" />
-            <span className="text-sm text-slate-600 dark:text-slate-300">{team.memberCount} members</span>
+            <span className="text-sm text-slate-600 dark:text-slate-300">
+              {team.memberCount} members
+            </span>
           </div>
         </div>
 
         {/* Coverage badge */}
-        <div className={`${coverageBgClasses[coverageColor]} px-4 py-2 rounded-lg`}>
+        <div
+          className={`${coverageBgClasses[coverageColor]} px-4 py-2 rounded-lg`}
+        >
           <div className="text-center">
-            <div className={`text-2xl font-bold bg-gradient-to-r ${coverageColorClasses[coverageColor]} bg-clip-text text-transparent`}>
+            <div
+              className={`text-2xl font-bold bg-gradient-to-r ${coverageColorClasses[coverageColor]} bg-clip-text text-transparent`}
+            >
               {metrics.coveragePercentage.toFixed(0)}%
             </div>
-            <div className="text-xs font-medium text-slate-600 dark:text-slate-400">Coverage</div>
+            <div className="text-xs font-medium text-slate-600 dark:text-slate-400">
+              Coverage
+            </div>
           </div>
         </div>
       </div>
@@ -97,10 +129,15 @@ export function TeamMetricsCard({ team, metrics, onViewDetails, onViewPlanning }
       {/* Top gaps */}
       {metrics.topGaps.length > 0 && (
         <div className="mb-4 p-3 bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-800 rounded-lg">
-          <div className="text-xs font-semibold text-rose-700 dark:text-rose-300 mb-2">Top Gaps:</div>
+          <div className="text-xs font-semibold text-rose-700 dark:text-rose-300 mb-2">
+            Top Gaps:
+          </div>
           <ul className="space-y-1">
             {metrics.topGaps.slice(0, 2).map((gap, idx) => (
-              <li key={idx} className="text-xs text-rose-600 dark:text-rose-400 flex items-center gap-1">
+              <li
+                key={idx}
+                className="text-xs text-rose-600 dark:text-rose-400 flex items-center gap-1"
+              >
                 <span className="w-1 h-1 bg-rose-500 rounded-full" />
                 {gap}
               </li>
@@ -146,8 +183,12 @@ function MetricItem({ icon, label, value, color }: MetricItemProps) {
     <div className="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
       <div className={colorClasses[color]}>{icon}</div>
       <div className="flex-1">
-        <div className="text-xs text-slate-500 dark:text-slate-400">{label}</div>
-        <div className="text-sm font-bold text-slate-900 dark:text-slate-100">{value}</div>
+        <div className="text-xs text-slate-500 dark:text-slate-400">
+          {label}
+        </div>
+        <div className="text-sm font-bold text-slate-900 dark:text-slate-100">
+          {value}
+        </div>
       </div>
     </div>
   )

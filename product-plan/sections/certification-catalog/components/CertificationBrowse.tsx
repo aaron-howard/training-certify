@@ -28,7 +28,7 @@ export function CertificationBrowse({
   const handleFilterChange = (
     vendor: string,
     category: string,
-    difficulty: string
+    difficulty: string,
   ) => {
     setSelectedVendor(vendor)
     setSelectedCategory(category)
@@ -56,22 +56,24 @@ export function CertificationBrowse({
     const matchesDifficulty =
       selectedDifficulty === 'all' || cert.difficulty === selectedDifficulty
 
-    return matchesSearch && matchesVendor && matchesCategory && matchesDifficulty
+    return (
+      matchesSearch && matchesVendor && matchesCategory && matchesDifficulty
+    )
   })
 
   // Get unique values for filters
   const uniqueVendors = Array.from(
-    new Set(certifications.map((c) => c.vendorId))
+    new Set(certifications.map((c) => c.vendorId)),
   ).map((id) => {
     const cert = certifications.find((c) => c.vendorId === id)
     return { id, name: cert?.vendorName || '' }
   })
 
   const uniqueCategories = Array.from(
-    new Set(certifications.map((c) => c.category))
+    new Set(certifications.map((c) => c.category)),
   )
   const uniqueDifficulties = Array.from(
-    new Set(certifications.map((c) => c.difficulty))
+    new Set(certifications.map((c) => c.difficulty)),
   )
 
   return (
@@ -85,11 +87,13 @@ export function CertificationBrowse({
                 Certification Catalog
               </h1>
               <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                Discover and track professional certifications from leading vendors
+                Discover and track professional certifications from leading
+                vendors
               </p>
             </div>
             <div className="text-sm text-slate-600 dark:text-slate-400">
-              {filteredCertifications.length} of {certifications.length} certifications
+              {filteredCertifications.length} of {certifications.length}{' '}
+              certifications
             </div>
           </div>
 

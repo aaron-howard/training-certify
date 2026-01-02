@@ -656,9 +656,7 @@
       "expiringIn90Days": 0,
       "expired": 0,
       "gapCount": 2,
-      "topGaps": [
-        "AWS Certified DevOps Engineer - Professional"
-      ]
+      "topGaps": ["AWS Certified DevOps Engineer - Professional"]
     },
     {
       "teamId": "team-003",
@@ -670,9 +668,7 @@
       "expiringIn90Days": 0,
       "expired": 0,
       "gapCount": 2,
-      "topGaps": [
-        "CISSP - Certified Information Systems Security Professional"
-      ]
+      "topGaps": ["CISSP - Certified Information Systems Security Professional"]
     },
     {
       "teamId": "team-004",

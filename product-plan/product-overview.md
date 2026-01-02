@@ -27,24 +27,31 @@ Training-Certify is an enterprise certification tracking and compliance manageme
 The product is organized into 7 milestones:
 
 ### Milestone 1: Foundation
+
 Set up project structure, design system tokens, and core types from the global data model.
 
 ### Milestone 2: Application Shell
+
 Implement the sidebar navigation, top bar, user menu, and responsive layout that wraps all sections.
 
 ### Milestone 3: Certification Management
+
 Core certification tracking with upload, status monitoring, search/filter, and lifecycle management.
 
 ### Milestone 4: Team & Workforce Management
+
 Manager and executive views for team competency analysis, gap identification, and workforce planning.
 
 ### Milestone 5: Compliance & Audit
+
 Enterprise audit trail, compliance dashboard, and reporting for regulatory requirements.
 
 ### Milestone 6: Certification Catalog
+
 Vendor certification directory with browse, search, detail views, and catalog discovery.
 
 ### Milestone 7: Notifications & Alerts
+
 Notification dashboard with feed, settings, and configurable alert preferences.
 
 ## Design System
@@ -57,6 +64,7 @@ Notification dashboard with feed, settings, and configurable alert preferences.
 ## Data Model Overview
 
 Core entities:
+
 - **User** — Employees with certifications tracked
 - **Certification** — Catalog entries with metadata
 - **UserCertification** — User's acquired certifications

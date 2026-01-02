@@ -23,21 +23,29 @@ export function CertificationDetail({
 }: CertificationDetailProps) {
   const getDifficultyColor = (difficulty: string) => {
     const colors = {
-      Beginner: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
-      Intermediate: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',
-      Advanced: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
-      Expert: 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',
+      Beginner:
+        'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+      Intermediate:
+        'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+      Advanced:
+        'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+      Expert:
+        'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',
     }
     return colors[difficulty as keyof typeof colors] || colors.Intermediate
   }
 
   const getCategoryColor = (category: string) => {
     const colors = {
-      Cloud: 'bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',
-      Security: 'bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',
-      Networking: 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+      Cloud:
+        'bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+      Security:
+        'bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',
+      Networking:
+        'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
       Data: 'bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800',
-      'Project Management': 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+      'Project Management':
+        'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
     }
     return colors[category as keyof typeof colors] || colors.Cloud
   }
@@ -69,10 +77,14 @@ export function CertificationDetail({
                 {certification.name}
               </h1>
               <div className="flex flex-wrap gap-2 mb-6">
-                <span className={`px-3 py-1.5 text-sm font-medium rounded-lg border ${getCategoryColor(certification.category)}`}>
+                <span
+                  className={`px-3 py-1.5 text-sm font-medium rounded-lg border ${getCategoryColor(certification.category)}`}
+                >
                   {certification.category}
                 </span>
-                <span className={`px-3 py-1.5 text-sm font-semibold rounded-lg border ${getDifficultyColor(certification.difficulty)}`}>
+                <span
+                  className={`px-3 py-1.5 text-sm font-semibold rounded-lg border ${getDifficultyColor(certification.difficulty)}`}
+                >
                   {certification.difficulty}
                 </span>
                 <span className="px-3 py-1.5 text-sm font-medium rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center gap-1.5">
@@ -88,7 +100,10 @@ export function CertificationDetail({
                   <span className="font-semibold text-blue-600 dark:text-blue-400">
                     {certification.holderCount}
                   </span>{' '}
-                  {certification.holderCount === 1 ? 'team member holds' : 'team members hold'} this certification
+                  {certification.holderCount === 1
+                    ? 'team member holds'
+                    : 'team members hold'}{' '}
+                  this certification
                 </span>
               </div>
             </div>
@@ -181,7 +196,9 @@ export function CertificationDetail({
                     {certification.prerequisites.required.map((req, index) => (
                       <li key={index} className="flex items-start gap-2">
                         <CheckCircle2 className="w-5 h-5 text-rose-600 dark:text-rose-400 flex-shrink-0 mt-0.5" />
-                        <span className="text-slate-600 dark:text-slate-400">{req}</span>
+                        <span className="text-slate-600 dark:text-slate-400">
+                          {req}
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -194,12 +211,16 @@ export function CertificationDetail({
                     Recommended
                   </h3>
                   <ul className="space-y-2">
-                    {certification.prerequisites.recommended.map((rec, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <CheckCircle2 className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-                        <span className="text-slate-600 dark:text-slate-400">{rec}</span>
-                      </li>
-                    ))}
+                    {certification.prerequisites.recommended.map(
+                      (rec, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <CheckCircle2 className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+                          <span className="text-slate-600 dark:text-slate-400">
+                            {rec}
+                          </span>
+                        </li>
+                      ),
+                    )}
                   </ul>
                 </div>
               )}
@@ -216,15 +237,22 @@ export function CertificationDetail({
                 </h2>
               </div>
               <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
-                Renewal cycle: <span className="font-semibold text-slate-900 dark:text-slate-100">{certification.renewalRequirements.cycle}</span>
+                Renewal cycle:{' '}
+                <span className="font-semibold text-slate-900 dark:text-slate-100">
+                  {certification.renewalRequirements.cycle}
+                </span>
               </p>
               <ul className="space-y-2">
-                {certification.renewalRequirements.options.map((option, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
-                    <span className="text-slate-600 dark:text-slate-400">{option}</span>
-                  </li>
-                ))}
+                {certification.renewalRequirements.options.map(
+                  (option, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
+                      <span className="text-slate-600 dark:text-slate-400">
+                        {option}
+                      </span>
+                    </li>
+                  ),
+                )}
               </ul>
             </div>
           </div>
@@ -243,41 +271,61 @@ export function CertificationDetail({
                 <div className="pb-4 border-b border-white/20">
                   <div className="flex items-center gap-2 mb-2">
                     <FileText className="w-4 h-4 text-blue-200" />
-                    <span className="text-sm font-medium text-blue-200">Format</span>
+                    <span className="text-sm font-medium text-blue-200">
+                      Format
+                    </span>
                   </div>
-                  <p className="text-white font-medium">{certification.examInfo.format}</p>
+                  <p className="text-white font-medium">
+                    {certification.examInfo.format}
+                  </p>
                 </div>
 
                 <div className="pb-4 border-b border-white/20">
                   <div className="flex items-center gap-2 mb-2">
                     <Clock className="w-4 h-4 text-blue-200" />
-                    <span className="text-sm font-medium text-blue-200">Duration</span>
+                    <span className="text-sm font-medium text-blue-200">
+                      Duration
+                    </span>
                   </div>
-                  <p className="text-white font-medium">{certification.examInfo.duration}</p>
+                  <p className="text-white font-medium">
+                    {certification.examInfo.duration}
+                  </p>
                 </div>
 
                 <div className="pb-4 border-b border-white/20">
                   <div className="flex items-center gap-2 mb-2">
                     <FileText className="w-4 h-4 text-blue-200" />
-                    <span className="text-sm font-medium text-blue-200">Questions</span>
+                    <span className="text-sm font-medium text-blue-200">
+                      Questions
+                    </span>
                   </div>
-                  <p className="text-white font-medium">{certification.examInfo.numberOfQuestions}</p>
+                  <p className="text-white font-medium">
+                    {certification.examInfo.numberOfQuestions}
+                  </p>
                 </div>
 
                 <div className="pb-4 border-b border-white/20">
                   <div className="flex items-center gap-2 mb-2">
                     <CheckCircle2 className="w-4 h-4 text-blue-200" />
-                    <span className="text-sm font-medium text-blue-200">Passing Score</span>
+                    <span className="text-sm font-medium text-blue-200">
+                      Passing Score
+                    </span>
                   </div>
-                  <p className="text-white font-medium">{certification.examInfo.passingScore}</p>
+                  <p className="text-white font-medium">
+                    {certification.examInfo.passingScore}
+                  </p>
                 </div>
 
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <DollarSign className="w-4 h-4 text-blue-200" />
-                    <span className="text-sm font-medium text-blue-200">Cost</span>
+                    <span className="text-sm font-medium text-blue-200">
+                      Cost
+                    </span>
                   </div>
-                  <p className="text-2xl font-bold text-white">{certification.examInfo.cost}</p>
+                  <p className="text-2xl font-bold text-white">
+                    {certification.examInfo.cost}
+                  </p>
                 </div>
               </div>
             </div>

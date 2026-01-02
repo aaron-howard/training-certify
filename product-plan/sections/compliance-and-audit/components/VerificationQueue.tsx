@@ -8,13 +8,21 @@ interface VerificationQueueProps {
   onViewDocument?: (documentUrl: string) => void
 }
 
-export function VerificationQueue({ pendingVerifications, onVerify, onViewDocument }: VerificationQueueProps) {
-  const pending = pendingVerifications.filter(v => v.status === 'pending-verification')
+export function VerificationQueue({
+  pendingVerifications,
+  onVerify,
+  onViewDocument,
+}: VerificationQueueProps) {
+  const pending = pendingVerifications.filter(
+    (v) => v.status === 'pending-verification',
+  )
 
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-md">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Verification Queue</h3>
+        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+          Verification Queue
+        </h3>
         <span className="px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 text-xs font-semibold rounded-full">
           {pending.length} pending
         </span>
@@ -26,11 +34,15 @@ export function VerificationQueue({ pendingVerifications, onVerify, onViewDocume
             <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full mb-4">
               <CheckCircle className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <p className="text-emerald-700 dark:text-emerald-300 font-medium">All caught up!</p>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">No certifications pending verification</p>
+            <p className="text-emerald-700 dark:text-emerald-300 font-medium">
+              All caught up!
+            </p>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+              No certifications pending verification
+            </p>
           </div>
         ) : (
-          pending.map(verification => (
+          pending.map((verification) => (
             <div
               key={verification.id}
               className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
@@ -48,7 +60,10 @@ export function VerificationQueue({ pendingVerifications, onVerify, onViewDocume
               </div>
 
               <div className="text-xs text-slate-500 dark:text-slate-500 mb-3">
-                Uploaded {formatDistanceToNow(new Date(verification.uploadedDate), { addSuffix: true })}
+                Uploaded{' '}
+                {formatDistanceToNow(new Date(verification.uploadedDate), {
+                  addSuffix: true,
+                })}
               </div>
 
               <div className="flex items-center gap-2">

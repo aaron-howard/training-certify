@@ -59,12 +59,8 @@
           "name": "audit_logs_user_id_users_id_fk",
           "tableFrom": "audit_logs",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -237,12 +233,8 @@
           "name": "notifications_user_id_users_id_fk",
           "tableFrom": "notifications",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -296,12 +288,8 @@
           "name": "teams_manager_id_users_id_fk",
           "tableFrom": "teams",
           "tableTo": "users",
-          "columnsFrom": [
-            "manager_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["manager_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -411,12 +399,8 @@
           "name": "user_certifications_user_id_users_id_fk",
           "tableFrom": "user_certifications",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -424,12 +408,8 @@
           "name": "user_certifications_certification_id_certifications_id_fk",
           "tableFrom": "user_certifications",
           "tableTo": "certifications",
-          "columnsFrom": [
-            "certification_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["certification_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -463,12 +443,8 @@
           "name": "user_teams_user_id_users_id_fk",
           "tableFrom": "user_teams",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -476,12 +452,8 @@
           "name": "user_teams_team_id_teams_id_fk",
           "tableFrom": "user_teams",
           "tableTo": "teams",
-          "columnsFrom": [
-            "team_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["team_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -549,9 +521,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -574,31 +544,17 @@
     "public.certification_difficulty": {
       "name": "certification_difficulty",
       "schema": "public",
-      "values": [
-        "Beginner",
-        "Intermediate",
-        "Advanced",
-        "Expert"
-      ]
+      "values": ["Beginner", "Intermediate", "Advanced", "Expert"]
     },
     "public.certification_status": {
       "name": "certification_status",
       "schema": "public",
-      "values": [
-        "active",
-        "expiring",
-        "expiring-soon",
-        "expired"
-      ]
+      "values": ["active", "expiring", "expiring-soon", "expired"]
     },
     "public.notification_severity": {
       "name": "notification_severity",
       "schema": "public",
-      "values": [
-        "critical",
-        "warning",
-        "info"
-      ]
+      "values": ["critical", "warning", "info"]
     },
     "public.notification_type": {
       "name": "notification_type",
@@ -613,12 +569,7 @@
     "public.role": {
       "name": "role",
       "schema": "public",
-      "values": [
-        "Admin",
-        "User",
-        "Manager",
-        "Executive"
-      ]
+      "values": ["Admin", "User", "Manager", "Executive"]
     }
   },
   "schemas": {},

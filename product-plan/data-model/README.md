@@ -5,9 +5,11 @@ This directory contains the global data model for Training-Certify, including Ty
 ## Core Entities
 
 ### User
+
 Individual employees who need certifications tracked. Users can have different roles that determine their permissions and dashboard views.
 
 **Fields:**
+
 - `id` — Unique identifier
 - `name` — Full name
 - `email` — Email address
@@ -16,15 +18,18 @@ Individual employees who need certifications tracked. Users can have different r
 - `avatarUrl` — URL to user's profile picture (nullable)
 
 **Relationships:**
+
 - User has many UserCertifications
 - User belongs to many Teams (through teamIds)
 - User can perform AuditLog actions
 - User receives Notifications
 
 ### Certification
+
 A specific certification from the catalog with metadata including name, vendor, renewal cycle, intended audience, prerequisites, and difficulty level.
 
 **Fields:**
+
 - `id` — Unique identifier
 - `name` — Certification name (e.g., "AWS Certified Solutions Architect - Associate")
 - `vendorId` — Reference to Vendor
@@ -42,14 +47,17 @@ A specific certification from the catalog with metadata including name, vendor, 
 - `holderCount` — Number of users who hold this certification
 
 **Relationships:**
+
 - Certification belongs to a Vendor
 - Certification has many UserCertifications
 - Certification can be part of CertificationRequirements
 
 ### UserCertification
+
 A user's acquired certification with expiration date, upload proof, current status, renewal tracking, and verification timestamps.
 
 **Fields:**
+
 - `id` — Unique identifier
 - `userId` — Reference to User
 - `certificationId` — Reference to Certification
@@ -64,15 +72,18 @@ A user's acquired certification with expiration date, upload proof, current stat
 - `verifiedAt` — Timestamp of verification (ISO 8601)
 
 **Relationships:**
+
 - UserCertification belongs to a User
 - UserCertification references a Certification
 - UserCertification generates Notifications
 - UserCertification creates AuditLog entries
 
 ### Team
+
 Groups of users for competency tracking, workforce management, and gap analysis. Users can belong to multiple teams.
 
 **Fields:**
+
 - `id` — Unique identifier
 - `name` — Team name
 - `description` — Team description
@@ -80,27 +91,33 @@ Groups of users for competency tracking, workforce management, and gap analysis.
 - `managerId` — Reference to User who manages this team
 
 **Relationships:**
+
 - Team has many Users (through membership)
 - Team has TeamMetrics
 - Team can have CertificationRequirements
 - Team has WorkforcePlanningInsights
 
 ### Vendor
+
 Certification issuing bodies such as AWS, Microsoft, (ISC)², ITIL, CompTIA, PMI, GIAC, OffSec, Cisco, and others.
 
 **Fields:**
+
 - `id` — Unique identifier
 - `name` — Vendor name (e.g., "Amazon Web Services")
 - `logo` — URL to vendor logo
 - `certificationCount` — Number of certifications offered
 
 **Relationships:**
+
 - Vendor has many Certifications
 
 ### AuditLog
+
 Timestamped record of all actions including uploads, renewals, assignments, and verifications for compliance tracking and regulatory requirements.
 
 **Fields:**
+
 - `id` — Unique identifier
 - `timestamp` — When the action occurred (ISO 8601)
 - `action` — Type of action (upload, renewal, deletion, verification, assignment, expiration, update)
@@ -109,13 +126,16 @@ Timestamped record of all actions including uploads, renewals, assignments, and 
 - `details` — Human-readable description of the action
 
 **Relationships:**
+
 - AuditLog references Users (performer and affected)
 - AuditLog references UserCertifications, Teams, or CertificationRequirements
 
 ### Notification
+
 Renewal reminders and expiration alerts sent to users at configurable intervals (30/60/90 days) based on certification expiration dates.
 
 **Fields:**
+
 - `id` — Unique identifier
 - `userId` — Reference to User
 - `userName` — Display name of user
@@ -130,30 +150,38 @@ Renewal reminders and expiration alerts sent to users at configurable intervals 
 - Optional team-related fields: `teamMemberName`, `teamName`, `expiringCount`, `complianceRate`
 
 **Relationships:**
+
 - Notification belongs to a User
 - Notification may relate to a UserCertification
 
 ## Supporting Types
 
 ### TeamMetrics
+
 Team-level metrics for dashboard views, showing coverage percentages, expiring certifications, and gaps.
 
 ### CertificationRequirement
+
 Defines which certifications are required or recommended for specific roles within teams.
 
 ### ComplianceMetrics
+
 Organization-wide compliance status including overall percentage, trending, and team-by-team breakdown.
 
 ### NotificationSettings
+
 User preferences for notification frequency (30/60/90-day intervals), channels (email, in-app, SMS), and additional preferences.
 
 ### WorkforcePlanningInsight
+
 Workforce planning data including projected gaps, hiring recommendations, and training priorities for teams.
 
 ### ComplianceReport
+
 Generated reports for audit trails, certification status, and compliance summaries with download links.
 
 ### PendingVerification
+
 Certifications uploaded by users that are awaiting verification by managers or administrators.
 
 ## Relationships Summary
@@ -227,6 +255,7 @@ import type {
 ### Sample Data
 
 Sample data for all entities is available in `sample-data.json`. This data can be used for:
+
 - Development and testing
 - UI prototyping
 - Example data for documentation

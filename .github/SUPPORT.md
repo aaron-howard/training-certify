@@ -11,9 +11,11 @@ Design OS is free and open source. To keep it sustainable, you can seek support 
 ---
 
 ## Bugs
-- Post suspected bugs in the **Bugs category** of Discussions.  Maintainers may promote confirmed bugs to Issues for tracking and fixes.
+
+- Post suspected bugs in the **Bugs category** of Discussions. Maintainers may promote confirmed bugs to Issues for tracking and fixes.
 
 ---
 
 ## Feature ideas
+
 Use the **Ideas category** of Discussions to propose and upvote new features and integration requests.

@@ -25,18 +25,23 @@ export function CompetencyDashboard({
   onViewWorkforcePlanning,
 }: TeamWorkforceManagementProps) {
   // Calculate organization-wide metrics
-  const totalCoverage = teamMetrics.length > 0
-    ? teamMetrics.reduce((sum, tm) => sum + tm.coveragePercentage, 0) / teamMetrics.length
-    : 0
+  const totalCoverage =
+    teamMetrics.length > 0
+      ? teamMetrics.reduce((sum, tm) => sum + tm.coveragePercentage, 0) /
+        teamMetrics.length
+      : 0
 
   const totalExpiringSoon = teamMetrics.reduce(
-    (sum, tm) => sum + tm.expiringIn30Days + tm.expiringIn60Days + tm.expiringIn90Days,
-    0
+    (sum, tm) =>
+      sum + tm.expiringIn30Days + tm.expiringIn60Days + tm.expiringIn90Days,
+    0,
   )
 
   const totalGaps = teamMetrics.reduce((sum, tm) => sum + tm.gapCount, 0)
 
-  const totalCertifications = userCertifications.filter(uc => uc.status === 'active').length
+  const totalCertifications = userCertifications.filter(
+    (uc) => uc.status === 'active',
+  ).length
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-emerald-50/20 dark:from-slate-950 dark:via-blue-950/30 dark:to-emerald-950/20 p-4 md:p-8">
@@ -47,7 +52,8 @@ export function CompetencyDashboard({
             Workforce Competency Overview
           </h1>
           <p className="text-slate-600 dark:text-slate-400 text-lg">
-            Strategic visibility into team certifications, coverage, and capability gaps
+            Strategic visibility into team certifications, coverage, and
+            capability gaps
           </p>
         </div>
 
@@ -57,7 +63,13 @@ export function CompetencyDashboard({
             icon={<Target className="w-6 h-6" />}
             label="Avg Coverage"
             value={`${totalCoverage.toFixed(1)}%`}
-            trend={totalCoverage >= 75 ? 'positive' : totalCoverage >= 60 ? 'neutral' : 'negative'}
+            trend={
+              totalCoverage >= 75
+                ? 'positive'
+                : totalCoverage >= 60
+                  ? 'neutral'
+                  : 'negative'
+            }
             color="blue"
           />
           <MetricCard
@@ -91,7 +103,7 @@ export function CompetencyDashboard({
             </h2>
             <button
               onClick={() => {
-                const teamIds = teams.map(t => t.id)
+                const teamIds = teams.map((t) => t.id)
                 onCompareTeams?.(teamIds)
               }}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg transition-colors text-sm font-medium"
@@ -102,7 +114,7 @@ export function CompetencyDashboard({
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {teams.map((team) => {
-              const metrics = teamMetrics.find(tm => tm.teamId === team.id)
+              const metrics = teamMetrics.find((tm) => tm.teamId === team.id)
               return (
                 <TeamMetricsCard
                   key={team.id}
@@ -148,19 +160,26 @@ interface MetricCardProps {
 function MetricCard({ icon, label, value, trend, color }: MetricCardProps) {
   const colorClasses = {
     blue: 'bg-blue-50 dark:bg-blue-950/50 border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400',
-    emerald: 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400',
-    amber: 'bg-amber-50 dark:bg-amber-950/50 border-amber-200 dark:border-amber-800 text-amber-600 dark:text-amber-400',
+    emerald:
+      'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400',
+    amber:
+      'bg-amber-50 dark:bg-amber-950/50 border-amber-200 dark:border-amber-800 text-amber-600 dark:text-amber-400',
     rose: 'bg-rose-50 dark:bg-rose-950/50 border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400',
   }
 
   const trendIndicators = {
-    positive: 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300',
-    neutral: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300',
-    negative: 'bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300',
+    positive:
+      'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300',
+    neutral:
+      'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300',
+    negative:
+      'bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300',
   }
 
   return (
-    <div className={`${colorClasses[color]} border rounded-xl p-6 relative overflow-hidden transition-all hover:shadow-lg`}>
+    <div
+      className={`${colorClasses[color]} border rounded-xl p-6 relative overflow-hidden transition-all hover:shadow-lg`}
+    >
       <div className="absolute top-0 right-0 w-32 h-32 opacity-10">
         <div className="absolute inset-0 bg-gradient-to-br from-current to-transparent rounded-full transform translate-x-12 -translate-y-12" />
       </div>

@@ -1,5 +1,9 @@
 import { AlertTriangle, TrendingDown } from 'lucide-react'
-import type { Certification, Team, TeamMetrics } from '@/../product/sections/team-and-workforce-management/types'
+import type {
+  Certification,
+  Team,
+  TeamMetrics,
+} from '@/../product/sections/team-and-workforce-management/types'
 
 interface GapAlertsProps {
   teams: Array<Team>
@@ -7,7 +11,11 @@ interface GapAlertsProps {
   certifications: Array<Certification>
 }
 
-export function GapAlerts({ teams, teamMetrics, certifications }: GapAlertsProps) {
+export function GapAlerts({
+  teams,
+  teamMetrics,
+  certifications,
+}: GapAlertsProps) {
   // Build alerts from team metrics
   interface Alert {
     teamId: string
@@ -20,8 +28,8 @@ export function GapAlerts({ teams, teamMetrics, certifications }: GapAlertsProps
 
   const alerts: Array<Alert> = []
 
-  teamMetrics.forEach(metrics => {
-    const team = teams.find(t => t.id === metrics.teamId)
+  teamMetrics.forEach((metrics) => {
+    const team = teams.find((t) => t.id === metrics.teamId)
     if (!team) return
 
     // High gap count
@@ -90,7 +98,9 @@ export function GapAlerts({ teams, teamMetrics, certifications }: GapAlertsProps
         <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 dark:bg-emerald-900/50 rounded-full mb-4">
           <TrendingDown className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
         </div>
-        <h3 className="text-xl font-bold text-emerald-900 dark:text-emerald-100 mb-2">All Clear!</h3>
+        <h3 className="text-xl font-bold text-emerald-900 dark:text-emerald-100 mb-2">
+          All Clear!
+        </h3>
         <p className="text-emerald-700 dark:text-emerald-300">
           No critical gaps or expiring certifications at this time.
         </p>
@@ -141,7 +151,8 @@ function AlertCard({ alert }: AlertCardProps) {
     medium: {
       bg: 'bg-amber-50 dark:bg-amber-950/20',
       border: 'border-amber-200 dark:border-amber-800',
-      badge: 'bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300',
+      badge:
+        'bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300',
       icon: 'text-amber-600 dark:text-amber-400',
     },
     low: {
@@ -161,21 +172,32 @@ function AlertCard({ alert }: AlertCardProps) {
   }
 
   return (
-    <div className={`${config.bg} ${config.border} border rounded-lg p-4 transition-all hover:shadow-md`}>
+    <div
+      className={`${config.bg} ${config.border} border rounded-lg p-4 transition-all hover:shadow-md`}
+    >
       <div className="flex items-start gap-3">
         <AlertTriangle className={`w-5 h-5 mt-0.5 ${config.icon}`} />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-semibold text-slate-900 dark:text-slate-100">{alert.teamName}</span>
-            <span className={`${config.badge} px-2 py-0.5 text-xs font-semibold rounded`}>
+            <span className="font-semibold text-slate-900 dark:text-slate-100">
+              {alert.teamName}
+            </span>
+            <span
+              className={`${config.badge} px-2 py-0.5 text-xs font-semibold rounded`}
+            >
               {typeLabels[alert.type]}
             </span>
           </div>
-          <p className="text-sm text-slate-700 dark:text-slate-300">{alert.message}</p>
+          <p className="text-sm text-slate-700 dark:text-slate-300">
+            {alert.message}
+          </p>
           {alert.certificationNames.length > 0 && (
             <div className="mt-2 space-y-1">
               {alert.certificationNames.map((name, idx) => (
-                <div key={idx} className="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+                <div
+                  key={idx}
+                  className="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1.5"
+                >
                   <span className="w-1 h-1 bg-current rounded-full opacity-50" />
                   {name}
                 </div>

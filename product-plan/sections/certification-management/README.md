@@ -24,6 +24,7 @@ Table view of user certifications with status monitoring, search/filter, and add
 ## Data Types
 
 See `types.ts` for complete TypeScript interfaces including:
+
 - `UserCertification` — User's certification record
 - `CertificationFormData` — Form data for add/edit
 - `CertificationManagementProps` — Component props

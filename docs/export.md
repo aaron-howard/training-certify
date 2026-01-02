@@ -137,6 +137,7 @@ Exported components are:
 ```
 
 Your implementation agent's job is to:
+
 - Wire up callbacks to routing and API calls
 - Replace sample data with real data from your backend
 - Implement proper error handling and loading states

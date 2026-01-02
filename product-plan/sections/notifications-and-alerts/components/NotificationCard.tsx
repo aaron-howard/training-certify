@@ -6,7 +6,7 @@ import {
   MailOpen,
   Shield,
   Users,
-  X
+  X,
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import type { Notification } from '@/../product/sections/notifications-and-alerts/types'
@@ -37,18 +37,24 @@ export function NotificationCard({
 
   const getTypeColor = (type: string) => {
     const colors = {
-      'expiration-alert': 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300',
-      'renewal-reminder': 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',
-      'team-member-alert': 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300',
-      'compliance-warning': 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300',
+      'expiration-alert':
+        'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300',
+      'renewal-reminder':
+        'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',
+      'team-member-alert':
+        'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300',
+      'compliance-warning':
+        'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300',
     }
     return colors[type as keyof typeof colors] || colors['renewal-reminder']
   }
 
   const getSeverityBadge = (severity: string) => {
     const badges = {
-      critical: 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',
-      warning: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+      critical:
+        'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',
+      warning:
+        'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
       info: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',
     }
     return badges[severity as keyof typeof badges] || badges.info
@@ -59,10 +65,11 @@ export function NotificationCard({
 
   return (
     <div
-      className={`relative bg-white dark:bg-slate-900 border rounded-xl overflow-hidden transition-all hover:shadow-lg ${notification.isRead
+      className={`relative bg-white dark:bg-slate-900 border rounded-xl overflow-hidden transition-all hover:shadow-lg ${
+        notification.isRead
           ? 'border-slate-200 dark:border-slate-800'
           : 'border-blue-300 dark:border-blue-700 shadow-md shadow-blue-500/10'
-        }`}
+      }`}
     >
       {/* Unread Indicator */}
       {!notification.isRead && (
@@ -81,14 +88,19 @@ export function NotificationCard({
             {/* Header */}
             <div className="flex items-start justify-between gap-3 mb-2">
               <div className="flex-1">
-                <h3 className={`font-semibold mb-1 ${notification.isRead
-                    ? 'text-slate-700 dark:text-slate-300'
-                    : 'text-slate-900 dark:text-slate-100'
-                  }`}>
+                <h3
+                  className={`font-semibold mb-1 ${
+                    notification.isRead
+                      ? 'text-slate-700 dark:text-slate-300'
+                      : 'text-slate-900 dark:text-slate-100'
+                  }`}
+                >
                   {notification.title}
                 </h3>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className={`px-2 py-0.5 text-xs font-medium rounded border ${getSeverityBadge(notification.severity)}`}>
+                  <span
+                    className={`px-2 py-0.5 text-xs font-medium rounded border ${getSeverityBadge(notification.severity)}`}
+                  >
                     {notification.severity}
                   </span>
                   {notification.daysUntilExpiration !== undefined && (
@@ -137,12 +149,16 @@ export function NotificationCard({
             {/* Metadata */}
             <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
               <span>
-                {formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true })}
+                {formatDistanceToNow(new Date(notification.timestamp), {
+                  addSuffix: true,
+                })}
               </span>
               {notification.certificationName && (
                 <>
                   <span>•</span>
-                  <span className="font-medium">{notification.certificationName}</span>
+                  <span className="font-medium">
+                    {notification.certificationName}
+                  </span>
                 </>
               )}
               {notification.teamName && (

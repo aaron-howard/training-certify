@@ -33,7 +33,11 @@ export function FilterPanel({
                 value="all"
                 checked={selectedVendor === 'all'}
                 onChange={(e) =>
-                  onFilterChange(e.target.value, selectedCategory, selectedDifficulty)
+                  onFilterChange(
+                    e.target.value,
+                    selectedCategory,
+                    selectedDifficulty,
+                  )
                 }
                 className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
               />
@@ -42,14 +46,21 @@ export function FilterPanel({
               </span>
             </label>
             {vendors.map((vendor) => (
-              <label key={vendor.id} className="flex items-center gap-2 cursor-pointer">
+              <label
+                key={vendor.id}
+                className="flex items-center gap-2 cursor-pointer"
+              >
                 <input
                   type="radio"
                   name="vendor"
                   value={vendor.id}
                   checked={selectedVendor === vendor.id}
                   onChange={(e) =>
-                    onFilterChange(e.target.value, selectedCategory, selectedDifficulty)
+                    onFilterChange(
+                      e.target.value,
+                      selectedCategory,
+                      selectedDifficulty,
+                    )
                   }
                   className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                 />
@@ -74,7 +85,11 @@ export function FilterPanel({
                 value="all"
                 checked={selectedCategory === 'all'}
                 onChange={(e) =>
-                  onFilterChange(selectedVendor, e.target.value, selectedDifficulty)
+                  onFilterChange(
+                    selectedVendor,
+                    e.target.value,
+                    selectedDifficulty,
+                  )
                 }
                 className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
               />
@@ -83,14 +98,21 @@ export function FilterPanel({
               </span>
             </label>
             {categories.map((category) => (
-              <label key={category} className="flex items-center gap-2 cursor-pointer">
+              <label
+                key={category}
+                className="flex items-center gap-2 cursor-pointer"
+              >
                 <input
                   type="radio"
                   name="category"
                   value={category}
                   checked={selectedCategory === category}
                   onChange={(e) =>
-                    onFilterChange(selectedVendor, e.target.value, selectedDifficulty)
+                    onFilterChange(
+                      selectedVendor,
+                      e.target.value,
+                      selectedDifficulty,
+                    )
                   }
                   className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                 />
@@ -115,7 +137,11 @@ export function FilterPanel({
                 value="all"
                 checked={selectedDifficulty === 'all'}
                 onChange={(e) =>
-                  onFilterChange(selectedVendor, selectedCategory, e.target.value)
+                  onFilterChange(
+                    selectedVendor,
+                    selectedCategory,
+                    e.target.value,
+                  )
                 }
                 className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
               />
@@ -124,14 +150,21 @@ export function FilterPanel({
               </span>
             </label>
             {difficulties.map((difficulty) => (
-              <label key={difficulty} className="flex items-center gap-2 cursor-pointer">
+              <label
+                key={difficulty}
+                className="flex items-center gap-2 cursor-pointer"
+              >
                 <input
                   type="radio"
                   name="difficulty"
                   value={difficulty}
                   checked={selectedDifficulty === difficulty}
                   onChange={(e) =>
-                    onFilterChange(selectedVendor, selectedCategory, e.target.value)
+                    onFilterChange(
+                      selectedVendor,
+                      selectedCategory,
+                      e.target.value,
+                    )
                   }
                   className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                 />

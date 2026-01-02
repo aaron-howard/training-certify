@@ -16,10 +16,12 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify that all certifications are displayed in the browse view
 
 **Steps**:
+
 1. Navigate to `/catalog`
 2. Observe the certification grid
 
 **Expected**:
+
 - All certifications from sample data are displayed
 - Each card shows: name, vendor logo, category tag, difficulty indicator, validity period
 - Cards are arranged in a responsive grid (4 columns on desktop, 2 on tablet, 1 on mobile)
@@ -30,6 +32,7 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify search filters certifications by name or keyword
 
 **Steps**:
+
 1. Navigate to `/catalog`
 2. Enter "AWS" in the search bar
 3. Observe filtered results
@@ -37,6 +40,7 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 5. Observe filtered results
 
 **Expected**:
+
 - Step 3: Only AWS certifications are displayed
 - Step 5: Certifications with "architect" in the name are displayed
 - Search is case-insensitive
@@ -48,6 +52,7 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify vendor filter works correctly
 
 **Steps**:
+
 1. Navigate to `/catalog`
 2. Open vendor filter
 3. Select "Microsoft"
@@ -56,6 +61,7 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 6. Observe results
 
 **Expected**:
+
 - Step 4: Only Microsoft certifications displayed
 - Step 6: Both Microsoft and Google Cloud certifications displayed
 - Filter count badge shows number of active filters
@@ -66,6 +72,7 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify category filter works correctly
 
 **Steps**:
+
 1. Navigate to `/catalog`
 2. Select "Security" category filter
 3. Observe results
@@ -73,6 +80,7 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 5. Observe results
 
 **Expected**:
+
 - Step 3: Only security certifications displayed
 - Step 5: Both security and cloud certifications displayed
 - Category tags on cards match selected filters
@@ -82,6 +90,7 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify difficulty filter works correctly
 
 **Steps**:
+
 1. Navigate to `/catalog`
 2. Select "Beginner" difficulty
 3. Observe results
@@ -89,6 +98,7 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 5. Observe results
 
 **Expected**:
+
 - Step 3: Only beginner certifications displayed
 - Step 5: Only advanced certifications displayed
 - Difficulty indicators on cards match filter
@@ -98,6 +108,7 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify multiple filters work together
 
 **Steps**:
+
 1. Navigate to `/catalog`
 2. Search for "cloud"
 3. Filter by vendor "AWS"
@@ -105,6 +116,7 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 5. Observe results
 
 **Expected**:
+
 - Only certifications matching ALL criteria are displayed
 - Filter count shows total active filters
 - Clearing any filter updates results immediately
@@ -114,11 +126,13 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify empty state appears when no results
 
 **Steps**:
+
 1. Navigate to `/catalog`
 2. Search for "nonexistent certification xyz"
 3. Observe empty state
 
 **Expected**:
+
 - Empty state message appears
 - Message suggests: "No certifications found. Try adjusting your search or filters."
 - Clear filters/search button is prominently displayed
@@ -129,11 +143,13 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify browse page adapts to different screen sizes
 
 **Steps**:
+
 1. Navigate to `/catalog` on desktop
 2. Resize to tablet width
 3. Resize to mobile width
 
 **Expected**:
+
 - Desktop: 4-column grid
 - Tablet: 2-column grid
 - Mobile: 1-column grid (stacked cards)
@@ -145,6 +161,7 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify quick action buttons work on certification cards
 
 **Steps**:
+
 1. Navigate to `/catalog`
 2. Click "View Details" on a certification card
 3. Go back, click "Add to Profile" on a card
@@ -152,6 +169,7 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 5. Go back, click "View Holders" on a card
 
 **Expected**:
+
 - Step 2: Navigates to detail page
 - Step 3: Confirmation message or navigates to Certification Management
 - Step 4: Confirmation message that goal was saved
@@ -164,11 +182,13 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify detail page shows complete certification information
 
 **Steps**:
+
 1. Navigate to `/catalog`
 2. Click on "AWS Certified Solutions Architect - Associate"
 3. Observe detail page
 
 **Expected**:
+
 - Certification name and vendor displayed
 - Category and difficulty tags shown
 - Full description visible
@@ -183,10 +203,12 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify back button returns to browse page
 
 **Steps**:
+
 1. Navigate to certification detail page
 2. Click "Back to Catalog" button
 
 **Expected**:
+
 - Returns to browse page
 - Previous search/filter state is preserved (if applicable)
 
@@ -195,11 +217,13 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify add to profile button works
 
 **Steps**:
+
 1. Navigate to certification detail page
 2. Click "Add to Profile" button
 3. Observe result
 
 **Expected**:
+
 - Success confirmation message appears
 - OR navigates to Certification Management with add form pre-filled
 - Button state changes to indicate already added (if returning to page)
@@ -209,11 +233,13 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify mark as goal button works
 
 **Steps**:
+
 1. Navigate to certification detail page
 2. Click "Mark as Goal" button
 3. Observe result
 
 **Expected**:
+
 - Confirmation message appears
 - Goal is saved
 - Button state changes to show "Goal Set" or similar
@@ -223,11 +249,13 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify view holders shows team members
 
 **Steps**:
+
 1. Navigate to certification detail page
 2. Click "View Holders" button (shows X holders)
 3. Observe result
 
 **Expected**:
+
 - Modal or new view shows list of team members
 - Each member shows name, role, team
 - If no holders, message says "No team members hold this certification yet"
@@ -237,11 +265,13 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify detail page works on all devices
 
 **Steps**:
+
 1. View detail page on desktop
 2. Resize to tablet
 3. Resize to mobile
 
 **Expected**:
+
 - Desktop: Sidebar layout with exam info on right
 - Tablet: Sidebar collapses below main content
 - Mobile: Single column, all content stacked
@@ -252,10 +282,12 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify detail page loads via direct URL
 
 **Steps**:
+
 1. Navigate directly to `/catalog/cert-id-123`
 2. Observe page load
 
 **Expected**:
+
 - Page loads successfully
 - All data is displayed
 - Back button still works
@@ -265,10 +297,12 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify error handling for nonexistent certifications
 
 **Steps**:
+
 1. Navigate to `/catalog/nonexistent-id-999`
 2. Observe result
 
 **Expected**:
+
 - Error message: "Certification not found"
 - Option to return to catalog
 - No broken UI or console errors
@@ -280,11 +314,13 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify browse page renders correctly in dark mode
 
 **Steps**:
+
 1. Enable dark mode
 2. Navigate to `/catalog`
 3. Inspect visual elements
 
 **Expected**:
+
 - Background is dark (slate-900 or darker)
 - Text is light (slate-100 or lighter)
 - Cards have dark backgrounds with visible borders
@@ -296,11 +332,13 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify detail page renders correctly in dark mode
 
 **Steps**:
+
 1. Enable dark mode
 2. Navigate to a certification detail page
 3. Inspect visual elements
 
 **Expected**:
+
 - All sections have appropriate dark backgrounds
 - Text maintains good contrast
 - Sidebar/exam info section is visually distinct
@@ -313,12 +351,14 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify all interactive elements are keyboard accessible
 
 **Steps**:
+
 1. Navigate to `/catalog` using only keyboard
 2. Tab through search, filters, and certification cards
 3. Press Enter on a card to view details
 4. Tab through detail page elements
 
 **Expected**:
+
 - All interactive elements receive focus
 - Focus indicators are visible
 - Enter/Space activate buttons
@@ -330,11 +370,13 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify content is accessible to screen readers
 
 **Steps**:
+
 1. Enable screen reader (NVDA, JAWS, or VoiceOver)
 2. Navigate through browse and detail pages
 3. Listen to announcements
 
 **Expected**:
+
 - Certification names are announced
 - Filter controls are labeled
 - Action buttons have clear labels
@@ -348,11 +390,13 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify page loads quickly
 
 **Steps**:
+
 1. Clear cache
 2. Navigate to `/catalog`
 3. Measure load time
 
 **Expected**:
+
 - Initial page load < 2 seconds
 - Images load progressively or have placeholders
 - No layout shifts during load
@@ -362,11 +406,13 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Verify search is responsive
 
 **Steps**:
+
 1. Navigate to `/catalog` with 100+ certifications
 2. Type quickly in search bar
 3. Observe results update
 
 **Expected**:
+
 - Results update within 300ms of typing
 - No lag or frozen UI
 - Debouncing prevents excessive re-renders
@@ -378,10 +424,12 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Handle empty catalog gracefully
 
 **Steps**:
+
 1. Load page with empty certifications array
 2. Observe UI
 
 **Expected**:
+
 - Empty state message appears
 - No errors or broken layout
 - Helpful message explains catalog is empty
@@ -391,10 +439,12 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Handle missing images gracefully
 
 **Steps**:
+
 1. Load certification with invalid logo URL
 2. Observe card rendering
 
 **Expected**:
+
 - Placeholder image or vendor initials displayed
 - Card layout remains intact
 - No broken image icons
@@ -404,10 +454,12 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Handle long text gracefully
 
 **Steps**:
+
 1. View certification with very long name
 2. Observe card and detail page
 
 **Expected**:
+
 - Text wraps or truncates with ellipsis
 - Card layout doesn't break
 - Full name visible on detail page
@@ -419,6 +471,7 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Complete flow from discovery to adding certification
 
 **Steps**:
+
 1. Navigate to catalog
 2. Search for "AWS"
 3. Filter by "Cloud" category
@@ -428,6 +481,7 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 7. Complete add form (if shown)
 
 **Expected**:
+
 - Smooth flow with no errors
 - User can complete entire process
 - Confirmation shown at the end
@@ -437,6 +491,7 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 **Objective**: Mark certification as goal from browse page
 
 **Steps**:
+
 1. Navigate to catalog
 2. Browse certifications
 3. Click "Mark as Goal" on a card
@@ -444,6 +499,7 @@ This document outlines test scenarios for the Certification Catalog section. Tes
 5. Navigate to goals/profile to verify
 
 **Expected**:
+
 - Goal is saved immediately
 - Confirmation message appears
 - Goal appears in user's profile or goals list

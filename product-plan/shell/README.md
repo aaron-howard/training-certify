@@ -18,10 +18,12 @@ The shell uses a sidebar navigation pattern optimized for enterprise dashboard u
 Main layout container that provides the overall shell structure.
 
 **Props:**
+
 - `user` — Current logged-in user
 - `children` — Section content to display
 
 **Features:**
+
 - Manages mobile navigation state (hamburger menu)
 - Provides responsive layout grid
 - Wraps content with MainNav and UserMenu
@@ -31,11 +33,13 @@ Main layout container that provides the overall shell structure.
 Sidebar navigation with links to all main sections.
 
 **Props:**
+
 - `items` — Navigation items (label, path, icon)
 - `currentPath` — Active route for highlighting
 - `onNavigate` — Navigation callback
 
 **Features:**
+
 - Displays all 5 main sections
 - Highlights active section with primary color
 - Shows icons alongside labels
@@ -46,6 +50,7 @@ Sidebar navigation with links to all main sections.
 User avatar and dropdown menu in the top-right corner.
 
 **Props:**
+
 - `user` — Current user (name, email, avatar)
 - `onProfileClick` — Navigate to profile
 - `onSettingsClick` — Navigate to settings
@@ -53,6 +58,7 @@ User avatar and dropdown menu in the top-right corner.
 - `onLogoutClick` — Handle logout
 
 **Features:**
+
 - Displays user avatar and name
 - Dropdown menu with Profile, Settings, Help, Logout
 - Keyboard accessible
@@ -86,14 +92,17 @@ User avatar and dropdown menu in the top-right corner.
 ## Responsive Behavior
 
 ### Desktop (≥1024px)
+
 - Fixed sidebar on left
 - Content area on right
 - User menu in top-right
 
 ### Tablet (768px-1023px)
+
 - Same as desktop
 
 ### Mobile (<768px)
+
 - Sidebar collapses to hamburger menu
 - Tapping opens sidebar overlay
 - Content uses full width

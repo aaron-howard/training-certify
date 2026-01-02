@@ -21,6 +21,7 @@ Stop here if the spec doesn't exist.
 Check if `/product/data-model/data-model.md` exists.
 
 **If it exists:**
+
 - Read the file to understand the global entity definitions
 - Entity names in your sample data should match the global data model
 - Use the descriptions and relationships as a guide
@@ -132,11 +133,11 @@ Example structure:
       "invoiceNumber": "INV-2024-001",
       "clientName": "Acme Corp",
       "clientEmail": "billing@acme.com",
-      "total": 1500.00,
+      "total": 1500.0,
       "status": "sent",
       "dueDate": "2024-02-15",
       "lineItems": [
-        { "description": "Web Design", "quantity": 1, "rate": 1500.00 }
+        { "description": "Web Design", "quantity": 1, "rate": 1500.0 }
       ]
     }
   ]
@@ -144,6 +145,7 @@ Example structure:
 ```
 
 The `_meta` descriptions should:
+
 - Use plain, non-technical language
 - Explain what each model represents in the context of the user's product
 - Describe relationships in terms of "contains", "belongs to", "links to", etc.
@@ -165,7 +167,6 @@ After creating data.json, generate `product/sections/[section-id]/types.ts` base
    - Objects → Create a named interface
 
 2. **Use union types for status/enum fields:**
-
    - If a field like `status` has known values, use a union: `'draft' | 'sent' | 'paid' | 'overdue'`
 
    - Base this on the spec and the variety in sample data

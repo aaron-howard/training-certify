@@ -1,1 +1,1508 @@
-[{"filePath":"D:\\repos\\training-certify\\app.config.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\diagnose_db.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\drizzle.config.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\eslint.config.js","messages":[{"ruleId":null,"nodeType":null,"fatal":true,"severity":2,"message":"Parsing error: \"parserOptions.project\" has been provided for @typescript-eslint/parser.\nThe file was not found in any of the provided project(s): eslint.config.js"}],"suppressedMessages":[],"errorCount":1,"fatalErrorCount":1,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"source":"//  @ts-check\n\nimport { tanstackConfig } from '@tanstack/eslint-config'\n\nexport default [...tanstackConfig]\n","usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\prettier.config.js","messages":[{"ruleId":null,"nodeType":null,"fatal":true,"severity":2,"message":"Parsing error: \"parserOptions.project\" has been provided for @typescript-eslint/parser.\nThe file was not found in any of the provided project(s): prettier.config.js"}],"suppressedMessages":[],"errorCount":1,"fatalErrorCount":1,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"source":"//  @ts-check\n\n/** @type {import('prettier').Config} */\nconst config = {\n  semi: false,\n  singleQuote: true,\n  trailingComma: \"all\",\n};\n\nexport default config;\n","usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\data-model\\types.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\certification-catalog\\components\\CertificationBrowse.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\certification-catalog\\components\\CertificationCard.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\certification-catalog\\components\\CertificationDetail.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\certification-catalog\\components\\FilterPanel.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\certification-catalog\\components\\index.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\certification-catalog\\types.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\certification-management\\components\\CertificationManagement.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\certification-management\\components\\index.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\certification-management\\types.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\compliance-and-audit\\components\\AuditTrailTable.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\compliance-and-audit\\components\\ComplianceDashboard.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\compliance-and-audit\\components\\ComplianceMetricsOverview.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\compliance-and-audit\\components\\RecentActivityFeed.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\compliance-and-audit\\components\\ReportsSection.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\compliance-and-audit\\components\\UpcomingDeadlines.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\compliance-and-audit\\components\\VerificationQueue.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\compliance-and-audit\\components\\index.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\compliance-and-audit\\types.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\notifications-and-alerts\\components\\NotificationCard.tsx","messages":[{"ruleId":"@typescript-eslint/no-unnecessary-condition","severity":2,"message":"Unnecessary conditional, value is always truthy.","line":34,"column":18,"nodeType":"MemberExpression","messageId":"alwaysTruthy","endLine":34,"endColumn":51}],"suppressedMessages":[],"errorCount":1,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"source":"import {\n  AlertTriangle,\n  Bell,\n  Clock,\n  Mail,\n  MailOpen,\n  Shield,\n  Users,\n  X\n} from 'lucide-react'\nimport { formatDistanceToNow } from 'date-fns'\nimport type { Notification } from '@/../product/sections/notifications-and-alerts/types'\n\ninterface NotificationCardProps {\n  notification: Notification\n  onMarkAsRead?: () => void\n  onMarkAsUnread?: () => void\n  onDismiss?: () => void\n}\n\nexport function NotificationCard({\n  notification,\n  onMarkAsRead,\n  onMarkAsUnread,\n  onDismiss,\n}: NotificationCardProps) {\n  const getTypeIcon = (type: string) => {\n    const icons = {\n      'expiration-alert': AlertTriangle,\n      'renewal-reminder': Bell,\n      'team-member-alert': Users,\n      'compliance-warning': Shield,\n    }\n    const Icon = icons[type as keyof typeof icons] || Bell\n    return Icon\n  }\n\n  const getTypeColor = (type: string) => {\n    const colors = {\n      'expiration-alert': 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300',\n      'renewal-reminder': 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',\n      'team-member-alert': 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300',\n      'compliance-warning': 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300',\n    }\n    return colors[type as keyof typeof colors] || colors['renewal-reminder']\n  }\n\n  const getSeverityBadge = (severity: string) => {\n    const badges = {\n      critical: 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',\n      warning: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',\n      info: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',\n    }\n    return badges[severity as keyof typeof badges] || badges.info\n  }\n\n  const Icon = getTypeIcon(notification.type)\n  const typeColor = getTypeColor(notification.type)\n\n  return (\n    <div\n      className={`relative bg-white dark:bg-slate-900 border rounded-xl overflow-hidden transition-all hover:shadow-lg ${\n        notification.isRead\n          ? 'border-slate-200 dark:border-slate-800'\n          : 'border-blue-300 dark:border-blue-700 shadow-md shadow-blue-500/10'\n      }`}\n    >\n      {/* Unread Indicator */}\n      {!notification.isRead && (\n        <div className=\"absolute top-0 left-0 w-1 h-full bg-blue-500\" />\n      )}\n\n      <div className=\"p-5 pl-6\">\n        <div className=\"flex items-start gap-4\">\n          {/* Icon */}\n          <div className={`flex-shrink-0 p-2.5 rounded-lg ${typeColor}`}>\n            <Icon className=\"w-5 h-5\" />\n          </div>\n\n          {/* Content */}\n          <div className=\"flex-1 min-w-0\">\n            {/* Header */}\n            <div className=\"flex items-start justify-between gap-3 mb-2\">\n              <div className=\"flex-1\">\n                <h3 className={`font-semibold mb-1 ${\n                  notification.isRead\n                    ? 'text-slate-700 dark:text-slate-300'\n                    : 'text-slate-900 dark:text-slate-100'\n                }`}>\n                  {notification.title}\n                </h3>\n                <div className=\"flex items-center gap-2 flex-wrap\">\n                  <span className={`px-2 py-0.5 text-xs font-medium rounded border ${getSeverityBadge(notification.severity)}`}>\n                    {notification.severity}\n                  </span>\n                  {notification.daysUntilExpiration !== undefined && (\n                    <span className=\"flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400\">\n                      <Clock className=\"w-3 h-3\" />\n                      {notification.daysUntilExpiration} days\n                    </span>\n                  )}\n                </div>\n              </div>\n\n              {/* Actions */}\n              <div className=\"flex items-center gap-1\">\n                {notification.isRead ? (\n                  <button\n                    onClick={onMarkAsUnread}\n                    className=\"p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors\"\n                    title=\"Mark as unread\"\n                  >\n                    <Mail className=\"w-4 h-4 text-slate-600 dark:text-slate-400\" />\n                  </button>\n                ) : (\n                  <button\n                    onClick={onMarkAsRead}\n                    className=\"p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors\"\n                    title=\"Mark as read\"\n                  >\n                    <MailOpen className=\"w-4 h-4 text-slate-600 dark:text-slate-400\" />\n                  </button>\n                )}\n                <button\n                  onClick={onDismiss}\n                  className=\"p-1.5 hover:bg-rose-100 dark:hover:bg-rose-900/30 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg transition-colors\"\n                  title=\"Dismiss\"\n                >\n                  <X className=\"w-4 h-4 text-slate-600 dark:text-slate-400\" />\n                </button>\n              </div>\n            </div>\n\n            {/* Description */}\n            <p className=\"text-sm text-slate-600 dark:text-slate-400 mb-3\">\n              {notification.description}\n            </p>\n\n            {/* Metadata */}\n            <div className=\"flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400\">\n              <span>\n                {formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true })}\n              </span>\n              {notification.certificationName && (\n                <>\n                  <span>•</span>\n                  <span className=\"font-medium\">{notification.certificationName}</span>\n                </>\n              )}\n              {notification.teamName && (\n                <>\n                  <span>•</span>\n                  <span className=\"font-medium\">{notification.teamName}</span>\n                </>\n              )}\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  )\n}\n","usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\notifications-and-alerts\\components\\NotificationSettings.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\notifications-and-alerts\\components\\NotificationsDashboard.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\notifications-and-alerts\\components\\index.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\notifications-and-alerts\\types.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\team-and-workforce-management\\components\\CompetencyDashboard.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\team-and-workforce-management\\components\\CoverageHeatmap.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\team-and-workforce-management\\components\\GapAlerts.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\team-and-workforce-management\\components\\TeamMetricsCard.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\team-and-workforce-management\\components\\index.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\sections\\team-and-workforce-management\\types.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\shell\\components\\AppShell.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\shell\\components\\MainNav.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\shell\\components\\UserMenu.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product-plan\\shell\\components\\index.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product\\sections\\certification-catalog\\types.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product\\sections\\certification-management\\types.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product\\sections\\compliance-and-audit\\types.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product\\sections\\notifications-and-alerts\\types.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\product\\sections\\team-and-workforce-management\\types.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\scripts\\cleanup-duplicates.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\scripts\\clear-catalog.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\scripts\\debug-db.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\scripts\\debug-env.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\scripts\\identify-retired.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\scripts\\remove-retired-exams.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\scripts\\run-sync.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\scripts\\seed-additional.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\scripts\\seed-catalog.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\scripts\\seed-cisco.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\scripts\\seed-microsoft.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\scripts\\test-db.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\scripts\\test-ingestion.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\scripts\\test-scraping.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\api\\certifications.server.ts","messages":[{"ruleId":"@typescript-eslint/no-unnecessary-condition","severity":2,"message":"Unnecessary conditional, value is always falsy.","line":72,"column":17,"nodeType":"UnaryExpression","messageId":"alwaysFalsy","endLine":72,"endColumn":24},{"ruleId":"@typescript-eslint/no-unnecessary-condition","severity":2,"message":"Unnecessary conditional, value is always falsy.","line":128,"column":17,"nodeType":"UnaryExpression","messageId":"alwaysFalsy","endLine":128,"endColumn":24}],"suppressedMessages":[],"errorCount":2,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"source":"import { createServerFn } from '@tanstack/react-start';\r\nimport { eq } from 'drizzle-orm';\r\nimport { userCertifications } from '../db/schema';\r\nimport type { UserCertification } from '../types';\r\n\r\nexport const getUserCertifications = createServerFn({ method: 'GET' })\r\n    .handler(async () => {\r\n        const { getDb, instanceId } = await import('../db/db.server');\r\n        const db = await getDb();\r\n        if (!db) throw new Error(`Database not available (Server Instance: ${instanceId})`);\r\n\r\n        try {\r\n            const result = await db.select().from(userCertifications);\r\n            const mapped = result.map((cert) => ({\r\n                ...cert,\r\n                verifiedAt: cert.verifiedAt?.toISOString() || '',\r\n                status: (cert.status || 'active') as UserCertification['status'],\r\n            })) as Array<UserCertification>;\r\n            console.log(`✅ [Server] Returning ${mapped.length} user certifications`);\r\n            return mapped;\r\n        } catch (error) {\r\n            console.error('❌ [Server] Failed to fetch user certifications:', error);\r\n            return [];\r\n        }\r\n    });\r\n\r\ninterface CreateCertificationInput {\r\n    userId?: string;\r\n    certificationId?: string;\r\n    certificationName?: string;\r\n    vendorName?: string;\r\n    certificationNumber?: string;\r\n    issueDate?: string;\r\n    expirationDate?: string;\r\n    status?: string;\r\n    daysUntilExpiration?: number;\r\n    documentUrl?: string;\r\n    verifiedAt?: string | Date;\r\n}\r\n\r\nexport const createCertification = createServerFn({ method: 'POST' })\r\n    .inputValidator((data: unknown): CreateCertificationInput => {\r\n        if (typeof data === 'object' && data !== null) {\r\n            return data as CreateCertificationInput;\r\n        }\r\n        throw new Error('Invalid input data');\r\n    })\r\n    .handler(async ({ data }) => {\r\n        const { getDb } = await import('../db/db.server');\r\n        const db = await getDb();\r\n        if (!db) throw new Error('Database not available');\r\n\r\n        try {\r\n            const verifiedAtValue = data.verifiedAt\r\n                ? (typeof data.verifiedAt === 'string' ? new Date(data.verifiedAt) : data.verifiedAt)\r\n                : new Date();\r\n\r\n            const result = await db.insert(userCertifications).values({\r\n                userId: data.userId || 'user-001',\r\n                certificationId: data.certificationId || 'manual',\r\n                certificationName: data.certificationName || 'Unknown Certification',\r\n                vendorName: data.vendorName || 'Unknown Vendor',\r\n                certificationNumber: data.certificationNumber,\r\n                issueDate: data.issueDate,\r\n                expirationDate: data.expirationDate,\r\n                status: data.status || 'active',\r\n                daysUntilExpiration: data.daysUntilExpiration,\r\n                documentUrl: data.documentUrl || '',\r\n                verifiedAt: verifiedAtValue,\r\n            }).returning();\r\n\r\n            if (!result || result.length === 0) throw new Error('Failed to create certification record');\r\n            const newCert = result[0];\r\n            return {\r\n                ...newCert,\r\n                verifiedAt: newCert.verifiedAt?.toISOString() || '',\r\n                status: newCert.status as UserCertification['status'],\r\n            } as UserCertification;\r\n        } catch (error) {\r\n            console.error('❌ [Server] Failed to create certification:', error);\r\n            throw error;\r\n        }\r\n    });\r\n\r\ninterface UpdateCertificationInput {\r\n    id: string;\r\n    updates: {\r\n        userId?: string;\r\n        certificationId?: string;\r\n        certificationName?: string;\r\n        vendorName?: string;\r\n        certificationNumber?: string;\r\n        issueDate?: string;\r\n        expirationDate?: string;\r\n        status?: string;\r\n        daysUntilExpiration?: number;\r\n        documentUrl?: string;\r\n        verifiedAt?: string | Date;\r\n    };\r\n}\r\n\r\nexport const updateCertification = createServerFn({ method: 'POST' })\r\n    .inputValidator((data: unknown): UpdateCertificationInput => {\r\n        if (typeof data === 'object' && data !== null && 'id' in data && 'updates' in data) {\r\n            return data as UpdateCertificationInput;\r\n        }\r\n        throw new Error('Invalid input data');\r\n    })\r\n    .handler(async ({ data }) => {\r\n        const { getDb } = await import('../db/db.server');\r\n        const db = await getDb();\r\n        if (!db) throw new Error('Database not available');\r\n\r\n        try {\r\n            const { id, updates } = data;\r\n            const { verifiedAt, ...rest } = updates;\r\n            const updateData: Record<string, unknown> = { ...rest };\r\n            if (verifiedAt) {\r\n                updateData.verifiedAt = typeof verifiedAt === 'string' ? new Date(verifiedAt) : verifiedAt;\r\n            }\r\n            if ('updatedAt' in updateData) {\r\n                delete updateData.updatedAt;\r\n            }\r\n            const result = await db.update(userCertifications)\r\n                .set({ ...updateData, updatedAt: new Date() })\r\n                .where(eq(userCertifications.id, id))\r\n                .returning();\r\n            if (!result || result.length === 0) return null;\r\n            const updatedCert = result[0];\r\n            return {\r\n                ...updatedCert,\r\n                verifiedAt: updatedCert.verifiedAt?.toISOString() || '',\r\n                status: updatedCert.status as UserCertification['status'],\r\n            } as UserCertification;\r\n        } catch (error) {\r\n            console.error('❌ [Server] Failed to update certification:', error);\r\n            throw error;\r\n        }\r\n    });\r\n\r\nexport const deleteCertification = createServerFn({ method: 'POST' })\r\n    .inputValidator((data: string) => data)\r\n    .handler(async ({ data: id }) => {\r\n        const { getDb } = await import('../db/db.server');\r\n        const db = await getDb();\r\n        if (!db) throw new Error('Database not available');\r\n\r\n        try {\r\n            await db.delete(userCertifications).where(eq(userCertifications.id, id));\r\n            return { success: true };\r\n        } catch (error) {\r\n            console.error('❌ [Server] Failed to delete certification:', error);\r\n            throw error;\r\n        }\r\n    });\r\n","usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\api\\db-test.server.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\api\\debug.server.ts","messages":[{"ruleId":"@typescript-eslint/require-await","severity":1,"message":"Async arrow function has no 'await' expression.","line":4,"column":23,"nodeType":"ArrowFunctionExpression","messageId":"missingAwait","endLine":4,"endColumn":25,"suggestions":[{"messageId":"removeAsync","fix":{"range":[130,136],"text":""},"desc":"Remove 'async'."}]}],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":1,"fixableErrorCount":0,"fixableWarningCount":0,"source":"import { createServerFn } from '@tanstack/react-start'\r\n\r\nexport const checkRpc = createServerFn({ method: 'GET' })\r\n    .handler(async () => {\r\n        console.log('✅ [RPC Check] This should ONLY appear in the TERMINAL.')\r\n        return { message: 'RPC is working', timestamp: Date.now() }\r\n    })\r\n","usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\api\\others.server.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\api\\teams.server.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\api\\users.server.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\components\\Header.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\components\\sections\\certification-management\\CertificationManagement.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\components\\shell\\AppShell.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\components\\shell\\MainNav.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\components\\shell\\UserMenu.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\data\\demo.punk-songs.ts","messages":[{"ruleId":"@typescript-eslint/require-await","severity":1,"message":"Async arrow function has no 'await' expression.","line":5,"column":21,"nodeType":"ArrowFunctionExpression","messageId":"missingAwait","endLine":5,"endColumn":23,"suggestions":[{"messageId":"removeAsync","fix":{"range":[129,135],"text":""},"desc":"Remove 'async'."}]}],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":1,"fixableErrorCount":0,"fixableWarningCount":0,"source":"import { createServerFn } from '@tanstack/react-start'\n\nexport const getPunkSongs = createServerFn({\n  method: 'GET',\n}).handler(async () => [\n  { id: 1, name: 'Teenage Dirtbag', artist: 'Wheatus' },\n  { id: 2, name: 'Smells Like Teen Spirit', artist: 'Nirvana' },\n  { id: 3, name: 'The Middle', artist: 'Jimmy Eat World' },\n  { id: 4, name: 'My Own Worst Enemy', artist: 'Lit' },\n  { id: 5, name: 'Fat Lip', artist: 'Sum 41' },\n  { id: 6, name: 'All the Small Things', artist: 'blink-182' },\n  { id: 7, name: 'Beverly Hills', artist: 'Weezer' },\n])\n","usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\db\\db.server.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\db\\schema.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\db\\seed.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\entry-client.tsx","messages":[{"ruleId":"@typescript-eslint/ban-ts-comment","severity":2,"message":"Include a description after the \"@ts-ignore\" directive to explain why the @ts-ignore is necessary. The description must be 3 characters or longer.","line":6,"column":1,"nodeType":"Line","messageId":"tsDirectiveCommentRequiresDescription","endLine":6,"endColumn":14}],"suppressedMessages":[],"errorCount":1,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"source":"import { hydrateRoot } from 'react-dom/client'\r\nimport { StartClient } from '@tanstack/react-start/client'\r\nimport { getRouter } from './router'\r\n\r\nconst router = getRouter()\r\n// @ts-ignore\r\nhydrateRoot(document, <StartClient router={router} />)\r\n","usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\entry-server.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\hooks\\usePermissions.ts","messages":[{"ruleId":"@typescript-eslint/no-unnecessary-condition","severity":2,"message":"Unnecessary conditional, value is always truthy.","line":114,"column":28,"nodeType":"TSAsExpression","messageId":"alwaysTruthy","endLine":114,"endColumn":40},{"ruleId":"@typescript-eslint/no-unnecessary-condition","severity":2,"message":"Unnecessary conditional, value is always truthy.","line":115,"column":16,"nodeType":"MemberExpression","messageId":"alwaysTruthy","endLine":115,"endColumn":42},{"ruleId":"@typescript-eslint/no-unnecessary-condition","severity":2,"message":"Unnecessary conditional, value is always truthy.","line":122,"column":49,"nodeType":"TSAsExpression","messageId":"alwaysTruthy","endLine":122,"endColumn":68}],"suppressedMessages":[],"errorCount":3,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"source":"import { useMemo } from 'react'\r\n\r\nexport type Role = 'Admin' | 'Manager' | 'Auditor' | 'User'\r\n\r\nexport interface Permissions {\r\n    // Dashboard\r\n    canViewDashboard: boolean\r\n\r\n    // Certifications\r\n    canManageOwnCerts: boolean\r\n    canViewAllCerts: boolean\r\n\r\n    // Team\r\n    canViewTeam: boolean\r\n    canManageTeam: boolean\r\n    canCreateTeam: boolean\r\n    canDeleteTeam: boolean\r\n\r\n    // Catalog\r\n    canViewCatalog: boolean\r\n    canManageCatalog: boolean\r\n    canSeedCatalog: boolean\r\n    canSyncCatalog: boolean\r\n\r\n    // Audit\r\n    canViewAuditLogs: boolean\r\n\r\n    // Users\r\n    canManageUsers: boolean\r\n    canPromoteUsers: boolean\r\n\r\n    // Notifications\r\n    canManageNotificationCategories: boolean\r\n    canManageOwnNotificationSettings: boolean\r\n}\r\n\r\nconst rolePermissions: Record<Role, Permissions> = {\r\n    Admin: {\r\n        canViewDashboard: true,\r\n        canManageOwnCerts: true,\r\n        canViewAllCerts: true,\r\n        canViewTeam: true,\r\n        canManageTeam: true,\r\n        canCreateTeam: true,\r\n        canDeleteTeam: true,\r\n        canViewCatalog: true,\r\n        canManageCatalog: true,\r\n        canSeedCatalog: true,\r\n        canSyncCatalog: true,\r\n        canViewAuditLogs: true,\r\n        canManageUsers: true,\r\n        canPromoteUsers: true,\r\n        canManageNotificationCategories: true,\r\n        canManageOwnNotificationSettings: true,\r\n    },\r\n    Manager: {\r\n        canViewDashboard: true,\r\n        canManageOwnCerts: true,\r\n        canViewAllCerts: true,\r\n        canViewTeam: true,\r\n        canManageTeam: true,\r\n        canCreateTeam: false,\r\n        canDeleteTeam: false,\r\n        canViewCatalog: true,\r\n        canManageCatalog: false,\r\n        canSeedCatalog: false,\r\n        canSyncCatalog: false,\r\n        canViewAuditLogs: true,\r\n        canManageUsers: false,\r\n        canPromoteUsers: false,\r\n        canManageNotificationCategories: false,\r\n        canManageOwnNotificationSettings: true,\r\n    },\r\n    Auditor: {\r\n        canViewDashboard: true,\r\n        canManageOwnCerts: true,\r\n        canViewAllCerts: true,\r\n        canViewTeam: true,\r\n        canManageTeam: false,\r\n        canCreateTeam: false,\r\n        canDeleteTeam: false,\r\n        canViewCatalog: true,\r\n        canManageCatalog: false,\r\n        canSeedCatalog: false,\r\n        canSyncCatalog: false,\r\n        canViewAuditLogs: true,\r\n        canManageUsers: false,\r\n        canPromoteUsers: false,\r\n        canManageNotificationCategories: false,\r\n        canManageOwnNotificationSettings: true,\r\n    },\r\n    User: {\r\n        canViewDashboard: true,\r\n        canManageOwnCerts: true,\r\n        canViewAllCerts: false,\r\n        canViewTeam: false,\r\n        canManageTeam: false,\r\n        canCreateTeam: false,\r\n        canDeleteTeam: false,\r\n        canViewCatalog: true,\r\n        canManageCatalog: false,\r\n        canSeedCatalog: false,\r\n        canSyncCatalog: false,\r\n        canViewAuditLogs: false,\r\n        canManageUsers: false,\r\n        canPromoteUsers: false,\r\n        canManageNotificationCategories: false,\r\n        canManageOwnNotificationSettings: true,\r\n    },\r\n}\r\n\r\nexport function usePermissions(role: Role | string | undefined | null): Permissions {\r\n    return useMemo(() => {\r\n        const validRole = (role as Role) || 'User'\r\n        return rolePermissions[validRole] || rolePermissions.User\r\n    }, [role])\r\n}\r\n\r\n// Helper to check if a role is at least a certain level\r\nexport function isAtLeastRole(currentRole: Role | string | undefined, requiredRole: Role): boolean {\r\n    const roleHierarchy: Array<Role> = ['User', 'Auditor', 'Manager', 'Admin']\r\n    const currentIndex = roleHierarchy.indexOf((currentRole as Role) || 'User')\r\n    const requiredIndex = roleHierarchy.indexOf(requiredRole)\r\n    return currentIndex >= requiredIndex\r\n}\r\n","usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\lib\\env.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\lib\\ingestion.server.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routeTree.gen.ts","messages":[],"suppressedMessages":[{"ruleId":"@typescript-eslint/ban-ts-comment","severity":2,"message":"Do not use \"@ts-nocheck\" because it alters compilation errors.","line":3,"column":1,"nodeType":"Line","messageId":"tsDirectiveComment","endLine":3,"endColumn":15,"suppressions":[{"kind":"directive","justification":""}]},{"ruleId":"import/first","severity":2,"message":"Import in body of module; reorder to top.","line":632,"column":1,"nodeType":"ImportDeclaration","messageId":"order","endLine":632,"endColumn":46,"fix":{"range":[22647,22647],"text":""},"suppressions":[{"kind":"directive","justification":""}]},{"ruleId":"import/first","severity":2,"message":"Import in body of module; reorder to top.","line":633,"column":1,"nodeType":"ImportDeclaration","messageId":"order","endLine":633,"endColumn":57,"fix":{"range":[0,22704],"text":"/* eslint-disable */\n\n// @ts-nocheck\n\n// noinspection JSUnusedGlobalSymbols\n\n// This file was automatically generated by TanStack Router.\n// You should NOT make any changes in this file as it will be overwritten.\n// Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.\n\nimport { Route as rootRouteImport } from './routes/__root'\nimport { Route as UserProfileRouteImport } from './routes/user-profile'\nimport { Route as TeamManagementRouteImport } from './routes/team-management'\nimport { Route as SignUpRouteImport } from './routes/sign-up'\nimport { Route as SignInRouteImport } from './routes/sign-in'\nimport { Route as NotificationsRouteImport } from './routes/notifications'\nimport { Route as DbHealthRouteImport } from './routes/db-health'\nimport { Route as ComplianceAuditRouteImport } from './routes/compliance-audit'\nimport { Route as CertificationManagementRouteImport } from './routes/certification-management'\nimport { Route as CatalogRouteImport } from './routes/catalog'\nimport { Route as IndexRouteImport } from './routes/index'\nimport { Route as ApiUsersRouteImport } from './routes/api.users'\nimport { Route as ApiTeamsRouteImport } from './routes/api.teams'\nimport { Route as ApiTeamMembersRouteImport } from './routes/api.team-members'\nimport { Route as ApiSeedRouteImport } from './routes/api.seed'\nimport { Route as ApiNotificationsRouteImport } from './routes/api.notifications'\nimport { Route as ApiNotificationSettingsRouteImport } from './routes/api.notification-settings'\nimport { Route as ApiExportRouteImport } from './routes/api.export'\nimport { Route as ApiDashboardRouteImport } from './routes/api.dashboard'\nimport { Route as ApiComplianceRouteImport } from './routes/api.compliance'\nimport { Route as ApiCertificationsRouteImport } from './routes/api.certifications'\nimport { Route as ApiCatalogRouteImport } from './routes/api.catalog'\nimport { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'\nimport { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'\nimport { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'\nimport { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'\nimport { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr.spa-mode'\nimport { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'\nimport { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'\n\nimport type { getRouter } from './router.tsx'\nimport type { createStart } from '@tanstack/react-start'\n\nconst UserProfileRoute = UserProfileRouteImport.update({\n  id: '/user-profile',\n  path: '/user-profile',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst TeamManagementRoute = TeamManagementRouteImport.update({\n  id: '/team-management',\n  path: '/team-management',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst SignUpRoute = SignUpRouteImport.update({\n  id: '/sign-up',\n  path: '/sign-up',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst SignInRoute = SignInRouteImport.update({\n  id: '/sign-in',\n  path: '/sign-in',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst NotificationsRoute = NotificationsRouteImport.update({\n  id: '/notifications',\n  path: '/notifications',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst DbHealthRoute = DbHealthRouteImport.update({\n  id: '/db-health',\n  path: '/db-health',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ComplianceAuditRoute = ComplianceAuditRouteImport.update({\n  id: '/compliance-audit',\n  path: '/compliance-audit',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst CertificationManagementRoute = CertificationManagementRouteImport.update({\n  id: '/certification-management',\n  path: '/certification-management',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst CatalogRoute = CatalogRouteImport.update({\n  id: '/catalog',\n  path: '/catalog',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst IndexRoute = IndexRouteImport.update({\n  id: '/',\n  path: '/',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiUsersRoute = ApiUsersRouteImport.update({\n  id: '/api/users',\n  path: '/api/users',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiTeamsRoute = ApiTeamsRouteImport.update({\n  id: '/api/teams',\n  path: '/api/teams',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiTeamMembersRoute = ApiTeamMembersRouteImport.update({\n  id: '/api/team-members',\n  path: '/api/team-members',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiSeedRoute = ApiSeedRouteImport.update({\n  id: '/api/seed',\n  path: '/api/seed',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiNotificationsRoute = ApiNotificationsRouteImport.update({\n  id: '/api/notifications',\n  path: '/api/notifications',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiNotificationSettingsRoute = ApiNotificationSettingsRouteImport.update({\n  id: '/api/notification-settings',\n  path: '/api/notification-settings',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiExportRoute = ApiExportRouteImport.update({\n  id: '/api/export',\n  path: '/api/export',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiDashboardRoute = ApiDashboardRouteImport.update({\n  id: '/api/dashboard',\n  path: '/api/dashboard',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiComplianceRoute = ApiComplianceRouteImport.update({\n  id: '/api/compliance',\n  path: '/api/compliance',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiCertificationsRoute = ApiCertificationsRouteImport.update({\n  id: '/api/certifications',\n  path: '/api/certifications',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiCatalogRoute = ApiCatalogRouteImport.update({\n  id: '/api/catalog',\n  path: '/api/catalog',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({\n  id: '/demo/start/server-funcs',\n  path: '/demo/start/server-funcs',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst DemoStartApiRequestRoute = DemoStartApiRequestRouteImport.update({\n  id: '/demo/start/api-request',\n  path: '/demo/start/api-request',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst DemoApiNamesRoute = DemoApiNamesRouteImport.update({\n  id: '/demo/api/names',\n  path: '/demo/api/names',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst DemoStartSsrIndexRoute = DemoStartSsrIndexRouteImport.update({\n  id: '/demo/start/ssr/',\n  path: '/demo/start/ssr/',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst DemoStartSsrSpaModeRoute = DemoStartSsrSpaModeRouteImport.update({\n  id: '/demo/start/ssr/spa-mode',\n  path: '/demo/start/ssr/spa-mode',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst DemoStartSsrFullSsrRoute = DemoStartSsrFullSsrRouteImport.update({\n  id: '/demo/start/ssr/full-ssr',\n  path: '/demo/start/ssr/full-ssr',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({\n  id: '/demo/start/ssr/data-only',\n  path: '/demo/start/ssr/data-only',\n  getParentRoute: () => rootRouteImport,\n} as any)\n\nexport interface FileRoutesByFullPath {\n  '/': typeof IndexRoute\n  '/catalog': typeof CatalogRoute\n  '/certification-management': typeof CertificationManagementRoute\n  '/compliance-audit': typeof ComplianceAuditRoute\n  '/db-health': typeof DbHealthRoute\n  '/notifications': typeof NotificationsRoute\n  '/sign-in': typeof SignInRoute\n  '/sign-up': typeof SignUpRoute\n  '/team-management': typeof TeamManagementRoute\n  '/user-profile': typeof UserProfileRoute\n  '/api/catalog': typeof ApiCatalogRoute\n  '/api/certifications': typeof ApiCertificationsRoute\n  '/api/compliance': typeof ApiComplianceRoute\n  '/api/dashboard': typeof ApiDashboardRoute\n  '/api/export': typeof ApiExportRoute\n  '/api/notification-settings': typeof ApiNotificationSettingsRoute\n  '/api/notifications': typeof ApiNotificationsRoute\n  '/api/seed': typeof ApiSeedRoute\n  '/api/team-members': typeof ApiTeamMembersRoute\n  '/api/teams': typeof ApiTeamsRoute\n  '/api/users': typeof ApiUsersRoute\n  '/demo/api/names': typeof DemoApiNamesRoute\n  '/demo/start/api-request': typeof DemoStartApiRequestRoute\n  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute\n  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute\n  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute\n  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute\n  '/demo/start/ssr': typeof DemoStartSsrIndexRoute\n}\nexport interface FileRoutesByTo {\n  '/': typeof IndexRoute\n  '/catalog': typeof CatalogRoute\n  '/certification-management': typeof CertificationManagementRoute\n  '/compliance-audit': typeof ComplianceAuditRoute\n  '/db-health': typeof DbHealthRoute\n  '/notifications': typeof NotificationsRoute\n  '/sign-in': typeof SignInRoute\n  '/sign-up': typeof SignUpRoute\n  '/team-management': typeof TeamManagementRoute\n  '/user-profile': typeof UserProfileRoute\n  '/api/catalog': typeof ApiCatalogRoute\n  '/api/certifications': typeof ApiCertificationsRoute\n  '/api/compliance': typeof ApiComplianceRoute\n  '/api/dashboard': typeof ApiDashboardRoute\n  '/api/export': typeof ApiExportRoute\n  '/api/notification-settings': typeof ApiNotificationSettingsRoute\n  '/api/notifications': typeof ApiNotificationsRoute\n  '/api/seed': typeof ApiSeedRoute\n  '/api/team-members': typeof ApiTeamMembersRoute\n  '/api/teams': typeof ApiTeamsRoute\n  '/api/users': typeof ApiUsersRoute\n  '/demo/api/names': typeof DemoApiNamesRoute\n  '/demo/start/api-request': typeof DemoStartApiRequestRoute\n  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute\n  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute\n  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute\n  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute\n  '/demo/start/ssr': typeof DemoStartSsrIndexRoute\n}\nexport interface FileRoutesById {\n  __root__: typeof rootRouteImport\n  '/': typeof IndexRoute\n  '/catalog': typeof CatalogRoute\n  '/certification-management': typeof CertificationManagementRoute\n  '/compliance-audit': typeof ComplianceAuditRoute\n  '/db-health': typeof DbHealthRoute\n  '/notifications': typeof NotificationsRoute\n  '/sign-in': typeof SignInRoute\n  '/sign-up': typeof SignUpRoute\n  '/team-management': typeof TeamManagementRoute\n  '/user-profile': typeof UserProfileRoute\n  '/api/catalog': typeof ApiCatalogRoute\n  '/api/certifications': typeof ApiCertificationsRoute\n  '/api/compliance': typeof ApiComplianceRoute\n  '/api/dashboard': typeof ApiDashboardRoute\n  '/api/export': typeof ApiExportRoute\n  '/api/notification-settings': typeof ApiNotificationSettingsRoute\n  '/api/notifications': typeof ApiNotificationsRoute\n  '/api/seed': typeof ApiSeedRoute\n  '/api/team-members': typeof ApiTeamMembersRoute\n  '/api/teams': typeof ApiTeamsRoute\n  '/api/users': typeof ApiUsersRoute\n  '/demo/api/names': typeof DemoApiNamesRoute\n  '/demo/start/api-request': typeof DemoStartApiRequestRoute\n  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute\n  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute\n  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute\n  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute\n  '/demo/start/ssr/': typeof DemoStartSsrIndexRoute\n}\nexport interface FileRouteTypes {\n  fileRoutesByFullPath: FileRoutesByFullPath\n  fullPaths:\n    | '/'\n    | '/catalog'\n    | '/certification-management'\n    | '/compliance-audit'\n    | '/db-health'\n    | '/notifications'\n    | '/sign-in'\n    | '/sign-up'\n    | '/team-management'\n    | '/user-profile'\n    | '/api/catalog'\n    | '/api/certifications'\n    | '/api/compliance'\n    | '/api/dashboard'\n    | '/api/export'\n    | '/api/notification-settings'\n    | '/api/notifications'\n    | '/api/seed'\n    | '/api/team-members'\n    | '/api/teams'\n    | '/api/users'\n    | '/demo/api/names'\n    | '/demo/start/api-request'\n    | '/demo/start/server-funcs'\n    | '/demo/start/ssr/data-only'\n    | '/demo/start/ssr/full-ssr'\n    | '/demo/start/ssr/spa-mode'\n    | '/demo/start/ssr'\n  fileRoutesByTo: FileRoutesByTo\n  to:\n    | '/'\n    | '/catalog'\n    | '/certification-management'\n    | '/compliance-audit'\n    | '/db-health'\n    | '/notifications'\n    | '/sign-in'\n    | '/sign-up'\n    | '/team-management'\n    | '/user-profile'\n    | '/api/catalog'\n    | '/api/certifications'\n    | '/api/compliance'\n    | '/api/dashboard'\n    | '/api/export'\n    | '/api/notification-settings'\n    | '/api/notifications'\n    | '/api/seed'\n    | '/api/team-members'\n    | '/api/teams'\n    | '/api/users'\n    | '/demo/api/names'\n    | '/demo/start/api-request'\n    | '/demo/start/server-funcs'\n    | '/demo/start/ssr/data-only'\n    | '/demo/start/ssr/full-ssr'\n    | '/demo/start/ssr/spa-mode'\n    | '/demo/start/ssr'\n  id:\n    | '__root__'\n    | '/'\n    | '/catalog'\n    | '/certification-management'\n    | '/compliance-audit'\n    | '/db-health'\n    | '/notifications'\n    | '/sign-in'\n    | '/sign-up'\n    | '/team-management'\n    | '/user-profile'\n    | '/api/catalog'\n    | '/api/certifications'\n    | '/api/compliance'\n    | '/api/dashboard'\n    | '/api/export'\n    | '/api/notification-settings'\n    | '/api/notifications'\n    | '/api/seed'\n    | '/api/team-members'\n    | '/api/teams'\n    | '/api/users'\n    | '/demo/api/names'\n    | '/demo/start/api-request'\n    | '/demo/start/server-funcs'\n    | '/demo/start/ssr/data-only'\n    | '/demo/start/ssr/full-ssr'\n    | '/demo/start/ssr/spa-mode'\n    | '/demo/start/ssr/'\n  fileRoutesById: FileRoutesById\n}\nexport interface RootRouteChildren {\n  IndexRoute: typeof IndexRoute\n  CatalogRoute: typeof CatalogRoute\n  CertificationManagementRoute: typeof CertificationManagementRoute\n  ComplianceAuditRoute: typeof ComplianceAuditRoute\n  DbHealthRoute: typeof DbHealthRoute\n  NotificationsRoute: typeof NotificationsRoute\n  SignInRoute: typeof SignInRoute\n  SignUpRoute: typeof SignUpRoute\n  TeamManagementRoute: typeof TeamManagementRoute\n  UserProfileRoute: typeof UserProfileRoute\n  ApiCatalogRoute: typeof ApiCatalogRoute\n  ApiCertificationsRoute: typeof ApiCertificationsRoute\n  ApiComplianceRoute: typeof ApiComplianceRoute\n  ApiDashboardRoute: typeof ApiDashboardRoute\n  ApiExportRoute: typeof ApiExportRoute\n  ApiNotificationSettingsRoute: typeof ApiNotificationSettingsRoute\n  ApiNotificationsRoute: typeof ApiNotificationsRoute\n  ApiSeedRoute: typeof ApiSeedRoute\n  ApiTeamMembersRoute: typeof ApiTeamMembersRoute\n  ApiTeamsRoute: typeof ApiTeamsRoute\n  ApiUsersRoute: typeof ApiUsersRoute\n  DemoApiNamesRoute: typeof DemoApiNamesRoute\n  DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute\n  DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute\n  DemoStartSsrDataOnlyRoute: typeof DemoStartSsrDataOnlyRoute\n  DemoStartSsrFullSsrRoute: typeof DemoStartSsrFullSsrRoute\n  DemoStartSsrSpaModeRoute: typeof DemoStartSsrSpaModeRoute\n  DemoStartSsrIndexRoute: typeof DemoStartSsrIndexRoute\n}\n\ndeclare module '@tanstack/react-router' {\n  interface FileRoutesByPath {\n    '/user-profile': {\n      id: '/user-profile'\n      path: '/user-profile'\n      fullPath: '/user-profile'\n      preLoaderRoute: typeof UserProfileRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/team-management': {\n      id: '/team-management'\n      path: '/team-management'\n      fullPath: '/team-management'\n      preLoaderRoute: typeof TeamManagementRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/sign-up': {\n      id: '/sign-up'\n      path: '/sign-up'\n      fullPath: '/sign-up'\n      preLoaderRoute: typeof SignUpRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/sign-in': {\n      id: '/sign-in'\n      path: '/sign-in'\n      fullPath: '/sign-in'\n      preLoaderRoute: typeof SignInRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/notifications': {\n      id: '/notifications'\n      path: '/notifications'\n      fullPath: '/notifications'\n      preLoaderRoute: typeof NotificationsRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/db-health': {\n      id: '/db-health'\n      path: '/db-health'\n      fullPath: '/db-health'\n      preLoaderRoute: typeof DbHealthRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/compliance-audit': {\n      id: '/compliance-audit'\n      path: '/compliance-audit'\n      fullPath: '/compliance-audit'\n      preLoaderRoute: typeof ComplianceAuditRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/certification-management': {\n      id: '/certification-management'\n      path: '/certification-management'\n      fullPath: '/certification-management'\n      preLoaderRoute: typeof CertificationManagementRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/catalog': {\n      id: '/catalog'\n      path: '/catalog'\n      fullPath: '/catalog'\n      preLoaderRoute: typeof CatalogRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/': {\n      id: '/'\n      path: '/'\n      fullPath: '/'\n      preLoaderRoute: typeof IndexRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/users': {\n      id: '/api/users'\n      path: '/api/users'\n      fullPath: '/api/users'\n      preLoaderRoute: typeof ApiUsersRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/teams': {\n      id: '/api/teams'\n      path: '/api/teams'\n      fullPath: '/api/teams'\n      preLoaderRoute: typeof ApiTeamsRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/team-members': {\n      id: '/api/team-members'\n      path: '/api/team-members'\n      fullPath: '/api/team-members'\n      preLoaderRoute: typeof ApiTeamMembersRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/seed': {\n      id: '/api/seed'\n      path: '/api/seed'\n      fullPath: '/api/seed'\n      preLoaderRoute: typeof ApiSeedRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/notifications': {\n      id: '/api/notifications'\n      path: '/api/notifications'\n      fullPath: '/api/notifications'\n      preLoaderRoute: typeof ApiNotificationsRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/notification-settings': {\n      id: '/api/notification-settings'\n      path: '/api/notification-settings'\n      fullPath: '/api/notification-settings'\n      preLoaderRoute: typeof ApiNotificationSettingsRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/export': {\n      id: '/api/export'\n      path: '/api/export'\n      fullPath: '/api/export'\n      preLoaderRoute: typeof ApiExportRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/dashboard': {\n      id: '/api/dashboard'\n      path: '/api/dashboard'\n      fullPath: '/api/dashboard'\n      preLoaderRoute: typeof ApiDashboardRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/compliance': {\n      id: '/api/compliance'\n      path: '/api/compliance'\n      fullPath: '/api/compliance'\n      preLoaderRoute: typeof ApiComplianceRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/certifications': {\n      id: '/api/certifications'\n      path: '/api/certifications'\n      fullPath: '/api/certifications'\n      preLoaderRoute: typeof ApiCertificationsRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/catalog': {\n      id: '/api/catalog'\n      path: '/api/catalog'\n      fullPath: '/api/catalog'\n      preLoaderRoute: typeof ApiCatalogRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/demo/start/server-funcs': {\n      id: '/demo/start/server-funcs'\n      path: '/demo/start/server-funcs'\n      fullPath: '/demo/start/server-funcs'\n      preLoaderRoute: typeof DemoStartServerFuncsRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/demo/start/api-request': {\n      id: '/demo/start/api-request'\n      path: '/demo/start/api-request'\n      fullPath: '/demo/start/api-request'\n      preLoaderRoute: typeof DemoStartApiRequestRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/demo/api/names': {\n      id: '/demo/api/names'\n      path: '/demo/api/names'\n      fullPath: '/demo/api/names'\n      preLoaderRoute: typeof DemoApiNamesRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/demo/start/ssr/': {\n      id: '/demo/start/ssr/'\n      path: '/demo/start/ssr'\n      fullPath: '/demo/start/ssr'\n      preLoaderRoute: typeof DemoStartSsrIndexRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/demo/start/ssr/spa-mode': {\n      id: '/demo/start/ssr/spa-mode'\n      path: '/demo/start/ssr/spa-mode'\n      fullPath: '/demo/start/ssr/spa-mode'\n      preLoaderRoute: typeof DemoStartSsrSpaModeRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/demo/start/ssr/full-ssr': {\n      id: '/demo/start/ssr/full-ssr'\n      path: '/demo/start/ssr/full-ssr'\n      fullPath: '/demo/start/ssr/full-ssr'\n      preLoaderRoute: typeof DemoStartSsrFullSsrRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/demo/start/ssr/data-only': {\n      id: '/demo/start/ssr/data-only'\n      path: '/demo/start/ssr/data-only'\n      fullPath: '/demo/start/ssr/data-only'\n      preLoaderRoute: typeof DemoStartSsrDataOnlyRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n  }\n}\n\nconst rootRouteChildren: RootRouteChildren = {\n  IndexRoute: IndexRoute,\n  CatalogRoute: CatalogRoute,\n  CertificationManagementRoute: CertificationManagementRoute,\n  ComplianceAuditRoute: ComplianceAuditRoute,\n  DbHealthRoute: DbHealthRoute,\n  NotificationsRoute: NotificationsRoute,\n  SignInRoute: SignInRoute,\n  SignUpRoute: SignUpRoute,\n  TeamManagementRoute: TeamManagementRoute,\n  UserProfileRoute: UserProfileRoute,\n  ApiCatalogRoute: ApiCatalogRoute,\n  ApiCertificationsRoute: ApiCertificationsRoute,\n  ApiComplianceRoute: ApiComplianceRoute,\n  ApiDashboardRoute: ApiDashboardRoute,\n  ApiExportRoute: ApiExportRoute,\n  ApiNotificationSettingsRoute: ApiNotificationSettingsRoute,\n  ApiNotificationsRoute: ApiNotificationsRoute,\n  ApiSeedRoute: ApiSeedRoute,\n  ApiTeamMembersRoute: ApiTeamMembersRoute,\n  ApiTeamsRoute: ApiTeamsRoute,\n  ApiUsersRoute: ApiUsersRoute,\n  DemoApiNamesRoute: DemoApiNamesRoute,\n  DemoStartApiRequestRoute: DemoStartApiRequestRoute,\n  DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,\n  DemoStartSsrDataOnlyRoute: DemoStartSsrDataOnlyRoute,\n  DemoStartSsrFullSsrRoute: DemoStartSsrFullSsrRoute,\n  DemoStartSsrSpaModeRoute: DemoStartSsrSpaModeRoute,\n  DemoStartSsrIndexRoute: DemoStartSsrIndexRoute,\n}\nexport const routeTree = rootRouteImport\n  ._addFileChildren(rootRouteChildren)\n  ._addFileTypes<FileRouteTypes>()"},"suppressions":[{"kind":"directive","justification":""}]},{"ruleId":"import/newline-after-import","severity":2,"message":"Expected 1 empty line after import statement not followed by another import.","line":633,"column":1,"nodeType":null,"messageId":"newline","fix":{"range":[22704,22704],"text":"\n"},"suppressions":[{"kind":"directive","justification":""}]}],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\router.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\__root.tsx","messages":[{"ruleId":"@typescript-eslint/no-unnecessary-condition","severity":2,"message":"Unnecessary conditional, expected left-hand side of `??` operator to be possibly null or undefined.","line":64,"column":23,"nodeType":"ChainExpression","messageId":"neverNullish","endLine":64,"endColumn":58},{"ruleId":"@typescript-eslint/no-unnecessary-condition","severity":2,"message":"Unnecessary optional chain on a non-nullish value.","line":64,"column":45,"nodeType":"MemberExpression","messageId":"neverOptionalChain","endLine":64,"endColumn":47,"suggestions":[{"messageId":"suggestRemoveOptionalChain","fix":{"range":[2125,2127],"text":"."},"desc":"Remove unnecessary optional chain"}]}],"suppressedMessages":[],"errorCount":2,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"source":"import { HeadContent, Link, Outlet, Scripts, createRootRouteWithContext, useRouter } from '@tanstack/react-router'\nimport { QueryClient, QueryClientProvider  } from '@tanstack/react-query'\nimport { ClerkProvider, RedirectToSignIn, useAuth, useUser } from '@clerk/tanstack-react-start'\nimport { useEffect } from 'react'\nimport { AppShell } from '../components/shell/AppShell'\nimport { ENV } from '../lib/env'\n\nimport appCss from '../styles.css?url'\n\nexport const Route = createRootRouteWithContext<{\n  queryClient: QueryClient\n}>()({\n  head: () => ({\n    meta: [\n      {\n        charSet: 'utf-8',\n      },\n      {\n        name: 'viewport',\n        content: 'width=device-width, initial-scale=1',\n      },\n      {\n        title: 'Training-Certify Platform',\n      },\n      {\n        name: 'description',\n        content: 'Enterprise certification tracking and compliance management platform.',\n      },\n    ],\n    links: [\n      {\n        rel: 'stylesheet',\n        href: appCss,\n      },\n      {\n        rel: 'icon',\n        href: '/favicon.ico',\n      },\n    ],\n  }),\n\n  shellComponent: RootDocument,\n  component: RootComponent,\n  notFoundComponent: () => (\n    <div className=\"p-8 text-center\">\n      <h2 className=\"text-2xl font-bold\">404 - Page Not Found</h2>\n      <p className=\"text-slate-600 mt-2\">The section you are looking for does not exist.</p>\n      <Link to=\"/\" className=\"text-blue-600 hover:underline mt-4 inline-block\">Go to Dashboard</Link>\n    </div>\n  ),\n  errorComponent: ({ error }: { error: Error }) => (\n    <div className=\"p-8 text-center bg-red-50 text-red-900 rounded-lg border border-red-200\">\n      <h2 className=\"text-xl font-bold\">Something went wrong</h2>\n      <pre className=\"mt-4 text-xs overflow-auto text-left p-4 bg-white rounded border\">{error.message}</pre>\n      <button onClick={() => window.location.reload()} className=\"mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700\">\n        Reload Page\n      </button>\n    </div>\n  ),\n})\n\nfunction RootDocument({ children }: { children: React.ReactNode }) {\n  const router = useRouter()\n  const queryClient = router.options.context?.queryClient ?? new QueryClient()\n\n  return (\n    <html lang=\"en\">\n      <head>\n        <HeadContent />\n        <script\n          dangerouslySetInnerHTML={{\n            __html: `window.__ENV__ = { CLERK_PUBLISHABLE_KEY: ${JSON.stringify(ENV.CLERK_PUBLISHABLE_KEY)} };`,\n          }}\n        />\n      </head>\n      <body>\n        <ClerkProvider publishableKey={ENV.CLERK_PUBLISHABLE_KEY}>\n          <QueryClientProvider client={queryClient}>\n            {children}\n          </QueryClientProvider>\n        </ClerkProvider>\n        <Scripts />\n      </body>\n    </html>\n  )\n}\n\nfunction RootComponent() {\n  const { isLoaded, isSignedIn } = useAuth()\n  const { user } = useUser()\n  const router = useRouter()\n  const path = router.state.location.pathname\n\n  const isAuthPage = path.startsWith('/sign-in') || path.startsWith('/sign-up')\n\n  useEffect(() => {\n    if (isSignedIn && user) {\n      // Use fetch API instead of broken createServerFn\n      fetch('/api/users', {\n        method: 'POST',\n        headers: { 'Content-Type': 'application/json' },\n        body: JSON.stringify({\n          id: user.id,\n          name: `${user.firstName} ${user.lastName}`.trim() || user.username || 'User',\n          email: user.emailAddresses[0]?.emailAddress || '',\n          avatarUrl: user.imageUrl\n        })\n      })\n        .then((res) => res.json())\n        .then((data) => {\n          console.log('👤 [Client] User synced with DB:', data.role)\n        })\n        .catch((err) => {\n          console.error('❌ [Client] Sync failed:', err)\n        })\n    }\n  }, [isSignedIn, user])\n\n\n\n  if (!isLoaded) {\n    return <div className=\"flex items-center justify-center min-h-screen\">Loading...</div>\n  }\n\n  if (!isSignedIn && !isAuthPage) {\n    return <RedirectToSignIn />\n  }\n\n  return (\n    <AppShell>\n      <Outlet />\n    </AppShell>\n  )\n}\n","usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\api.catalog.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\api.certifications.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\api.compliance.ts","messages":[{"ruleId":"@typescript-eslint/no-unnecessary-condition","severity":2,"message":"Unnecessary optional chain on a non-nullish value.","line":18,"column":68,"nodeType":"MemberExpression","messageId":"neverOptionalChain","endLine":18,"endColumn":70,"suggestions":[{"messageId":"suggestRemoveOptionalChain","fix":{"range":[731,733],"text":"."},"desc":"Remove unnecessary optional chain"}]},{"ruleId":"@typescript-eslint/no-unnecessary-condition","severity":2,"message":"Unnecessary optional chain on a non-nullish value.","line":18,"column":99,"nodeType":"MemberExpression","messageId":"neverOptionalChain","endLine":18,"endColumn":101,"suggestions":[{"messageId":"suggestRemoveOptionalChain","fix":{"range":[762,764],"text":"."},"desc":"Remove unnecessary optional chain"}]}],"suppressedMessages":[],"errorCount":2,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"source":"import { createFileRoute } from '@tanstack/react-router'\r\nimport { json } from '@tanstack/react-start'\r\nimport { getDb } from '../db/db.server'\r\nimport { auditLogs } from '../db/schema'\r\n\r\nexport const Route = createFileRoute('/api/compliance')({\r\n    server: {\r\n        handlers: {\r\n            GET: async () => {\r\n                try {\r\n                    const db = await getDb()\r\n                    if (!db) {\r\n                        return json({ error: 'Database not available' }, { status: 500 })\r\n                    }\r\n\r\n                    const logs = await db.select().from(auditLogs).limit(50)\r\n                    const totalAudits = logs.length\r\n                    const issuesFound = logs.filter((l) => l.action?.includes('issue') || l.action?.includes('failed')).length\r\n\r\n                    return json({\r\n                        auditLogs: logs.map(l => ({\r\n                            id: l.id,\r\n                            user: l.userId || 'System',\r\n                            action: l.action,\r\n                            date: l.timestamp,\r\n                            status: 'verified'\r\n                        })),\r\n                        stats: {\r\n                            complianceRate: 98,\r\n                            totalAudits,\r\n                            issuesFound\r\n                        }\r\n                    })\r\n                } catch (error) {\r\n                    console.error('[API Compliance] Error:', error)\r\n                    return json({\r\n                        auditLogs: [],\r\n                        stats: { complianceRate: 0, totalAudits: 0, issuesFound: 0 }\r\n                    })\r\n                }\r\n            }\r\n        }\r\n    }\r\n})\r\n","usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\api.dashboard.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\api.export.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\api.notification-settings.ts","messages":[{"ruleId":"@typescript-eslint/require-await","severity":1,"message":"Async method 'GET' has no 'await' expression.","line":19,"column":13,"nodeType":"ArrowFunctionExpression","messageId":"missingAwait","endLine":19,"endColumn":24,"suggestions":[{"messageId":"removeAsync","fix":{"range":[943,949],"text":""},"desc":"Remove 'async'."}]}],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":1,"fixableErrorCount":0,"fixableWarningCount":0,"source":"import { createFileRoute } from '@tanstack/react-router'\r\nimport { json } from '@tanstack/react-start'\r\nimport { and, eq } from 'drizzle-orm'\r\nimport { getDb } from '../db/db.server'\r\nimport { notifications } from '../db/schema'\r\n\r\n// Default notification categories\r\nconst defaultCategories = [\r\n    { id: 'expiration-alert', name: 'Expiration Alerts', description: 'Alerts when certifications are about to expire' },\r\n    { id: 'renewal-reminder', name: 'Renewal Reminders', description: 'Reminders to renew certifications' },\r\n    { id: 'team-member-alert', name: 'Team Updates', description: 'Notifications about team member certifications' },\r\n    { id: 'compliance-warning', name: 'Compliance Warnings', description: 'Warnings about compliance issues' },\r\n]\r\n\r\nexport const Route = createFileRoute('/api/notification-settings')({\r\n    server: {\r\n        handlers: {\r\n            // GET notification settings/categories\r\n            GET: async ({ request }) => {\r\n                try {\r\n                    const url = new URL(request.url)\r\n                    const userId = url.searchParams.get('userId')\r\n\r\n                    // Return default categories (in production, would fetch from DB)\r\n                    return json({\r\n                        categories: defaultCategories,\r\n                        userPreferences: {\r\n                            // Default all enabled\r\n                            'expiration-alert': true,\r\n                            'renewal-reminder': true,\r\n                            'team-member-alert': true,\r\n                            'compliance-warning': true,\r\n                            emailEnabled: true,\r\n                            pushEnabled: false\r\n                        }\r\n                    })\r\n                } catch (error) {\r\n                    console.error('[API Notification Settings GET] Error:', error)\r\n                    return json({ categories: defaultCategories, userPreferences: {} })\r\n                }\r\n            },\r\n            // PATCH - Update user notification preferences\r\n            PATCH: async ({ request }) => {\r\n                try {\r\n                    const data = await request.json()\r\n                    const { userId, preferences } = data\r\n\r\n                    if (!userId) {\r\n                        return json({ error: 'userId is required' }, { status: 400 })\r\n                    }\r\n\r\n                    // In production, save to DB\r\n                    console.log(`✅ [API] Updated notification preferences for ${userId}:`, preferences)\r\n                    return json({ success: true, preferences })\r\n                } catch (error) {\r\n                    console.error('[API Notification Settings PATCH] Error:', error)\r\n                    return json({ error: 'Failed to update preferences' }, { status: 500 })\r\n                }\r\n            },\r\n            // POST - Mark notifications as read\r\n            POST: async ({ request }) => {\r\n                try {\r\n                    const data = await request.json()\r\n                    const { action, notificationId, userId } = data\r\n\r\n                    const db = await getDb()\r\n                    if (!db) {\r\n                        return json({ error: 'Database not available' }, { status: 500 })\r\n                    }\r\n\r\n                    if (action === 'markRead' && notificationId) {\r\n                        await db.update(notifications)\r\n                            .set({ isRead: true })\r\n                            .where(eq(notifications.id, notificationId))\r\n                        return json({ success: true })\r\n                    } else if (action === 'markAllRead' && userId) {\r\n                        await db.update(notifications)\r\n                            .set({ isRead: true })\r\n                            .where(eq(notifications.userId, userId))\r\n                        return json({ success: true })\r\n                    } else if (action === 'dismiss' && notificationId) {\r\n                        await db.update(notifications)\r\n                            .set({ isDismissed: true })\r\n                            .where(eq(notifications.id, notificationId))\r\n                        return json({ success: true })\r\n                    }\r\n\r\n                    return json({ error: 'Invalid action' }, { status: 400 })\r\n                } catch (error) {\r\n                    console.error('[API Notification Settings POST] Error:', error)\r\n                    return json({ error: 'Failed to update notification' }, { status: 500 })\r\n                }\r\n            }\r\n        }\r\n    }\r\n})\r\n","usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\api.notifications.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\api.seed.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\api.team-members.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\api.teams.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\api.users.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\catalog.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\certification-management.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\compliance-audit.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\db-health.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\demo\\api.names.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\demo\\start.api-request.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\demo\\start.server-funcs.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\demo\\start.ssr.data-only.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\demo\\start.ssr.full-ssr.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\demo\\start.ssr.index.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\demo\\start.ssr.spa-mode.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\index.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\notifications.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\sign-in.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\sign-up.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\team-management.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\routes\\user-profile.tsx","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\src\\types\\index.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]},{"filePath":"D:\\repos\\training-certify\\vite.config.ts","messages":[],"suppressedMessages":[],"errorCount":0,"fatalErrorCount":0,"warningCount":0,"fixableErrorCount":0,"fixableWarningCount":0,"usedDeprecatedRules":[]}]
+[
+  {
+    "filePath": "D:\\repos\\training-certify\\app.config.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\diagnose_db.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\drizzle.config.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\eslint.config.js",
+    "messages": [
+      {
+        "ruleId": null,
+        "nodeType": null,
+        "fatal": true,
+        "severity": 2,
+        "message": "Parsing error: \"parserOptions.project\" has been provided for @typescript-eslint/parser.\nThe file was not found in any of the provided project(s): eslint.config.js"
+      }
+    ],
+    "suppressedMessages": [],
+    "errorCount": 1,
+    "fatalErrorCount": 1,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "//  @ts-check\n\nimport { tanstackConfig } from '@tanstack/eslint-config'\n\nexport default [...tanstackConfig]\n",
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\prettier.config.js",
+    "messages": [
+      {
+        "ruleId": null,
+        "nodeType": null,
+        "fatal": true,
+        "severity": 2,
+        "message": "Parsing error: \"parserOptions.project\" has been provided for @typescript-eslint/parser.\nThe file was not found in any of the provided project(s): prettier.config.js"
+      }
+    ],
+    "suppressedMessages": [],
+    "errorCount": 1,
+    "fatalErrorCount": 1,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "//  @ts-check\n\n/** @type {import('prettier').Config} */\nconst config = {\n  semi: false,\n  singleQuote: true,\n  trailingComma: \"all\",\n};\n\nexport default config;\n",
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\data-model\\types.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\certification-catalog\\components\\CertificationBrowse.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\certification-catalog\\components\\CertificationCard.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\certification-catalog\\components\\CertificationDetail.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\certification-catalog\\components\\FilterPanel.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\certification-catalog\\components\\index.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\certification-catalog\\types.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\certification-management\\components\\CertificationManagement.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\certification-management\\components\\index.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\certification-management\\types.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\compliance-and-audit\\components\\AuditTrailTable.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\compliance-and-audit\\components\\ComplianceDashboard.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\compliance-and-audit\\components\\ComplianceMetricsOverview.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\compliance-and-audit\\components\\RecentActivityFeed.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\compliance-and-audit\\components\\ReportsSection.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\compliance-and-audit\\components\\UpcomingDeadlines.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\compliance-and-audit\\components\\VerificationQueue.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\compliance-and-audit\\components\\index.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\compliance-and-audit\\types.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\notifications-and-alerts\\components\\NotificationCard.tsx",
+    "messages": [
+      {
+        "ruleId": "@typescript-eslint/no-unnecessary-condition",
+        "severity": 2,
+        "message": "Unnecessary conditional, value is always truthy.",
+        "line": 34,
+        "column": 18,
+        "nodeType": "MemberExpression",
+        "messageId": "alwaysTruthy",
+        "endLine": 34,
+        "endColumn": 51
+      }
+    ],
+    "suppressedMessages": [],
+    "errorCount": 1,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import {\n  AlertTriangle,\n  Bell,\n  Clock,\n  Mail,\n  MailOpen,\n  Shield,\n  Users,\n  X\n} from 'lucide-react'\nimport { formatDistanceToNow } from 'date-fns'\nimport type { Notification } from '@/../product/sections/notifications-and-alerts/types'\n\ninterface NotificationCardProps {\n  notification: Notification\n  onMarkAsRead?: () => void\n  onMarkAsUnread?: () => void\n  onDismiss?: () => void\n}\n\nexport function NotificationCard({\n  notification,\n  onMarkAsRead,\n  onMarkAsUnread,\n  onDismiss,\n}: NotificationCardProps) {\n  const getTypeIcon = (type: string) => {\n    const icons = {\n      'expiration-alert': AlertTriangle,\n      'renewal-reminder': Bell,\n      'team-member-alert': Users,\n      'compliance-warning': Shield,\n    }\n    const Icon = icons[type as keyof typeof icons] || Bell\n    return Icon\n  }\n\n  const getTypeColor = (type: string) => {\n    const colors = {\n      'expiration-alert': 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300',\n      'renewal-reminder': 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',\n      'team-member-alert': 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300',\n      'compliance-warning': 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300',\n    }\n    return colors[type as keyof typeof colors] || colors['renewal-reminder']\n  }\n\n  const getSeverityBadge = (severity: string) => {\n    const badges = {\n      critical: 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',\n      warning: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',\n      info: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',\n    }\n    return badges[severity as keyof typeof badges] || badges.info\n  }\n\n  const Icon = getTypeIcon(notification.type)\n  const typeColor = getTypeColor(notification.type)\n\n  return (\n    <div\n      className={`relative bg-white dark:bg-slate-900 border rounded-xl overflow-hidden transition-all hover:shadow-lg ${\n        notification.isRead\n          ? 'border-slate-200 dark:border-slate-800'\n          : 'border-blue-300 dark:border-blue-700 shadow-md shadow-blue-500/10'\n      }`}\n    >\n      {/* Unread Indicator */}\n      {!notification.isRead && (\n        <div className=\"absolute top-0 left-0 w-1 h-full bg-blue-500\" />\n      )}\n\n      <div className=\"p-5 pl-6\">\n        <div className=\"flex items-start gap-4\">\n          {/* Icon */}\n          <div className={`flex-shrink-0 p-2.5 rounded-lg ${typeColor}`}>\n            <Icon className=\"w-5 h-5\" />\n          </div>\n\n          {/* Content */}\n          <div className=\"flex-1 min-w-0\">\n            {/* Header */}\n            <div className=\"flex items-start justify-between gap-3 mb-2\">\n              <div className=\"flex-1\">\n                <h3 className={`font-semibold mb-1 ${\n                  notification.isRead\n                    ? 'text-slate-700 dark:text-slate-300'\n                    : 'text-slate-900 dark:text-slate-100'\n                }`}>\n                  {notification.title}\n                </h3>\n                <div className=\"flex items-center gap-2 flex-wrap\">\n                  <span className={`px-2 py-0.5 text-xs font-medium rounded border ${getSeverityBadge(notification.severity)}`}>\n                    {notification.severity}\n                  </span>\n                  {notification.daysUntilExpiration !== undefined && (\n                    <span className=\"flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400\">\n                      <Clock className=\"w-3 h-3\" />\n                      {notification.daysUntilExpiration} days\n                    </span>\n                  )}\n                </div>\n              </div>\n\n              {/* Actions */}\n              <div className=\"flex items-center gap-1\">\n                {notification.isRead ? (\n                  <button\n                    onClick={onMarkAsUnread}\n                    className=\"p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors\"\n                    title=\"Mark as unread\"\n                  >\n                    <Mail className=\"w-4 h-4 text-slate-600 dark:text-slate-400\" />\n                  </button>\n                ) : (\n                  <button\n                    onClick={onMarkAsRead}\n                    className=\"p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors\"\n                    title=\"Mark as read\"\n                  >\n                    <MailOpen className=\"w-4 h-4 text-slate-600 dark:text-slate-400\" />\n                  </button>\n                )}\n                <button\n                  onClick={onDismiss}\n                  className=\"p-1.5 hover:bg-rose-100 dark:hover:bg-rose-900/30 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg transition-colors\"\n                  title=\"Dismiss\"\n                >\n                  <X className=\"w-4 h-4 text-slate-600 dark:text-slate-400\" />\n                </button>\n              </div>\n            </div>\n\n            {/* Description */}\n            <p className=\"text-sm text-slate-600 dark:text-slate-400 mb-3\">\n              {notification.description}\n            </p>\n\n            {/* Metadata */}\n            <div className=\"flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400\">\n              <span>\n                {formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true })}\n              </span>\n              {notification.certificationName && (\n                <>\n                  <span>•</span>\n                  <span className=\"font-medium\">{notification.certificationName}</span>\n                </>\n              )}\n              {notification.teamName && (\n                <>\n                  <span>•</span>\n                  <span className=\"font-medium\">{notification.teamName}</span>\n                </>\n              )}\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  )\n}\n",
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\notifications-and-alerts\\components\\NotificationSettings.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\notifications-and-alerts\\components\\NotificationsDashboard.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\notifications-and-alerts\\components\\index.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\notifications-and-alerts\\types.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\team-and-workforce-management\\components\\CompetencyDashboard.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\team-and-workforce-management\\components\\CoverageHeatmap.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\team-and-workforce-management\\components\\GapAlerts.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\team-and-workforce-management\\components\\TeamMetricsCard.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\team-and-workforce-management\\components\\index.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\sections\\team-and-workforce-management\\types.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\shell\\components\\AppShell.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\shell\\components\\MainNav.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\shell\\components\\UserMenu.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product-plan\\shell\\components\\index.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product\\sections\\certification-catalog\\types.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product\\sections\\certification-management\\types.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product\\sections\\compliance-and-audit\\types.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product\\sections\\notifications-and-alerts\\types.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\product\\sections\\team-and-workforce-management\\types.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\scripts\\cleanup-duplicates.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\scripts\\clear-catalog.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\scripts\\debug-db.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\scripts\\debug-env.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\scripts\\identify-retired.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\scripts\\remove-retired-exams.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\scripts\\run-sync.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\scripts\\seed-additional.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\scripts\\seed-catalog.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\scripts\\seed-cisco.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\scripts\\seed-microsoft.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\scripts\\test-db.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\scripts\\test-ingestion.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\scripts\\test-scraping.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\api\\certifications.server.ts",
+    "messages": [
+      {
+        "ruleId": "@typescript-eslint/no-unnecessary-condition",
+        "severity": 2,
+        "message": "Unnecessary conditional, value is always falsy.",
+        "line": 72,
+        "column": 17,
+        "nodeType": "UnaryExpression",
+        "messageId": "alwaysFalsy",
+        "endLine": 72,
+        "endColumn": 24
+      },
+      {
+        "ruleId": "@typescript-eslint/no-unnecessary-condition",
+        "severity": 2,
+        "message": "Unnecessary conditional, value is always falsy.",
+        "line": 128,
+        "column": 17,
+        "nodeType": "UnaryExpression",
+        "messageId": "alwaysFalsy",
+        "endLine": 128,
+        "endColumn": 24
+      }
+    ],
+    "suppressedMessages": [],
+    "errorCount": 2,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import { createServerFn } from '@tanstack/react-start';\r\nimport { eq } from 'drizzle-orm';\r\nimport { userCertifications } from '../db/schema';\r\nimport type { UserCertification } from '../types';\r\n\r\nexport const getUserCertifications = createServerFn({ method: 'GET' })\r\n    .handler(async () => {\r\n        const { getDb, instanceId } = await import('../db/db.server');\r\n        const db = await getDb();\r\n        if (!db) throw new Error(`Database not available (Server Instance: ${instanceId})`);\r\n\r\n        try {\r\n            const result = await db.select().from(userCertifications);\r\n            const mapped = result.map((cert) => ({\r\n                ...cert,\r\n                verifiedAt: cert.verifiedAt?.toISOString() || '',\r\n                status: (cert.status || 'active') as UserCertification['status'],\r\n            })) as Array<UserCertification>;\r\n            console.log(`✅ [Server] Returning ${mapped.length} user certifications`);\r\n            return mapped;\r\n        } catch (error) {\r\n            console.error('❌ [Server] Failed to fetch user certifications:', error);\r\n            return [];\r\n        }\r\n    });\r\n\r\ninterface CreateCertificationInput {\r\n    userId?: string;\r\n    certificationId?: string;\r\n    certificationName?: string;\r\n    vendorName?: string;\r\n    certificationNumber?: string;\r\n    issueDate?: string;\r\n    expirationDate?: string;\r\n    status?: string;\r\n    daysUntilExpiration?: number;\r\n    documentUrl?: string;\r\n    verifiedAt?: string | Date;\r\n}\r\n\r\nexport const createCertification = createServerFn({ method: 'POST' })\r\n    .inputValidator((data: unknown): CreateCertificationInput => {\r\n        if (typeof data === 'object' && data !== null) {\r\n            return data as CreateCertificationInput;\r\n        }\r\n        throw new Error('Invalid input data');\r\n    })\r\n    .handler(async ({ data }) => {\r\n        const { getDb } = await import('../db/db.server');\r\n        const db = await getDb();\r\n        if (!db) throw new Error('Database not available');\r\n\r\n        try {\r\n            const verifiedAtValue = data.verifiedAt\r\n                ? (typeof data.verifiedAt === 'string' ? new Date(data.verifiedAt) : data.verifiedAt)\r\n                : new Date();\r\n\r\n            const result = await db.insert(userCertifications).values({\r\n                userId: data.userId || 'user-001',\r\n                certificationId: data.certificationId || 'manual',\r\n                certificationName: data.certificationName || 'Unknown Certification',\r\n                vendorName: data.vendorName || 'Unknown Vendor',\r\n                certificationNumber: data.certificationNumber,\r\n                issueDate: data.issueDate,\r\n                expirationDate: data.expirationDate,\r\n                status: data.status || 'active',\r\n                daysUntilExpiration: data.daysUntilExpiration,\r\n                documentUrl: data.documentUrl || '',\r\n                verifiedAt: verifiedAtValue,\r\n            }).returning();\r\n\r\n            if (!result || result.length === 0) throw new Error('Failed to create certification record');\r\n            const newCert = result[0];\r\n            return {\r\n                ...newCert,\r\n                verifiedAt: newCert.verifiedAt?.toISOString() || '',\r\n                status: newCert.status as UserCertification['status'],\r\n            } as UserCertification;\r\n        } catch (error) {\r\n            console.error('❌ [Server] Failed to create certification:', error);\r\n            throw error;\r\n        }\r\n    });\r\n\r\ninterface UpdateCertificationInput {\r\n    id: string;\r\n    updates: {\r\n        userId?: string;\r\n        certificationId?: string;\r\n        certificationName?: string;\r\n        vendorName?: string;\r\n        certificationNumber?: string;\r\n        issueDate?: string;\r\n        expirationDate?: string;\r\n        status?: string;\r\n        daysUntilExpiration?: number;\r\n        documentUrl?: string;\r\n        verifiedAt?: string | Date;\r\n    };\r\n}\r\n\r\nexport const updateCertification = createServerFn({ method: 'POST' })\r\n    .inputValidator((data: unknown): UpdateCertificationInput => {\r\n        if (typeof data === 'object' && data !== null && 'id' in data && 'updates' in data) {\r\n            return data as UpdateCertificationInput;\r\n        }\r\n        throw new Error('Invalid input data');\r\n    })\r\n    .handler(async ({ data }) => {\r\n        const { getDb } = await import('../db/db.server');\r\n        const db = await getDb();\r\n        if (!db) throw new Error('Database not available');\r\n\r\n        try {\r\n            const { id, updates } = data;\r\n            const { verifiedAt, ...rest } = updates;\r\n            const updateData: Record<string, unknown> = { ...rest };\r\n            if (verifiedAt) {\r\n                updateData.verifiedAt = typeof verifiedAt === 'string' ? new Date(verifiedAt) : verifiedAt;\r\n            }\r\n            if ('updatedAt' in updateData) {\r\n                delete updateData.updatedAt;\r\n            }\r\n            const result = await db.update(userCertifications)\r\n                .set({ ...updateData, updatedAt: new Date() })\r\n                .where(eq(userCertifications.id, id))\r\n                .returning();\r\n            if (!result || result.length === 0) return null;\r\n            const updatedCert = result[0];\r\n            return {\r\n                ...updatedCert,\r\n                verifiedAt: updatedCert.verifiedAt?.toISOString() || '',\r\n                status: updatedCert.status as UserCertification['status'],\r\n            } as UserCertification;\r\n        } catch (error) {\r\n            console.error('❌ [Server] Failed to update certification:', error);\r\n            throw error;\r\n        }\r\n    });\r\n\r\nexport const deleteCertification = createServerFn({ method: 'POST' })\r\n    .inputValidator((data: string) => data)\r\n    .handler(async ({ data: id }) => {\r\n        const { getDb } = await import('../db/db.server');\r\n        const db = await getDb();\r\n        if (!db) throw new Error('Database not available');\r\n\r\n        try {\r\n            await db.delete(userCertifications).where(eq(userCertifications.id, id));\r\n            return { success: true };\r\n        } catch (error) {\r\n            console.error('❌ [Server] Failed to delete certification:', error);\r\n            throw error;\r\n        }\r\n    });\r\n",
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\api\\db-test.server.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\api\\debug.server.ts",
+    "messages": [
+      {
+        "ruleId": "@typescript-eslint/require-await",
+        "severity": 1,
+        "message": "Async arrow function has no 'await' expression.",
+        "line": 4,
+        "column": 23,
+        "nodeType": "ArrowFunctionExpression",
+        "messageId": "missingAwait",
+        "endLine": 4,
+        "endColumn": 25,
+        "suggestions": [
+          {
+            "messageId": "removeAsync",
+            "fix": { "range": [130, 136], "text": "" },
+            "desc": "Remove 'async'."
+          }
+        ]
+      }
+    ],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 1,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import { createServerFn } from '@tanstack/react-start'\r\n\r\nexport const checkRpc = createServerFn({ method: 'GET' })\r\n    .handler(async () => {\r\n        console.log('✅ [RPC Check] This should ONLY appear in the TERMINAL.')\r\n        return { message: 'RPC is working', timestamp: Date.now() }\r\n    })\r\n",
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\api\\others.server.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\api\\teams.server.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\api\\users.server.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\components\\Header.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\components\\sections\\certification-management\\CertificationManagement.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\components\\shell\\AppShell.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\components\\shell\\MainNav.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\components\\shell\\UserMenu.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\data\\demo.punk-songs.ts",
+    "messages": [
+      {
+        "ruleId": "@typescript-eslint/require-await",
+        "severity": 1,
+        "message": "Async arrow function has no 'await' expression.",
+        "line": 5,
+        "column": 21,
+        "nodeType": "ArrowFunctionExpression",
+        "messageId": "missingAwait",
+        "endLine": 5,
+        "endColumn": 23,
+        "suggestions": [
+          {
+            "messageId": "removeAsync",
+            "fix": { "range": [129, 135], "text": "" },
+            "desc": "Remove 'async'."
+          }
+        ]
+      }
+    ],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 1,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import { createServerFn } from '@tanstack/react-start'\n\nexport const getPunkSongs = createServerFn({\n  method: 'GET',\n}).handler(async () => [\n  { id: 1, name: 'Teenage Dirtbag', artist: 'Wheatus' },\n  { id: 2, name: 'Smells Like Teen Spirit', artist: 'Nirvana' },\n  { id: 3, name: 'The Middle', artist: 'Jimmy Eat World' },\n  { id: 4, name: 'My Own Worst Enemy', artist: 'Lit' },\n  { id: 5, name: 'Fat Lip', artist: 'Sum 41' },\n  { id: 6, name: 'All the Small Things', artist: 'blink-182' },\n  { id: 7, name: 'Beverly Hills', artist: 'Weezer' },\n])\n",
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\db\\db.server.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\db\\schema.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\db\\seed.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\entry-client.tsx",
+    "messages": [
+      {
+        "ruleId": "@typescript-eslint/ban-ts-comment",
+        "severity": 2,
+        "message": "Include a description after the \"@ts-ignore\" directive to explain why the @ts-ignore is necessary. The description must be 3 characters or longer.",
+        "line": 6,
+        "column": 1,
+        "nodeType": "Line",
+        "messageId": "tsDirectiveCommentRequiresDescription",
+        "endLine": 6,
+        "endColumn": 14
+      }
+    ],
+    "suppressedMessages": [],
+    "errorCount": 1,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import { hydrateRoot } from 'react-dom/client'\r\nimport { StartClient } from '@tanstack/react-start/client'\r\nimport { getRouter } from './router'\r\n\r\nconst router = getRouter()\r\n// @ts-ignore\r\nhydrateRoot(document, <StartClient router={router} />)\r\n",
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\entry-server.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\hooks\\usePermissions.ts",
+    "messages": [
+      {
+        "ruleId": "@typescript-eslint/no-unnecessary-condition",
+        "severity": 2,
+        "message": "Unnecessary conditional, value is always truthy.",
+        "line": 114,
+        "column": 28,
+        "nodeType": "TSAsExpression",
+        "messageId": "alwaysTruthy",
+        "endLine": 114,
+        "endColumn": 40
+      },
+      {
+        "ruleId": "@typescript-eslint/no-unnecessary-condition",
+        "severity": 2,
+        "message": "Unnecessary conditional, value is always truthy.",
+        "line": 115,
+        "column": 16,
+        "nodeType": "MemberExpression",
+        "messageId": "alwaysTruthy",
+        "endLine": 115,
+        "endColumn": 42
+      },
+      {
+        "ruleId": "@typescript-eslint/no-unnecessary-condition",
+        "severity": 2,
+        "message": "Unnecessary conditional, value is always truthy.",
+        "line": 122,
+        "column": 49,
+        "nodeType": "TSAsExpression",
+        "messageId": "alwaysTruthy",
+        "endLine": 122,
+        "endColumn": 68
+      }
+    ],
+    "suppressedMessages": [],
+    "errorCount": 3,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import { useMemo } from 'react'\r\n\r\nexport type Role = 'Admin' | 'Manager' | 'Auditor' | 'User'\r\n\r\nexport interface Permissions {\r\n    // Dashboard\r\n    canViewDashboard: boolean\r\n\r\n    // Certifications\r\n    canManageOwnCerts: boolean\r\n    canViewAllCerts: boolean\r\n\r\n    // Team\r\n    canViewTeam: boolean\r\n    canManageTeam: boolean\r\n    canCreateTeam: boolean\r\n    canDeleteTeam: boolean\r\n\r\n    // Catalog\r\n    canViewCatalog: boolean\r\n    canManageCatalog: boolean\r\n    canSeedCatalog: boolean\r\n    canSyncCatalog: boolean\r\n\r\n    // Audit\r\n    canViewAuditLogs: boolean\r\n\r\n    // Users\r\n    canManageUsers: boolean\r\n    canPromoteUsers: boolean\r\n\r\n    // Notifications\r\n    canManageNotificationCategories: boolean\r\n    canManageOwnNotificationSettings: boolean\r\n}\r\n\r\nconst rolePermissions: Record<Role, Permissions> = {\r\n    Admin: {\r\n        canViewDashboard: true,\r\n        canManageOwnCerts: true,\r\n        canViewAllCerts: true,\r\n        canViewTeam: true,\r\n        canManageTeam: true,\r\n        canCreateTeam: true,\r\n        canDeleteTeam: true,\r\n        canViewCatalog: true,\r\n        canManageCatalog: true,\r\n        canSeedCatalog: true,\r\n        canSyncCatalog: true,\r\n        canViewAuditLogs: true,\r\n        canManageUsers: true,\r\n        canPromoteUsers: true,\r\n        canManageNotificationCategories: true,\r\n        canManageOwnNotificationSettings: true,\r\n    },\r\n    Manager: {\r\n        canViewDashboard: true,\r\n        canManageOwnCerts: true,\r\n        canViewAllCerts: true,\r\n        canViewTeam: true,\r\n        canManageTeam: true,\r\n        canCreateTeam: false,\r\n        canDeleteTeam: false,\r\n        canViewCatalog: true,\r\n        canManageCatalog: false,\r\n        canSeedCatalog: false,\r\n        canSyncCatalog: false,\r\n        canViewAuditLogs: true,\r\n        canManageUsers: false,\r\n        canPromoteUsers: false,\r\n        canManageNotificationCategories: false,\r\n        canManageOwnNotificationSettings: true,\r\n    },\r\n    Auditor: {\r\n        canViewDashboard: true,\r\n        canManageOwnCerts: true,\r\n        canViewAllCerts: true,\r\n        canViewTeam: true,\r\n        canManageTeam: false,\r\n        canCreateTeam: false,\r\n        canDeleteTeam: false,\r\n        canViewCatalog: true,\r\n        canManageCatalog: false,\r\n        canSeedCatalog: false,\r\n        canSyncCatalog: false,\r\n        canViewAuditLogs: true,\r\n        canManageUsers: false,\r\n        canPromoteUsers: false,\r\n        canManageNotificationCategories: false,\r\n        canManageOwnNotificationSettings: true,\r\n    },\r\n    User: {\r\n        canViewDashboard: true,\r\n        canManageOwnCerts: true,\r\n        canViewAllCerts: false,\r\n        canViewTeam: false,\r\n        canManageTeam: false,\r\n        canCreateTeam: false,\r\n        canDeleteTeam: false,\r\n        canViewCatalog: true,\r\n        canManageCatalog: false,\r\n        canSeedCatalog: false,\r\n        canSyncCatalog: false,\r\n        canViewAuditLogs: false,\r\n        canManageUsers: false,\r\n        canPromoteUsers: false,\r\n        canManageNotificationCategories: false,\r\n        canManageOwnNotificationSettings: true,\r\n    },\r\n}\r\n\r\nexport function usePermissions(role: Role | string | undefined | null): Permissions {\r\n    return useMemo(() => {\r\n        const validRole = (role as Role) || 'User'\r\n        return rolePermissions[validRole] || rolePermissions.User\r\n    }, [role])\r\n}\r\n\r\n// Helper to check if a role is at least a certain level\r\nexport function isAtLeastRole(currentRole: Role | string | undefined, requiredRole: Role): boolean {\r\n    const roleHierarchy: Array<Role> = ['User', 'Auditor', 'Manager', 'Admin']\r\n    const currentIndex = roleHierarchy.indexOf((currentRole as Role) || 'User')\r\n    const requiredIndex = roleHierarchy.indexOf(requiredRole)\r\n    return currentIndex >= requiredIndex\r\n}\r\n",
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\lib\\env.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\lib\\ingestion.server.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routeTree.gen.ts",
+    "messages": [],
+    "suppressedMessages": [
+      {
+        "ruleId": "@typescript-eslint/ban-ts-comment",
+        "severity": 2,
+        "message": "Do not use \"@ts-nocheck\" because it alters compilation errors.",
+        "line": 3,
+        "column": 1,
+        "nodeType": "Line",
+        "messageId": "tsDirectiveComment",
+        "endLine": 3,
+        "endColumn": 15,
+        "suppressions": [{ "kind": "directive", "justification": "" }]
+      },
+      {
+        "ruleId": "import/first",
+        "severity": 2,
+        "message": "Import in body of module; reorder to top.",
+        "line": 632,
+        "column": 1,
+        "nodeType": "ImportDeclaration",
+        "messageId": "order",
+        "endLine": 632,
+        "endColumn": 46,
+        "fix": { "range": [22647, 22647], "text": "" },
+        "suppressions": [{ "kind": "directive", "justification": "" }]
+      },
+      {
+        "ruleId": "import/first",
+        "severity": 2,
+        "message": "Import in body of module; reorder to top.",
+        "line": 633,
+        "column": 1,
+        "nodeType": "ImportDeclaration",
+        "messageId": "order",
+        "endLine": 633,
+        "endColumn": 57,
+        "fix": {
+          "range": [0, 22704],
+          "text": "/* eslint-disable */\n\n// @ts-nocheck\n\n// noinspection JSUnusedGlobalSymbols\n\n// This file was automatically generated by TanStack Router.\n// You should NOT make any changes in this file as it will be overwritten.\n// Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.\n\nimport { Route as rootRouteImport } from './routes/__root'\nimport { Route as UserProfileRouteImport } from './routes/user-profile'\nimport { Route as TeamManagementRouteImport } from './routes/team-management'\nimport { Route as SignUpRouteImport } from './routes/sign-up'\nimport { Route as SignInRouteImport } from './routes/sign-in'\nimport { Route as NotificationsRouteImport } from './routes/notifications'\nimport { Route as DbHealthRouteImport } from './routes/db-health'\nimport { Route as ComplianceAuditRouteImport } from './routes/compliance-audit'\nimport { Route as CertificationManagementRouteImport } from './routes/certification-management'\nimport { Route as CatalogRouteImport } from './routes/catalog'\nimport { Route as IndexRouteImport } from './routes/index'\nimport { Route as ApiUsersRouteImport } from './routes/api.users'\nimport { Route as ApiTeamsRouteImport } from './routes/api.teams'\nimport { Route as ApiTeamMembersRouteImport } from './routes/api.team-members'\nimport { Route as ApiSeedRouteImport } from './routes/api.seed'\nimport { Route as ApiNotificationsRouteImport } from './routes/api.notifications'\nimport { Route as ApiNotificationSettingsRouteImport } from './routes/api.notification-settings'\nimport { Route as ApiExportRouteImport } from './routes/api.export'\nimport { Route as ApiDashboardRouteImport } from './routes/api.dashboard'\nimport { Route as ApiComplianceRouteImport } from './routes/api.compliance'\nimport { Route as ApiCertificationsRouteImport } from './routes/api.certifications'\nimport { Route as ApiCatalogRouteImport } from './routes/api.catalog'\nimport { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'\nimport { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'\nimport { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'\nimport { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'\nimport { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr.spa-mode'\nimport { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'\nimport { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'\n\nimport type { getRouter } from './router.tsx'\nimport type { createStart } from '@tanstack/react-start'\n\nconst UserProfileRoute = UserProfileRouteImport.update({\n  id: '/user-profile',\n  path: '/user-profile',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst TeamManagementRoute = TeamManagementRouteImport.update({\n  id: '/team-management',\n  path: '/team-management',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst SignUpRoute = SignUpRouteImport.update({\n  id: '/sign-up',\n  path: '/sign-up',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst SignInRoute = SignInRouteImport.update({\n  id: '/sign-in',\n  path: '/sign-in',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst NotificationsRoute = NotificationsRouteImport.update({\n  id: '/notifications',\n  path: '/notifications',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst DbHealthRoute = DbHealthRouteImport.update({\n  id: '/db-health',\n  path: '/db-health',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ComplianceAuditRoute = ComplianceAuditRouteImport.update({\n  id: '/compliance-audit',\n  path: '/compliance-audit',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst CertificationManagementRoute = CertificationManagementRouteImport.update({\n  id: '/certification-management',\n  path: '/certification-management',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst CatalogRoute = CatalogRouteImport.update({\n  id: '/catalog',\n  path: '/catalog',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst IndexRoute = IndexRouteImport.update({\n  id: '/',\n  path: '/',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiUsersRoute = ApiUsersRouteImport.update({\n  id: '/api/users',\n  path: '/api/users',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiTeamsRoute = ApiTeamsRouteImport.update({\n  id: '/api/teams',\n  path: '/api/teams',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiTeamMembersRoute = ApiTeamMembersRouteImport.update({\n  id: '/api/team-members',\n  path: '/api/team-members',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiSeedRoute = ApiSeedRouteImport.update({\n  id: '/api/seed',\n  path: '/api/seed',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiNotificationsRoute = ApiNotificationsRouteImport.update({\n  id: '/api/notifications',\n  path: '/api/notifications',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiNotificationSettingsRoute = ApiNotificationSettingsRouteImport.update({\n  id: '/api/notification-settings',\n  path: '/api/notification-settings',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiExportRoute = ApiExportRouteImport.update({\n  id: '/api/export',\n  path: '/api/export',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiDashboardRoute = ApiDashboardRouteImport.update({\n  id: '/api/dashboard',\n  path: '/api/dashboard',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiComplianceRoute = ApiComplianceRouteImport.update({\n  id: '/api/compliance',\n  path: '/api/compliance',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiCertificationsRoute = ApiCertificationsRouteImport.update({\n  id: '/api/certifications',\n  path: '/api/certifications',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst ApiCatalogRoute = ApiCatalogRouteImport.update({\n  id: '/api/catalog',\n  path: '/api/catalog',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({\n  id: '/demo/start/server-funcs',\n  path: '/demo/start/server-funcs',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst DemoStartApiRequestRoute = DemoStartApiRequestRouteImport.update({\n  id: '/demo/start/api-request',\n  path: '/demo/start/api-request',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst DemoApiNamesRoute = DemoApiNamesRouteImport.update({\n  id: '/demo/api/names',\n  path: '/demo/api/names',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst DemoStartSsrIndexRoute = DemoStartSsrIndexRouteImport.update({\n  id: '/demo/start/ssr/',\n  path: '/demo/start/ssr/',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst DemoStartSsrSpaModeRoute = DemoStartSsrSpaModeRouteImport.update({\n  id: '/demo/start/ssr/spa-mode',\n  path: '/demo/start/ssr/spa-mode',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst DemoStartSsrFullSsrRoute = DemoStartSsrFullSsrRouteImport.update({\n  id: '/demo/start/ssr/full-ssr',\n  path: '/demo/start/ssr/full-ssr',\n  getParentRoute: () => rootRouteImport,\n} as any)\nconst DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({\n  id: '/demo/start/ssr/data-only',\n  path: '/demo/start/ssr/data-only',\n  getParentRoute: () => rootRouteImport,\n} as any)\n\nexport interface FileRoutesByFullPath {\n  '/': typeof IndexRoute\n  '/catalog': typeof CatalogRoute\n  '/certification-management': typeof CertificationManagementRoute\n  '/compliance-audit': typeof ComplianceAuditRoute\n  '/db-health': typeof DbHealthRoute\n  '/notifications': typeof NotificationsRoute\n  '/sign-in': typeof SignInRoute\n  '/sign-up': typeof SignUpRoute\n  '/team-management': typeof TeamManagementRoute\n  '/user-profile': typeof UserProfileRoute\n  '/api/catalog': typeof ApiCatalogRoute\n  '/api/certifications': typeof ApiCertificationsRoute\n  '/api/compliance': typeof ApiComplianceRoute\n  '/api/dashboard': typeof ApiDashboardRoute\n  '/api/export': typeof ApiExportRoute\n  '/api/notification-settings': typeof ApiNotificationSettingsRoute\n  '/api/notifications': typeof ApiNotificationsRoute\n  '/api/seed': typeof ApiSeedRoute\n  '/api/team-members': typeof ApiTeamMembersRoute\n  '/api/teams': typeof ApiTeamsRoute\n  '/api/users': typeof ApiUsersRoute\n  '/demo/api/names': typeof DemoApiNamesRoute\n  '/demo/start/api-request': typeof DemoStartApiRequestRoute\n  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute\n  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute\n  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute\n  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute\n  '/demo/start/ssr': typeof DemoStartSsrIndexRoute\n}\nexport interface FileRoutesByTo {\n  '/': typeof IndexRoute\n  '/catalog': typeof CatalogRoute\n  '/certification-management': typeof CertificationManagementRoute\n  '/compliance-audit': typeof ComplianceAuditRoute\n  '/db-health': typeof DbHealthRoute\n  '/notifications': typeof NotificationsRoute\n  '/sign-in': typeof SignInRoute\n  '/sign-up': typeof SignUpRoute\n  '/team-management': typeof TeamManagementRoute\n  '/user-profile': typeof UserProfileRoute\n  '/api/catalog': typeof ApiCatalogRoute\n  '/api/certifications': typeof ApiCertificationsRoute\n  '/api/compliance': typeof ApiComplianceRoute\n  '/api/dashboard': typeof ApiDashboardRoute\n  '/api/export': typeof ApiExportRoute\n  '/api/notification-settings': typeof ApiNotificationSettingsRoute\n  '/api/notifications': typeof ApiNotificationsRoute\n  '/api/seed': typeof ApiSeedRoute\n  '/api/team-members': typeof ApiTeamMembersRoute\n  '/api/teams': typeof ApiTeamsRoute\n  '/api/users': typeof ApiUsersRoute\n  '/demo/api/names': typeof DemoApiNamesRoute\n  '/demo/start/api-request': typeof DemoStartApiRequestRoute\n  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute\n  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute\n  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute\n  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute\n  '/demo/start/ssr': typeof DemoStartSsrIndexRoute\n}\nexport interface FileRoutesById {\n  __root__: typeof rootRouteImport\n  '/': typeof IndexRoute\n  '/catalog': typeof CatalogRoute\n  '/certification-management': typeof CertificationManagementRoute\n  '/compliance-audit': typeof ComplianceAuditRoute\n  '/db-health': typeof DbHealthRoute\n  '/notifications': typeof NotificationsRoute\n  '/sign-in': typeof SignInRoute\n  '/sign-up': typeof SignUpRoute\n  '/team-management': typeof TeamManagementRoute\n  '/user-profile': typeof UserProfileRoute\n  '/api/catalog': typeof ApiCatalogRoute\n  '/api/certifications': typeof ApiCertificationsRoute\n  '/api/compliance': typeof ApiComplianceRoute\n  '/api/dashboard': typeof ApiDashboardRoute\n  '/api/export': typeof ApiExportRoute\n  '/api/notification-settings': typeof ApiNotificationSettingsRoute\n  '/api/notifications': typeof ApiNotificationsRoute\n  '/api/seed': typeof ApiSeedRoute\n  '/api/team-members': typeof ApiTeamMembersRoute\n  '/api/teams': typeof ApiTeamsRoute\n  '/api/users': typeof ApiUsersRoute\n  '/demo/api/names': typeof DemoApiNamesRoute\n  '/demo/start/api-request': typeof DemoStartApiRequestRoute\n  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute\n  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute\n  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute\n  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute\n  '/demo/start/ssr/': typeof DemoStartSsrIndexRoute\n}\nexport interface FileRouteTypes {\n  fileRoutesByFullPath: FileRoutesByFullPath\n  fullPaths:\n    | '/'\n    | '/catalog'\n    | '/certification-management'\n    | '/compliance-audit'\n    | '/db-health'\n    | '/notifications'\n    | '/sign-in'\n    | '/sign-up'\n    | '/team-management'\n    | '/user-profile'\n    | '/api/catalog'\n    | '/api/certifications'\n    | '/api/compliance'\n    | '/api/dashboard'\n    | '/api/export'\n    | '/api/notification-settings'\n    | '/api/notifications'\n    | '/api/seed'\n    | '/api/team-members'\n    | '/api/teams'\n    | '/api/users'\n    | '/demo/api/names'\n    | '/demo/start/api-request'\n    | '/demo/start/server-funcs'\n    | '/demo/start/ssr/data-only'\n    | '/demo/start/ssr/full-ssr'\n    | '/demo/start/ssr/spa-mode'\n    | '/demo/start/ssr'\n  fileRoutesByTo: FileRoutesByTo\n  to:\n    | '/'\n    | '/catalog'\n    | '/certification-management'\n    | '/compliance-audit'\n    | '/db-health'\n    | '/notifications'\n    | '/sign-in'\n    | '/sign-up'\n    | '/team-management'\n    | '/user-profile'\n    | '/api/catalog'\n    | '/api/certifications'\n    | '/api/compliance'\n    | '/api/dashboard'\n    | '/api/export'\n    | '/api/notification-settings'\n    | '/api/notifications'\n    | '/api/seed'\n    | '/api/team-members'\n    | '/api/teams'\n    | '/api/users'\n    | '/demo/api/names'\n    | '/demo/start/api-request'\n    | '/demo/start/server-funcs'\n    | '/demo/start/ssr/data-only'\n    | '/demo/start/ssr/full-ssr'\n    | '/demo/start/ssr/spa-mode'\n    | '/demo/start/ssr'\n  id:\n    | '__root__'\n    | '/'\n    | '/catalog'\n    | '/certification-management'\n    | '/compliance-audit'\n    | '/db-health'\n    | '/notifications'\n    | '/sign-in'\n    | '/sign-up'\n    | '/team-management'\n    | '/user-profile'\n    | '/api/catalog'\n    | '/api/certifications'\n    | '/api/compliance'\n    | '/api/dashboard'\n    | '/api/export'\n    | '/api/notification-settings'\n    | '/api/notifications'\n    | '/api/seed'\n    | '/api/team-members'\n    | '/api/teams'\n    | '/api/users'\n    | '/demo/api/names'\n    | '/demo/start/api-request'\n    | '/demo/start/server-funcs'\n    | '/demo/start/ssr/data-only'\n    | '/demo/start/ssr/full-ssr'\n    | '/demo/start/ssr/spa-mode'\n    | '/demo/start/ssr/'\n  fileRoutesById: FileRoutesById\n}\nexport interface RootRouteChildren {\n  IndexRoute: typeof IndexRoute\n  CatalogRoute: typeof CatalogRoute\n  CertificationManagementRoute: typeof CertificationManagementRoute\n  ComplianceAuditRoute: typeof ComplianceAuditRoute\n  DbHealthRoute: typeof DbHealthRoute\n  NotificationsRoute: typeof NotificationsRoute\n  SignInRoute: typeof SignInRoute\n  SignUpRoute: typeof SignUpRoute\n  TeamManagementRoute: typeof TeamManagementRoute\n  UserProfileRoute: typeof UserProfileRoute\n  ApiCatalogRoute: typeof ApiCatalogRoute\n  ApiCertificationsRoute: typeof ApiCertificationsRoute\n  ApiComplianceRoute: typeof ApiComplianceRoute\n  ApiDashboardRoute: typeof ApiDashboardRoute\n  ApiExportRoute: typeof ApiExportRoute\n  ApiNotificationSettingsRoute: typeof ApiNotificationSettingsRoute\n  ApiNotificationsRoute: typeof ApiNotificationsRoute\n  ApiSeedRoute: typeof ApiSeedRoute\n  ApiTeamMembersRoute: typeof ApiTeamMembersRoute\n  ApiTeamsRoute: typeof ApiTeamsRoute\n  ApiUsersRoute: typeof ApiUsersRoute\n  DemoApiNamesRoute: typeof DemoApiNamesRoute\n  DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute\n  DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute\n  DemoStartSsrDataOnlyRoute: typeof DemoStartSsrDataOnlyRoute\n  DemoStartSsrFullSsrRoute: typeof DemoStartSsrFullSsrRoute\n  DemoStartSsrSpaModeRoute: typeof DemoStartSsrSpaModeRoute\n  DemoStartSsrIndexRoute: typeof DemoStartSsrIndexRoute\n}\n\ndeclare module '@tanstack/react-router' {\n  interface FileRoutesByPath {\n    '/user-profile': {\n      id: '/user-profile'\n      path: '/user-profile'\n      fullPath: '/user-profile'\n      preLoaderRoute: typeof UserProfileRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/team-management': {\n      id: '/team-management'\n      path: '/team-management'\n      fullPath: '/team-management'\n      preLoaderRoute: typeof TeamManagementRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/sign-up': {\n      id: '/sign-up'\n      path: '/sign-up'\n      fullPath: '/sign-up'\n      preLoaderRoute: typeof SignUpRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/sign-in': {\n      id: '/sign-in'\n      path: '/sign-in'\n      fullPath: '/sign-in'\n      preLoaderRoute: typeof SignInRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/notifications': {\n      id: '/notifications'\n      path: '/notifications'\n      fullPath: '/notifications'\n      preLoaderRoute: typeof NotificationsRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/db-health': {\n      id: '/db-health'\n      path: '/db-health'\n      fullPath: '/db-health'\n      preLoaderRoute: typeof DbHealthRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/compliance-audit': {\n      id: '/compliance-audit'\n      path: '/compliance-audit'\n      fullPath: '/compliance-audit'\n      preLoaderRoute: typeof ComplianceAuditRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/certification-management': {\n      id: '/certification-management'\n      path: '/certification-management'\n      fullPath: '/certification-management'\n      preLoaderRoute: typeof CertificationManagementRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/catalog': {\n      id: '/catalog'\n      path: '/catalog'\n      fullPath: '/catalog'\n      preLoaderRoute: typeof CatalogRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/': {\n      id: '/'\n      path: '/'\n      fullPath: '/'\n      preLoaderRoute: typeof IndexRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/users': {\n      id: '/api/users'\n      path: '/api/users'\n      fullPath: '/api/users'\n      preLoaderRoute: typeof ApiUsersRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/teams': {\n      id: '/api/teams'\n      path: '/api/teams'\n      fullPath: '/api/teams'\n      preLoaderRoute: typeof ApiTeamsRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/team-members': {\n      id: '/api/team-members'\n      path: '/api/team-members'\n      fullPath: '/api/team-members'\n      preLoaderRoute: typeof ApiTeamMembersRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/seed': {\n      id: '/api/seed'\n      path: '/api/seed'\n      fullPath: '/api/seed'\n      preLoaderRoute: typeof ApiSeedRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/notifications': {\n      id: '/api/notifications'\n      path: '/api/notifications'\n      fullPath: '/api/notifications'\n      preLoaderRoute: typeof ApiNotificationsRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/notification-settings': {\n      id: '/api/notification-settings'\n      path: '/api/notification-settings'\n      fullPath: '/api/notification-settings'\n      preLoaderRoute: typeof ApiNotificationSettingsRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/export': {\n      id: '/api/export'\n      path: '/api/export'\n      fullPath: '/api/export'\n      preLoaderRoute: typeof ApiExportRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/dashboard': {\n      id: '/api/dashboard'\n      path: '/api/dashboard'\n      fullPath: '/api/dashboard'\n      preLoaderRoute: typeof ApiDashboardRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/compliance': {\n      id: '/api/compliance'\n      path: '/api/compliance'\n      fullPath: '/api/compliance'\n      preLoaderRoute: typeof ApiComplianceRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/certifications': {\n      id: '/api/certifications'\n      path: '/api/certifications'\n      fullPath: '/api/certifications'\n      preLoaderRoute: typeof ApiCertificationsRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/api/catalog': {\n      id: '/api/catalog'\n      path: '/api/catalog'\n      fullPath: '/api/catalog'\n      preLoaderRoute: typeof ApiCatalogRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/demo/start/server-funcs': {\n      id: '/demo/start/server-funcs'\n      path: '/demo/start/server-funcs'\n      fullPath: '/demo/start/server-funcs'\n      preLoaderRoute: typeof DemoStartServerFuncsRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/demo/start/api-request': {\n      id: '/demo/start/api-request'\n      path: '/demo/start/api-request'\n      fullPath: '/demo/start/api-request'\n      preLoaderRoute: typeof DemoStartApiRequestRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/demo/api/names': {\n      id: '/demo/api/names'\n      path: '/demo/api/names'\n      fullPath: '/demo/api/names'\n      preLoaderRoute: typeof DemoApiNamesRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/demo/start/ssr/': {\n      id: '/demo/start/ssr/'\n      path: '/demo/start/ssr'\n      fullPath: '/demo/start/ssr'\n      preLoaderRoute: typeof DemoStartSsrIndexRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/demo/start/ssr/spa-mode': {\n      id: '/demo/start/ssr/spa-mode'\n      path: '/demo/start/ssr/spa-mode'\n      fullPath: '/demo/start/ssr/spa-mode'\n      preLoaderRoute: typeof DemoStartSsrSpaModeRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/demo/start/ssr/full-ssr': {\n      id: '/demo/start/ssr/full-ssr'\n      path: '/demo/start/ssr/full-ssr'\n      fullPath: '/demo/start/ssr/full-ssr'\n      preLoaderRoute: typeof DemoStartSsrFullSsrRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n    '/demo/start/ssr/data-only': {\n      id: '/demo/start/ssr/data-only'\n      path: '/demo/start/ssr/data-only'\n      fullPath: '/demo/start/ssr/data-only'\n      preLoaderRoute: typeof DemoStartSsrDataOnlyRouteImport\n      parentRoute: typeof rootRouteImport\n    }\n  }\n}\n\nconst rootRouteChildren: RootRouteChildren = {\n  IndexRoute: IndexRoute,\n  CatalogRoute: CatalogRoute,\n  CertificationManagementRoute: CertificationManagementRoute,\n  ComplianceAuditRoute: ComplianceAuditRoute,\n  DbHealthRoute: DbHealthRoute,\n  NotificationsRoute: NotificationsRoute,\n  SignInRoute: SignInRoute,\n  SignUpRoute: SignUpRoute,\n  TeamManagementRoute: TeamManagementRoute,\n  UserProfileRoute: UserProfileRoute,\n  ApiCatalogRoute: ApiCatalogRoute,\n  ApiCertificationsRoute: ApiCertificationsRoute,\n  ApiComplianceRoute: ApiComplianceRoute,\n  ApiDashboardRoute: ApiDashboardRoute,\n  ApiExportRoute: ApiExportRoute,\n  ApiNotificationSettingsRoute: ApiNotificationSettingsRoute,\n  ApiNotificationsRoute: ApiNotificationsRoute,\n  ApiSeedRoute: ApiSeedRoute,\n  ApiTeamMembersRoute: ApiTeamMembersRoute,\n  ApiTeamsRoute: ApiTeamsRoute,\n  ApiUsersRoute: ApiUsersRoute,\n  DemoApiNamesRoute: DemoApiNamesRoute,\n  DemoStartApiRequestRoute: DemoStartApiRequestRoute,\n  DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,\n  DemoStartSsrDataOnlyRoute: DemoStartSsrDataOnlyRoute,\n  DemoStartSsrFullSsrRoute: DemoStartSsrFullSsrRoute,\n  DemoStartSsrSpaModeRoute: DemoStartSsrSpaModeRoute,\n  DemoStartSsrIndexRoute: DemoStartSsrIndexRoute,\n}\nexport const routeTree = rootRouteImport\n  ._addFileChildren(rootRouteChildren)\n  ._addFileTypes<FileRouteTypes>()"
+        },
+        "suppressions": [{ "kind": "directive", "justification": "" }]
+      },
+      {
+        "ruleId": "import/newline-after-import",
+        "severity": 2,
+        "message": "Expected 1 empty line after import statement not followed by another import.",
+        "line": 633,
+        "column": 1,
+        "nodeType": null,
+        "messageId": "newline",
+        "fix": { "range": [22704, 22704], "text": "\n" },
+        "suppressions": [{ "kind": "directive", "justification": "" }]
+      }
+    ],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\router.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\__root.tsx",
+    "messages": [
+      {
+        "ruleId": "@typescript-eslint/no-unnecessary-condition",
+        "severity": 2,
+        "message": "Unnecessary conditional, expected left-hand side of `??` operator to be possibly null or undefined.",
+        "line": 64,
+        "column": 23,
+        "nodeType": "ChainExpression",
+        "messageId": "neverNullish",
+        "endLine": 64,
+        "endColumn": 58
+      },
+      {
+        "ruleId": "@typescript-eslint/no-unnecessary-condition",
+        "severity": 2,
+        "message": "Unnecessary optional chain on a non-nullish value.",
+        "line": 64,
+        "column": 45,
+        "nodeType": "MemberExpression",
+        "messageId": "neverOptionalChain",
+        "endLine": 64,
+        "endColumn": 47,
+        "suggestions": [
+          {
+            "messageId": "suggestRemoveOptionalChain",
+            "fix": { "range": [2125, 2127], "text": "." },
+            "desc": "Remove unnecessary optional chain"
+          }
+        ]
+      }
+    ],
+    "suppressedMessages": [],
+    "errorCount": 2,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import { HeadContent, Link, Outlet, Scripts, createRootRouteWithContext, useRouter } from '@tanstack/react-router'\nimport { QueryClient, QueryClientProvider  } from '@tanstack/react-query'\nimport { ClerkProvider, RedirectToSignIn, useAuth, useUser } from '@clerk/tanstack-react-start'\nimport { useEffect } from 'react'\nimport { AppShell } from '../components/shell/AppShell'\nimport { ENV } from '../lib/env'\n\nimport appCss from '../styles.css?url'\n\nexport const Route = createRootRouteWithContext<{\n  queryClient: QueryClient\n}>()({\n  head: () => ({\n    meta: [\n      {\n        charSet: 'utf-8',\n      },\n      {\n        name: 'viewport',\n        content: 'width=device-width, initial-scale=1',\n      },\n      {\n        title: 'Training-Certify Platform',\n      },\n      {\n        name: 'description',\n        content: 'Enterprise certification tracking and compliance management platform.',\n      },\n    ],\n    links: [\n      {\n        rel: 'stylesheet',\n        href: appCss,\n      },\n      {\n        rel: 'icon',\n        href: '/favicon.ico',\n      },\n    ],\n  }),\n\n  shellComponent: RootDocument,\n  component: RootComponent,\n  notFoundComponent: () => (\n    <div className=\"p-8 text-center\">\n      <h2 className=\"text-2xl font-bold\">404 - Page Not Found</h2>\n      <p className=\"text-slate-600 mt-2\">The section you are looking for does not exist.</p>\n      <Link to=\"/\" className=\"text-blue-600 hover:underline mt-4 inline-block\">Go to Dashboard</Link>\n    </div>\n  ),\n  errorComponent: ({ error }: { error: Error }) => (\n    <div className=\"p-8 text-center bg-red-50 text-red-900 rounded-lg border border-red-200\">\n      <h2 className=\"text-xl font-bold\">Something went wrong</h2>\n      <pre className=\"mt-4 text-xs overflow-auto text-left p-4 bg-white rounded border\">{error.message}</pre>\n      <button onClick={() => window.location.reload()} className=\"mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700\">\n        Reload Page\n      </button>\n    </div>\n  ),\n})\n\nfunction RootDocument({ children }: { children: React.ReactNode }) {\n  const router = useRouter()\n  const queryClient = router.options.context?.queryClient ?? new QueryClient()\n\n  return (\n    <html lang=\"en\">\n      <head>\n        <HeadContent />\n        <script\n          dangerouslySetInnerHTML={{\n            __html: `window.__ENV__ = { CLERK_PUBLISHABLE_KEY: ${JSON.stringify(ENV.CLERK_PUBLISHABLE_KEY)} };`,\n          }}\n        />\n      </head>\n      <body>\n        <ClerkProvider publishableKey={ENV.CLERK_PUBLISHABLE_KEY}>\n          <QueryClientProvider client={queryClient}>\n            {children}\n          </QueryClientProvider>\n        </ClerkProvider>\n        <Scripts />\n      </body>\n    </html>\n  )\n}\n\nfunction RootComponent() {\n  const { isLoaded, isSignedIn } = useAuth()\n  const { user } = useUser()\n  const router = useRouter()\n  const path = router.state.location.pathname\n\n  const isAuthPage = path.startsWith('/sign-in') || path.startsWith('/sign-up')\n\n  useEffect(() => {\n    if (isSignedIn && user) {\n      // Use fetch API instead of broken createServerFn\n      fetch('/api/users', {\n        method: 'POST',\n        headers: { 'Content-Type': 'application/json' },\n        body: JSON.stringify({\n          id: user.id,\n          name: `${user.firstName} ${user.lastName}`.trim() || user.username || 'User',\n          email: user.emailAddresses[0]?.emailAddress || '',\n          avatarUrl: user.imageUrl\n        })\n      })\n        .then((res) => res.json())\n        .then((data) => {\n          console.log('👤 [Client] User synced with DB:', data.role)\n        })\n        .catch((err) => {\n          console.error('❌ [Client] Sync failed:', err)\n        })\n    }\n  }, [isSignedIn, user])\n\n\n\n  if (!isLoaded) {\n    return <div className=\"flex items-center justify-center min-h-screen\">Loading...</div>\n  }\n\n  if (!isSignedIn && !isAuthPage) {\n    return <RedirectToSignIn />\n  }\n\n  return (\n    <AppShell>\n      <Outlet />\n    </AppShell>\n  )\n}\n",
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\api.catalog.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\api.certifications.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\api.compliance.ts",
+    "messages": [
+      {
+        "ruleId": "@typescript-eslint/no-unnecessary-condition",
+        "severity": 2,
+        "message": "Unnecessary optional chain on a non-nullish value.",
+        "line": 18,
+        "column": 68,
+        "nodeType": "MemberExpression",
+        "messageId": "neverOptionalChain",
+        "endLine": 18,
+        "endColumn": 70,
+        "suggestions": [
+          {
+            "messageId": "suggestRemoveOptionalChain",
+            "fix": { "range": [731, 733], "text": "." },
+            "desc": "Remove unnecessary optional chain"
+          }
+        ]
+      },
+      {
+        "ruleId": "@typescript-eslint/no-unnecessary-condition",
+        "severity": 2,
+        "message": "Unnecessary optional chain on a non-nullish value.",
+        "line": 18,
+        "column": 99,
+        "nodeType": "MemberExpression",
+        "messageId": "neverOptionalChain",
+        "endLine": 18,
+        "endColumn": 101,
+        "suggestions": [
+          {
+            "messageId": "suggestRemoveOptionalChain",
+            "fix": { "range": [762, 764], "text": "." },
+            "desc": "Remove unnecessary optional chain"
+          }
+        ]
+      }
+    ],
+    "suppressedMessages": [],
+    "errorCount": 2,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import { createFileRoute } from '@tanstack/react-router'\r\nimport { json } from '@tanstack/react-start'\r\nimport { getDb } from '../db/db.server'\r\nimport { auditLogs } from '../db/schema'\r\n\r\nexport const Route = createFileRoute('/api/compliance')({\r\n    server: {\r\n        handlers: {\r\n            GET: async () => {\r\n                try {\r\n                    const db = await getDb()\r\n                    if (!db) {\r\n                        return json({ error: 'Database not available' }, { status: 500 })\r\n                    }\r\n\r\n                    const logs = await db.select().from(auditLogs).limit(50)\r\n                    const totalAudits = logs.length\r\n                    const issuesFound = logs.filter((l) => l.action?.includes('issue') || l.action?.includes('failed')).length\r\n\r\n                    return json({\r\n                        auditLogs: logs.map(l => ({\r\n                            id: l.id,\r\n                            user: l.userId || 'System',\r\n                            action: l.action,\r\n                            date: l.timestamp,\r\n                            status: 'verified'\r\n                        })),\r\n                        stats: {\r\n                            complianceRate: 98,\r\n                            totalAudits,\r\n                            issuesFound\r\n                        }\r\n                    })\r\n                } catch (error) {\r\n                    console.error('[API Compliance] Error:', error)\r\n                    return json({\r\n                        auditLogs: [],\r\n                        stats: { complianceRate: 0, totalAudits: 0, issuesFound: 0 }\r\n                    })\r\n                }\r\n            }\r\n        }\r\n    }\r\n})\r\n",
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\api.dashboard.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\api.export.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\api.notification-settings.ts",
+    "messages": [
+      {
+        "ruleId": "@typescript-eslint/require-await",
+        "severity": 1,
+        "message": "Async method 'GET' has no 'await' expression.",
+        "line": 19,
+        "column": 13,
+        "nodeType": "ArrowFunctionExpression",
+        "messageId": "missingAwait",
+        "endLine": 19,
+        "endColumn": 24,
+        "suggestions": [
+          {
+            "messageId": "removeAsync",
+            "fix": { "range": [943, 949], "text": "" },
+            "desc": "Remove 'async'."
+          }
+        ]
+      }
+    ],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 1,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import { createFileRoute } from '@tanstack/react-router'\r\nimport { json } from '@tanstack/react-start'\r\nimport { and, eq } from 'drizzle-orm'\r\nimport { getDb } from '../db/db.server'\r\nimport { notifications } from '../db/schema'\r\n\r\n// Default notification categories\r\nconst defaultCategories = [\r\n    { id: 'expiration-alert', name: 'Expiration Alerts', description: 'Alerts when certifications are about to expire' },\r\n    { id: 'renewal-reminder', name: 'Renewal Reminders', description: 'Reminders to renew certifications' },\r\n    { id: 'team-member-alert', name: 'Team Updates', description: 'Notifications about team member certifications' },\r\n    { id: 'compliance-warning', name: 'Compliance Warnings', description: 'Warnings about compliance issues' },\r\n]\r\n\r\nexport const Route = createFileRoute('/api/notification-settings')({\r\n    server: {\r\n        handlers: {\r\n            // GET notification settings/categories\r\n            GET: async ({ request }) => {\r\n                try {\r\n                    const url = new URL(request.url)\r\n                    const userId = url.searchParams.get('userId')\r\n\r\n                    // Return default categories (in production, would fetch from DB)\r\n                    return json({\r\n                        categories: defaultCategories,\r\n                        userPreferences: {\r\n                            // Default all enabled\r\n                            'expiration-alert': true,\r\n                            'renewal-reminder': true,\r\n                            'team-member-alert': true,\r\n                            'compliance-warning': true,\r\n                            emailEnabled: true,\r\n                            pushEnabled: false\r\n                        }\r\n                    })\r\n                } catch (error) {\r\n                    console.error('[API Notification Settings GET] Error:', error)\r\n                    return json({ categories: defaultCategories, userPreferences: {} })\r\n                }\r\n            },\r\n            // PATCH - Update user notification preferences\r\n            PATCH: async ({ request }) => {\r\n                try {\r\n                    const data = await request.json()\r\n                    const { userId, preferences } = data\r\n\r\n                    if (!userId) {\r\n                        return json({ error: 'userId is required' }, { status: 400 })\r\n                    }\r\n\r\n                    // In production, save to DB\r\n                    console.log(`✅ [API] Updated notification preferences for ${userId}:`, preferences)\r\n                    return json({ success: true, preferences })\r\n                } catch (error) {\r\n                    console.error('[API Notification Settings PATCH] Error:', error)\r\n                    return json({ error: 'Failed to update preferences' }, { status: 500 })\r\n                }\r\n            },\r\n            // POST - Mark notifications as read\r\n            POST: async ({ request }) => {\r\n                try {\r\n                    const data = await request.json()\r\n                    const { action, notificationId, userId } = data\r\n\r\n                    const db = await getDb()\r\n                    if (!db) {\r\n                        return json({ error: 'Database not available' }, { status: 500 })\r\n                    }\r\n\r\n                    if (action === 'markRead' && notificationId) {\r\n                        await db.update(notifications)\r\n                            .set({ isRead: true })\r\n                            .where(eq(notifications.id, notificationId))\r\n                        return json({ success: true })\r\n                    } else if (action === 'markAllRead' && userId) {\r\n                        await db.update(notifications)\r\n                            .set({ isRead: true })\r\n                            .where(eq(notifications.userId, userId))\r\n                        return json({ success: true })\r\n                    } else if (action === 'dismiss' && notificationId) {\r\n                        await db.update(notifications)\r\n                            .set({ isDismissed: true })\r\n                            .where(eq(notifications.id, notificationId))\r\n                        return json({ success: true })\r\n                    }\r\n\r\n                    return json({ error: 'Invalid action' }, { status: 400 })\r\n                } catch (error) {\r\n                    console.error('[API Notification Settings POST] Error:', error)\r\n                    return json({ error: 'Failed to update notification' }, { status: 500 })\r\n                }\r\n            }\r\n        }\r\n    }\r\n})\r\n",
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\api.notifications.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\api.seed.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\api.team-members.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\api.teams.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\api.users.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\catalog.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\certification-management.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\compliance-audit.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\db-health.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\demo\\api.names.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\demo\\start.api-request.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\demo\\start.server-funcs.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\demo\\start.ssr.data-only.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\demo\\start.ssr.full-ssr.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\demo\\start.ssr.index.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\demo\\start.ssr.spa-mode.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\index.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\notifications.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\sign-in.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\sign-up.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\team-management.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\routes\\user-profile.tsx",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\src\\types\\index.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "D:\\repos\\training-certify\\vite.config.ts",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  }
+]

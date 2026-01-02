@@ -1,5 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { ChevronDown, HelpCircle, LogOut, Settings, User as UserIcon } from 'lucide-react'
+import {
+  ChevronDown,
+  HelpCircle,
+  LogOut,
+  Settings,
+  User as UserIcon,
+} from 'lucide-react'
 import type { User } from './AppShell'
 
 export interface UserMenuProps {

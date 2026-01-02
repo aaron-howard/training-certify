@@ -6,7 +6,11 @@ export interface Notification {
   id: string
   userId: string
   userName: string
-  type: 'expiration-alert' | 'renewal-reminder' | 'team-member-alert' | 'compliance-warning'
+  type:
+    | 'expiration-alert'
+    | 'renewal-reminder'
+    | 'team-member-alert'
+    | 'compliance-warning'
   severity: 'critical' | 'warning' | 'info'
   title: string
   description: string

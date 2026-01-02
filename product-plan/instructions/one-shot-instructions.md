@@ -49,10 +49,7 @@ npm install date-fns lucide-react
 ```js
 // tailwind.config.js
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'class',
   theme: {
     extend: {},
@@ -74,9 +71,12 @@ Import fonts in HTML:
 
 ```html
 <!-- index.html -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+  rel="stylesheet"
+/>
 ```
 
 ```css
@@ -85,12 +85,14 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
-code, pre {
+code,
+pre {
   font-family: 'JetBrains Mono', monospace;
 }
 ```
 
 Design System:
+
 - **Colors**: Blue (primary), Emerald (secondary), Slate (neutral)
 - **Typography**: Inter (headings/body), JetBrains Mono (monospaced)
 
@@ -105,6 +107,7 @@ Copy `data-model/types.ts` into your project at `src/types/` or `src/lib/types.t
 ## Components
 
 Copy shell components from `shell/components/`:
+
 - `AppShell.tsx` — Main layout container
 - `MainNav.tsx` — Sidebar navigation
 - `UserMenu.tsx` — User menu dropdown
@@ -159,6 +162,7 @@ function App() {
 ## Components
 
 Copy from `sections/certification-management/components/`:
+
 - `CertificationTable.tsx`
 
 Update imports:
@@ -215,6 +219,7 @@ function CertificationManagementPage() {
 ## Components
 
 Copy from `sections/team-and-workforce-management/components/`:
+
 - `CompetencyDashboard.tsx`
 - `CoverageMetrics.tsx`
 - `TeamComparisonChart.tsx`
@@ -253,6 +258,7 @@ function TeamWorkforcePage() {
 ## Components
 
 Copy from `sections/compliance-and-audit/components/`:
+
 - `ComplianceDashboard.tsx`
 - `ComplianceMetrics.tsx`
 - `RecentActivity.tsx`
@@ -303,6 +309,7 @@ function CompliancePage() {
 ## Components
 
 Copy from `sections/certification-catalog/components/`:
+
 - `CertificationBrowse.tsx`
 - `CertificationCard.tsx`
 - `FilterPanel.tsx`
@@ -360,6 +367,7 @@ function CatalogDetailPage() {
 ## Components
 
 Copy from `sections/notifications-and-alerts/components/`:
+
 - `NotificationsDashboard.tsx`
 - `NotificationCard.tsx`
 - `NotificationSettings.tsx`
@@ -469,6 +477,7 @@ Once the frontend is complete, integrate with a backend:
 ## Support
 
 For questions or issues:
+
 - Review section-specific test files in `sections/[section-name]/tests.md`
 - Check component screenshots in `sections/[section-name]/*.png`
 - Refer to `product-overview.md` for product context

@@ -21,9 +21,11 @@ After receiving their input, use the AskUserQuestion tool to ask 3-5 targeted qu
 - **The main features** that make this possible
 
 **Important:** If the user hasn't already provided a product name, ask them:
+
 - "What would you like to call this product? (A short, memorable name)"
 
 Other example clarifying questions (adapt based on their input):
+
 - "Who is the primary user of this product? Can you describe them?"
 - "What's the single biggest pain point you're addressing?"
 - "How do people currently solve this problem without your product?"
@@ -42,10 +44,12 @@ Once you have enough information, present a draft summary:
 [Draft 1-3 sentence description]
 
 **Problems & Solutions:**
+
 1. [Problem] → [Solution]
 2. [Problem] → [Solution]
 
 **Key Features:**
+
 - Feature 1
 - Feature 2
 - Feature 3
@@ -62,23 +66,27 @@ Once the user approves, create the file at `/product/product-overview.md` with t
 # [Product Name]
 
 ## Description
+
 [The finalized 1-3 sentence description]
 
 ## Problems & Solutions
 
 ### Problem 1: [Problem Title]
+
 [How the product solves it in 1-2 sentences]
 
 ### Problem 2: [Problem Title]
+
 [How the product solves it in 1-2 sentences]
 
 [Add more as needed, up to 5]
 
 ## Key Features
+
 - [Feature 1]
 - [Feature 2]
 - [Feature 3]
-[Add more as needed]
+  [Add more as needed]
 ```
 
 **Important:** The `# [Product Name]` heading at the top is required - this is what displays as the card title in the app.

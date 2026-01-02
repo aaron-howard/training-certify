@@ -14,7 +14,15 @@ export interface User {
   id: string
   name: string
   email: string
-  role: 'Developer' | 'Manager' | 'Architect' | 'SRE' | 'Security Engineer' | 'PM' | 'Executive' | 'Auditor'
+  role:
+    | 'Developer'
+    | 'Manager'
+    | 'Architect'
+    | 'SRE'
+    | 'Security Engineer'
+    | 'PM'
+    | 'Executive'
+    | 'Auditor'
   teamIds: Array<string>
   avatarUrl: string | null
 }

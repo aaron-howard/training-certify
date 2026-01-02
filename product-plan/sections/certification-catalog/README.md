@@ -26,6 +26,7 @@ This section provides two main views:
 Main browse page with search, filters, and certification grid.
 
 **Props:**
+
 - `certifications` — Array of certification objects
 - `vendors` — Optional array of vendors for filtering
 - `onViewDetails` — Callback when clicking a certification
@@ -36,6 +37,7 @@ Main browse page with search, filters, and certification grid.
 - `onFilter` — Callback when filters change
 
 **Features:**
+
 - Search bar for keyword search
 - Filter panel (vendor, category, difficulty)
 - Responsive grid layout
@@ -46,6 +48,7 @@ Main browse page with search, filters, and certification grid.
 Individual certification card displayed in the browse grid.
 
 **Props:**
+
 - `certification` — Certification object
 - `onViewDetails` — Callback for viewing details
 - `onAddToProfile` — Callback to add to profile
@@ -53,6 +56,7 @@ Individual certification card displayed in the browse grid.
 - `onViewHolders` — Callback to view holders
 
 **Features:**
+
 - Displays name, vendor, category, difficulty
 - Shows validity period
 - Quick action buttons
@@ -63,6 +67,7 @@ Individual certification card displayed in the browse grid.
 Filter controls for browse page.
 
 **Props:**
+
 - `vendors` — List of available vendors
 - `categories` — List of categories
 - `selectedVendor` — Currently selected vendor
@@ -71,6 +76,7 @@ Filter controls for browse page.
 - `onFilterChange` — Callback when filters change
 
 **Features:**
+
 - Vendor dropdown/checkboxes
 - Category filter
 - Difficulty level filter
@@ -81,6 +87,7 @@ Filter controls for browse page.
 Full detail page for a certification.
 
 **Props:**
+
 - `certification` — Full certification object
 - `onBack` — Callback to return to browse
 - `onAddToProfile` — Callback to add to profile
@@ -88,6 +95,7 @@ Full detail page for a certification.
 - `onViewHolders` — Callback to view holders
 
 **Features:**
+
 - Full description and overview
 - Prerequisites (required and recommended)
 - Exam information (format, duration, cost, passing score)
@@ -178,7 +186,7 @@ const [certifications, setCertifications] = useState<Certification[]>(mockData)
 const [searchTerm, setSearchTerm] = useState('')
 const [filters, setFilters] = useState({})
 
-const filteredCerts = certifications.filter(cert => {
+const filteredCerts = certifications.filter((cert) => {
   // Apply search and filter logic
 })
 ```
@@ -207,6 +215,7 @@ const handleViewHolders = (certId: string) => {
 ## Testing
 
 See `tests.md` for comprehensive test scenarios including:
+
 - Browse and search functionality
 - Filter combinations
 - Detail page navigation

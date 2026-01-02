@@ -1,82 +1,127 @@
 import { createServerFn } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 import { users } from '../db/schema'
+import { getVerifiedAuth, requireRole } from '../lib/auth.server'
 
+/**
+ * Ensures a user exists in the local database.
+ * Uses the verified userId from the Clerk session.
+ */
 export const ensureUser = createServerFn({ method: 'POST' })
-    .inputValidator((data: { id: string; name: string; email: string; avatarUrl?: string }) => data)
-    .handler(async ({ data }) => {
-        const { getDb, instanceId } = await import('../db/db.server');
-        const db = await getDb();
-        if (!db) throw new Error(`Database not available (Server Instance: ${instanceId})`);
+  .inputValidator(
+    (data: { id: string; name: string; email: string; avatarUrl?: string }) =>
+      data,
+  )
+  .handler(async ({ data }) => {
+    // Security: Verify the caller matches the ID they are trying to ensure
+    const authenticatedId = await getVerifiedAuth()
+    if (authenticatedId !== data.id) {
+      throw new Error('Unauthorized: Cannot ensure a different user')
+    }
 
-        try {
-            // Check if user exists
-            const existing = await db.select().from(users).where(eq(users.id, data.id)).limit(1)
+    const { getDb, instanceId } = await import('../db/db.server')
+    const db = await getDb()
+    if (!db)
+      throw new Error(`Database not available (Server Instance: ${instanceId})`)
 
-            if (existing.length > 0) {
-                console.log(`✅ [Server] User found: ${data.id} (${existing[0].role})`)
-                return existing[0]
-            }
+    try {
+      // Check if user exists
+      const existing = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, data.id))
+        .limit(1)
 
-            // Create user
-            console.log(`🚀 [Server] Creating new user: ${data.id}`)
-            const result = await db.insert(users).values({
-                id: data.id,
-                name: data.name,
-                email: data.email,
-                avatarUrl: data.avatarUrl,
-                role: 'User' // Default role
-            }).returning()
+      if (existing.length > 0) {
+        return existing[0]
+      }
 
-            return result[0]
-        } catch (error) {
-            console.error('❌ [Server] Failed to ensure user:', error)
-            throw error
-        }
-    })
+      // Create user
+      const result = await db
+        .insert(users)
+        .values({
+          id: data.id,
+          name: data.name,
+          email: data.email,
+          avatarUrl: data.avatarUrl,
+          role: 'User', // Default role
+        })
+        .returning()
 
+      return result[0]
+    } catch (error) {
+      console.error('❌ [Server] Failed to ensure user:', error)
+      throw error
+    }
+  })
+
+/**
+ * Updates a user's role.
+ * Only accessible by Admins.
+ */
 export const updateUserRole = createServerFn({ method: 'POST' })
-    .inputValidator((data: { userId: string; role: 'Admin' | 'User' | 'Manager' | 'Executive' | 'Auditor'; adminId: string }) => data)
-    .handler(async ({ data }) => {
-        const { getDb } = await import('../db/db.server');
-        const db = await getDb();
-        if (!db) throw new Error('Database not available');
+  .inputValidator(
+    (data: {
+      userId: string
+      role: 'Admin' | 'User' | 'Manager' | 'Executive' | 'Auditor'
+    }) => data,
+  )
+  .handler(async ({ data }) => {
+    // Security: Require Admin role
+    await requireRole(['Admin'])
 
-        try {
-            // Check if requester is Admin
-            const requester = await db.select().from(users).where(eq(users.id, data.adminId)).limit(1)
-            if (!requester.length || requester[0].role !== 'Admin') {
-                throw new Error('Unauthorized: Only admins can change roles')
-            }
+    const { getDb } = await import('../db/db.server')
+    const db = await getDb()
+    if (!db) throw new Error('Database not available')
 
-            const result = await db.update(users)
-                .set({ role: data.role, updatedAt: new Date() })
-                .where(eq(users.id, data.userId))
-                .returning()
+    try {
+      const result = await db
+        .update(users)
+        .set({ role: data.role, updatedAt: new Date() })
+        .where(eq(users.id, data.userId))
+        .returning()
 
-            return result[0]
-        } catch (error) {
-            console.error('❌ [Server] Failed to update role:', error)
-            throw error
-        }
-    })
+      if (result.length === 0) {
+        throw new Error('User not found')
+      }
 
+      return result[0]
+    } catch (error) {
+      console.error('❌ [Server] Failed to update role:', error)
+      throw error
+    }
+  })
+
+/**
+ * Development utility to promote a user to Admin.
+ * Hardened to only allow the authenticated user to promote themselves.
+ */
 export const makeMeAdmin = createServerFn({ method: 'POST' })
-    .inputValidator((data: { userId: string }) => data)
-    .handler(async ({ data }) => {
-        const { getDb } = await import('../db/db.server');
-        const db = await getDb();
-        if (!db) throw new Error('Database not available');
+  .inputValidator((data: { userId: string }) => data)
+  .handler(async ({ data }) => {
+    // Security: Get verified ID from session
+    const authenticatedId = await getVerifiedAuth()
 
-        try {
-            const result = await db.update(users)
-                .set({ role: 'Admin', updatedAt: new Date() })
-                .where(eq(users.id, data.userId))
-                .returning()
-            console.log(`🪄 [Server] User ${data.userId} promoted to Admin`)
-            return result[0]
-        } catch (error) {
-            console.error('❌ [Server] Failed to promote:', error)
-            throw error
-        }
-    })
+    // Safety check: Ensure they are promoting themselves
+    if (authenticatedId !== data.userId) {
+      throw new Error('Unauthorized: You can only promote yourself')
+    }
+
+    const { getDb } = await import('../db/db.server')
+    const db = await getDb()
+    if (!db) throw new Error('Database not available')
+
+    try {
+      const result = await db
+        .update(users)
+        .set({ role: 'Admin', updatedAt: new Date() })
+        .where(eq(users.id, authenticatedId))
+        .returning()
+
+      console.log(`🪄 [Server] User ${authenticatedId} promoted to Admin`)
+      return result[0]
+    } catch (error) {
+      console.error('❌ [Server] Failed to promote:', error)
+      throw error
+    }
+  })

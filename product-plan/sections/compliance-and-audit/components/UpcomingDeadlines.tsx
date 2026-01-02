@@ -9,13 +9,16 @@ interface UpcomingDeadlinesProps {
 }
 
 export function UpcomingDeadlines({ expiringSoon }: UpcomingDeadlinesProps) {
-  const total = expiringSoon.next30Days + expiringSoon.next60Days + expiringSoon.next90Days
+  const total =
+    expiringSoon.next30Days + expiringSoon.next60Days + expiringSoon.next90Days
 
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-md">
       <div className="flex items-center gap-2 mb-4">
         <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Upcoming Deadlines</h3>
+        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+          Upcoming Deadlines
+        </h3>
       </div>
 
       {total === 0 ? (
@@ -23,8 +26,12 @@ export function UpcomingDeadlines({ expiringSoon }: UpcomingDeadlinesProps) {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full mb-4">
             <Clock className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <p className="text-emerald-700 dark:text-emerald-300 font-medium">All certifications current</p>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">No upcoming expirations</p>
+          <p className="text-emerald-700 dark:text-emerald-300 font-medium">
+            All certifications current
+          </p>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+            No upcoming expirations
+          </p>
         </div>
       ) : (
         <div className="space-y-3">

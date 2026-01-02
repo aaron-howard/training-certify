@@ -23,7 +23,7 @@ const config = defineConfig({
       'react',
       'react-dom',
       '@clerk/tanstack-react-start',
-      '@tanstack/react-query'
+      '@tanstack/react-query',
     ],
   },
 })

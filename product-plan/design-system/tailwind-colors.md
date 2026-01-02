@@ -13,6 +13,7 @@ Training-Certify uses Tailwind CSS with the following color palette:
 ### Primary Color (Blue)
 
 Use for:
+
 - Primary actions and buttons
 - Active navigation items
 - Links
@@ -35,6 +36,7 @@ Use for:
 ```
 
 Common shades:
+
 - `blue-50` — Very light backgrounds, subtle highlights
 - `blue-100` — Light backgrounds, disabled states
 - `blue-500` — Standard primary color
@@ -45,6 +47,7 @@ Common shades:
 ### Secondary Color (Emerald)
 
 Use for:
+
 - Success states
 - Positive indicators (e.g., "Active" status)
 - Secondary CTAs
@@ -62,6 +65,7 @@ Use for:
 ```
 
 Common shades:
+
 - `emerald-100` — Light backgrounds for success states
 - `emerald-500` — Standard secondary color
 - `emerald-600` — Secondary buttons
@@ -70,6 +74,7 @@ Common shades:
 ### Neutral Color (Slate)
 
 Use for:
+
 - Text (body, headings, labels)
 - Backgrounds
 - Borders
@@ -90,12 +95,15 @@ Use for:
 <div class="border border-slate-200 dark:border-slate-800">Card border</div>
 
 <!-- Hover states -->
-<button class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700">
+<button
+  class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700"
+>
   Button
 </button>
 ```
 
 Common shades:
+
 - `slate-50` — Lightest background (light mode)
 - `slate-100` — Light background (light mode cards)
 - `slate-200` — Borders, dividers (light mode)
@@ -122,7 +130,9 @@ While not part of the core palette, these Tailwind colors are used for status in
 
 ```html
 <span class="text-amber-600 dark:text-amber-400">Warning message</span>
-<div class="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300">
+<div
+  class="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300"
+>
   Expiring soon
 </div>
 ```
@@ -130,7 +140,9 @@ While not part of the core palette, these Tailwind colors are used for status in
 ### Green (Success - Alternative to Emerald)
 
 ```html
-<div class="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
+<div
+  class="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
+>
   Success
 </div>
 ```
@@ -169,9 +181,7 @@ Use Tailwind's opacity modifiers for semi-transparent colors:
 Use gradients for headers and hero sections:
 
 ```html
-<div class="bg-gradient-to-r from-blue-600 to-blue-700">
-  Gradient header
-</div>
+<div class="bg-gradient-to-r from-blue-600 to-blue-700">Gradient header</div>
 
 <div class="bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100">
   Subtle page gradient

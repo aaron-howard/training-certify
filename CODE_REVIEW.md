@@ -9,6 +9,7 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 ## 🔴 Critical Issues
 
 ### 1. Database Driver Consistency
+
 **File:** `scripts/test-db.ts`, `src/db/index.server.ts`
 **Issue:** Previously, some scripts used Neon-specific drivers. The application now correctly uses `pg` and `drizzle-orm/node-postgres` for local development.
 
@@ -17,10 +18,12 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 ---
 
 ### 2. Missing TypeScript Types for Database Instance
+
 **File:** `src/db/index.server.ts`
 **Issue:** The database instance was previously typed as `any`, which defeats TypeScript's type safety and makes the codebase less maintainable.
 
-**Impact:** 
+**Impact:**
+
 - No type checking for database queries
 - Loss of IntelliSense/autocomplete
 - Potential runtime errors from type mismatches
@@ -30,10 +33,12 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 ---
 
 ### 3. Schema Enums Defined But Not Used
+
 **File:** `src/db/schema.ts`
 **Issue:** Enums are defined (`roleEnum`, `certificationStatusEnum`, etc.) but the schema uses `text()` fields instead of the enum types.
 
 **Impact:**
+
 - Database doesn't enforce enum values at the schema level
 - Potential for invalid data insertion
 - Migration creates enums but they're unused
@@ -43,6 +48,7 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 ---
 
 ### 4. Missing Dependency: `date-fns`
+
 **Files:** Multiple files in `product-plan/sections/`
 **Issue:** Several components import `date-fns` but it's not listed in `package.json`.
 
@@ -55,8 +61,10 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 ## ⚠️ TypeScript Errors
 
 ### Type Errors in Entry Files
+
 **Files:** `src/entry-client.tsx`, `src/entry-server.tsx`
 **Issues:**
+
 - `StartClient` export not found in `@tanstack/react-start`
 - `createRouter` property doesn't exist in handler type
 
@@ -65,6 +73,7 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 ---
 
 ### Implicit `any` Types
+
 **Files:** Multiple route files (`notifications.tsx`, `team-management.tsx`)
 **Issue:** Parameters in `.map()` callbacks have implicit `any` types.
 
@@ -75,8 +84,10 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 ---
 
 ### Unused Variables
+
 **Files:** Multiple files
 **Issues:**
+
 - Unused imports and variables throughout the codebase
 - Violates `noUnusedLocals` and `noUnusedParameters` TypeScript settings
 
@@ -87,10 +98,12 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 ## 🟡 Code Quality Issues
 
 ### Excessive Use of `any` Type
+
 **Files:** Throughout the codebase (57 instances found)
 **Issue:** Heavy reliance on `any` type defeats TypeScript's purpose.
 
 **Examples:**
+
 - `src/db/index.server.ts`: `let db: any = null`
 - `src/api/certifications.ts`: Multiple `any` types in validators and mappers
 - Route files: `context as any`
@@ -100,6 +113,7 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 ---
 
 ### Database Connection Error Handling
+
 **File:** `src/db/index.server.ts`
 **Issue:** Database initialization can return `null` but callers may not handle this properly.
 
@@ -110,6 +124,7 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 ---
 
 ### Environment Variable Loading
+
 **File:** `src/lib/env.ts`
 **Issue:** Complex async logic for loading `.env` files that may not work in all environments.
 
@@ -122,8 +137,10 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 ## 🟢 Database Setup Issues
 
 ### Docker Compose Configuration
+
 **File:** `docker-compose.yml`
 **Status:** ✅ Well configured
+
 - PostgreSQL 16 Alpine image
 - Health checks configured
 - Volume persistence set up
@@ -134,8 +151,10 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 ---
 
 ### Migration Files
+
 **File:** `src/db/migrations/0000_cuddly_hammerhead.sql`
 **Status:** ✅ Properly generated
+
 - Enums created correctly
 - Tables created with proper constraints
 - Foreign keys defined
@@ -145,8 +164,10 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 ---
 
 ### Seed File
+
 **File:** `src/db/seed.ts`
 **Status:** ✅ Well structured
+
 - Proper error handling
 - Uses `onConflictDoNothing()` for idempotency
 - Good data structure
@@ -158,6 +179,7 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 ## 📋 Recommendations Summary
 
 ### High Priority
+
 1. ✅ Fix database test script to use `pg` driver
 2. ✅ Add proper TypeScript types for database instance
 3. ✅ Update schema to use enums instead of text fields
@@ -165,12 +187,14 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 5. ✅ Fix TypeScript errors in entry files
 
 ### Medium Priority
+
 1. Replace `any` types with proper types throughout codebase
 2. Add explicit types to callback parameters
 3. Remove unused variables and imports
 4. Improve error handling for database connections
 
 ### Low Priority
+
 1. Simplify environment variable loading
 2. Add JSDoc comments for complex functions
 3. Consider adding database connection pooling configuration
@@ -235,11 +259,9 @@ This code review identified **TypeScript errors**, **database setup inconsistenc
 1. **Schema Enums** - Enums are defined but not used in schema (requires migration)
    - This is a design decision that can be addressed later
    - Current text fields work but don't enforce enum values at DB level
-    
 2. **Product Plan Files** - Some TypeScript errors in `product-plan/` directory
    - These are export/template files, not part of the main application
    - Will be resolved when `date-fns` is installed: `npm install`
-    
 3. **Entry Files** - Framework-specific type issues in `entry-client.tsx` and `entry-server.tsx`
    - May be framework version compatibility issues
    - Application appears to work despite these type errors

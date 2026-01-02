@@ -7,6 +7,7 @@ Implement the Team & Workforce Management section, providing managers and execut
 ## Overview
 
 This section provides:
+
 - Competency dashboard with coverage metrics and gap visualization
 - Team detail views with member certification status
 - Certification requirement setting for roles/teams

@@ -7,21 +7,25 @@
 ## Technology Stack
 
 ### Frontend
+
 - **Framework**: [TanStack Start](https://tanstack.com/start) (React 19)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) (v4)
 - **Routing**: [TanStack Router](https://tanstack.com/router) (File-based routing)
 
 ### Backend
+
 - **Server Runtime**: Node.js (via Vinxi/Nitro)
 - **API**: TanStack Start Server Functions (`createServerFn`)
 - **Validation**: Ad-hoc (Moving to Zod - see `plan.md`)
 
 ### Database
+
 - **Engine**: PostgreSQL (Local)
 - **ORM**: [Drizzle ORM](https://orm.drizzle.team/)
 - **Migrations**: Drizzle Kit
 
 ### Authentication
+
 - **Provider**: [Clerk](https://clerk.com/)
 - **Integration**: `@clerk/tanstack-react-start`
 

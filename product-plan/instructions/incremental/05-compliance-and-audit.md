@@ -7,6 +7,7 @@ Implement the Compliance & Audit section, providing auditors and compliance offi
 ## Overview
 
 This section provides:
+
 - Compliance dashboard with status overview and metrics
 - Detailed audit trail with filtering and search
 - Report generation (audit trail export, status reports, compliance summaries)
@@ -77,7 +78,7 @@ const [filters, setFilters] = useState({
   certificationId: null,
 })
 
-const filteredLogs = auditLogs.filter(log => {
+const filteredLogs = auditLogs.filter((log) => {
   if (filters.userId && log.userId !== filters.userId) return false
   if (filters.actionType && log.actionType !== filters.actionType) return false
   // Add more filter conditions

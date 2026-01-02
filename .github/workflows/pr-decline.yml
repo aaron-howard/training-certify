@@ -7,10 +7,10 @@ on:
   workflow_dispatch:
     inputs:
       pr_number:
-        description: "PR number to act on"
+        description: 'PR number to act on'
         required: true
       reason:
-        description: "Reason to use"
+        description: 'Reason to use'
         required: true
         type: choice
         options: [Out of scope, Low info, Duplicate, Spam]
@@ -74,7 +74,7 @@ jobs:
         id: msg
         uses: actions/github-script@v7
         env:
-          REASON: ${{ steps.vars.outputs.reason }}          # <-- pass raw string
+          REASON: ${{ steps.vars.outputs.reason }} # <-- pass raw string
           IDEAS_URL: ${{ env.IDEAS_URL }}
           CONTRIBUTING_URL: ${{ env.CONTRIBUTING_URL }}
         with:

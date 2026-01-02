@@ -45,7 +45,8 @@ export function ComplianceDashboard({
                 Compliance & Audit
               </h1>
               <p className="text-slate-600 dark:text-slate-400 text-lg mt-1">
-                Comprehensive visibility into certification activities and regulatory compliance
+                Comprehensive visibility into certification activities and
+                regulatory compliance
               </p>
             </div>
           </div>
@@ -65,9 +66,7 @@ export function ComplianceDashboard({
             onViewDetails={onViewAuditDetails}
           />
 
-          <UpcomingDeadlines
-            expiringSoon={complianceMetrics.expiringSoon}
-          />
+          <UpcomingDeadlines expiringSoon={complianceMetrics.expiringSoon} />
 
           <VerificationQueue
             pendingVerifications={pendingVerifications}

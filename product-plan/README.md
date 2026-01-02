@@ -26,6 +26,7 @@ Use this approach to implement the entire platform in a single coding session:
 4. Follow the conversation to implement all milestones
 
 The prompt guides the agent to:
+
 - Ask clarifying questions about your tech stack
 - Set up the project foundation
 - Implement all components in sequence
@@ -43,6 +44,7 @@ Use this approach to implement milestone-by-milestone:
 5. Proceed to the next milestone when complete
 
 Each milestone includes:
+
 - Objectives and overview
 - Step-by-step tasks
 - Code examples

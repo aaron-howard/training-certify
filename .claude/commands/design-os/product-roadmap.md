@@ -16,6 +16,7 @@ First, check if `/product/product-roadmap.md` exists and read `/product/product-
 ### Analyze the Product Overview
 
 Read the product overview and analyze:
+
 - The core description
 - The problems being solved
 - The key features listed
@@ -23,6 +24,7 @@ Read the product overview and analyze:
 ### Propose Sections
 
 Based on your analysis, propose 3-5 sections that represent:
+
 - **Navigation items** - main areas of the product UI
 - **Roadmap phases** - logical order for building
 - **Self-contained feature areas** - each can be designed and built independently
@@ -42,6 +44,7 @@ Then use the AskUserQuestion tool to ask the user: "Does this breakdown make sen
 ### Refine with User
 
 Iterate on the sections based on user feedback. Ask clarifying questions:
+
 - "Should [feature X] be its own section or part of [Section Y]?"
 - "What would you consider the most critical section to build first?"
 - "Are there any major areas I'm missing?"
@@ -56,12 +59,15 @@ Once approved, create `/product/product-roadmap.md` with this exact format:
 ## Sections
 
 ### 1. [Section Title]
+
 [One sentence description]
 
 ### 2. [Section Title]
+
 [One sentence description]
 
 ### 3. [Section Title]
+
 [One sentence description]
 ```
 
@@ -82,6 +88,7 @@ Once approved, create `/product/product-roadmap.md` with this exact format:
 ### Read Current Files
 
 Read both:
+
 - `/product/product-overview.md`
 - `/product/product-roadmap.md`
 
@@ -91,9 +98,10 @@ Read both:
 
 1. [Section 1 Title]
 2. [Section 2 Title]
-...
+   ...
 
 What would you like to do?
+
 - **Update sections** - Add, remove, or reorder sections
 - **Sync from files** - I'll re-read the markdown files and confirm everything is in sync
 - **Start fresh** - Regenerate the roadmap based on the current product overview"

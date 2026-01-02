@@ -9,9 +9,9 @@ It's a product planning and design tool that helps you define your product visio
 
 ## The Problem
 
-AI coding tools are incredible at building fast. But the results often miss the mark. You describe what you want, the agent builds *something*, but it's not what you envisioned. The UI looks generic. Features get half-implemented. You spend as much time fixing and redirecting as you would have spent building.
+AI coding tools are incredible at building fast. But the results often miss the mark. You describe what you want, the agent builds _something_, but it's not what you envisioned. The UI looks generic. Features get half-implemented. You spend as much time fixing and redirecting as you would have spent building.
 
-The core issue: we're asking coding agents to figure out what to build *and* build it simultaneously. Design decisions get made on the fly, buried in code, impossible to adjust without starting over. There's no spec. No shared understanding. No source of truth for what "done" looks like.
+The core issue: we're asking coding agents to figure out what to build _and_ build it simultaneously. Design decisions get made on the fly, buried in code, impossible to adjust without starting over. There's no spec. No shared understanding. No source of truth for what "done" looks like.
 
 ## The Design OS Process
 
@@ -26,7 +26,7 @@ Each step is a conversation. The AI asks questions, you provide direction, and t
 
 ## How It Works
 
-Design OS is its own separate codebase—a design environment you use *before* building. When you're done, you export components and assets to import into your actual product's codebase.
+Design OS is its own separate codebase—a design environment you use _before_ building. When you're done, you export components and assets to import into your actual product's codebase.
 
 You interact with Design OS through slash commands. Each command walks you through a specific part of the process:
 

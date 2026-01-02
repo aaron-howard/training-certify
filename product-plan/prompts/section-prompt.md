@@ -89,16 +89,21 @@ To use this prompt template:
 ## Section Descriptions (for reference)
 
 ### Certification Management
+
 Core certification tracking and lifecycle management for individual users, including upload, renewal reminders, and status tracking with a table view.
 
 ### Team & Workforce Management
+
 Manager and executive views for team oversight, competency analysis, gap identification, and workforce planning with dashboards and visualizations.
 
 ### Compliance & Audit
+
 Enterprise audit trail, compliance reporting, and auditor-specific views for regulatory and contractual requirements with detailed logging.
 
 ### Certification Catalog
+
 Vendor certification directory and metadata covering AWS, Azure, (ISC)², ITIL, and all supported certification bodies with browse and detail views.
 
 ### Notifications & Alerts
+
 Automated renewal reminder engine with 30/60/90-day alerts and configurable notification workflows including feed, filters, and settings.

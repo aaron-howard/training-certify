@@ -102,6 +102,7 @@ You'll also define:
 The shell is implemented as React components that will wrap your section screen designs.
 
 **Creates:**
+
 - `product/shell/spec.md` — Shell specification
 - `src/shell/components/AppShell.tsx` — Main shell wrapper
 - `src/shell/components/MainNav.tsx` — Navigation component

@@ -1,9 +1,20 @@
 import { useMemo, useState } from 'react'
-import { AlertCircle, Calendar, CheckCircle2, ChevronDown, Edit, FileText, Plus, Search, Trash2, XCircle } from 'lucide-react'
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle2,
+  ChevronDown,
+  Edit,
+  FileText,
+  Plus,
+  Search,
+  Trash2,
+  XCircle,
+} from 'lucide-react'
 import type {
   CertificationManagementProps,
   CertificationStatus,
-  UserCertification
+  UserCertification,
 } from '@/../product/sections/certification-management/types'
 
 /**
@@ -24,7 +35,9 @@ export function CertificationManagement({
   onFilterByStatus,
 }: CertificationManagementProps) {
   const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState<CertificationStatus | 'all'>('all')
+  const [statusFilter, setStatusFilter] = useState<CertificationStatus | 'all'>(
+    'all',
+  )
   const [sortBy, setSortBy] = useState<'expiration' | 'name'>('expiration')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
@@ -34,15 +47,18 @@ export function CertificationManagement({
 
     // Apply search
     if (searchQuery) {
-      filtered = filtered.filter(cert =>
-        cert.certificationName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        cert.vendorName.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(
+        (cert) =>
+          cert.certificationName
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          cert.vendorName.toLowerCase().includes(searchQuery.toLowerCase()),
       )
     }
 
     // Apply status filter
     if (statusFilter !== 'all') {
-      filtered = filtered.filter(cert => cert.status === statusFilter)
+      filtered = filtered.filter((cert) => cert.status === statusFilter)
     }
 
     // Sort
@@ -86,9 +102,10 @@ export function CertificationManagement({
   const statusCounts = useMemo(() => {
     return {
       all: userCertifications.length,
-      active: userCertifications.filter(c => c.status === 'active').length,
-      expiring: userCertifications.filter(c => c.status === 'expiring').length,
-      expired: userCertifications.filter(c => c.status === 'expired').length,
+      active: userCertifications.filter((c) => c.status === 'active').length,
+      expiring: userCertifications.filter((c) => c.status === 'expiring')
+        .length,
+      expired: userCertifications.filter((c) => c.status === 'expired').length,
     }
   }, [userCertifications])
 
@@ -107,13 +124,15 @@ export function CertificationManagement({
               </p>
             </div>
             <button
-              onClick={() => onCreate?.({
-                certificationName: '',
-                vendorName: '',
-                certificationNumber: '',
-                issueDate: '',
-                expirationDate: '',
-              })}
+              onClick={() =>
+                onCreate?.({
+                  certificationName: '',
+                  vendorName: '',
+                  certificationNumber: '',
+                  issueDate: '',
+                  expirationDate: '',
+                })
+              }
               className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg font-medium transition-colors shadow-sm hover:shadow-md"
             >
               <Plus className="w-5 h-5" />
@@ -177,22 +196,24 @@ export function CertificationManagement({
 
             {/* Status Filter */}
             <div className="flex gap-2 flex-wrap">
-              {(['all', 'active', 'expiring', 'expired'] as const).map((status) => (
-                <button
-                  key={status}
-                  onClick={() => handleStatusFilterChange(status)}
-                  className={`px-4 py-2.5 rounded-lg font-medium transition-all ${
-                    statusFilter === status
-                      ? 'bg-blue-600 dark:bg-blue-500 text-white shadow-sm'
-                      : 'bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
-                  }`}
-                >
-                  {status.charAt(0).toUpperCase() + status.slice(1)}
-                  <span className="ml-2 text-sm opacity-75">
-                    ({statusCounts[status]})
-                  </span>
-                </button>
-              ))}
+              {(['all', 'active', 'expiring', 'expired'] as const).map(
+                (status) => (
+                  <button
+                    key={status}
+                    onClick={() => handleStatusFilterChange(status)}
+                    className={`px-4 py-2.5 rounded-lg font-medium transition-all ${
+                      statusFilter === status
+                        ? 'bg-blue-600 dark:bg-blue-500 text-white shadow-sm'
+                        : 'bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
+                    }`}
+                  >
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                    <span className="ml-2 text-sm opacity-75">
+                      ({statusCounts[status]})
+                    </span>
+                  </button>
+                ),
+              )}
             </div>
           </div>
         </div>
@@ -209,7 +230,9 @@ export function CertificationManagement({
                       className="inline-flex items-center gap-2 font-semibold text-slate-900 dark:text-slate-50 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                     >
                       Certification
-                      <ChevronDown className={`w-4 h-4 transition-transform ${sortBy === 'name' && sortOrder === 'desc' ? 'rotate-180' : ''}`} />
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform ${sortBy === 'name' && sortOrder === 'desc' ? 'rotate-180' : ''}`}
+                      />
                     </button>
                   </th>
                   <th className="text-left px-6 py-4 font-semibold text-slate-900 dark:text-slate-50">
@@ -221,7 +244,9 @@ export function CertificationManagement({
                       className="inline-flex items-center gap-2 font-semibold text-slate-900 dark:text-slate-50 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                     >
                       Expiration
-                      <ChevronDown className={`w-4 h-4 transition-transform ${sortBy === 'expiration' && sortOrder === 'desc' ? 'rotate-180' : ''}`} />
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform ${sortBy === 'expiration' && sortOrder === 'desc' ? 'rotate-180' : ''}`}
+                      />
                     </button>
                   </th>
                   <th className="text-left px-6 py-4 font-semibold text-slate-900 dark:text-slate-50">
@@ -299,7 +324,8 @@ function CertificationRow({
   onView?: (id: string) => void
 }) {
   const daysUntilExpiration = Math.ceil(
-    (new Date(certification.expirationDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+    (new Date(certification.expirationDate).getTime() - Date.now()) /
+      (1000 * 60 * 60 * 24),
   )
 
   return (
@@ -320,19 +346,24 @@ function CertificationRow({
       <td className="px-6 py-4">
         <div>
           <div className="text-slate-900 dark:text-slate-50">
-            {new Date(certification.expirationDate).toLocaleDateString('en-US', {
-              month: 'short',
-              day: 'numeric',
-              year: 'numeric',
-            })}
+            {new Date(certification.expirationDate).toLocaleDateString(
+              'en-US',
+              {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+              },
+            )}
           </div>
-          <div className={`text-sm mt-0.5 ${
-            certification.status === 'expired'
-              ? 'text-red-600 dark:text-red-400'
-              : certification.status === 'expiring'
-              ? 'text-amber-600 dark:text-amber-400'
-              : 'text-slate-600 dark:text-slate-400'
-          }`}>
+          <div
+            className={`text-sm mt-0.5 ${
+              certification.status === 'expired'
+                ? 'text-red-600 dark:text-red-400'
+                : certification.status === 'expiring'
+                  ? 'text-amber-600 dark:text-amber-400'
+                  : 'text-slate-600 dark:text-slate-400'
+            }`}
+          >
             {certification.status === 'expired'
               ? `Expired ${Math.abs(daysUntilExpiration)} days ago`
               : `${daysUntilExpiration} days remaining`}
@@ -354,13 +385,15 @@ function CertificationRow({
             <FileText className="w-4 h-4" />
           </button>
           <button
-            onClick={() => onEdit?.(certification.id, {
-              certificationName: certification.certificationName,
-              vendorName: certification.vendorName,
-              certificationNumber: certification.certificationNumber,
-              issueDate: certification.issueDate,
-              expirationDate: certification.expirationDate,
-            })}
+            onClick={() =>
+              onEdit?.(certification.id, {
+                certificationName: certification.certificationName,
+                vendorName: certification.vendorName,
+                certificationNumber: certification.certificationNumber,
+                issueDate: certification.issueDate,
+                expirationDate: certification.expirationDate,
+              })
+            }
             className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400"
             title="Edit"
           >
@@ -392,7 +425,8 @@ function CertificationCard({
   onView?: (id: string) => void
 }) {
   const daysUntilExpiration = Math.ceil(
-    (new Date(certification.expirationDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+    (new Date(certification.expirationDate).getTime() - Date.now()) /
+      (1000 * 60 * 60 * 24),
   )
 
   return (
@@ -414,21 +448,26 @@ function CertificationCard({
           <Calendar className="w-4 h-4 text-slate-400" />
           <span className="text-slate-600 dark:text-slate-400">Expires:</span>
           <span className="text-slate-900 dark:text-slate-50 font-medium">
-            {new Date(certification.expirationDate).toLocaleDateString('en-US', {
-              month: 'short',
-              day: 'numeric',
-              year: 'numeric',
-            })}
+            {new Date(certification.expirationDate).toLocaleDateString(
+              'en-US',
+              {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+              },
+            )}
           </span>
         </div>
 
-        <div className={`text-sm font-medium ${
-          certification.status === 'expired'
-            ? 'text-red-600 dark:text-red-400'
-            : certification.status === 'expiring'
-            ? 'text-amber-600 dark:text-amber-400'
-            : 'text-emerald-600 dark:text-emerald-400'
-        }`}>
+        <div
+          className={`text-sm font-medium ${
+            certification.status === 'expired'
+              ? 'text-red-600 dark:text-red-400'
+              : certification.status === 'expiring'
+                ? 'text-amber-600 dark:text-amber-400'
+                : 'text-emerald-600 dark:text-emerald-400'
+          }`}
+        >
           {certification.status === 'expired'
             ? `Expired ${Math.abs(daysUntilExpiration)} days ago`
             : `${daysUntilExpiration} days remaining`}
@@ -450,13 +489,15 @@ function CertificationCard({
           View
         </button>
         <button
-          onClick={() => onEdit?.(certification.id, {
-            certificationName: certification.certificationName,
-            vendorName: certification.vendorName,
-            certificationNumber: certification.certificationNumber,
-            issueDate: certification.issueDate,
-            expirationDate: certification.expirationDate,
-          })}
+          onClick={() =>
+            onEdit?.(certification.id, {
+              certificationName: certification.certificationName,
+              vendorName: certification.vendorName,
+              certificationNumber: certification.certificationNumber,
+              issueDate: certification.issueDate,
+              expirationDate: certification.expirationDate,
+            })
+          }
           className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 rounded-lg text-sm font-medium text-white transition-colors"
         >
           <Edit className="w-4 h-4" />
@@ -479,24 +520,29 @@ function StatusBadge({ status }: { status: CertificationStatus }) {
     active: {
       icon: CheckCircle2,
       label: 'Active',
-      className: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900',
+      className:
+        'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900',
     },
     expiring: {
       icon: AlertCircle,
       label: 'Expiring Soon',
-      className: 'bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900',
+      className:
+        'bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900',
     },
     expired: {
       icon: XCircle,
       label: 'Expired',
-      className: 'bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-900',
+      className:
+        'bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-900',
     },
   }
 
   const { icon: Icon, label, className } = config[status]
 
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${className}`}>
+    <span
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${className}`}
+    >
       <Icon className="w-3.5 h-3.5" />
       {label}
     </span>

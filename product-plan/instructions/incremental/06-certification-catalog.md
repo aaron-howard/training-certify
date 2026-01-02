@@ -7,6 +7,7 @@ Implement the Certification Catalog section, enabling users to discover, researc
 ## Overview
 
 This section provides:
+
 - Browse page with searchable/filterable certification grid
 - Certification detail page with full metadata
 - Actions: add to profile, mark as goal, view holders
@@ -77,9 +78,12 @@ const [filters, setFilters] = useState({
   difficulty: null,
 })
 
-const filteredCertifications = certifications.filter(cert => {
+const filteredCertifications = certifications.filter((cert) => {
   // Search filter
-  if (searchTerm && !cert.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+  if (
+    searchTerm &&
+    !cert.name.toLowerCase().includes(searchTerm.toLowerCase())
+  ) {
     return false
   }
 
@@ -89,7 +93,10 @@ const filteredCertifications = certifications.filter(cert => {
   }
 
   // Category filter
-  if (filters.categories.length > 0 && !filters.categories.includes(cert.category)) {
+  if (
+    filters.categories.length > 0 &&
+    !filters.categories.includes(cert.category)
+  ) {
     return false
   }
 

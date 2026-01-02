@@ -26,7 +26,10 @@ export function NotificationSettings({
   const [channels, setChannels] = useState(settings.channels)
   const [preferences, setPreferences] = useState(settings.preferences)
 
-  const handleFrequencyChange = (field: keyof NotificationFrequency, value: number) => {
+  const handleFrequencyChange = (
+    field: keyof NotificationFrequency,
+    value: number,
+  ) => {
     const updated = { ...frequency, [field]: value }
     setFrequency(updated)
     onUpdateFrequency?.(updated)
@@ -53,7 +56,9 @@ export function NotificationSettings({
           <div className="p-2 bg-white/10 rounded-lg">
             <Bell className="w-5 h-5 text-white" />
           </div>
-          <h2 className="text-xl font-bold text-white">Notification Settings</h2>
+          <h2 className="text-xl font-bold text-white">
+            Notification Settings
+          </h2>
         </div>
         <button
           onClick={onClose}
@@ -73,7 +78,8 @@ export function NotificationSettings({
             </h3>
           </div>
           <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
-            Set when you want to be notified before certifications expire (in days)
+            Set when you want to be notified before certifications expire (in
+            days)
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
@@ -89,12 +95,16 @@ export function NotificationSettings({
                 <input
                   type="number"
                   value={frequency[key]}
-                  onChange={(e) => handleFrequencyChange(key, parseInt(e.target.value) || 0)}
+                  onChange={(e) =>
+                    handleFrequencyChange(key, parseInt(e.target.value) || 0)
+                  }
                   className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                   min="1"
                   max="365"
                 />
-                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">days before expiration</p>
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  days before expiration
+                </p>
               </div>
             ))}
           </div>
@@ -121,8 +131,12 @@ export function NotificationSettings({
               />
               <Bell className="w-5 h-5 text-slate-600 dark:text-slate-400" />
               <div className="flex-1">
-                <div className="font-medium text-slate-900 dark:text-slate-100">In-App Notifications</div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Show notifications within the application</div>
+                <div className="font-medium text-slate-900 dark:text-slate-100">
+                  In-App Notifications
+                </div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">
+                  Show notifications within the application
+                </div>
               </div>
             </label>
 
@@ -135,8 +149,12 @@ export function NotificationSettings({
               />
               <Mail className="w-5 h-5 text-slate-600 dark:text-slate-400" />
               <div className="flex-1">
-                <div className="font-medium text-slate-900 dark:text-slate-100">Email Notifications</div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Receive alerts via email</div>
+                <div className="font-medium text-slate-900 dark:text-slate-100">
+                  Email Notifications
+                </div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">
+                  Receive alerts via email
+                </div>
               </div>
             </label>
 
@@ -149,8 +167,12 @@ export function NotificationSettings({
               />
               <Smartphone className="w-5 h-5 text-slate-600 dark:text-slate-400" />
               <div className="flex-1">
-                <div className="font-medium text-slate-900 dark:text-slate-100">SMS Notifications</div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Get text messages for critical alerts</div>
+                <div className="font-medium text-slate-900 dark:text-slate-100">
+                  SMS Notifications
+                </div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">
+                  Get text messages for critical alerts
+                </div>
               </div>
             </label>
           </div>

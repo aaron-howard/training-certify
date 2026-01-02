@@ -7,6 +7,7 @@ Implement the Notifications & Alerts section, providing users with a centralized
 ## Overview
 
 This section provides:
+
 - Notification feed with filtering (all, unread, dismissed)
 - Notification cards with actions (mark read/unread, dismiss)
 - Settings panel for frequency and channel preferences
@@ -69,29 +70,28 @@ import { NotificationsDashboard } from './components/notifications/Notifications
 Wire up state for notifications:
 
 ```typescript
-const [notifications, setNotifications] = useState<Notification[]>(mockNotifications)
+const [notifications, setNotifications] =
+  useState<Notification[]>(mockNotifications)
 
 const handleMarkAsRead = (id: string) => {
-  setNotifications(prev =>
-    prev.map(notif =>
-      notif.id === id ? { ...notif, isRead: true } : notif
-    )
+  setNotifications((prev) =>
+    prev.map((notif) => (notif.id === id ? { ...notif, isRead: true } : notif)),
   )
 }
 
 const handleMarkAsUnread = (id: string) => {
-  setNotifications(prev =>
-    prev.map(notif =>
-      notif.id === id ? { ...notif, isRead: false } : notif
-    )
+  setNotifications((prev) =>
+    prev.map((notif) =>
+      notif.id === id ? { ...notif, isRead: false } : notif,
+    ),
   )
 }
 
 const handleDismiss = (id: string) => {
-  setNotifications(prev =>
-    prev.map(notif =>
-      notif.id === id ? { ...notif, isDismissed: true } : notif
-    )
+  setNotifications((prev) =>
+    prev.map((notif) =>
+      notif.id === id ? { ...notif, isDismissed: true } : notif,
+    ),
   )
 }
 ```

@@ -41,6 +41,7 @@ Use the AskUserQuestion tool to ask 4-6 targeted questions to define:
 - **Scope boundaries** - What should be explicitly excluded?
 
 Example questions (adapt based on their input and the section):
+
 - "What are the main actions a user can take in this section?"
 - "What information needs to be displayed on the primary view?"
 - "Walk me through the main user flow - what happens step by step?"
@@ -59,6 +60,7 @@ If a shell design has been created for this project (check if `/src/shell/compon
 Most sections use the app shell, but some pages like public-facing views, landing pages, or embedded widgets should be standalone."
 
 Use AskUserQuestion with options:
+
 - "Inside app shell" - The default for most in-app sections
 - "Standalone (no shell)" - For public pages, landing pages, or embeds
 
@@ -74,11 +76,13 @@ Once you have enough information, present a draft specification:
 [2-3 sentence summary of what this section does]
 
 **User Flows:**
+
 - [Flow 1]
 - [Flow 2]
 - [Flow 3]
 
 **UI Requirements:**
+
 - [Requirement 1]
 - [Requirement 2]
 - [Requirement 3]
@@ -97,25 +101,30 @@ Once the user approves, create the file at `product/sections/[section-id]/spec.m
 # [Section Title] Specification
 
 ## Overview
+
 [The finalized 2-3 sentence description]
 
 ## User Flows
+
 - [Flow 1]
 - [Flow 2]
 - [Flow 3]
-[Add all flows discussed]
+  [Add all flows discussed]
 
 ## UI Requirements
+
 - [Requirement 1]
 - [Requirement 2]
 - [Requirement 3]
-[Add all requirements discussed]
+  [Add all requirements discussed]
 
 ## Configuration
+
 - shell: [true/false]
 ```
 
 **Important:**
+
 - Set `shell: true` if the section should display inside the app shell (this is the default)
 - Set `shell: false` if the section should display as a standalone page without the shell
 

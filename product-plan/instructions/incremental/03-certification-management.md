@@ -7,6 +7,7 @@ Implement the Certification Management section, enabling users to track personal
 ## Overview
 
 This section provides a table view of user certifications with:
+
 - Status badges (active, expiring soon, expired)
 - Expiration countdown timers
 - Search and filter capabilities

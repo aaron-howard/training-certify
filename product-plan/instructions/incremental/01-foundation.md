@@ -36,10 +36,7 @@ Update your Tailwind configuration to enable dark mode and configure content pat
 ```js
 // tailwind.config.js
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'class',
   theme: {
     extend: {},
@@ -68,9 +65,12 @@ Import fonts in your HTML or CSS:
 
 ```html
 <!-- index.html -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+  rel="stylesheet"
+/>
 ```
 
 ```css
@@ -79,7 +79,8 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
-code, pre {
+code,
+pre {
   font-family: 'JetBrains Mono', monospace;
 }
 ```
@@ -89,6 +90,7 @@ code, pre {
 Copy `data-model/types.ts` into your project at `src/types/` or `src/lib/types.ts`.
 
 This file contains TypeScript interfaces for:
+
 - User
 - Certification
 - UserCertification

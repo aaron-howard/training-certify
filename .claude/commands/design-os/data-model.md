@@ -42,6 +42,7 @@ Use the AskUserQuestion tool to clarify:
 - "How do these entities relate to each other?"
 
 Keep the conversation focused on:
+
 - **Entity names** — What are the main nouns?
 - **Plain-language descriptions** — What does each entity represent?
 - **Relationships** — How do entities connect to each other?
@@ -79,9 +80,11 @@ Once approved, create the file at `/product/data-model/data-model.md` with this 
 ## Entities
 
 ### [EntityName]
+
 [Plain-language description of what this entity represents and its purpose in the system.]
 
 ### [AnotherEntity]
+
 [Plain-language description.]
 
 [Add more entities as needed]
@@ -91,7 +94,7 @@ Once approved, create the file at `/product/data-model/data-model.md` with this 
 - [Entity1] has many [Entity2]
 - [Entity2] belongs to [Entity1]
 - [Entity3] belongs to both [Entity1] and [Entity2]
-[Add more relationships as needed]
+  [Add more relationships as needed]
 ```
 
 **Important:** Keep descriptions minimal — focus on what each entity represents, not every field it contains. Leave room for the implementation agent to extend the model.
@@ -103,9 +106,11 @@ Let the user know:
 "I've created your data model at `/product/data-model/data-model.md`.
 
 **Entities defined:**
+
 - [List entities]
 
 **Relationships:**
+
 - [List key relationships]
 
 This provides a shared vocabulary that will be used when generating sample data for your sections. When you run `/sample-data`, it will reference this model to ensure consistency.
