@@ -30,28 +30,32 @@ export function ExecutiveDashboard() {
             value: `${stats?.complianceRate || 0}%`,
             icon: Shield,
             color: 'blue',
-            description: 'Across all departments'
+            description: 'Across all departments',
+            href: '/compliance-audit'
         },
         {
             title: 'Total Certifications',
             value: stats?.totalCerts || 0,
             icon: Award,
             color: 'emerald',
-            description: 'Active credentials'
+            description: 'Active credentials',
+            href: '/catalog'
         },
         {
             title: 'Critical Gaps',
             value: stats?.criticalGaps || 0,
             icon: TrendingUp,
             color: 'rose',
-            description: 'Teams below target'
+            description: 'Teams below target',
+            href: '/team-management'
         },
         {
             title: 'Total Workforce',
             value: stats?.totalUsers || 0,
             icon: Users,
             color: 'amber',
-            description: 'Monitored employees'
+            description: 'Monitored employees',
+            href: '/team-management'
         }
     ]
 
@@ -68,14 +72,19 @@ export function ExecutiveDashboard() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {cards.map((card) => (
-                    <div key={card.title} className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-${card.color}-50 dark:bg-${card.color}-950/30 text-${card.color}-600`}>
+                    <Link
+                        key={card.title}
+                        to={card.href}
+                        className="p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg hover:border-blue-500/30 transition-all group overflow-hidden relative cursor-pointer"
+                    >
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-${card.color}-50 dark:bg-${card.color}-950/30 text-${card.color}-600 group-hover:scale-110 transition-transform`}>
                             <card.icon className="w-6 h-6" />
                         </div>
                         <div className="text-3xl font-bold text-slate-900 dark:text-slate-50 mb-1">{card.value}</div>
                         <div className="text-sm font-semibold text-slate-900 dark:text-slate-50 mb-1">{card.title}</div>
                         <div className="text-xs text-slate-500">{card.description}</div>
-                    </div>
+                        <div className={`absolute bottom-0 left-0 h-1 bg-${card.color}-600/50 w-0 group-hover:w-full transition-all duration-300`} />
+                    </Link>
                 ))}
             </div>
 

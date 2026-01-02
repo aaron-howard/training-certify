@@ -1,4 +1,4 @@
-import { boolean, integer, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { boolean, integer, pgEnum, pgTable, text, timestamp, unique, uuid } from 'drizzle-orm/pg-core';
 
 // Enums for various statuses and types
 export const roleEnum = pgEnum('role', ['Admin', 'User', 'Manager', 'Executive', 'Auditor']);
@@ -78,7 +78,9 @@ export const teamRequirements = pgTable('team_requirements', {
     certificationId: text('certification_id').notNull().references(() => certifications.id),
     targetCount: integer('target_count').notNull().default(1),
     createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+}, (t) => ({
+    unq: unique().on(t.teamId, t.certificationId)
+}));
 
 // Notifications
 export const notifications = pgTable('notifications', {

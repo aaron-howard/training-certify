@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { eq, sql } from 'drizzle-orm'
+import { eq, inArray, sql } from 'drizzle-orm'
 import { getDb } from '../db/db.server'
-import { teams, userCertifications, userTeams } from '../db/schema'
+import { teamRequirements, teams, userCertifications, userTeams } from '../db/schema'
 
 export const Route = createFileRoute('/api/teams')({
     server: {
@@ -29,62 +29,69 @@ export const Route = createFileRoute('/api/teams')({
                     let totalCriticalGaps = 0
 
                     for (const team of teamsResult) {
-                        const members = await db.select({ userId: userTeams.userId })
-                            .from(userTeams)
-                            .where(eq(userTeams.teamId, team.id))
+                        try {
+                            const members = await db.select({ userId: userTeams.userId })
+                                .from(userTeams)
+                                .where(eq(userTeams.teamId, team.id))
 
-                        const memberCount = members.length
-                        members.forEach(m => allMemberIds.add(m.userId))
+                            const memberCount = members.length
+                            const memberIds = members.map(m => m.userId)
+                            memberIds.forEach(id => allMemberIds.add(id))
 
-                        // Fetch requirements for this team
-                        const requirements = await db.select({
-                            id: sql`team_requirements.id`,
-                            certificationId: sql`team_requirements.certification_id`,
-                            targetCount: sql`team_requirements.target_count`
-                        })
-                            .from(sql`team_requirements`)
-                            .where(sql`team_requirements.team_id = ${team.id}`)
+                            // Fetch requirements for this team
+                            const requirements = await db.select({
+                                id: teamRequirements.id,
+                                certificationId: teamRequirements.certificationId,
+                                targetCount: teamRequirements.targetCount,
+                            })
+                                .from(teamRequirements)
+                                .where(eq(teamRequirements.teamId, team.id))
 
-                        let coverage = 0
-                        if (requirements.length > 0) {
-                            let totalCompliance = 0
-                            for (const req of (requirements as any[])) {
-                                const memberIds = members.map(m => m.userId)
-                                if (memberIds.length === 0) {
-                                    totalCriticalGaps++
-                                    continue
+                            let coverage = 0
+                            if (requirements.length > 0) {
+                                let totalCompliance = 0
+                                for (const req of requirements) {
+                                    if (memberIds.length === 0) {
+                                        totalCriticalGaps++
+                                        continue
+                                    }
+
+                                    const actualMembersWithCert = await db.select({ userId: userCertifications.userId })
+                                        .from(userCertifications)
+                                        .where(
+                                            sql`(${inArray(userCertifications.userId, memberIds)}) AND ${userCertifications.certificationId} = ${req.certificationId}`
+                                        )
+                                        .groupBy(userCertifications.userId)
+
+                                    const count = actualMembersWithCert.length
+                                    totalCompliance += Math.min(count / req.targetCount, 1)
+                                    if (count < req.targetCount) {
+                                        totalCriticalGaps++
+                                    }
                                 }
-
-                                const actualMembersWithCert = await db.select({ userId: userCertifications.userId })
+                                coverage = Math.round((totalCompliance / requirements.length) * 100)
+                            } else if (memberCount > 0) {
+                                // Fallback to "any certification" coverage if no specific requirements defined
+                                const membersWithCerts = await db.select({ userId: userCertifications.userId })
                                     .from(userCertifications)
-                                    .where(sql`${userCertifications.userId} IN (${sql.join(memberIds)}) AND ${userCertifications.certificationId} = ${req.certificationId}`)
+                                    .where(inArray(userCertifications.userId, memberIds))
                                     .groupBy(userCertifications.userId)
 
-                                const count = actualMembersWithCert.length
-                                totalCompliance += Math.min(count / req.targetCount, 1)
-                                if (count < req.targetCount) {
-                                    totalCriticalGaps++
-                                }
+                                coverage = Math.round((membersWithCerts.length / memberCount) * 100)
                             }
-                            coverage = Math.round((totalCompliance / requirements.length) * 100)
-                        } else if (memberCount > 0) {
-                            // Fallback to "any certification" coverage if no specific requirements defined
-                            const memberIds = members.map(m => m.userId)
-                            const membersWithCerts = await db.select({ userId: userCertifications.userId })
-                                .from(userCertifications)
-                                .where(sql`${userCertifications.userId} IN ${memberIds}`)
-                                .groupBy(userCertifications.userId)
 
-                            coverage = Math.round((membersWithCerts.length / memberCount) * 100)
+                            totalCoverageSum += coverage
+                            result.push({
+                                ...team,
+                                memberCount,
+                                coverage,
+                                requirementCount: requirements.length
+                            })
+                        } catch (teamError) {
+                            console.error(`[API Teams GET] Error processing team ${team.name} (${team.id}):`, teamError)
+                            // Push team without coverage info to avoid total disappearance
+                            result.push({ ...team, memberCount: 0, coverage: 0, requirementCount: 0, error: true })
                         }
-
-                        totalCoverageSum += coverage
-                        result.push({
-                            ...team,
-                            memberCount,
-                            coverage,
-                            requirementCount: requirements.length
-                        })
                     }
 
                     const overallCoverage = result.length > 0 ? Math.round(totalCoverageSum / result.length) : 0
@@ -96,7 +103,7 @@ export const Route = createFileRoute('/api/teams')({
                     if (memberIdsArray.length > 0) {
                         const scopedCerts = await db.select()
                             .from(userCertifications)
-                            .where(sql`${userCertifications.userId} IN ${memberIdsArray}`)
+                            .where(inArray(userCertifications.userId, memberIdsArray))
 
                         totalCerts = scopedCerts.length
                         expiringSoonCerts = scopedCerts.filter(c =>

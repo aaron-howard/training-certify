@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Plus, Trash2, X, AlertCircle, CheckCircle2 } from 'lucide-react'
 
@@ -23,16 +23,24 @@ export function TeamRequirementsModal({ teamId, teamName, onClose }: { teamId: s
         }
     })
 
-    const { data: certifications = [] } = useQuery({
+    const { data: certList = [] } = useQuery({
         queryKey: ['allCertifications'],
         queryFn: async () => {
-            const res = await fetch('/api/certifications/catalog') // Assuming this endpoint exists or similar
+            const res = await fetch('/api/catalog')
+            let certs = []
             if (!res.ok) {
-                // Fallback to searching certifications from existing ones if catalog doesn't exist
                 const res2 = await fetch('/api/certifications')
-                return res2.json()
+                certs = await res2.json()
+            } else {
+                const data = await res.json()
+                certs = data.certifications || []
             }
-            return res.json()
+
+            return certs.sort((a: any, b: any) => {
+                const nameA = (a.name || a.certificationName || '').toLowerCase()
+                const nameB = (b.name || b.certificationName || '').toLowerCase()
+                return nameA.localeCompare(nameB)
+            })
         }
     })
 
@@ -88,7 +96,7 @@ export function TeamRequirementsModal({ teamId, teamName, onClose }: { teamId: s
                             className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-sm text-slate-900 dark:text-slate-100 outline-none focus:ring-2 focus:ring-blue-500/20 transition-all cursor-pointer"
                         >
                             <option value="">Select a certification...</option>
-                            {certifications.map((cert: any) => (
+                            {certList.map((cert: any) => (
                                 <option key={cert.id} value={cert.id}>{cert.name || cert.certificationName} ({cert.vendor || cert.vendorName})</option>
                             ))}
                         </select>
