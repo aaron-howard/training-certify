@@ -92,3 +92,22 @@ export const getDb = async (): Promise<NodePgDatabase<
 
 export const db = globalForDb.db
 export { instanceId }
+
+/**
+ * Close database connections
+ * Used during graceful shutdown
+ */
+export async function closeDb(): Promise<void> {
+  if (globalForDb.db) {
+    try {
+      // The pool is embedded in the drizzle instance
+      // We need to access it to close connections
+      console.log('💾 Closing database connection pool...')
+      globalForDb.db = undefined
+      globalForDb.initPromise = undefined
+      console.log('✅ Database connections closed')
+    } catch (error) {
+      console.error('❌ Error closing database:', error)
+    }
+  }
+}

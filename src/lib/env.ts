@@ -1,162 +1,93 @@
-// src/lib/env.ts
-const isServer = typeof window === 'undefined'
+/**
+ * Environment variable validation using Zod
+ * Ensures all required environment variables are present and valid
+ */
 
-interface EnvType {
-  isServer: boolean
-  DATABASE_URL: string | undefined
-  CLERK_PUBLISHABLE_KEY: string | undefined
-  CLERK_SECRET_KEY: string | undefined
-  // Add other keys as needed
+import { z } from 'zod'
+
+const envSchema = z.object({
+  // Database
+  DATABASE_URL: z.string().url('DATABASE_URL must be a valid PostgreSQL URL'),
+
+  // Clerk Authentication
+  CLERK_SECRET_KEY: z
+    .string()
+    .min(1, 'CLERK_SECRET_KEY is required')
+    .startsWith('sk_', 'CLERK_SECRET_KEY must start with sk_'),
+  VITE_CLERK_PUBLISHABLE_KEY: z
+    .string()
+    .min(1, 'VITE_CLERK_PUBLISHABLE_KEY is required')
+    .startsWith('pk_', 'VITE_CLERK_PUBLISHABLE_KEY must start with pk_'),
+
+  // Application
+  NODE_ENV: z
+    .enum(['development', 'production', 'test'])
+    .default('development'),
+  PORT: z.string().default('3000'),
+
+  // Monitoring (Optional)
+  SENTRY_DSN: z.string().url().optional(),
+
+  // Caching (Optional - for multi-instance deployments)
+  REDIS_URL: z.string().url().optional(),
+
+  // Security (Optional)
+  HTTPS_ONLY: z
+    .string()
+    .transform((val) => val === 'true')
+    .optional(),
+  CSRF_SECRET: z.string().min(32).optional(),
+})
+
+export type Env = z.infer<typeof envSchema>
+
+/**
+ * Validate environment variables
+ * Call this at application startup
+ * @throws {Error} If validation fails
+ */
+export function validateEnv(): Env {
+  try {
+    const validated = envSchema.parse(process.env)
+    console.log('✅ Environment variables validated successfully')
+    return validated
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error('❌ Environment variable validation failed:')
+      error.errors.forEach((err) => {
+        console.error(`  - ${err.path.join('.')}: ${err.message}`)
+      })
+    }
+    console.error('\n💡 Please check your .env file and ensure all required variables are set.')
+    process.exit(1)
+  }
 }
 
-// Global cache to store the *result* of the parsing, not the object itself.
-// This ensures that even if module instances are different, they can fetch the same data.
-const globalForEnv = globalThis as unknown as {
-  parsedEnv: Record<string, string> | undefined
-  envLoadingPromise: Promise<Record<string, string>> | undefined
+/**
+ * Get validated environment variables
+ * Use this instead of process.env for type safety
+ */
+export function getEnv(): Env {
+  return envSchema.parse(process.env)
 }
 
-// Initialize the local ENV object for this module instance
-export const ENV: EnvType = {
-  isServer,
-  DATABASE_URL: undefined,
-  CLERK_PUBLISHABLE_KEY: undefined,
-  CLERK_SECRET_KEY: undefined,
+/**
+ * Check if running in production
+ */
+export function isProduction(): boolean {
+  return process.env.NODE_ENV === 'production'
 }
 
-// Client-side hydration
-if (!isServer && typeof window !== 'undefined' && (window as any).__ENV__) {
-  Object.assign(ENV, (window as any).__ENV__)
+/**
+ * Check if running in development
+ */
+export function isDevelopment(): boolean {
+  return process.env.NODE_ENV === 'development'
 }
 
-export const envReady = isServer
-  ? (async () => {
-      // 1. If we already have parsed data globally, populate this instance and return.
-      if (globalForEnv.parsedEnv) {
-        Object.assign(ENV, globalForEnv.parsedEnv)
-        return
-      }
-
-      // 2. If a load is in progress, wait for it, then populate.
-      if (globalForEnv.envLoadingPromise) {
-        const result = await globalForEnv.envLoadingPromise
-        Object.assign(ENV, result)
-        return
-      }
-
-      // 3. Otherwise, perform the load.
-      globalForEnv.envLoadingPromise = (async () => {
-        const processEnv = process.env
-        const loaded: Record<string, string> = {}
-
-        // A. Process Env Vars
-        let dbSource = 'fallback'
-        if (processEnv.DATABASE_URL || processEnv.VITE_DATABASE_URL) {
-          loaded.DATABASE_URL = (processEnv.DATABASE_URL ||
-            processEnv.VITE_DATABASE_URL) as string
-          dbSource = 'process.env'
-        }
-
-        // Clerk Key Search
-        loaded.CLERK_PUBLISHABLE_KEY =
-          processEnv.CLERK_PUBLISHABLE_KEY ||
-          processEnv.VITE_CLERK_PUBLISHABLE_KEY ||
-          processEnv.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-          ''
-
-        loaded.CLERK_SECRET_KEY =
-          processEnv.CLERK_SECRET_KEY || processEnv.VITE_CLERK_SECRET_KEY || ''
-
-        // B. File Fallback (.env.local, .env)
-        if (
-          !loaded.DATABASE_URL ||
-          !loaded.CLERK_PUBLISHABLE_KEY ||
-          !loaded.CLERK_SECRET_KEY
-        ) {
-          try {
-            const fs = await import('node:fs')
-            const path = await import('node:path')
-            const envFiles = ['.env.local', '.env']
-
-            for (const file of envFiles) {
-              const searchPaths = [
-                path.resolve(process.cwd(), file),
-                path.resolve(process.cwd(), '..', file),
-              ]
-
-              for (const filePath of searchPaths) {
-                if (fs.existsSync(filePath)) {
-                  const content = fs.readFileSync(filePath, 'utf-8')
-                  const lines = content.split(/\r?\n/)
-                  for (const line of lines) {
-                    const trimmed = line.trim()
-                    if (!trimmed || trimmed.startsWith('#')) continue
-                    const match = trimmed.match(/^([^=]+)=(.*)$/)
-                    if (match) {
-                      const key = match[1].trim()
-                      const val = match[2].trim().replace(/^["']|["']$/g, '')
-
-                      if (
-                        !loaded.DATABASE_URL &&
-                        (key === 'DATABASE_URL' || key === 'VITE_DATABASE_URL')
-                      ) {
-                        loaded.DATABASE_URL = val
-                        dbSource = file
-                      }
-                      if (
-                        !loaded.CLERK_PUBLISHABLE_KEY &&
-                        (key === 'CLERK_PUBLISHABLE_KEY' ||
-                          key === 'VITE_CLERK_PUBLISHABLE_KEY')
-                      )
-                        loaded.CLERK_PUBLISHABLE_KEY = val
-                      if (
-                        !loaded.CLERK_SECRET_KEY &&
-                        (key === 'CLERK_SECRET_KEY' ||
-                          key === 'VITE_CLERK_SECRET_KEY')
-                      )
-                        loaded.CLERK_SECRET_KEY = val
-                    }
-                  }
-                  // If we found a file and loaded something, we can stop for this specific filename type?
-                  // Actually, let's keep it simple: any found file contributes.
-                }
-              }
-            }
-          } catch (e) {
-            console.error('⚠️ [ENV] Failed during dynamic parsing:', e)
-          }
-        }
-
-        // C. Final Fallback (Hardcoded for local dev)
-        if (!loaded.DATABASE_URL) {
-          console.warn('⚠️ [ENV] DATABASE_URL not found. Using local fallback.')
-          loaded.DATABASE_URL =
-            'postgresql://postgres:password@127.0.0.1:5433/devdb'
-        }
-
-        try {
-          const url = new URL(loaded.DATABASE_URL)
-          console.log('💎 [ENV Final]', {
-            source: dbSource,
-            db: '✅ ok',
-            host: url.hostname,
-            port: url.port ? url.port : '5432 (default)',
-            dbName: url.pathname,
-          })
-        } catch (e) {
-          console.log('💎 [ENV Final]', {
-            source: dbSource,
-            db: loaded.DATABASE_URL ? '✅ ok' : '❌ missing',
-            parseError: 'Failed to parse URL',
-          })
-        }
-
-        return loaded
-      })()
-
-      // Await the promise we just created (or found) and populate local ENV
-      const result = await globalForEnv.envLoadingPromise
-      globalForEnv.parsedEnv = result // Cache result
-      Object.assign(ENV, result) // Update THIS instance
-    })()
-  : Promise.resolve()
+/**
+ * Check if running in test
+ */
+export function isTest(): boolean {
+  return process.env.NODE_ENV === 'test'
+}
