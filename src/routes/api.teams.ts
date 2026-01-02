@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { count, eq, sql } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { getDb } from '../db/db.server'
 import { teams, userCertifications, userTeams } from '../db/schema'
 
@@ -48,7 +48,7 @@ export const Route = createFileRoute('/api/teams')({
                         let coverage = 0
                         if (requirements.length > 0) {
                             let totalCompliance = 0
-                            for (const req: any of requirements) {
+                            for (const req of (requirements as any[])) {
                                 const memberIds = members.map(m => m.userId)
                                 if (memberIds.length === 0) {
                                     totalCriticalGaps++

@@ -21,6 +21,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserProfileSplatRouteImport } from './routes/user-profile.$'
 import { Route as ApiUsersRouteImport } from './routes/api.users'
 import { Route as ApiTeamsRouteImport } from './routes/api.teams'
+import { Route as ApiTeamRequirementsRouteImport } from './routes/api.team-requirements'
 import { Route as ApiTeamMembersRouteImport } from './routes/api.team-members'
 import { Route as ApiSeedRouteImport } from './routes/api.seed'
 import { Route as ApiNotificationsRouteImport } from './routes/api.notifications'
@@ -96,6 +97,11 @@ const ApiUsersRoute = ApiUsersRouteImport.update({
 const ApiTeamsRoute = ApiTeamsRouteImport.update({
   id: '/api/teams',
   path: '/api/teams',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTeamRequirementsRoute = ApiTeamRequirementsRouteImport.update({
+  id: '/api/team-requirements',
+  path: '/api/team-requirements',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiTeamMembersRoute = ApiTeamMembersRouteImport.update({
@@ -198,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/api/notifications': typeof ApiNotificationsRoute
   '/api/seed': typeof ApiSeedRoute
   '/api/team-members': typeof ApiTeamMembersRoute
+  '/api/team-requirements': typeof ApiTeamRequirementsRoute
   '/api/teams': typeof ApiTeamsRoute
   '/api/users': typeof ApiUsersRoute
   '/user-profile/$': typeof UserProfileSplatRoute
@@ -228,6 +235,7 @@ export interface FileRoutesByTo {
   '/api/notifications': typeof ApiNotificationsRoute
   '/api/seed': typeof ApiSeedRoute
   '/api/team-members': typeof ApiTeamMembersRoute
+  '/api/team-requirements': typeof ApiTeamRequirementsRoute
   '/api/teams': typeof ApiTeamsRoute
   '/api/users': typeof ApiUsersRoute
   '/user-profile/$': typeof UserProfileSplatRoute
@@ -259,6 +267,7 @@ export interface FileRoutesById {
   '/api/notifications': typeof ApiNotificationsRoute
   '/api/seed': typeof ApiSeedRoute
   '/api/team-members': typeof ApiTeamMembersRoute
+  '/api/team-requirements': typeof ApiTeamRequirementsRoute
   '/api/teams': typeof ApiTeamsRoute
   '/api/users': typeof ApiUsersRoute
   '/user-profile/$': typeof UserProfileSplatRoute
@@ -291,6 +300,7 @@ export interface FileRouteTypes {
     | '/api/notifications'
     | '/api/seed'
     | '/api/team-members'
+    | '/api/team-requirements'
     | '/api/teams'
     | '/api/users'
     | '/user-profile/$'
@@ -321,6 +331,7 @@ export interface FileRouteTypes {
     | '/api/notifications'
     | '/api/seed'
     | '/api/team-members'
+    | '/api/team-requirements'
     | '/api/teams'
     | '/api/users'
     | '/user-profile/$'
@@ -351,6 +362,7 @@ export interface FileRouteTypes {
     | '/api/notifications'
     | '/api/seed'
     | '/api/team-members'
+    | '/api/team-requirements'
     | '/api/teams'
     | '/api/users'
     | '/user-profile/$'
@@ -382,6 +394,7 @@ export interface RootRouteChildren {
   ApiNotificationsRoute: typeof ApiNotificationsRoute
   ApiSeedRoute: typeof ApiSeedRoute
   ApiTeamMembersRoute: typeof ApiTeamMembersRoute
+  ApiTeamRequirementsRoute: typeof ApiTeamRequirementsRoute
   ApiTeamsRoute: typeof ApiTeamsRoute
   ApiUsersRoute: typeof ApiUsersRoute
   UserProfileSplatRoute: typeof UserProfileSplatRoute
@@ -478,6 +491,13 @@ declare module '@tanstack/react-router' {
       path: '/api/teams'
       fullPath: '/api/teams'
       preLoaderRoute: typeof ApiTeamsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/team-requirements': {
+      id: '/api/team-requirements'
+      path: '/api/team-requirements'
+      fullPath: '/api/team-requirements'
+      preLoaderRoute: typeof ApiTeamRequirementsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/team-members': {
@@ -614,6 +634,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiNotificationsRoute: ApiNotificationsRoute,
   ApiSeedRoute: ApiSeedRoute,
   ApiTeamMembersRoute: ApiTeamMembersRoute,
+  ApiTeamRequirementsRoute: ApiTeamRequirementsRoute,
   ApiTeamsRoute: ApiTeamsRoute,
   ApiUsersRoute: ApiUsersRoute,
   UserProfileSplatRoute: UserProfileSplatRoute,
