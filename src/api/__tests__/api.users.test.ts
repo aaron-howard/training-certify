@@ -38,7 +38,7 @@ describe('/api/users Integration Tests', () => {
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
             // Import and call the route handler
-            const { Route } = await import('../api.users')
+            const { Route } = await import('../../routes/api.users')
             const handler = Route.options.server?.handlers?.GET
 
             if (!handler) throw new Error('GET handler not found')
@@ -59,7 +59,7 @@ describe('/api/users Integration Tests', () => {
             const mockDb = createMockDb(mockUsers)
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.users')
+            const { Route } = await import('../../routes/api.users')
             const handler = Route.options.server?.handlers?.GET
 
             if (!handler) throw new Error('GET handler not found')
@@ -76,7 +76,7 @@ describe('/api/users Integration Tests', () => {
             const mockDb = createMockDb(user)
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.users')
+            const { Route } = await import('../../routes/api.users')
             const handler = Route.options.server?.handlers?.GET
 
             if (!handler) throw new Error('GET handler not found')
@@ -96,7 +96,7 @@ describe('/api/users Integration Tests', () => {
             const mockDb = createMockDb([])
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.users')
+            const { Route } = await import('../../routes/api.users')
             const handler = Route.options.server?.handlers?.GET
 
             if (!handler) throw new Error('GET handler not found')
@@ -119,7 +119,7 @@ describe('/api/users Integration Tests', () => {
             const mockDb = createMockDb(newUser)
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.users')
+            const { Route } = await import('../../routes/api.users')
             const handler = Route.options.server?.handlers?.POST
 
             if (!handler) throw new Error('POST handler not found')
@@ -150,7 +150,7 @@ describe('/api/users Integration Tests', () => {
             mockDb.limit.mockResolvedValue([existingUser])
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.users')
+            const { Route } = await import('../../routes/api.users')
             const handler = Route.options.server?.handlers?.POST
 
             if (!handler) throw new Error('POST handler not found')
@@ -180,7 +180,7 @@ describe('/api/users Integration Tests', () => {
             const mockDb = createMockDb(targetUser)
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.users')
+            const { Route } = await import('../../routes/api.users')
             const handler = Route.options.server?.handlers?.PATCH
 
             if (!handler) throw new Error('PATCH handler not found')
@@ -202,7 +202,7 @@ describe('/api/users Integration Tests', () => {
             const mockDb = createMockDb(user)
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.users')
+            const { Route } = await import('../../routes/api.users')
             const handler = Route.options.server?.handlers?.PATCH
 
             if (!handler) throw new Error('PATCH handler not found')
@@ -224,7 +224,7 @@ describe('/api/users Integration Tests', () => {
             const mockDb = createMockDb(admin)
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.users')
+            const { Route } = await import('../../routes/api.users')
             const handler = Route.options.server?.handlers?.PATCH
 
             if (!handler) throw new Error('PATCH handler not found')

@@ -43,7 +43,7 @@ describe('/api/teams Integration Tests', () => {
             mockDb.limit.mockResolvedValue([])
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.teams')
+            const { Route } = await import('../../routes/api.teams')
             const handler = Route.options.server?.handlers?.GET
 
             if (!handler) throw new Error('GET handler not found')
@@ -64,7 +64,7 @@ describe('/api/teams Integration Tests', () => {
             const mockDb = createMockDb([])
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.teams')
+            const { Route } = await import('../../routes/api.teams')
             const handler = Route.options.server?.handlers?.GET
 
             if (!handler) throw new Error('GET handler not found')
@@ -82,7 +82,7 @@ describe('/api/teams Integration Tests', () => {
             const mockDb = createMockDb([mockTeam])
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.teams')
+            const { Route } = await import('../../routes/api.teams')
             const handler = Route.options.server?.handlers?.GET
 
             if (!handler) throw new Error('GET handler not found')
@@ -104,7 +104,7 @@ describe('/api/teams Integration Tests', () => {
             const mockDb = createMockDb([])
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.teams')
+            const { Route } = await import('../../routes/api.teams')
             const handler = Route.options.server?.handlers?.GET
 
             if (!handler) throw new Error('GET handler not found')
@@ -124,7 +124,7 @@ describe('/api/teams Integration Tests', () => {
             const mockDb = createMockDb([])
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.teams')
+            const { Route } = await import('../../routes/api.teams')
             const handler = Route.options.server?.handlers?.GET
 
             if (!handler) throw new Error('GET handler not found')
@@ -144,7 +144,7 @@ describe('/api/teams Integration Tests', () => {
             const mockDb = createMockDb(newTeam)
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.teams')
+            const { Route } = await import('../../routes/api.teams')
             const handler = Route.options.server?.handlers?.POST
 
             if (!handler) throw new Error('POST handler not found')
@@ -169,7 +169,7 @@ describe('/api/teams Integration Tests', () => {
             const mockDb = createMockDb(user)
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.teams')
+            const { Route } = await import('../../routes/api.teams')
             const handler = Route.options.server?.handlers?.POST
 
             if (!handler) throw new Error('POST handler not found')
@@ -192,7 +192,7 @@ describe('/api/teams Integration Tests', () => {
             const mockDb = createMockDb(factories.team())
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.teams')
+            const { Route } = await import('../../routes/api.teams')
             const handler = Route.options.server?.handlers?.POST
 
             if (!handler) throw new Error('POST handler not found')
@@ -216,7 +216,7 @@ describe('/api/teams Integration Tests', () => {
             const mockDb = createMockDb({})
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.teams')
+            const { Route } = await import('../../routes/api.teams')
             const handler = Route.options.server?.handlers?.PATCH
 
             if (!handler) throw new Error('PATCH handler not found')
@@ -243,7 +243,7 @@ describe('/api/teams Integration Tests', () => {
             const mockDb = createMockDb(team)
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.teams')
+            const { Route } = await import('../../routes/api.teams')
             const handler = Route.options.server?.handlers?.PATCH
 
             if (!handler) throw new Error('PATCH handler not found')
@@ -270,7 +270,7 @@ describe('/api/teams Integration Tests', () => {
             const mockDb = createMockDb(team)
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.teams')
+            const { Route } = await import('../../routes/api.teams')
             const handler = Route.options.server?.handlers?.PATCH
 
             if (!handler) throw new Error('PATCH handler not found')
@@ -296,7 +296,7 @@ describe('/api/teams Integration Tests', () => {
             const mockDb = createMockDb({})
             vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-            const { Route } = await import('../api.teams')
+            const { Route } = await import('../../routes/api.teams')
             const handler = Route.options.server?.handlers?.PATCH
 
             if (!handler) throw new Error('PATCH handler not found')

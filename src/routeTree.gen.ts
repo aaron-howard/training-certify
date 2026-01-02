@@ -12,7 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeamManagementRouteImport } from './routes/team-management'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as ReadyRouteImport } from './routes/ready'
 import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as MetricsRouteImport } from './routes/metrics'
+import { Route as HealthRouteImport } from './routes/health'
 import { Route as DbHealthRouteImport } from './routes/db-health'
 import { Route as ComplianceAuditRouteImport } from './routes/compliance-audit'
 import { Route as CertificationManagementRouteImport } from './routes/certification-management'
@@ -53,9 +56,24 @@ const SignInRoute = SignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReadyRoute = ReadyRouteImport.update({
+  id: '/ready',
+  path: '/ready',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NotificationsRoute = NotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MetricsRoute = MetricsRouteImport.update({
+  id: '/metrics',
+  path: '/metrics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HealthRoute = HealthRouteImport.update({
+  id: '/health',
+  path: '/health',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DbHealthRoute = DbHealthRouteImport.update({
@@ -185,7 +203,10 @@ export interface FileRoutesByFullPath {
   '/certification-management': typeof CertificationManagementRoute
   '/compliance-audit': typeof ComplianceAuditRoute
   '/db-health': typeof DbHealthRoute
+  '/health': typeof HealthRoute
+  '/metrics': typeof MetricsRoute
   '/notifications': typeof NotificationsRoute
+  '/ready': typeof ReadyRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/team-management': typeof TeamManagementRoute
@@ -215,7 +236,10 @@ export interface FileRoutesByTo {
   '/certification-management': typeof CertificationManagementRoute
   '/compliance-audit': typeof ComplianceAuditRoute
   '/db-health': typeof DbHealthRoute
+  '/health': typeof HealthRoute
+  '/metrics': typeof MetricsRoute
   '/notifications': typeof NotificationsRoute
+  '/ready': typeof ReadyRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/team-management': typeof TeamManagementRoute
@@ -246,7 +270,10 @@ export interface FileRoutesById {
   '/certification-management': typeof CertificationManagementRoute
   '/compliance-audit': typeof ComplianceAuditRoute
   '/db-health': typeof DbHealthRoute
+  '/health': typeof HealthRoute
+  '/metrics': typeof MetricsRoute
   '/notifications': typeof NotificationsRoute
+  '/ready': typeof ReadyRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/team-management': typeof TeamManagementRoute
@@ -278,7 +305,10 @@ export interface FileRouteTypes {
     | '/certification-management'
     | '/compliance-audit'
     | '/db-health'
+    | '/health'
+    | '/metrics'
     | '/notifications'
+    | '/ready'
     | '/sign-in'
     | '/sign-up'
     | '/team-management'
@@ -308,7 +338,10 @@ export interface FileRouteTypes {
     | '/certification-management'
     | '/compliance-audit'
     | '/db-health'
+    | '/health'
+    | '/metrics'
     | '/notifications'
+    | '/ready'
     | '/sign-in'
     | '/sign-up'
     | '/team-management'
@@ -338,7 +371,10 @@ export interface FileRouteTypes {
     | '/certification-management'
     | '/compliance-audit'
     | '/db-health'
+    | '/health'
+    | '/metrics'
     | '/notifications'
+    | '/ready'
     | '/sign-in'
     | '/sign-up'
     | '/team-management'
@@ -369,7 +405,10 @@ export interface RootRouteChildren {
   CertificationManagementRoute: typeof CertificationManagementRoute
   ComplianceAuditRoute: typeof ComplianceAuditRoute
   DbHealthRoute: typeof DbHealthRoute
+  HealthRoute: typeof HealthRoute
+  MetricsRoute: typeof MetricsRoute
   NotificationsRoute: typeof NotificationsRoute
+  ReadyRoute: typeof ReadyRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
   TeamManagementRoute: typeof TeamManagementRoute
@@ -417,11 +456,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignInRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ready': {
+      id: '/ready'
+      path: '/ready'
+      fullPath: '/ready'
+      preLoaderRoute: typeof ReadyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/notifications': {
       id: '/notifications'
       path: '/notifications'
       fullPath: '/notifications'
       preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/metrics': {
+      id: '/metrics'
+      path: '/metrics'
+      fullPath: '/metrics'
+      preLoaderRoute: typeof MetricsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/health': {
+      id: '/health'
+      path: '/health'
+      fullPath: '/health'
+      preLoaderRoute: typeof HealthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/db-health': {
@@ -601,7 +661,10 @@ const rootRouteChildren: RootRouteChildren = {
   CertificationManagementRoute: CertificationManagementRoute,
   ComplianceAuditRoute: ComplianceAuditRoute,
   DbHealthRoute: DbHealthRoute,
+  HealthRoute: HealthRoute,
+  MetricsRoute: MetricsRoute,
   NotificationsRoute: NotificationsRoute,
+  ReadyRoute: ReadyRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
   TeamManagementRoute: TeamManagementRoute,

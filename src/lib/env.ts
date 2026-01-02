@@ -91,3 +91,22 @@ export function isDevelopment(): boolean {
 export function isTest(): boolean {
   return process.env.NODE_ENV === 'test'
 }
+
+/**
+ * Lazy-loaded validated environment (for compatibility)
+ */
+let _env: Env | null = null
+
+export const ENV = new Proxy({} as Env, {
+  get(_target, prop) {
+    if (!_env) {
+      _env = envSchema.parse(process.env)
+    }
+    return _env[prop as keyof Env]
+  },
+})
+
+/**
+ * Promise that resolves when environment is ready
+ */
+export const envReady = Promise.resolve()
