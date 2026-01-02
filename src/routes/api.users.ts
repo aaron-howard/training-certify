@@ -156,13 +156,19 @@ export const Route = createFileRoute('/api/users')({
             return json({ error: 'Database not available' }, { status: 500 })
           }
 
-          if (!data.id || !data.role) {
-            return json({ error: 'Missing id or role' }, { status: 400 })
+          if (!data.id) {
+            return json({ error: 'Missing user id' }, { status: 400 })
           }
 
-          console.log(`🔧 [API] Updating user ${data.id} role to: ${data.role}`)
+          console.log(`🔧 [API] Updating user ${data.id}`)
+          const updates: any = {}
+          if (data.role) updates.role = data.role
+          if (data.name) updates.name = data.name
+          if (data.email) updates.email = data.email
+          updates.updatedAt = new Date()
+
           const result = await db.update(users)
-            .set({ role: data.role })
+            .set(updates)
             .where(eq(users.id, data.id))
             .returning()
 
@@ -174,6 +180,41 @@ export const Route = createFileRoute('/api/users')({
         } catch (error) {
           console.error('❌ [API] Failed to update user:', error)
           return json({ error: 'Failed to update user' }, { status: 500 })
+        }
+      },
+      DELETE: async ({ request }) => {
+        try {
+          const url = new URL(request.url)
+          const id = url.searchParams.get('id')
+          if (!id) {
+            return json({ error: 'Missing user id' }, { status: 400 })
+          }
+
+          const db = await getDb()
+          if (!db) {
+            return json({ error: 'Database not available' }, { status: 500 })
+          }
+
+          console.log(`🗑️ [API] Deleting user ${id}`)
+
+          await db.transaction(async (tx: any) => {
+            // Cleanup related data
+            await tx.delete(userCertifications).where(eq(userCertifications.userId, id))
+            await tx.delete(notifications).where(eq(notifications.userId, id))
+            await tx.delete(userTeams).where(eq(userTeams.userId, id))
+            await tx.delete(auditLogs).where(eq(auditLogs.userId, id))
+
+            // If user is a manager, set managerId to null in teams
+            await tx.update(teams).set({ managerId: null }).where(eq(teams.managerId, id))
+
+            // Finally delete the user
+            await tx.delete(users).where(eq(users.id, id))
+          })
+
+          return json({ success: true })
+        } catch (error) {
+          console.error('❌ [API] Failed to delete user:', error)
+          return json({ error: 'Failed to delete user' }, { status: 500 })
         }
       }
     }

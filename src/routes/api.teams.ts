@@ -23,10 +23,10 @@ export const Route = createFileRoute('/api/teams')({
                     })
                         .from(teams)
 
-
                     const result = []
                     let totalCoverageSum = 0
                     const allMemberIds = new Set<string>()
+                    let totalCriticalGaps = 0
 
                     for (const team of teamsResult) {
                         const members = await db.select({ userId: userTeams.userId })
@@ -36,8 +36,39 @@ export const Route = createFileRoute('/api/teams')({
                         const memberCount = members.length
                         members.forEach(m => allMemberIds.add(m.userId))
 
+                        // Fetch requirements for this team
+                        const requirements = await db.select({
+                            id: sql`team_requirements.id`,
+                            certificationId: sql`team_requirements.certification_id`,
+                            targetCount: sql`team_requirements.target_count`
+                        })
+                            .from(sql`team_requirements`)
+                            .where(sql`team_requirements.team_id = ${team.id}`)
+
                         let coverage = 0
-                        if (memberCount > 0) {
+                        if (requirements.length > 0) {
+                            let totalCompliance = 0
+                            for (const req: any of requirements) {
+                                const memberIds = members.map(m => m.userId)
+                                if (memberIds.length === 0) {
+                                    totalCriticalGaps++
+                                    continue
+                                }
+
+                                const actualMembersWithCert = await db.select({ userId: userCertifications.userId })
+                                    .from(userCertifications)
+                                    .where(sql`${userCertifications.userId} IN ${memberIds} AND ${userCertifications.certificationId} = ${req.certificationId}`)
+                                    .groupBy(userCertifications.userId)
+
+                                const count = actualMembersWithCert.length
+                                totalCompliance += Math.min(count / req.targetCount, 1)
+                                if (count < req.targetCount) {
+                                    totalCriticalGaps++
+                                }
+                            }
+                            coverage = Math.round((totalCompliance / requirements.length) * 100)
+                        } else if (memberCount > 0) {
+                            // Fallback to "any certification" coverage if no specific requirements defined
                             const memberIds = members.map(m => m.userId)
                             const membersWithCerts = await db.select({ userId: userCertifications.userId })
                                 .from(userCertifications)
@@ -51,7 +82,8 @@ export const Route = createFileRoute('/api/teams')({
                         result.push({
                             ...team,
                             memberCount,
-                            coverage
+                            coverage,
+                            requirementCount: requirements.length
                         })
                     }
 
@@ -68,7 +100,7 @@ export const Route = createFileRoute('/api/teams')({
 
                         totalCerts = scopedCerts.length
                         expiringSoonCerts = scopedCerts.filter(c =>
-                            c.status === 'expiring' || c.status === 'expiring-soon'
+                            c.status === 'expiring' || c.status === 'expiring-soon' || c.status === 'active' && c.expirationDate && new Date(c.expirationDate as string).getTime() < Date.now() + 30 * 24 * 60 * 60 * 1000
                         ).length
                     }
 
@@ -76,7 +108,7 @@ export const Route = createFileRoute('/api/teams')({
                         { label: 'Total Certifications', value: totalCerts, change: 0, trend: 'up' },
                         { label: 'Coverage Rate', value: `${overallCoverage}%`, change: 0, trend: 'up' },
                         { label: 'Expiring Soon', value: expiringSoonCerts, change: 0, trend: 'down' },
-                        { label: 'Critical Gaps', value: 0, change: 0, trend: 'up' }
+                        { label: 'Critical Gaps', value: totalCriticalGaps, change: 0, trend: 'up' }
                     ]
 
                     return json({

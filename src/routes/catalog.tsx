@@ -1,8 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Database, Edit, ExternalLink, Plus, Search, Trash2, X } from 'lucide-react'
+import { Database, Edit, ExternalLink, Plus, Search, Trash2, UserPlus, X } from 'lucide-react'
 import { useUser } from '@clerk/tanstack-react-start'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
+import { CertificationAssignmentModal } from '../components/catalog/CertificationAssignmentModal'
 
 // API fetch functions (using traditional fetch instead of broken createServerFn)
 const fetchCatalog = async () => {
@@ -37,6 +38,7 @@ function CatalogPage() {
     const [categoryFilter, setCategoryFilter] = useState('All')
     const [showAddModal, setShowAddModal] = useState(false)
     const [selectedCert, setSelectedCert] = useState<any>(null)
+    const [assigningCert, setAssigningCert] = useState<any>(null)
     const [newCert, setNewCert] = useState({ id: '', name: '', vendorName: '', difficulty: 'Intermediate', price: '', category: 'Cloud', description: '' })
 
     // Sync/Get User Role
@@ -65,18 +67,19 @@ function CatalogPage() {
 
     // Get permissions based on role
     const isAdmin = dbUser?.role === 'Admin'
+    const isManager = dbUser?.role === 'Manager' || isAdmin
 
     // List of unique vendors for filtering
-    const vendors = useMemo(() => {
+    const vendors = useMemo<string[]>(() => {
         if (!catalog?.certifications) return ['All']
-        const uniqueVendors = Array.from(new Set(catalog.certifications.map((c: any) => c.vendor)))
+        const uniqueVendors = Array.from(new Set(catalog.certifications.map((c: any) => c.vendor))) as string[]
         return ['All', ...uniqueVendors.filter(Boolean).sort()]
     }, [catalog?.certifications])
 
     // List of unique categories for filtering
-    const categories = useMemo(() => {
+    const categories = useMemo<string[]>(() => {
         if (!catalog?.certifications) return ['All']
-        const uniqueCategories = Array.from(new Set(catalog.certifications.map((c: any) => c.category)))
+        const uniqueCategories = Array.from(new Set(catalog.certifications.map((c: any) => c.category))) as string[]
         return ['All', ...uniqueCategories.filter(Boolean).sort()]
     }, [catalog?.certifications])
 
@@ -297,12 +300,22 @@ function CatalogPage() {
                         </div>
                         <h3 className="font-bold text-lg text-slate-900 dark:text-slate-50 mb-1 group-hover:text-blue-600 transition-colors line-clamp-2">{cert.name}</h3>
                         <p className="text-sm text-slate-500 mb-6">{cert.vendor}</p>
-                        <button
-                            onClick={() => setSelectedCert(cert)}
-                            className="w-full py-2 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:bg-blue-600 hover:text-white border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2"
-                        >
-                            View Requirements <ExternalLink className="w-4 h-4" />
-                        </button>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => setSelectedCert(cert)}
+                                className="flex-1 py-2 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2"
+                            >
+                                Details
+                            </button>
+                            {isManager && (
+                                <button
+                                    onClick={() => setAssigningCert(cert)}
+                                    className="flex-1 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2"
+                                >
+                                    <UserPlus className="w-4 h-4" /> Assign
+                                </button>
+                            )}
+                        </div>
                     </div>
                 ))}
             </div>
@@ -493,6 +506,13 @@ function CatalogPage() {
                         </div>
                     </div>
                 </div>
+            )}
+            {assigningCert && (
+                <CertificationAssignmentModal
+                    cert={assigningCert}
+                    managerId={dbUser?.id}
+                    onClose={() => setAssigningCert(null)}
+                />
             )}
         </div>
     )

@@ -2,7 +2,7 @@ import { Link, createFileRoute } from '@tanstack/react-router'
 import { UserProfile } from '@clerk/tanstack-react-start'
 import { ArrowLeft } from 'lucide-react'
 
-export const Route = createFileRoute('/user-profile')({
+export const Route = createFileRoute('/user-profile/$')({
   component: RouteComponent,
 })
 

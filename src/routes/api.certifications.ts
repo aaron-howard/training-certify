@@ -105,17 +105,20 @@ export const Route = createFileRoute('/api/certifications')({
                         status: data.status || 'active',
                         issueDate: data.issueDate || null,
                         expirationDate: data.expirationDate || null,
-                        certificationNumber: data.certificationNumber || null
+                        certificationNumber: data.certificationNumber || null,
+                        assignedById: data.assignedById || null
                     }).returning()
 
                     const result = insertResult[0]
 
                     await db.insert(auditLogs).values({
                         userId: data.userId,
-                        action: 'Add Certification',
+                        action: data.status === 'assigned' ? 'Assign Certification' : 'Add Certification',
                         resourceType: 'Certification',
                         resourceId: result.id,
-                        details: `Added ${result.certificationName} (${result.vendorName})`
+                        details: data.status === 'assigned'
+                            ? `Assigned ${result.certificationName} (${result.vendorName})`
+                            : `Added ${result.certificationName} (${result.vendorName})`
                     })
 
                     return json(result, { status: 201 })
@@ -140,23 +143,27 @@ export const Route = createFileRoute('/api/certifications')({
                             fileUrl: proof.fileUrl || `https://storage.example.com/${proof.fileName}`,
                         }).returning()
 
-                        // Update certification timestamp
+                        // Update certification timestamp and status if it was assigned
+                        const currentCert = await db.select().from(userCertifications).where(eq(userCertifications.id, id)).limit(1)
+                        const updates: any = { updatedAt: new Date() }
+                        if (currentCert.length > 0 && currentCert[0].status === 'assigned') {
+                            updates.status = 'active'
+                        }
+
                         await db.update(userCertifications)
-                            .set({ updatedAt: new Date() })
+                            .set(updates)
                             .where(eq(userCertifications.id, id))
 
                         return json({ success: true, proof: newProof[0] })
                     }
 
                     if (action === 'updateDetails' && id && data.updates) {
-                        // TODO: Add RBAC check here if strictly required, 
-                        // but for now relying on UI to only show edit button to appropriate users.
-
                         const updates: any = {}
                         if (data.updates.status) updates.status = data.updates.status
                         if (data.updates.issueDate) updates.issueDate = data.updates.issueDate
                         if (data.updates.expirationDate) updates.expirationDate = data.updates.expirationDate
                         if (data.updates.certificationNumber) updates.certificationNumber = data.updates.certificationNumber
+                        if (data.updates.assignedById) updates.assignedById = data.updates.assignedById
                         updates.updatedAt = new Date()
 
                         const result = await db.update(userCertifications)

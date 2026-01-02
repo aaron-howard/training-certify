@@ -2,8 +2,10 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useUser } from '@clerk/tanstack-react-start'
 import { useState } from 'react'
-import { Download, Plus, Trash2, UserMinus, UserPlus, X } from 'lucide-react'
+import { Download, Plus, Search, Settings, Shield, Trash2, UserMinus, UserPlus, Users, X } from 'lucide-react'
 import { usePermissions } from '../hooks/usePermissions'
+import { UserManagement } from '../components/admin/UserManagement'
+import { TeamRequirementsModal } from '../components/admin/TeamRequirementsModal'
 
 const fetchTeams = async () => {
     const res = await fetch('/api/teams')
@@ -20,8 +22,10 @@ function TeamManagementPage() {
     const queryClient = useQueryClient()
     const [showCreateModal, setShowCreateModal] = useState(false)
     const [showMemberModal, setShowMemberModal] = useState<string | null>(null)
+    const [showRequirementsModal, setShowRequirementsModal] = useState<string | null>(null)
     const [newTeamName, setNewTeamName] = useState('')
     const [newTeamDesc, setNewTeamDesc] = useState('')
+    const [activeTab, setActiveTab] = useState<'teams' | 'users'>('teams')
 
     // Get user role for permissions
     const { data: dbUser } = useQuery({
@@ -44,7 +48,7 @@ function TeamManagementPage() {
     })
 
     // Check permissions
-    usePermissions(dbUser?.role) // Hook call for future RBAC integration
+    usePermissions(dbUser?.role)
     const isAdmin = dbUser?.role === 'Admin'
     const isManager = dbUser?.role === 'Manager' || isAdmin
 
@@ -90,109 +94,154 @@ function TeamManagementPage() {
 
     return (
         <div className="space-y-8">
-            <div className="flex justify-between items-end">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50">Team & Workforce</h1>
                     <p className="text-slate-600 dark:text-slate-400">Monitor competency and manage certification compliance across teams.</p>
                 </div>
-                <div className="flex gap-2">
-                    {isAdmin && (
+                <div className="flex gap-2 w-full md:w-auto">
+                    {isAdmin && activeTab === 'teams' && (
                         <button
                             onClick={() => setShowCreateModal(true)}
-                            className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors flex items-center gap-2"
+                            className="flex-1 md:flex-none px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2"
                         >
                             <Plus className="w-4 h-4" /> New Team
                         </button>
                     )}
                     <button
                         onClick={handleExport}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
+                        className="flex-1 md:flex-none px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
                     >
                         <Download className="w-4 h-4" /> Export Report
                     </button>
                 </div>
             </div>
 
-            {/* Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {teamData.metrics?.map((metric: any) => (
-                    <div key={metric.label} className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                        <div className="flex justify-between items-start mb-2">
-                            <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{metric.label}</span>
-                            <span className={`text-xs px-2 py-0.5 rounded-full ${metric.trend === 'up' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30' : 'bg-red-50 text-red-700 dark:bg-red-950/30'}`}>
-                                {metric.trend === 'up' ? '+' : ''}{metric.change}%
-                            </span>
-                        </div>
-                        <div className="text-2xl font-bold text-slate-900 dark:text-slate-50">{metric.value}</div>
+            {/* Navigation Tabs */}
+            <div className="flex border-b border-slate-200 dark:border-slate-800">
+                <button
+                    onClick={() => setActiveTab('teams')}
+                    className={`px-6 py-3 text-sm font-semibold transition-colors relative ${activeTab === 'teams'
+                        ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
+                        : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+                        }`}
+                >
+                    <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4" /> Team Coverage
                     </div>
-                ))}
+                </button>
+                {isAdmin && (
+                    <button
+                        onClick={() => setActiveTab('users')}
+                        className={`px-6 py-3 text-sm font-semibold transition-colors relative ${activeTab === 'users'
+                            ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
+                            : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+                            }`}
+                    >
+                        <div className="flex items-center gap-2">
+                            <Shield className="w-4 h-4" /> User Management
+                        </div>
+                    </button>
+                )}
             </div>
 
-            {/* Teams Table */}
-            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
-                    <h3 className="font-semibold text-slate-900 dark:text-slate-100">Team Coverage</h3>
-                </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                        <thead className="bg-slate-50 dark:bg-slate-950 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                            <tr>
-                                <th className="px-6 py-3">Team</th>
-                                <th className="px-6 py-3">Members</th>
-                                <th className="px-6 py-3">Coverage</th>
-                                <th className="px-6 py-3 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                            {teamData.teams?.map((team: any) => (
-                                <tr key={team.id} className="hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
-                                    <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-50">{team.name}</td>
-                                    <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{team.memberCount}</td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="flex-1 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                                                <div className="h-full bg-blue-600 rounded-full" style={{ width: `${team.coverage}%` }} />
-                                            </div>
-                                            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{team.coverage}%</span>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <div className="flex gap-2 justify-end">
-                                            {isManager && (
-                                                <button
-                                                    onClick={() => setShowMemberModal(team.id)}
-                                                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 text-sm font-medium flex items-center gap-1"
-                                                >
-                                                    <UserPlus className="w-4 h-4" /> Manage
-                                                </button>
-                                            )}
-                                            {isAdmin && (
-                                                <button
-                                                    onClick={() => {
-                                                        if (confirm(`Delete team "${team.name}"?`)) {
-                                                            deleteTeamMutation.mutate(team.id)
-                                                        }
-                                                    }}
-                                                    className="text-red-600 dark:text-red-400 hover:text-red-700 text-sm font-medium flex items-center gap-1"
-                                                >
-                                                    <Trash2 className="w-4 h-4" /> Delete
-                                                </button>
-                                            )}
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                            {(!teamData.teams || teamData.teams.length === 0) && (
-                                <tr>
-                                    <td colSpan={4} className="px-6 py-8 text-center text-slate-500">
-                                        No teams found. {isAdmin && "Click 'New Team' to create one."}
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            {activeTab === 'teams' ? (
+                <>
+                    {/* Metrics */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {teamData.metrics?.map((metric: any) => (
+                            <div key={metric.label} className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                                <div className="flex justify-between items-start mb-2">
+                                    <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{metric.label}</span>
+                                    <span className={`text-xs px-2 py-0.5 rounded-full ${metric.trend === 'up' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30' : 'bg-red-50 text-red-700 dark:bg-red-950/30'}`}>
+                                        {metric.trend === 'up' ? '+' : ''}{metric.change}%
+                                    </span>
+                                </div>
+                                <div className="text-2xl font-bold text-slate-900 dark:text-slate-50">{metric.value}</div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Teams Table */}
+                    <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                            <h3 className="font-semibold text-slate-900 dark:text-slate-100">Team Coverage</h3>
+                        </div>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left">
+                                <thead className="bg-slate-50 dark:bg-slate-950 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                    <tr>
+                                        <th className="px-6 py-3">Team</th>
+                                        <th className="px-6 py-3">Members</th>
+                                        <th className="px-6 py-3">Coverage</th>
+                                        <th className="px-6 py-3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+                                    {teamData.teams?.map((team: any) => (
+                                        <tr key={team.id} className="hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
+                                            <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-50">{team.name}</td>
+                                            <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{team.memberCount}</td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex-1 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                        <div className="h-full bg-blue-600 rounded-full" style={{ width: `${team.coverage}%` }} />
+                                                    </div>
+                                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{team.coverage}%</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <div className="flex gap-3 justify-end items-center">
+                                                    {isManager && (
+                                                        <>
+                                                            <button
+                                                                onClick={() => setShowRequirementsModal(team.id)}
+                                                                className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 text-sm font-medium flex items-center gap-1 transition-colors"
+                                                                title="Manage Coverage Requirements"
+                                                            >
+                                                                <Settings className="w-4 h-4" /> Requirements
+                                                            </button>
+                                                            <button
+                                                                onClick={() => setShowMemberModal(team.id)}
+                                                                className="text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 text-sm font-medium flex items-center gap-1 transition-colors"
+                                                                title="Manage Team Members"
+                                                            >
+                                                                <UserPlus className="w-4 h-4" /> Manage
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                    {isAdmin && (
+                                                        <button
+                                                            onClick={() => {
+                                                                if (confirm(`Delete team "${team.name}"?`)) {
+                                                                    deleteTeamMutation.mutate(team.id)
+                                                                }
+                                                            }}
+                                                            className="text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors p-1"
+                                                            title="Delete Team"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {(!teamData.teams || teamData.teams.length === 0) && (
+                                        <tr>
+                                            <td colSpan={4} className="px-6 py-8 text-center text-slate-500">
+                                                No teams found. {isAdmin && "Click 'New Team' to create one."}
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </>
+            ) : (
+                <UserManagement />
+            )}
 
             {/* Create Team Modal */}
             {showCreateModal && (
@@ -259,11 +308,19 @@ function TeamManagementPage() {
                     onClose={() => setShowMemberModal(null)}
                 />
             )}
+
+            {/* Team Requirements Modal */}
+            {showRequirementsModal && (
+                <TeamRequirementsModal
+                    teamId={showRequirementsModal}
+                    teamName={teamData.teams?.find((t: any) => t.id === showRequirementsModal)?.name || 'Team'}
+                    onClose={() => setShowRequirementsModal(null)}
+                />
+            )}
         </div>
     )
 }
 
-// Member Management Modal Component
 function MemberManagementModal({ teamId, teamName, isAdmin, onClose }: { teamId: string; teamName: string; isAdmin: boolean; onClose: () => void }) {
     const queryClient = useQueryClient()
     const [selectedUserId, setSelectedUserId] = useState('')
@@ -295,10 +352,7 @@ function MemberManagementModal({ teamId, teamName, isAdmin, onClose }: { teamId:
     // Create a new user and add to team
     const createUserMutation = useMutation({
         mutationFn: async (userData: { name: string; email: string; role: string }) => {
-            // Generate a unique ID for the new user
             const newUserId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-
-            // Create the user
             const createRes = await fetch('/api/users', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -312,7 +366,6 @@ function MemberManagementModal({ teamId, teamName, isAdmin, onClose }: { teamId:
             if (!createRes.ok) throw new Error('Failed to create user')
             const newUser = await createRes.json()
 
-            // Add to team
             const addRes = await fetch('/api/teams', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
@@ -379,10 +432,10 @@ function MemberManagementModal({ teamId, teamName, isAdmin, onClose }: { teamId:
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['teamMembers', teamId] })
             queryClient.invalidateQueries({ queryKey: ['allUsers'] })
+            queryClient.invalidateQueries({ queryKey: ['adminUsers'] })
         }
     })
 
-    // Filter out users who are already members
     const memberIds = new Set(teamMembers.map((m: any) => m.id))
     const availableUsers = allUsers.filter((u: any) => !memberIds.has(u.id))
 
@@ -407,7 +460,6 @@ function MemberManagementModal({ teamId, teamName, isAdmin, onClose }: { teamId:
                     </button>
                 </div>
 
-                {/* Add Member Section */}
                 <div className="mb-6">
                     <div className="flex items-center justify-between mb-2">
                         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Add Member</label>
@@ -486,15 +538,8 @@ function MemberManagementModal({ teamId, teamName, isAdmin, onClose }: { teamId:
                             </button>
                         </div>
                     )}
-
-                    {availableUsers.length === 0 && !showInviteForm && (
-                        <p className="mt-2 text-xs text-slate-500">
-                            No users in the system yet. Click "Invite New User" to add someone.
-                        </p>
-                    )}
                 </div>
 
-                {/* Current Members List */}
                 <div>
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Current Members</label>
                     {isLoading ? (
@@ -506,13 +551,9 @@ function MemberManagementModal({ teamId, teamName, isAdmin, onClose }: { teamId:
                             {teamMembers.map((member: any) => (
                                 <div key={member.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-950 rounded-lg">
                                     <div className="flex items-center gap-3">
-                                        {member.avatarUrl ? (
-                                            <img src={member.avatarUrl} alt={member.name} className="w-8 h-8 rounded-full" />
-                                        ) : (
-                                            <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-400 font-medium text-sm">
-                                                {member.name?.charAt(0) || '?'}
-                                            </div>
-                                        )}
+                                        <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-400 font-medium text-sm">
+                                            {member.name?.charAt(0) || '?'}
+                                        </div>
                                         <div>
                                             <div className="font-medium text-slate-900 dark:text-slate-100">{member.name}</div>
                                             <div className="text-xs text-slate-500 mb-1">{member.email}</div>

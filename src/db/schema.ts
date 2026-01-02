@@ -2,7 +2,7 @@ import { boolean, integer, pgEnum, pgTable, text, timestamp, uuid } from 'drizzl
 
 // Enums for various statuses and types
 export const roleEnum = pgEnum('role', ['Admin', 'User', 'Manager', 'Executive', 'Auditor']);
-export const certificationStatusEnum = pgEnum('certification_status', ['active', 'expiring', 'expiring-soon', 'expired']);
+export const certificationStatusEnum = pgEnum('certification_status', ['active', 'expiring', 'expiring-soon', 'expired', 'assigned']);
 export const certificationCategoryEnum = pgEnum('certification_category', ['Cloud', 'Security', 'Networking', 'Data', 'Project Management']);
 export const certificationDifficultyEnum = pgEnum('certification_difficulty', ['Beginner', 'Intermediate', 'Advanced', 'Expert']);
 export const notificationSeverityEnum = pgEnum('notification_severity', ['critical', 'warning', 'info']);
@@ -66,8 +66,18 @@ export const userCertifications = pgTable('user_certifications', {
     daysUntilExpiration: integer('days_until_expiration'),
     documentUrl: text('document_url'),
     verifiedAt: timestamp('verified_at'),
+    assignedById: text('assigned_by_id').references(() => users.id),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Team Requirements
+export const teamRequirements = pgTable('team_requirements', {
+    id: uuid('id').defaultRandom().primaryKey(),
+    teamId: uuid('team_id').notNull().references(() => teams.id),
+    certificationId: text('certification_id').notNull().references(() => certifications.id),
+    targetCount: integer('target_count').notNull().default(1),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 // Notifications

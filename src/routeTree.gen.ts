@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as UserProfileRouteImport } from './routes/user-profile'
 import { Route as TeamManagementRouteImport } from './routes/team-management'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignInRouteImport } from './routes/sign-in'
@@ -19,6 +18,7 @@ import { Route as ComplianceAuditRouteImport } from './routes/compliance-audit'
 import { Route as CertificationManagementRouteImport } from './routes/certification-management'
 import { Route as CatalogRouteImport } from './routes/catalog'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UserProfileSplatRouteImport } from './routes/user-profile.$'
 import { Route as ApiUsersRouteImport } from './routes/api.users'
 import { Route as ApiTeamsRouteImport } from './routes/api.teams'
 import { Route as ApiTeamMembersRouteImport } from './routes/api.team-members'
@@ -38,11 +38,6 @@ import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr
 import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
 import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
 
-const UserProfileRoute = UserProfileRouteImport.update({
-  id: '/user-profile',
-  path: '/user-profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const TeamManagementRoute = TeamManagementRouteImport.update({
   id: '/team-management',
   path: '/team-management',
@@ -86,6 +81,11 @@ const CatalogRoute = CatalogRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UserProfileSplatRoute = UserProfileSplatRouteImport.update({
+  id: '/user-profile/$',
+  path: '/user-profile/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiUsersRoute = ApiUsersRouteImport.update({
@@ -189,7 +189,6 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/team-management': typeof TeamManagementRoute
-  '/user-profile': typeof UserProfileRoute
   '/api/catalog': typeof ApiCatalogRoute
   '/api/certifications': typeof ApiCertificationsRoute
   '/api/compliance': typeof ApiComplianceRoute
@@ -201,6 +200,7 @@ export interface FileRoutesByFullPath {
   '/api/team-members': typeof ApiTeamMembersRoute
   '/api/teams': typeof ApiTeamsRoute
   '/api/users': typeof ApiUsersRoute
+  '/user-profile/$': typeof UserProfileSplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
@@ -219,7 +219,6 @@ export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/team-management': typeof TeamManagementRoute
-  '/user-profile': typeof UserProfileRoute
   '/api/catalog': typeof ApiCatalogRoute
   '/api/certifications': typeof ApiCertificationsRoute
   '/api/compliance': typeof ApiComplianceRoute
@@ -231,6 +230,7 @@ export interface FileRoutesByTo {
   '/api/team-members': typeof ApiTeamMembersRoute
   '/api/teams': typeof ApiTeamsRoute
   '/api/users': typeof ApiUsersRoute
+  '/user-profile/$': typeof UserProfileSplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
@@ -250,7 +250,6 @@ export interface FileRoutesById {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/team-management': typeof TeamManagementRoute
-  '/user-profile': typeof UserProfileRoute
   '/api/catalog': typeof ApiCatalogRoute
   '/api/certifications': typeof ApiCertificationsRoute
   '/api/compliance': typeof ApiComplianceRoute
@@ -262,6 +261,7 @@ export interface FileRoutesById {
   '/api/team-members': typeof ApiTeamMembersRoute
   '/api/teams': typeof ApiTeamsRoute
   '/api/users': typeof ApiUsersRoute
+  '/user-profile/$': typeof UserProfileSplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
@@ -282,7 +282,6 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/team-management'
-    | '/user-profile'
     | '/api/catalog'
     | '/api/certifications'
     | '/api/compliance'
@@ -294,6 +293,7 @@ export interface FileRouteTypes {
     | '/api/team-members'
     | '/api/teams'
     | '/api/users'
+    | '/user-profile/$'
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
@@ -312,7 +312,6 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/team-management'
-    | '/user-profile'
     | '/api/catalog'
     | '/api/certifications'
     | '/api/compliance'
@@ -324,6 +323,7 @@ export interface FileRouteTypes {
     | '/api/team-members'
     | '/api/teams'
     | '/api/users'
+    | '/user-profile/$'
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
@@ -342,7 +342,6 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/team-management'
-    | '/user-profile'
     | '/api/catalog'
     | '/api/certifications'
     | '/api/compliance'
@@ -354,6 +353,7 @@ export interface FileRouteTypes {
     | '/api/team-members'
     | '/api/teams'
     | '/api/users'
+    | '/user-profile/$'
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
@@ -373,7 +373,6 @@ export interface RootRouteChildren {
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
   TeamManagementRoute: typeof TeamManagementRoute
-  UserProfileRoute: typeof UserProfileRoute
   ApiCatalogRoute: typeof ApiCatalogRoute
   ApiCertificationsRoute: typeof ApiCertificationsRoute
   ApiComplianceRoute: typeof ApiComplianceRoute
@@ -385,6 +384,7 @@ export interface RootRouteChildren {
   ApiTeamMembersRoute: typeof ApiTeamMembersRoute
   ApiTeamsRoute: typeof ApiTeamsRoute
   ApiUsersRoute: typeof ApiUsersRoute
+  UserProfileSplatRoute: typeof UserProfileSplatRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
   DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute
@@ -396,13 +396,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/user-profile': {
-      id: '/user-profile'
-      path: '/user-profile'
-      fullPath: '/user-profile'
-      preLoaderRoute: typeof UserProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/team-management': {
       id: '/team-management'
       path: '/team-management'
@@ -464,6 +457,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/user-profile/$': {
+      id: '/user-profile/$'
+      path: '/user-profile/$'
+      fullPath: '/user-profile/$'
+      preLoaderRoute: typeof UserProfileSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/users': {
@@ -605,7 +605,6 @@ const rootRouteChildren: RootRouteChildren = {
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
   TeamManagementRoute: TeamManagementRoute,
-  UserProfileRoute: UserProfileRoute,
   ApiCatalogRoute: ApiCatalogRoute,
   ApiCertificationsRoute: ApiCertificationsRoute,
   ApiComplianceRoute: ApiComplianceRoute,
@@ -617,6 +616,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiTeamMembersRoute: ApiTeamMembersRoute,
   ApiTeamsRoute: ApiTeamsRoute,
   ApiUsersRoute: ApiUsersRoute,
+  UserProfileSplatRoute: UserProfileSplatRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,
   DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,
