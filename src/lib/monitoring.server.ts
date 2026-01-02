@@ -3,12 +3,21 @@
  * Provides error tracking, metrics collection, and logging
  */
 
+import {
+    captureError as sentryCaptureError,
+    captureMessage as sentryCaptureMessage,
+} from './sentry.server'
+import { initRedis } from './cache.redis'
+
 /**
  * Initialize monitoring services
  * Call this at application startup
  */
 export function initMonitoring() {
-    console.log('🔍 Initializing monitoring...')
+    console.log('🔧 Initializing monitoring services...')
+
+    // Initialize Redis for distributed caching
+    initRedis()
 
     // Check for Sentry DSN
     if (process.env.SENTRY_DSN) {
@@ -27,9 +36,7 @@ export function initMonitoring() {
 }
 
 /**
- * Capture and report errors
- * @param error Error object
- * @param context Additional context
+ * Capture an error with context
  */
 export function captureError(error: Error, context?: Record<string, any>) {
     // Log to console
@@ -40,17 +47,12 @@ export function captureError(error: Error, context?: Record<string, any>) {
         timestamp: new Date().toISOString(),
     })
 
-    // Send to Sentry if configured
-    if (process.env.SENTRY_DSN) {
-        // Sentry.captureException(error, { extra: context })
-    }
+    // Send to Sentry
+    sentryCaptureError(error, context)
 }
 
 /**
- * Capture and report messages
- * @param message Message to log
- * @param level Log level
- * @param context Additional context
+ * Capture a message
  */
 export function captureMessage(
     message: string,
@@ -60,9 +62,8 @@ export function captureMessage(
     const emoji = level === 'error' ? '❌' : level === 'warning' ? '⚠️' : 'ℹ️'
     console.log(`${emoji} ${message}`, context || '')
 
-    if (process.env.SENTRY_DSN && level === 'error') {
-        // Sentry.captureMessage(message, { level, extra: context })
-    }
+    // Send to Sentry
+    sentryCaptureMessage(message, level)
 }
 
 /**

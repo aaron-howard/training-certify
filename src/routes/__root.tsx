@@ -16,6 +16,7 @@ import {
 import { useEffect } from 'react'
 import { AppShell } from '../components/shell/AppShell'
 import { ENV } from '../lib/env'
+import { initSentry } from '../lib/sentry.server'
 import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
@@ -111,6 +112,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   const { isLoaded, isSignedIn } = useAuth()
   const { user } = useUser()
+
+  // Initialize Sentry on client-side
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      initSentry()
+    }
+  }, [])
+
   const router = useRouter()
   const path = router.state.location.pathname
 

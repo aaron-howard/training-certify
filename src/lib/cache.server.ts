@@ -1,7 +1,15 @@
 /**
  * Simple in-memory cache with TTL support.
  * Useful for caching expensive computations and frequently accessed data.
+ * Now with Redis fallback for distributed caching.
  */
+
+import {
+    redisGet,
+    redisSet,
+    redisDel,
+    redisDelPattern,
+} from './cache.redis'
 
 interface CacheEntry<T> {
     data: T
@@ -131,22 +139,63 @@ export const CacheTTL = {
 }
 
 /**
- * Helper to get or compute a cached value
+ * Get a value from cache or compute it if not found
+ * Uses Redis as primary cache, in-memory as fallback
  * @param key Cache key
- * @param ttlMs Time to live in milliseconds
+ * @param ttl Time to live in milliseconds
  * @param compute Function to compute the value if not cached
  */
 export async function getOrCompute<T>(
     key: string,
-    ttlMs: number,
+    ttl: number,
     compute: () => Promise<T>,
 ): Promise<T> {
+    // Try Redis first (distributed cache)
+    const redisValue = await redisGet<T>(key)
+    if (redisValue !== null) {
+        // Also store in local cache for faster subsequent access
+        cache.set(key, redisValue, ttl)
+        return redisValue
+    }
+
+    // Fallback to in-memory cache
     const cached = cache.get<T>(key)
     if (cached !== null) {
+        // Backfill Redis cache
+        await redisSet(key, cached, Math.floor(ttl / 1000))
         return cached
     }
 
+    // Compute value
     const value = await compute()
-    cache.set(key, value, ttlMs)
+
+    // Store in both caches
+    await redisSet(key, value, Math.floor(ttl / 1000))
+    cache.set(key, value, ttl)
+
     return value
+}
+
+/**
+ * Invalidate cache keys matching pattern
+ * Clears both Redis and in-memory caches
+ */
+export async function invalidateCache(pattern: string): Promise<void> {
+    // Invalidate Redis
+    const redisDeleted = await redisDelPattern(pattern)
+    if (redisDeleted > 0) {
+        console.log(`🗑️  Invalidated ${redisDeleted} Redis keys matching: ${pattern}`)
+    }
+
+    // Invalidate in-memory
+    cache.invalidate(pattern)
+}
+
+/**
+ * Delete specific cache key
+ * Removes from both Redis and in-memory caches
+ */
+export async function deleteCache(key: string): Promise<void> {
+    await redisDel(key)
+    cache.delete(key)
 }
