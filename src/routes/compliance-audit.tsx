@@ -24,9 +24,17 @@ function ComplianceAuditPage() {
 
     return (
         <div className="space-y-8">
-            <div>
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50">Compliance & Audit</h1>
-                <p className="text-slate-600 dark:text-slate-400">Track audit trails and ensure regulatory compliance.</p>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50">Compliance & Audit</h1>
+                    <p className="text-slate-600 dark:text-slate-400">Track audit trails and ensure regulatory compliance.</p>
+                </div>
+                <button
+                    onClick={() => window.open('/api/export?type=compliance', '_blank')}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm"
+                >
+                    <Shield className="w-4 h-4" /> Export Audit Data
+                </button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

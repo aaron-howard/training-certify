@@ -1,5 +1,6 @@
 import { Award, Shield, TrendingUp, Users } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
 
 const fetchExecutiveStats = async () => {
     const res = await fetch('/api/dashboard?role=Executive')
@@ -105,7 +106,7 @@ export function ExecutiveDashboard() {
                         <p>Total certifications expiring in next 90 days: <span className="font-bold text-rose-600">{stats?.expiringSoon || 0}</span></p>
                         <p>Estimated Budget Impact: <span className="font-bold text-slate-900 dark:text-slate-50">{stats?.budgetImpact || '$0'}</span></p>
                         <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
-                            <button className="text-blue-600 font-semibold hover:underline">View Detailed Audit Report →</button>
+                            <Link to="/compliance-audit" className="text-blue-600 font-semibold hover:underline">View Detailed Audit Report →</Link>
                         </div>
                     </div>
                 </div>

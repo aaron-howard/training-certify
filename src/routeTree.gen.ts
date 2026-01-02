@@ -23,7 +23,6 @@ import { Route as ApiUsersRouteImport } from './routes/api.users'
 import { Route as ApiTeamsRouteImport } from './routes/api.teams'
 import { Route as ApiTeamRequirementsRouteImport } from './routes/api.team-requirements'
 import { Route as ApiTeamMembersRouteImport } from './routes/api.team-members'
-import { Route as ApiSeedRouteImport } from './routes/api.seed'
 import { Route as ApiNotificationsRouteImport } from './routes/api.notifications'
 import { Route as ApiNotificationSettingsRouteImport } from './routes/api.notification-settings'
 import { Route as ApiExportRouteImport } from './routes/api.export'
@@ -107,11 +106,6 @@ const ApiTeamRequirementsRoute = ApiTeamRequirementsRouteImport.update({
 const ApiTeamMembersRoute = ApiTeamMembersRouteImport.update({
   id: '/api/team-members',
   path: '/api/team-members',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiSeedRoute = ApiSeedRouteImport.update({
-  id: '/api/seed',
-  path: '/api/seed',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiNotificationsRoute = ApiNotificationsRouteImport.update({
@@ -202,7 +196,6 @@ export interface FileRoutesByFullPath {
   '/api/export': typeof ApiExportRoute
   '/api/notification-settings': typeof ApiNotificationSettingsRoute
   '/api/notifications': typeof ApiNotificationsRoute
-  '/api/seed': typeof ApiSeedRoute
   '/api/team-members': typeof ApiTeamMembersRoute
   '/api/team-requirements': typeof ApiTeamRequirementsRoute
   '/api/teams': typeof ApiTeamsRoute
@@ -233,7 +226,6 @@ export interface FileRoutesByTo {
   '/api/export': typeof ApiExportRoute
   '/api/notification-settings': typeof ApiNotificationSettingsRoute
   '/api/notifications': typeof ApiNotificationsRoute
-  '/api/seed': typeof ApiSeedRoute
   '/api/team-members': typeof ApiTeamMembersRoute
   '/api/team-requirements': typeof ApiTeamRequirementsRoute
   '/api/teams': typeof ApiTeamsRoute
@@ -265,7 +257,6 @@ export interface FileRoutesById {
   '/api/export': typeof ApiExportRoute
   '/api/notification-settings': typeof ApiNotificationSettingsRoute
   '/api/notifications': typeof ApiNotificationsRoute
-  '/api/seed': typeof ApiSeedRoute
   '/api/team-members': typeof ApiTeamMembersRoute
   '/api/team-requirements': typeof ApiTeamRequirementsRoute
   '/api/teams': typeof ApiTeamsRoute
@@ -298,7 +289,6 @@ export interface FileRouteTypes {
     | '/api/export'
     | '/api/notification-settings'
     | '/api/notifications'
-    | '/api/seed'
     | '/api/team-members'
     | '/api/team-requirements'
     | '/api/teams'
@@ -329,7 +319,6 @@ export interface FileRouteTypes {
     | '/api/export'
     | '/api/notification-settings'
     | '/api/notifications'
-    | '/api/seed'
     | '/api/team-members'
     | '/api/team-requirements'
     | '/api/teams'
@@ -360,7 +349,6 @@ export interface FileRouteTypes {
     | '/api/export'
     | '/api/notification-settings'
     | '/api/notifications'
-    | '/api/seed'
     | '/api/team-members'
     | '/api/team-requirements'
     | '/api/teams'
@@ -392,7 +380,6 @@ export interface RootRouteChildren {
   ApiExportRoute: typeof ApiExportRoute
   ApiNotificationSettingsRoute: typeof ApiNotificationSettingsRoute
   ApiNotificationsRoute: typeof ApiNotificationsRoute
-  ApiSeedRoute: typeof ApiSeedRoute
   ApiTeamMembersRoute: typeof ApiTeamMembersRoute
   ApiTeamRequirementsRoute: typeof ApiTeamRequirementsRoute
   ApiTeamsRoute: typeof ApiTeamsRoute
@@ -505,13 +492,6 @@ declare module '@tanstack/react-router' {
       path: '/api/team-members'
       fullPath: '/api/team-members'
       preLoaderRoute: typeof ApiTeamMembersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/seed': {
-      id: '/api/seed'
-      path: '/api/seed'
-      fullPath: '/api/seed'
-      preLoaderRoute: typeof ApiSeedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/notifications': {
@@ -632,7 +612,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiExportRoute: ApiExportRoute,
   ApiNotificationSettingsRoute: ApiNotificationSettingsRoute,
   ApiNotificationsRoute: ApiNotificationsRoute,
-  ApiSeedRoute: ApiSeedRoute,
   ApiTeamMembersRoute: ApiTeamMembersRoute,
   ApiTeamRequirementsRoute: ApiTeamRequirementsRoute,
   ApiTeamsRoute: ApiTeamsRoute,

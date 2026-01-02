@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { eq, sql } from 'drizzle-orm'
 import { getDb } from '../db/db.server'
-import { certifications, teams, userCertifications, userTeams, users } from '../db/schema'
+import { teamRequirements, teams, userCertifications, userTeams, users } from '../db/schema'
 
 export const Route = createFileRoute('/api/export')({
     server: {
@@ -20,20 +20,42 @@ export const Route = createFileRoute('/api/export')({
                     let data: any = {}
 
                     if (type === 'teams') {
-                        const teamsData = await db.select({
-                            id: teams.id,
-                            name: teams.name,
-                            description: teams.description,
-                            memberCount: sql<number>`count(${userTeams.userId})`.mapWith(Number)
-                        })
-                            .from(teams)
-                            .leftJoin(userTeams, eq(teams.id, userTeams.teamId))
-                            .groupBy(teams.id, teams.name, teams.description)
+                        const allTeams = await db.select().from(teams)
+                        const teamsWithDetails = []
+
+                        for (const team of allTeams) {
+                            // Fetch Members
+                            const members = await db.select({
+                                id: users.id,
+                                name: users.name,
+                                email: users.email,
+                                role: users.role
+                            })
+                                .from(userTeams)
+                                .innerJoin(users, eq(userTeams.userId, users.id))
+                                .where(eq(userTeams.teamId, team.id))
+
+                            // Fetch Requirements
+                            const requirements = await db.select({
+                                id: teamRequirements.id,
+                                certificationId: teamRequirements.certificationId,
+                                targetCount: teamRequirements.targetCount
+                            })
+                                .from(teamRequirements)
+                                .where(eq(teamRequirements.teamId, team.id))
+
+                            teamsWithDetails.push({
+                                ...team,
+                                memberCount: members.length,
+                                members,
+                                requirements
+                            })
+                        }
 
                         data = {
-                            reportType: 'Team Coverage Report',
+                            reportType: 'Detailed Team Compliance Report',
                             generatedAt: new Date().toISOString(),
-                            teams: teamsData
+                            teams: teamsWithDetails
                         }
                     } else if (type === 'certifications') {
                         const certsData = await db.select({
