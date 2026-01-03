@@ -10,7 +10,8 @@ import { factories } from '../../test/factories'
  * Mock Clerk auth for a specific user and role
  */
 export function mockAuthForRole(role: string, userId?: string) {
-    const user = factories[role.toLowerCase() as keyof typeof factories]?.({ id: userId }) || factories.user({ role, id: userId })
+    const factory = (factories as any)[role.toLowerCase()]
+    const user = factory ? factory({ id: userId }) : factories.user({ role, id: userId })
 
     const { auth } = require('@clerk/tanstack-react-start/server')
     vi.mocked(auth).mockResolvedValue({ userId: user.id })

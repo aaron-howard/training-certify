@@ -133,8 +133,8 @@ export const ENV = new Proxy({} as Env & { CLERK_PUBLISHABLE_KEY: string }, {
     // Client-side safety: Only allow VITE_ variables and provide basic fallback
     if (typeof window !== 'undefined') {
       if (prop === 'CLERK_PUBLISHABLE_KEY' || prop === 'VITE_CLERK_PUBLISHABLE_KEY') {
-        // @ts-ignore
-        return window?.__ENV__?.CLERK_PUBLISHABLE_KEY || import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+        // @ts-ignore - Basic fallback for local development if window.__ENV__ is missing
+        return window.__ENV__?.CLERK_PUBLISHABLE_KEY || import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
       }
       return (import.meta.env as any)[prop]
     }

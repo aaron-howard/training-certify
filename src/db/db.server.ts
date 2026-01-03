@@ -97,7 +97,7 @@ export { instanceId }
  * Close database connections
  * Used during graceful shutdown
  */
-export async function closeDb(): Promise<void> {
+export function closeDb(): void {
   if (globalForDb.db) {
     try {
       // The pool is embedded in the drizzle instance

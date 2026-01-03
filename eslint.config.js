@@ -11,6 +11,7 @@ export default [
       'vite.config.ts',
       'app.config.ts',
       'drizzle.config.ts',
+      '.output',
     ],
   },
 ]

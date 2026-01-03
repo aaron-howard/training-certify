@@ -9,7 +9,7 @@ import { metrics } from '../lib/monitoring.server'
 export const Route = createFileRoute('/metrics')({
     server: {
         handlers: {
-            GET: async () => {
+            GET: () => {
                 try {
                     const prometheusMetrics = metrics.getPrometheusMetrics()
 
