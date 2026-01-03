@@ -17,10 +17,17 @@ const envSchema = z.object({
     .string()
     .min(1, 'CLERK_SECRET_KEY is required')
     .startsWith('sk_', 'CLERK_SECRET_KEY must start with sk_'),
-  VITE_CLERK_PUBLISHABLE_KEY: z
-    .string()
-    .min(1, 'VITE_CLERK_PUBLISHABLE_KEY is required')
-    .startsWith('pk_', 'VITE_CLERK_PUBLISHABLE_KEY must start with pk_'),
+  VITE_CLERK_PUBLISHABLE_KEY: z.preprocess(
+    (val) =>
+      val ||
+      process.env.CLERK_PUBLISHABLE_KEY ||
+      process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+      process.env.VITE_PUBLIC_CLERK_PUBLISHABLE_KEY,
+    z
+      .string()
+      .min(1, 'Clerk Publishable Key is required')
+      .startsWith('pk_', 'Clerk Publishable Key must start with pk_'),
+  ),
 
   // Application
   NODE_ENV: z
