@@ -7,7 +7,10 @@ import { z } from 'zod'
 
 const envSchema = z.object({
   // Database
-  DATABASE_URL: z.string().url('DATABASE_URL must be a valid PostgreSQL URL'),
+  DATABASE_URL: z.preprocess(
+    (val) => val || process.env.POSTGRES_URL || process.env.POSTGRES_URL_NON_POOLING,
+    z.string().url('DATABASE_URL or POSTGRES_URL must be a valid PostgreSQL URL')
+  ),
 
   // Clerk Authentication
   CLERK_SECRET_KEY: z
@@ -61,9 +64,14 @@ export function validateEnv(): Env {
       error.errors.forEach((err) => {
         console.error(`  - ${err.path.join('.')}: ${err.message}`)
       })
+      console.error('Available env keys:', Object.keys(process.env).filter(k => !k.includes('KEY') && !k.includes('SECRET') && !k.includes('PASSWORD')))
     }
     console.error('\n💡 Please check your .env file and ensure all required variables are set.')
-    process.exit(1)
+    // In serverless environments, we might not want to exit(1) but return a failed state
+    if (typeof process !== 'undefined' && process.exit && process.env.NODE_ENV !== 'production') {
+      process.exit(1)
+    }
+    throw error
   }
 }
 
@@ -103,6 +111,15 @@ let _env: Env | null = null
 
 export const ENV = new Proxy({} as Env & { CLERK_PUBLISHABLE_KEY: string }, {
   get(_target, prop) {
+    // Client-side safety: Only allow VITE_ variables and provide basic fallback
+    if (typeof window !== 'undefined') {
+      if (prop === 'CLERK_PUBLISHABLE_KEY' || prop === 'VITE_CLERK_PUBLISHABLE_KEY') {
+        // @ts-ignore
+        return window?.__ENV__?.CLERK_PUBLISHABLE_KEY || import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+      }
+      return (import.meta.env as any)[prop]
+    }
+
     if (!_env) {
       _env = envSchema.parse(process.env)
     }
