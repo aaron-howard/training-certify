@@ -97,10 +97,14 @@ export function isTest(): boolean {
  */
 let _env: Env | null = null
 
-export const ENV = new Proxy({} as Env, {
+export const ENV = new Proxy({} as Env & { CLERK_PUBLISHABLE_KEY: string }, {
   get(_target, prop) {
     if (!_env) {
       _env = envSchema.parse(process.env)
+    }
+    // Provide CLERK_PUBLISHABLE_KEY as an alias for VITE_CLERK_PUBLISHABLE_KEY
+    if (prop === 'CLERK_PUBLISHABLE_KEY') {
+      return _env.VITE_CLERK_PUBLISHABLE_KEY
     }
     return _env[prop as keyof Env]
   },
