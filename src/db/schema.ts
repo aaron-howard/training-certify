@@ -194,7 +194,9 @@ export const userCertificationProofs = pgTable(
     uploadedAt: timestamp('uploaded_at').defaultNow().notNull(),
   },
   (t) => ({
-    userCertIdIdx: index('user_cert_proofs_user_cert_id_idx').on(t.userCertificationId),
+    userCertIdIdx: index('user_cert_proofs_user_cert_id_idx').on(
+      t.userCertificationId,
+    ),
   }),
 )
 

@@ -3,7 +3,9 @@
 ## Files Created
 
 ### 1. Sentry Configuration
+
 **File:** `src/lib/sentry.server.ts`
+
 - Unified server + client monitoring
 - Error tracking
 - Performance monitoring
@@ -12,18 +14,23 @@
 - User context tracking
 
 ### 2. Monitoring Integration
+
 **File:** `src/lib/monitoring.server.ts` (updated)
+
 - Integrated with Sentry
 - `captureError()` sends to Sentry
 - `captureMessage()` sends to Sentry
 
 ### 3. Root Component
+
 **File:** `src/routes/__root.tsx` (updated)
+
 - Initializes Sentry on client-side
 - Automatic error boundary
 - Session replay enabled
 
 ### 4. Package Installed
+
 ```powershell
 @sentry/tanstackstart-react
 ```
@@ -56,6 +63,7 @@ SENTRY_REPLAYS_ERROR_SAMPLE_RATE="1.0"  # 100% of error sessions
 ### 3. Test It
 
 **Create a test error:**
+
 ```typescript
 // In any route
 throw new Error('Test error for Sentry!')
@@ -72,19 +80,21 @@ throw new Error('Test error for Sentry!')
 ✅ **Session Replay** - Watch user sessions (10% sampled)  
 ✅ **Custom Metrics** - Track business KPIs  
 ✅ **Breadcrumbs** - Debug context for errors  
-✅ **User Context** - Know which users hit errors  
+✅ **User Context** - Know which users hit errors
 
 ---
 
 ## Features Enabled
 
 ### Automatic
+
 - ✅ Route instrumentation
 - ✅ Error boundaries
 - ✅ Performance tracking
 - ✅ Health check filtering
 
 ### Manual (Available)
+
 - `captureError(error, context)` - Log errors
 - `captureMessage(message, level)` - Log messages
 - `addBreadcrumb(message, data)` - Add debug context
@@ -96,6 +106,7 @@ throw new Error('Test error for Sentry!')
 ## Cost
 
 **Free Tier:**
+
 - 5,000 errors/month
 - 10,000 performance units/month
 - 50 replay sessions/month

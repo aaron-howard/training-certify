@@ -48,22 +48,22 @@ npm run lint
 
 ### Required
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@host:5432/db` |
-| `CLERK_SECRET_KEY` | Clerk secret key (starts with `sk_`) | `sk_live_...` |
-| `VITE_CLERK_PUBLISHABLE_KEY` | Clerk publishable key (starts with `pk_`) | `pk_live_...` |
-| `NODE_ENV` | Environment | `production` |
-| `PORT` | Server port | `3000` |
+| Variable                     | Description                               | Example                               |
+| ---------------------------- | ----------------------------------------- | ------------------------------------- |
+| `DATABASE_URL`               | PostgreSQL connection string              | `postgresql://user:pass@host:5432/db` |
+| `CLERK_SECRET_KEY`           | Clerk secret key (starts with `sk_`)      | `sk_live_...`                         |
+| `VITE_CLERK_PUBLISHABLE_KEY` | Clerk publishable key (starts with `pk_`) | `pk_live_...`                         |
+| `NODE_ENV`                   | Environment                               | `production`                          |
+| `PORT`                       | Server port                               | `3000`                                |
 
 ### Optional (Recommended)
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `SENTRY_DSN` | Sentry error tracking DSN | - |
-| `REDIS_URL` | Redis connection string | - |
-| `HTTPS_ONLY` | Force HTTPS | `false` |
-| `CSRF_SECRET` | CSRF protection secret | - |
+| Variable      | Description               | Default |
+| ------------- | ------------------------- | ------- |
+| `SENTRY_DSN`  | Sentry error tracking DSN | -       |
+| `REDIS_URL`   | Redis connection string   | -       |
+| `HTTPS_ONLY`  | Force HTTPS               | `false` |
+| `CSRF_SECRET` | CSRF protection secret    | -       |
 
 ---
 
@@ -72,16 +72,19 @@ npm run lint
 ### Option 1: Traditional Server
 
 1. **Install dependencies:**
+
    ```bash
    npm ci --production
    ```
 
 2. **Build application:**
+
    ```bash
    npm run build
    ```
 
 3. **Start server:**
+
    ```bash
    npm run start
    ```
@@ -97,6 +100,7 @@ npm run lint
 ### Option 2: Docker
 
 1. **Create Dockerfile:**
+
    ```dockerfile
    FROM node:18-alpine
    WORKDIR /app
@@ -117,16 +121,19 @@ npm run lint
 ### Option 3: Cloud Platforms
 
 #### Vercel
+
 ```bash
 vercel --prod
 ```
 
 #### Railway
+
 ```bash
 railway up
 ```
 
 #### Render
+
 - Connect GitHub repository
 - Set environment variables in dashboard
 - Deploy automatically on push
@@ -186,6 +193,7 @@ npm run db:rollback
 ### 2. Application Monitoring
 
 Configure your APM tool to monitor:
+
 - Response times (target: <500ms p95)
 - Error rates (target: <1%)
 - Database query performance
@@ -194,6 +202,7 @@ Configure your APM tool to monitor:
 ### 3. Alerting Rules
 
 Set up alerts for:
+
 - Error rate > 5%
 - Response time > 1s (p95)
 - Database connection failures
@@ -243,6 +252,7 @@ Set up alerts for:
 ### Database Backups
 
 1. **Automated Daily Backups:**
+
    ```bash
    pg_dump $DATABASE_URL > backup_$(date +%Y%m%d).sql
    ```
@@ -327,17 +337,19 @@ Set up alerts for:
    - Review recent deployments
 
 2. **Rollback steps:**
+
    ```bash
    # Revert to previous version
    git checkout <previous-commit>
    npm run build
    npm run start
-   
+
    # Or with PM2
    pm2 restart training-certify
    ```
 
 3. **Database rollback (if needed):**
+
    ```bash
    npm run db:rollback
    ```
@@ -352,6 +364,7 @@ Set up alerts for:
 ## Support
 
 For deployment issues:
+
 1. Check logs: `pm2 logs` or `docker logs`
 2. Review `/health` endpoint
 3. Check Sentry for errors

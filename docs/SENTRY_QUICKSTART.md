@@ -29,6 +29,7 @@ SENTRY_REPLAYS_ERROR_SAMPLE_RATE="1.0"
 ## 4. Next Steps
 
 See `sentry_setup_guide.md` for:
+
 - Complete server & client configuration
 - Performance tracing setup
 - Session replay configuration

@@ -35,6 +35,7 @@ cat drizzle/migrations/0001_*.sql
 ```
 
 Check for:
+
 - Correct table/column names
 - Proper data types
 - Index creation
@@ -44,11 +45,13 @@ Check for:
 #### 3. Apply Migration
 
 **Development:**
+
 ```bash
 npm run db:migrate
 ```
 
 **Production:**
+
 ```bash
 # Run with explicit connection string
 DATABASE_URL="postgresql://..." npm run db:migrate
@@ -69,6 +72,7 @@ npm run db:rollback
 ### DO
 
 ✅ **Test migrations in development first**
+
 ```bash
 # 1. Generate migration
 npm run db:generate
@@ -87,16 +91,19 @@ npm run db:migrate
 ```
 
 ✅ **Create separate migrations for different changes**
+
 - One migration per logical change
 - Easier to review and rollback
 
 ✅ **Include data migrations when needed**
+
 ```sql
 -- Example: Populate new column with default values
 UPDATE users SET role = 'User' WHERE role IS NULL;
 ```
 
 ✅ **Add indexes in separate migrations**
+
 ```sql
 -- Migration 1: Add column
 ALTER TABLE users ADD COLUMN email_verified BOOLEAN DEFAULT FALSE;
@@ -108,15 +115,18 @@ CREATE INDEX idx_users_email_verified ON users(email_verified);
 ### DON'T
 
 ❌ **Never use `drizzle-kit push` in production**
+
 - No migration history
 - No rollback capability
 - Risk of data loss
 
 ❌ **Don't modify existing migrations**
+
 - Once applied, migrations are immutable
 - Create new migration to fix issues
 
 ❌ **Don't skip migration testing**
+
 - Always test in staging before production
 - Verify data integrity after migration
 
@@ -169,20 +179,22 @@ crontab -e
 ### Backup Retention Policy
 
 | Frequency | Retention |
-|-----------|-----------|
-| Daily | 7 days |
-| Weekly | 4 weeks |
-| Monthly | 12 months |
-| Yearly | 3 years |
+| --------- | --------- |
+| Daily     | 7 days    |
+| Weekly    | 4 weeks   |
+| Monthly   | 12 months |
+| Yearly    | 3 years   |
 
 ### Cloud Backup (Recommended)
 
 **AWS RDS:**
+
 - Automated backups enabled
 - Point-in-time recovery
 - Cross-region replication
 
 **Render/Railway:**
+
 - Managed PostgreSQL with automatic backups
 - Configurable retention period
 
@@ -407,6 +419,7 @@ const pool = new Pool({
 ```
 
 **Production recommendations:**
+
 - `max`: 10-20 connections
 - Monitor pool exhaustion
 - Adjust based on concurrent users
@@ -446,6 +459,7 @@ max_wal_size = 4GB
 **Symptoms:** "sorry, too many clients already"
 
 **Solutions:**
+
 1. Increase `max` in pool config
 2. Check for connection leaks
 3. Implement connection timeout
@@ -456,6 +470,7 @@ max_wal_size = 4GB
 **Symptoms:** Response times > 1s
 
 **Solutions:**
+
 1. Check `pg_stat_statements`
 2. Add missing indexes
 3. Optimize query structure
@@ -466,6 +481,7 @@ max_wal_size = 4GB
 **Symptoms:** Queries hanging
 
 **Solutions:**
+
 ```sql
 -- Find blocking queries
 SELECT * FROM pg_locks WHERE NOT granted;

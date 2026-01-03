@@ -8,8 +8,11 @@ import { z } from 'zod'
 const envSchema = z.object({
   // Database
   DATABASE_URL: z.preprocess(
-    (val) => val || process.env.POSTGRES_URL || process.env.POSTGRES_URL_NON_POOLING,
-    z.string().url('DATABASE_URL or POSTGRES_URL must be a valid PostgreSQL URL')
+    (val) =>
+      val || process.env.POSTGRES_URL || process.env.POSTGRES_URL_NON_POOLING,
+    z
+      .string()
+      .url('DATABASE_URL or POSTGRES_URL must be a valid PostgreSQL URL'),
   ),
 
   // Clerk Authentication
@@ -36,14 +39,25 @@ const envSchema = z.object({
   PORT: z.string().default('3000'),
 
   // Monitoring (Optional)
-  SENTRY_DSN: z.string().trim().optional().refine((val) => !val || val.startsWith('http'), {
-    message: 'Invalid SENTRY_DSN URL',
-  }),
+  SENTRY_DSN: z
+    .string()
+    .trim()
+    .optional()
+    .refine((val) => !val || val.startsWith('http'), {
+      message: 'Invalid SENTRY_DSN URL',
+    }),
 
   // Caching (Optional - for multi-instance deployments)
-  REDIS_URL: z.string().trim().optional().refine((val) => !val || val.startsWith('redis') || val.startsWith('rediss'), {
-    message: 'Invalid REDIS_URL',
-  }),
+  REDIS_URL: z
+    .string()
+    .trim()
+    .optional()
+    .refine(
+      (val) => !val || val.startsWith('redis') || val.startsWith('rediss'),
+      {
+        message: 'Invalid REDIS_URL',
+      },
+    ),
 
   // Security (Optional)
   HTTPS_ONLY: z
@@ -77,14 +91,20 @@ export function validateEnv(): Env {
         console.error(`  - ${err.path.join('.')}: ${err.message}`)
       })
       // Log available keys (safely) to help debug Vercel environment issues
-      console.error('Available env keys:', Object.keys(process.env).filter(k =>
-        !k.toLowerCase().includes('key') &&
-        !k.toLowerCase().includes('secret') &&
-        !k.toLowerCase().includes('password') &&
-        !k.toLowerCase().includes('token')
-      ))
+      console.error(
+        'Available env keys:',
+        Object.keys(process.env).filter(
+          (k) =>
+            !k.toLowerCase().includes('key') &&
+            !k.toLowerCase().includes('secret') &&
+            !k.toLowerCase().includes('password') &&
+            !k.toLowerCase().includes('token'),
+        ),
+      )
     }
-    console.error('\n💡 Please check your Vercel environment variables or .env file.')
+    console.error(
+      '\n💡 Please check your Vercel environment variables or .env file.',
+    )
 
     // In production/serverless, we throw instead of exiting to allow for better error handling
     if (process.env.NODE_ENV === 'production') {
@@ -132,9 +152,15 @@ export const ENV = new Proxy({} as Env & { CLERK_PUBLISHABLE_KEY: string }, {
   get(_target, prop) {
     // Client-side safety: Only allow VITE_ variables and provide basic fallback
     if (typeof window !== 'undefined') {
-      if (prop === 'CLERK_PUBLISHABLE_KEY' || prop === 'VITE_CLERK_PUBLISHABLE_KEY') {
+      if (
+        prop === 'CLERK_PUBLISHABLE_KEY' ||
+        prop === 'VITE_CLERK_PUBLISHABLE_KEY'
+      ) {
         // @ts-ignore - Basic fallback for local development if window.__ENV__ is missing
-        return window.__ENV__?.CLERK_PUBLISHABLE_KEY || import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+        return (
+          window.__ENV__?.CLERK_PUBLISHABLE_KEY ||
+          import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+        )
       }
       return (import.meta.env as any)[prop]
     }
