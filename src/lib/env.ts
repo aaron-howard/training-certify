@@ -26,10 +26,14 @@ const envSchema = z.object({
   PORT: z.string().default('3000'),
 
   // Monitoring (Optional)
-  SENTRY_DSN: z.union([z.string().url(), z.literal('')]).optional(),
+  SENTRY_DSN: z.string().trim().optional().refine((val) => !val || val.startsWith('http'), {
+    message: 'Invalid SENTRY_DSN URL',
+  }),
 
   // Caching (Optional - for multi-instance deployments)
-  REDIS_URL: z.union([z.string().url(), z.literal('')]).optional(),
+  REDIS_URL: z.string().trim().optional().refine((val) => !val || val.startsWith('redis') || val.startsWith('rediss'), {
+    message: 'Invalid REDIS_URL',
+  }),
 
   // Security (Optional)
   HTTPS_ONLY: z
