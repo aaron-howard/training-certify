@@ -54,6 +54,11 @@ export type Env = z.infer<typeof envSchema>
  * @throws {Error} If validation fails
  */
 export function validateEnv(): Env {
+  // Client-side safety: Validation should only run on the server
+  if (typeof window !== 'undefined') {
+    return {} as Env
+  }
+
   try {
     const validated = envSchema.parse(process.env)
     console.log('✅ Environment variables validated successfully')
@@ -64,14 +69,21 @@ export function validateEnv(): Env {
       error.errors.forEach((err) => {
         console.error(`  - ${err.path.join('.')}: ${err.message}`)
       })
-      console.error('Available env keys:', Object.keys(process.env).filter(k => !k.includes('KEY') && !k.includes('SECRET') && !k.includes('PASSWORD')))
+      // Log available keys (safely) to help debug Vercel environment issues
+      console.error('Available env keys:', Object.keys(process.env).filter(k =>
+        !k.toLowerCase().includes('key') &&
+        !k.toLowerCase().includes('secret') &&
+        !k.toLowerCase().includes('password') &&
+        !k.toLowerCase().includes('token')
+      ))
     }
-    console.error('\n💡 Please check your .env file and ensure all required variables are set.')
-    // In serverless environments, we might not want to exit(1) but return a failed state
-    if (typeof process !== 'undefined' && process.exit && process.env.NODE_ENV !== 'production') {
-      process.exit(1)
+    console.error('\n💡 Please check your Vercel environment variables or .env file.')
+
+    // In production/serverless, we throw instead of exiting to allow for better error handling
+    if (process.env.NODE_ENV === 'production') {
+      throw error
     }
-    throw error
+    process.exit(1)
   }
 }
 

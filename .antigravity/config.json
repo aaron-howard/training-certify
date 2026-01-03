@@ -1,0 +1,7 @@
+{
+    "environment": {
+        "os": "windows",
+        "shell": "powershell",
+        "pathStyle": "windows"
+    }
+}
