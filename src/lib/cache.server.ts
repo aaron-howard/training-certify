@@ -5,10 +5,10 @@
  */
 
 import {
-    redisGet,
-    redisSet,
     redisDel,
     redisDelPattern,
+    redisGet,
+    redisSet,
 } from './cache.redis'
 
 interface CacheEntry<T> {
