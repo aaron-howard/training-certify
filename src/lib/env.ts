@@ -26,10 +26,10 @@ const envSchema = z.object({
   PORT: z.string().default('3000'),
 
   // Monitoring (Optional)
-  SENTRY_DSN: z.string().url().optional(),
+  SENTRY_DSN: z.union([z.string().url(), z.literal('')]).optional(),
 
   // Caching (Optional - for multi-instance deployments)
-  REDIS_URL: z.string().url().optional(),
+  REDIS_URL: z.union([z.string().url(), z.literal('')]).optional(),
 
   // Security (Optional)
   HTTPS_ONLY: z
