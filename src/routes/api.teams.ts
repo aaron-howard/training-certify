@@ -9,7 +9,6 @@ import {
   userTeams,
 } from '../db/schema'
 import { requireRole } from '../lib/auth.server'
-import { CacheTTL, getOrCompute } from '../lib/cache.server'
 import { RateLimitPresets, requireRateLimit } from '../lib/rateLimit.server'
 
 export const Route = createFileRoute('/api/teams')({
@@ -41,6 +40,7 @@ export const Route = createFileRoute('/api/teams')({
           }
 
           // Use cache for expensive team metrics calculation
+          const { getOrCompute, CacheTTL } = await import('../lib/cache.server')
           const cacheKey = `teams:all:${session.userId}`
           const data = await getOrCompute(cacheKey, CacheTTL.MEDIUM, async () => {
             // Fetch all teams
