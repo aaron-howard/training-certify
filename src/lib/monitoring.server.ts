@@ -13,9 +13,8 @@ export function initMonitoring() {
   // Check for Sentry DSN
   if (process.env.SENTRY_DSN) {
     console.log('✅ Sentry error tracking enabled')
-    // Sentry initialization would go here
-    // import * as Sentry from '@sentry/node'
-    // Sentry.init({ dsn: process.env.SENTRY_DSN, ... })
+    // Note: Sentry is initialized in src/entry-server.tsx on server startup
+    // This function is for metrics collection only
   } else {
     console.log('⚠️  Sentry DSN not configured - error tracking disabled')
   }

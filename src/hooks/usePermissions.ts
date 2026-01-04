@@ -132,7 +132,9 @@ export function usePermissions(
 ): Permissions {
   return useMemo(() => {
     const r = (role ?? 'User') as Role
-    console.log(`🛡️ [Permissions] Calculating for role: ${r}`)
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🛡️ [Permissions] Calculating for role: ${r}`)
+    }
     const perms = rolePermissions[r] as Permissions | undefined
     return perms ?? rolePermissions.User
   }, [role])

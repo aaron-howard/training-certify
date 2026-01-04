@@ -26,6 +26,7 @@ const config = defineConfig({
       'react-dom',
       '@clerk/tanstack-react-start',
       '@tanstack/react-query',
+      'cookie',
     ],
   },
 })

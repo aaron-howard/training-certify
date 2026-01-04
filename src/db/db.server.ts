@@ -14,9 +14,11 @@ const isServer =
 const instanceId = Math.random().toString(36).substring(7)
 
 if (isServer) {
-  console.log(
-    `🔌 [DB Module] Server-side instance ${instanceId} loaded. Window: ${typeof window}, SSR: ${(import.meta as any).env?.SSR}`,
-  )
+  if (process.env.NODE_ENV === 'development') {
+    console.log(
+      `🔌 [DB Module] Server-side instance ${instanceId} loaded. Window: ${typeof window}, SSR: ${(import.meta as any).env?.SSR}`,
+    )
+  }
 } else {
   console.warn(
     `⚠️ [DB Module] Client-side instance ${instanceId} loaded? Window: ${typeof window}, SSR: ${(import.meta as any).env?.SSR}`,
