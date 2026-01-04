@@ -5,7 +5,6 @@
 
 import { closeDb } from '../db/db.server'
 import { cache } from './cache.server'
-import { closeRedis } from './cache.redis'
 
 let isShuttingDown = false
 
@@ -28,10 +27,6 @@ async function gracefulShutdown(signal: string) {
     // 2. Clear cache
     console.log('🗑️  Clearing cache...')
     cache.clear()
-
-    // 3. Close Redis connection
-    console.log('💾 Closing Redis connection...')
-    await closeRedis()
 
     // 4. Close database connections
     console.log('💾 Closing database connections...')

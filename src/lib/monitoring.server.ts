@@ -1,13 +1,7 @@
-/**
- * Monitoring and observability utilities
- * Provides error tracking, metrics collection, and logging
- */
-
 import {
   captureError as sentryCaptureError,
   captureMessage as sentryCaptureMessage,
 } from './sentry.server'
-import { initRedis } from './cache.redis'
 
 /**
  * Initialize monitoring services
@@ -15,9 +9,6 @@ import { initRedis } from './cache.redis'
  */
 export function initMonitoring() {
   console.log('🔧 Initializing monitoring services...')
-
-  // Initialize Redis for distributed caching
-  initRedis()
 
   // Check for Sentry DSN
   if (process.env.SENTRY_DSN) {

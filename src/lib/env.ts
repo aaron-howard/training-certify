@@ -47,18 +47,6 @@ const envSchema = z.object({
       message: 'Invalid SENTRY_DSN URL',
     }),
 
-  // Caching (Optional - for multi-instance deployments)
-  REDIS_URL: z
-    .string()
-    .trim()
-    .optional()
-    .refine(
-      (val) => !val || val.startsWith('redis') || val.startsWith('rediss'),
-      {
-        message: 'Invalid REDIS_URL',
-      },
-    ),
-
   // Security (Optional)
   HTTPS_ONLY: z
     .string()

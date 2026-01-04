@@ -91,11 +91,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.__ENV__ = { CLERK_PUBLISHABLE_KEY: ${JSON.stringify(ENV.CLERK_PUBLISHABLE_KEY)} };`,
-          }}
-        />
       </head>
       <body>
         <ClerkProvider publishableKey={ENV.CLERK_PUBLISHABLE_KEY}>
