@@ -25,6 +25,11 @@ afterEach(() => {
 })
 
 // Global test utilities
+declare global {
+  var testUtils: Record<string, any>
+}
+
 global.testUtils = {
   // Add any global test utilities here
 }
+

@@ -1,4 +1,4 @@
-import { Clock, FileText, Shield, TrendingUp } from 'lucide-react'
+import { Shield } from 'lucide-react'
 import { ComplianceMetricsOverview } from './ComplianceMetricsOverview'
 import { RecentActivityFeed } from './RecentActivityFeed'
 import { UpcomingDeadlines } from './UpcomingDeadlines'

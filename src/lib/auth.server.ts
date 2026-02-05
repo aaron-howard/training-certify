@@ -43,7 +43,7 @@ export async function getAuthenticatedUser(): Promise<AuthSession> {
 
   return {
     userId: user[0].id,
-    role: user[0].role || 'User',
+    role: user[0].role,
     email: user[0].email || undefined,
   }
 }

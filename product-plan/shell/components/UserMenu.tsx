@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   ChevronDown,
   HelpCircle,
@@ -75,9 +75,8 @@ export function UserMenu({
 
         {/* Chevron */}
         <ChevronDown
-          className={`w-4 h-4 text-slate-500 dark:text-slate-400 transition-transform ${
-            isOpen ? 'rotate-180' : ''
-          }`}
+          className={`w-4 h-4 text-slate-500 dark:text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''
+            }`}
         />
       </button>
 

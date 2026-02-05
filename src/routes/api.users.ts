@@ -13,20 +13,21 @@ import {
 import { getVerifiedAuth, requireRole } from '../lib/auth.server'
 import { RateLimitPresets, requireRateLimit } from '../lib/rateLimit.server'
 import { getCSRFTokenFromRequest, requireCSRFToken } from '../lib/csrf.server'
-import { AppError, ForbiddenError, UnauthorizedError, ValidationError } from '../lib/errors'
+import * as Errors from '../lib/errors'
 import { UpdateUserSchema } from '../lib/validation'
+import type { Role } from '../hooks/usePermissions'
 
 export const Route = createFileRoute('/api/users')({
   server: {
     handlers: {
       GET: async () => {
         try {
-          await requireRole(['Admin', 'Auditor', 'Executive'])
+          await requireRole(['Admin', 'Auditor', 'Executive'] as Role[])
           const db = await getDbOrThrow()
           const allUsers = await db.select().from(users)
           return json(allUsers)
         } catch (error) {
-          if (error instanceof AppError) {
+          if (error instanceof Errors.AppError) {
             return json({ error: error.message, code: error.code }, { status: error.statusCode })
           }
           console.error('❌ [API Users GET] Unexpected Error:', error)
@@ -57,7 +58,7 @@ export const Route = createFileRoute('/api/users')({
               .limit(1)
 
             if (!requester.length || requester[0].role !== 'Admin') {
-              throw new ForbiddenError('You can only ensure your own user record unless you are an Admin')
+              throw new Errors.ForbiddenError('You can only ensure your own user record unless you are an Admin')
             }
           }
 
@@ -128,7 +129,7 @@ export const Route = createFileRoute('/api/users')({
                   name: data.name,
                   email: data.email,
                   avatarUrl: data.avatarUrl,
-                  role: existingUser[0].role || data.role || 'User',
+                  role: existingUser[0].role,
                 })
 
                 // Move all related data
@@ -148,7 +149,7 @@ export const Route = createFileRoute('/api/users')({
             throw error
           }
         } catch (error) {
-          if (error instanceof AppError) {
+          if (error instanceof Errors.AppError) {
             return json({ error: error.message, code: error.code }, { status: error.statusCode })
           }
           const message = error instanceof Error ? error.message : String(error)
@@ -161,14 +162,14 @@ export const Route = createFileRoute('/api/users')({
       },
       PATCH: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin'])
+          await requireRole(['Admin'] as Role[])
           requireCSRFToken(getCSRFTokenFromRequest(request))
 
           const rawData = await request.json()
           const validation = UpdateUserSchema.safeParse(rawData)
 
           if (!validation.success) {
-            throw new ValidationError('Invalid update data', validation.error.errors)
+            throw new Errors.ValidationError('Invalid update data', validation.error.errors)
           }
 
           const data = validation.data
@@ -187,15 +188,15 @@ export const Route = createFileRoute('/api/users')({
             .where(eq(users.id, data.id))
             .returning()
 
-          if (result.length === 0) throw new NotFoundError('User not found')
+          if (result.length === 0) throw new Errors.NotFoundError('User not found')
 
           return json(result[0])
         } catch (error) {
-          if (error instanceof AppError) {
+          if (error instanceof Errors.AppError) {
             return json({
               error: error.message,
               code: error.code,
-              details: error instanceof ValidationError ? error.errors : undefined
+              details: error instanceof Errors.ValidationError ? error.errors : undefined
             }, { status: error.statusCode })
           }
           console.error('❌ [API Users PATCH] Unexpected Error:', error)
@@ -204,12 +205,12 @@ export const Route = createFileRoute('/api/users')({
       },
       DELETE: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin'])
+          await requireRole(['Admin'] as Role[])
           requireCSRFToken(getCSRFTokenFromRequest(request))
 
           const url = new URL(request.url)
           const id = url.searchParams.get('id')
-          if (!id) throw new ValidationError('Missing user ID')
+          if (!id) throw new Errors.ValidationError('Missing user ID')
 
           const db = await getDbOrThrow()
 
@@ -229,7 +230,7 @@ export const Route = createFileRoute('/api/users')({
 
           return json({ success: true })
         } catch (error) {
-          if (error instanceof AppError) {
+          if (error instanceof Errors.AppError) {
             return json({ error: error.message, code: error.code }, { status: error.statusCode })
           }
           console.error('❌ [API Users DELETE] Unexpected Error:', error)

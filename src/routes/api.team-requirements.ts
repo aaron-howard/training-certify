@@ -4,10 +4,10 @@ import { eq } from 'drizzle-orm'
 import { getDbOrThrow } from '../db/db.server'
 import { certifications, teamRequirements, teams } from '../db/schema'
 import { requireRole } from '../lib/auth.server'
-import type { AuthSession } from '../lib/auth.server'
 import { getCSRFTokenFromRequest, requireCSRFToken } from '../lib/csrf.server'
 import { AppError, ForbiddenError, ValidationError } from '../lib/errors'
 import { TeamRequirementSchema } from '../lib/validation'
+import type { AuthSession } from '../lib/auth.server'
 
 async function checkTeamManagementOrThrow(
   db: Awaited<ReturnType<typeof getDbOrThrow>>,

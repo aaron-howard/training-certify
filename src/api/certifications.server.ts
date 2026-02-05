@@ -1,9 +1,9 @@
 import { createServerFn } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 import { userCertifications } from '../db/schema'
-import type { UserCertification } from '../types'
 import { CreateCertificationInputSchema, UpdateCertificationInputSchema } from '../lib/validation'
 import { DatabaseError } from '../lib/errors'
+import type { UserCertification } from '../types'
 
 export const getUserCertifications = createServerFn({ method: 'GET' }).handler(
   async () => {
@@ -15,7 +15,7 @@ export const getUserCertifications = createServerFn({ method: 'GET' }).handler(
       const mapped = result.map((cert) => ({
         ...cert,
         verifiedAt: cert.verifiedAt?.toISOString() || '',
-        status: (cert.status || 'active') as UserCertification['status'],
+        status: cert.status as UserCertification['status'],
       })) as Array<UserCertification>
       console.log(`✅ [Server] Returning ${mapped.length} user certifications`)
       return mapped
@@ -53,7 +53,7 @@ export const createCertification = createServerFn({ method: 'POST' })
           certificationNumber: data.certificationNumber,
           issueDate: data.issueDate,
           expirationDate: data.expirationDate,
-          status: data.status || 'active',
+          status: data.status,
           daysUntilExpiration: data.daysUntilExpiration,
           documentUrl: data.documentUrl || '',
           verifiedAt: verifiedAtValue,

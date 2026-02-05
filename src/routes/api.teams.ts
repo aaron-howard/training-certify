@@ -11,8 +11,9 @@ import {
 import { requireRole } from '../lib/auth.server'
 import { RateLimitPresets, requireRateLimit } from '../lib/rateLimit.server'
 import { getCSRFTokenFromRequest, requireCSRFToken } from '../lib/csrf.server'
-import { AppError, ForbiddenError, NotFoundError, ValidationError } from '../lib/errors'
+import * as Errors from '../lib/errors'
 import { TeamSchema } from '../lib/validation'
+import type { Role } from '../hooks/usePermissions'
 
 export const Route = createFileRoute('/api/teams')({
   server: {
@@ -26,7 +27,7 @@ export const Route = createFileRoute('/api/teams')({
             'Auditor',
             'Executive',
             'User',
-          ])
+          ] as Role[])
 
           // Rate limiting
           await requireRateLimit(session.userId, RateLimitPresets.READ)
@@ -270,7 +271,7 @@ export const Route = createFileRoute('/api/teams')({
 
           return json(data)
         } catch (error) {
-          if (error instanceof AppError) {
+          if (error instanceof Errors.AppError) {
             return json({ error: error.message, code: error.code }, { status: error.statusCode })
           }
           console.error('❌ [API Teams GET] Unexpected Error:', error)
@@ -280,7 +281,7 @@ export const Route = createFileRoute('/api/teams')({
       // POST - Create new team (Admin only)
       POST: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin'])
+          const session = await requireRole(['Admin'] as Role[])
           await requireRateLimit(session.userId, RateLimitPresets.MUTATION)
           requireCSRFToken(getCSRFTokenFromRequest(request))
 
@@ -288,7 +289,7 @@ export const Route = createFileRoute('/api/teams')({
           const validation = TeamSchema.safeParse(rawData)
 
           if (!validation.success) {
-            throw new ValidationError('Invalid team data', validation.error.errors)
+            throw new Errors.ValidationError('Invalid team data', validation.error.errors)
           }
 
           const data = validation.data
@@ -309,13 +310,13 @@ export const Route = createFileRoute('/api/teams')({
 
           return json(result[0], { status: 201 })
         } catch (error) {
-          if (error instanceof ValidationError) {
+          if (error instanceof Errors.ValidationError) {
             return json(
               { error: error.message, code: error.code, details: error.errors },
               { status: error.statusCode },
             )
           }
-          if (error instanceof AppError) {
+          if (error instanceof Errors.AppError) {
             return json({ error: error.message, code: error.code }, { status: error.statusCode })
           }
           console.error('❌ [API Teams POST] Unexpected Error:', error)
@@ -325,13 +326,13 @@ export const Route = createFileRoute('/api/teams')({
       // DELETE - Delete team (Admin only)
       DELETE: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin'])
+          const session = await requireRole(['Admin'] as Role[])
           await requireRateLimit(session.userId, RateLimitPresets.MUTATION)
           requireCSRFToken(getCSRFTokenFromRequest(request))
 
           const url = new URL(request.url)
           const id = url.searchParams.get('id')
-          if (!id) throw new ValidationError('Missing team ID')
+          if (!id) throw new Errors.ValidationError('Missing team ID')
 
           const db = await getDbOrThrow()
 
@@ -346,7 +347,7 @@ export const Route = createFileRoute('/api/teams')({
 
           return json({ success: true })
         } catch (error) {
-          if (error instanceof AppError) {
+          if (error instanceof Errors.AppError) {
             return json({ error: error.message, code: error.code }, { status: error.statusCode })
           }
           console.error('❌ [API Teams DELETE] Unexpected Error:', error)
@@ -356,7 +357,7 @@ export const Route = createFileRoute('/api/teams')({
       // PATCH - Add/remove team members (Manager+)
       PATCH: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin', 'Manager'])
+          const session = await requireRole(['Admin', 'Manager'] as Role[])
           await requireRateLimit(session.userId, RateLimitPresets.MUTATION)
           requireCSRFToken(getCSRFTokenFromRequest(request))
 
@@ -366,7 +367,7 @@ export const Route = createFileRoute('/api/teams')({
           const { action, teamId, userId } = data
 
           if (!teamId || !userId) {
-            throw new ValidationError('teamId and userId are required')
+            throw new Errors.ValidationError('teamId and userId are required')
           }
 
           // Security: If session user is a Manager (not Admin), check if they manage this team
@@ -378,7 +379,7 @@ export const Route = createFileRoute('/api/teams')({
               .limit(1)
 
             if (!team.length || team[0].managerId !== session.userId) {
-              throw new ForbiddenError('You are not the manager of this team')
+              throw new Errors.ForbiddenError('You are not the manager of this team')
             }
           }
 
@@ -406,10 +407,10 @@ export const Route = createFileRoute('/api/teams')({
 
             return json({ success: true, action: 'removed' })
           } else {
-            throw new ValidationError('Invalid action. Use "add" or "remove"')
+            throw new Errors.ValidationError('Invalid action. Use "add" or "remove"')
           }
         } catch (error) {
-          if (error instanceof AppError) {
+          if (error instanceof Errors.AppError) {
             return json({ error: error.message, code: error.code }, { status: error.statusCode })
           }
           console.error('❌ [API Teams PATCH] Unexpected Error:', error)

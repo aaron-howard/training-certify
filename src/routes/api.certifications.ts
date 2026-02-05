@@ -15,8 +15,8 @@ import { RateLimitPresets, requireRateLimit } from '../lib/rateLimit.server'
 import { getCSRFTokenFromRequest, requireCSRFToken } from '../lib/csrf.server'
 import { AppError, ForbiddenError, NotFoundError, ValidationError } from '../lib/errors'
 import {
-  CreateUserCertificationSchema,
-  CertificationPatchSchema
+  CertificationPatchSchema,
+  CreateUserCertificationSchema
 } from '../lib/validation'
 import type { AuthSession } from '../lib/auth.server'
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
@@ -277,22 +277,20 @@ export const Route = createFileRoute('/api/certifications')({
             return json({ success: true, proof: newProof[0] })
           }
 
-          if (data.action === 'updateDetails') {
-            const updates = {
-              ...data.updates,
-              updatedAt: new Date()
-            }
-
-            const result = await db
-              .update(userCertifications)
-              .set(updates)
-              .where(eq(userCertifications.id, data.id))
-              .returning()
-
-            return json({ success: true, certification: result[0] })
+          // Since it's a discriminated union and we checked 'addProof', it must be 'updateDetails'
+          const { updates } = data
+          const updateData = {
+            ...updates,
+            updatedAt: new Date(),
           }
 
-          throw new ValidationError('Invalid action')
+          const result = await db
+            .update(userCertifications)
+            .set(updateData)
+            .where(eq(userCertifications.id, data.id))
+            .returning()
+
+          return json({ success: true, certification: result[0] })
         } catch (error) {
           if (error instanceof ValidationError) {
             return json(

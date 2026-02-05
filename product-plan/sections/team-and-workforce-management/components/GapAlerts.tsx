@@ -14,7 +14,6 @@ interface GapAlertsProps {
 export function GapAlerts({
   teams,
   teamMetrics,
-  certifications,
 }: GapAlertsProps) {
   // Build alerts from team metrics
   interface Alert {

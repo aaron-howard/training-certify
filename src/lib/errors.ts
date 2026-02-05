@@ -29,9 +29,9 @@ export class ForbiddenError extends AppError {
 }
 
 export class ValidationError extends AppError {
-    public readonly errors?: unknown[]
+    public readonly errors?: Array<unknown>
 
-    constructor(message: string = 'Validation failed', errors?: unknown[]) {
+    constructor(message: string = 'Validation failed', errors?: Array<unknown>) {
         super(message, 400, 'VALIDATION_FAILED')
         this.errors = errors
     }

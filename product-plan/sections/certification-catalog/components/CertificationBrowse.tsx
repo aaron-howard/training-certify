@@ -6,7 +6,6 @@ import type { CertificationCatalogProps } from '@/../product/sections/certificat
 
 export function CertificationBrowse({
   certifications,
-  vendors,
   onViewDetails,
   onAddToProfile,
   onMarkAsGoal,
@@ -114,11 +113,10 @@ export function CertificationBrowse({
             {/* Filter Toggle */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 px-5 py-3 rounded-xl font-medium transition-all ${
-                showFilters
+              className={`flex items-center gap-2 px-5 py-3 rounded-xl font-medium transition-all ${showFilters
                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-              }`}
+                }`}
             >
               <SlidersHorizontal className="w-5 h-5" />
               <span className="hidden sm:inline">Filters</span>

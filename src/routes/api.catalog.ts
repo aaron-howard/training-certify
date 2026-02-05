@@ -4,9 +4,10 @@ import { eq } from 'drizzle-orm'
 import { getDbOrThrow } from '../db/db.server'
 import { certifications } from '../db/schema'
 import { requireRole } from '../lib/auth.server'
+import type { Role } from '../hooks/usePermissions'
 import { RateLimitPresets, requireRateLimit } from '../lib/rateLimit.server'
 import { getCSRFTokenFromRequest, requireCSRFToken } from '../lib/csrf.server'
-import { AppError, ForbiddenError, NotFoundError, ValidationError } from '../lib/errors'
+import * as Errors from '../lib/errors'
 import { CatalogCertificationSchema } from '../lib/validation'
 
 export const Route = createFileRoute('/api/catalog')({
@@ -16,11 +17,12 @@ export const Route = createFileRoute('/api/catalog')({
         try {
           await requireRole([
             'Admin',
+            'Admin',
             'Manager',
             'Auditor',
             'Executive',
             'User',
-          ])
+          ] as Role[])
 
           const db = await getDbOrThrow()
           const result = await db.select().from(certifications)
@@ -37,7 +39,7 @@ export const Route = createFileRoute('/api/catalog')({
             })),
           })
         } catch (error) {
-          if (error instanceof AppError) {
+          if (error instanceof Errors.AppError) {
             return json({ error: error.message, code: error.code }, { status: error.statusCode })
           }
           console.error('❌ [API Catalog GET] Unexpected Error:', error)
@@ -46,20 +48,20 @@ export const Route = createFileRoute('/api/catalog')({
       },
       DELETE: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin'])
+          const session = await requireRole(['Admin'] as Role[])
           await requireRateLimit(session.userId, RateLimitPresets.ADMIN)
           requireCSRFToken(getCSRFTokenFromRequest(request))
 
           const url = new URL(request.url)
           const id = url.searchParams.get('id')
-          if (!id) throw new ValidationError('Missing id parameter')
+          if (!id) throw new Errors.ValidationError('Missing id parameter')
 
           const db = await getDbOrThrow()
 
           await db.delete(certifications).where(eq(certifications.id, id))
           return json({ success: true, deletedId: id })
         } catch (error) {
-          if (error instanceof AppError) {
+          if (error instanceof Errors.AppError) {
             return json({ error: error.message, code: error.code }, { status: error.statusCode })
           }
           console.error('❌ [API Catalog DELETE] Unexpected Error:', error)
@@ -68,7 +70,7 @@ export const Route = createFileRoute('/api/catalog')({
       },
       POST: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin'])
+          const session = await requireRole(['Admin'] as Role[])
           await requireRateLimit(session.userId, RateLimitPresets.ADMIN)
           requireCSRFToken(getCSRFTokenFromRequest(request))
 
@@ -76,7 +78,7 @@ export const Route = createFileRoute('/api/catalog')({
           const validation = CatalogCertificationSchema.safeParse(rawData)
 
           if (!validation.success) {
-            throw new ValidationError('Invalid certification data', validation.error.errors)
+            throw new Errors.ValidationError('Invalid certification data', validation.error.errors)
           }
 
           const data = validation.data
@@ -91,8 +93,8 @@ export const Route = createFileRoute('/api/catalog')({
                 data.vendorId ||
                 data.vendorName.toLowerCase().replace(/\s/g, '-'),
               vendorName: data.vendorName,
-              category: data.category || 'Cloud',
-              difficulty: data.difficulty || 'Intermediate',
+              category: (data.category || 'Cloud') as any,
+              difficulty: (data.difficulty || 'Intermediate') as any,
               price: data.price ? String(data.price) : null, // Schema uses text for price unfortunately, or does it? checking schema...
               description: data.description || null,
             })
@@ -100,11 +102,11 @@ export const Route = createFileRoute('/api/catalog')({
 
           return json(result[0], { status: 201 })
         } catch (error) {
-          if (error instanceof AppError) {
+          if (error instanceof Errors.AppError) {
             return json({
               error: error.message,
               code: error.code,
-              details: error instanceof ValidationError ? error.errors : undefined
+              details: error instanceof Errors.ValidationError ? error.errors : undefined
             }, { status: error.statusCode })
           }
           const insertError = error as { code?: string }

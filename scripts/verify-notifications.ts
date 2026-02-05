@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import { Pool } from 'pg'
 import { drizzle } from 'drizzle-orm/node-postgres'
-import { and, eq, gt, lt, sql } from 'drizzle-orm'
+import { and, eq, sql } from 'drizzle-orm'
 import * as schema from '../src/db/schema'
 
 if (!process.env.DATABASE_URL) {
@@ -18,7 +18,6 @@ async function verifyNotifications() {
 
   const now = new Date()
   const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
-  const sixtyDaysFromNow = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000)
 
   // 1. Check for expiring user certifications
   console.log('--- Checking for expiring certifications ---')

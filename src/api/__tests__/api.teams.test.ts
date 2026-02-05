@@ -27,7 +27,7 @@ vi.mock('../../lib/rateLimit.server', () => ({
   },
 }))
 vi.mock('../../lib/cache.server', () => ({
-  getOrCompute: vi.fn((key, ttl, compute) => compute()),
+  getOrCompute: vi.fn((_key, _ttl, compute) => compute()),
   cache: {
     invalidate: vi.fn(),
   },

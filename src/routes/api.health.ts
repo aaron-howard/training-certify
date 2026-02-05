@@ -2,7 +2,8 @@ import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { getDb } from '../db/db.server'
 
-export const Route = createFileRoute('/api/health')({
+export const Route = createFileRoute('/api/health' as any)({
+  ssr: true,
   server: {
     handlers: {
       GET: async () => {

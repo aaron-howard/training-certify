@@ -151,7 +151,7 @@ class DatabaseRateLimiter {
   /**
    * Clean up old rate limit entries
    */
-  private async cleanup(db: Awaited<ReturnType<typeof import('../db/db.server').getDbOrThrow>>, before: Date): Promise<void> {
+  private async cleanup(db: any, before: Date): Promise<void> {
     const { rateLimitLogs } = await import('../db/schema')
     const { lt } = await import('drizzle-orm')
 
@@ -172,7 +172,7 @@ class RateLimiter {
   constructor() {
     this.inMemory = new InMemoryRateLimiter()
     this.useDatabase = process.env.NODE_ENV === 'production' && process.env.USE_DB_RATE_LIMIT !== 'false'
-    
+
     if (this.useDatabase) {
       this.database = new DatabaseRateLimiter()
     }

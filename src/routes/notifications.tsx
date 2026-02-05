@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useUser } from '@clerk/tanstack-react-start'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   AlertTriangle,
   Bell,
@@ -28,7 +28,7 @@ interface NotificationCategory {
 }
 
 interface NotificationSettings {
-  categories?: NotificationCategory[]
+  categories?: Array<NotificationCategory>
   userPreferences?: Record<string, boolean>
 }
 
@@ -54,7 +54,7 @@ function NotificationsPage() {
   const [showSettings, setShowSettings] = useState(false)
   const [preferences, setPreferences] = useState<Record<string, boolean>>({})
 
-  const { data: notifications = [], isLoading } = useQuery<Notification[]>({
+  const { data: notifications = [], isLoading } = useQuery<Array<Notification>>({
     queryKey: ['notifications'],
     queryFn: fetchNotifications,
   })
@@ -62,10 +62,13 @@ function NotificationsPage() {
   const { data: settings } = useQuery<NotificationSettings>({
     queryKey: ['notificationSettings'],
     queryFn: fetchSettings,
-    onSuccess: (data) => {
-      setPreferences(data.userPreferences || {})
-    },
   })
+
+  useEffect(() => {
+    if (settings?.userPreferences) {
+      setPreferences(settings.userPreferences)
+    }
+  }, [settings])
 
   // Mark all as read mutation
   const markAllReadMutation = useMutation({
@@ -213,7 +216,7 @@ function NotificationsPage() {
               <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
                 Categories
               </h3>
-              {settings?.categories?.map((cat) => (
+              {settings?.categories?.map((cat: NotificationCategory) => (
                 <div
                   key={cat.id}
                   className="flex items-center justify-between py-2"

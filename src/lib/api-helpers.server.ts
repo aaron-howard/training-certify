@@ -4,11 +4,12 @@
  */
 
 import { json } from '@tanstack/react-start'
-import { Request } from '@tanstack/react-router'
-import { AppError } from './errors'
-import { requireRole, type AuthSession } from './auth.server'
+import { AppError, ValidationError } from './errors'
+import { requireRole } from './auth.server'
 import { RateLimitPresets, requireRateLimit } from './rateLimit.server'
 import { getCSRFTokenFromRequest, requireCSRFToken } from './csrf.server'
+import type { AuthSession } from './auth.server';
+// Request is a global type in modern environments
 
 /**
  * Standard error handler for API routes.
@@ -24,13 +25,12 @@ export function handleApiError(error: unknown, context: string): Response {
       {
         error: error.message,
         code: error.code,
-        ...(error instanceof import('./errors').ValidationError && { details: error.errors }),
+        ...(error instanceof ValidationError && { details: error.errors }),
       },
       { status: error.statusCode }
     )
   }
 
-  const message = error instanceof Error ? error.message : String(error)
   console.error(`❌ [${context}] Unexpected Error:`, error)
   return json({ error: 'Internal server error' }, { status: 500 })
 }
@@ -43,11 +43,11 @@ export function handleApiError(error: unknown, context: string): Response {
  * @param context - Context string for error logging
  * @returns Promise that resolves to a Response
  */
-export function withErrorHandling<T>(
+export function withErrorHandling<T extends Response>(
   handler: () => Promise<T>,
-  context: string
+  _context: string
 ): Promise<Response> {
-  return handler().catch((error) => handleApiError(error, context))
+  return handler().catch((error) => handleApiError(error, _context))
 }
 
 /**
@@ -55,7 +55,7 @@ export function withErrorHandling<T>(
  * Handles role checking, rate limiting, and CSRF protection
  */
 export interface ApiHandlerOptions {
-  allowedRoles?: string[]
+  allowedRoles?: Array<string>
   rateLimit?: typeof RateLimitPresets[keyof typeof RateLimitPresets]
   requireCSRF?: boolean
 }
@@ -135,10 +135,10 @@ export async function setupMutationHandler(
  */
 export async function setupReadHandler(
   request: Request,
-  options: Omit<ApiHandlerOptions, 'rateLimit'> = {}
+  options: ApiHandlerOptions = {}
 ): Promise<AuthSession> {
   return setupApiHandler(request, {
     ...options,
-    rateLimit: options.rateLimit || RateLimitPresets.READ,
+    rateLimit: (options as any).rateLimit || RateLimitPresets.READ,
   })
 }

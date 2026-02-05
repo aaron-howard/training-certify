@@ -25,7 +25,7 @@ interface CatalogCertification {
 }
 
 interface CatalogResponse {
-  certifications: CatalogCertification[]
+  certifications: Array<CatalogCertification>
 }
 
 // API fetch functions (using traditional fetch instead of broken createServerFn)
@@ -112,18 +112,18 @@ function CatalogPage() {
   const vendors = useMemo<Array<string>>(() => {
     if (!catalog?.certifications) return ['All']
     const uniqueVendors = Array.from(
-      new Set(catalog.certifications.map((c) => c.vendor)),
-    )
-    return ['All', ...uniqueVendors.filter(Boolean).sort()]
+      new Set(catalog.certifications.map((c: CatalogCertification) => c.vendor)),
+    ).filter((v): v is string => !!v)
+    return ['All', ...uniqueVendors.sort()]
   }, [catalog?.certifications])
 
   // List of unique categories for filtering
   const categories = useMemo<Array<string>>(() => {
     if (!catalog?.certifications) return ['All']
     const uniqueCategories = Array.from(
-      new Set(catalog.certifications.map((c) => c.category)),
-    )
-    return ['All', ...uniqueCategories.filter(Boolean).sort()]
+      new Set(catalog.certifications.map((c: CatalogCertification) => c.category)),
+    ).filter((c): c is string => !!c)
+    return ['All', ...uniqueCategories.sort()]
   }, [catalog?.certifications])
 
   // Filter and Sort certifications
@@ -136,8 +136,8 @@ function CatalogPage() {
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
       processed = processed.filter(
-        (cert) =>
-          cert.name?.toLowerCase().includes(query) ||
+        (cert: CatalogCertification) =>
+          cert.name.toLowerCase().includes(query) ||
           cert.vendor?.toLowerCase().includes(query) ||
           cert.level?.toLowerCase().includes(query),
       )

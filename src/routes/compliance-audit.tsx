@@ -5,15 +5,18 @@ import { AlertCircle, FileCheck, History, Shield } from 'lucide-react'
 interface AuditLog {
   id: string
   userId: string
+  user: string
   action: string
   resourceType: string
   resourceId: string
   details?: string
   timestamp: string
+  date: string
+  status: string
 }
 
 interface ComplianceData {
-  auditLogs: AuditLog[]
+  auditLogs: Array<AuditLog>
   stats: {
     complianceRate: number
     totalAudits: number
@@ -115,12 +118,12 @@ function ComplianceAuditPage() {
           </h3>
         </div>
         <div className="divide-y divide-slate-200 dark:divide-slate-800">
-          {compliance?.auditLogs?.length === 0 ? (
+          {compliance.auditLogs.length === 0 ? (
             <div className="px-6 py-8 text-center text-slate-500">
               No audit logs yet.
             </div>
           ) : (
-            compliance?.auditLogs.map((log) => (
+            compliance.auditLogs.map((log) => (
               <div
                 key={log.id}
                 className="px-6 py-4 flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors"

@@ -29,12 +29,6 @@ export function ComplianceMetricsOverview({
     return <Minus className="w-5 h-5 text-slate-600 dark:text-slate-400" />
   }
 
-  const getTrendColor = () => {
-    if (metrics.trend === 'up') return 'text-emerald-600 dark:text-emerald-400'
-    if (metrics.trend === 'down') return 'text-rose-600 dark:text-rose-400'
-    return 'text-slate-600 dark:text-slate-400'
-  }
-
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-lg">
       <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6 flex items-center gap-2">

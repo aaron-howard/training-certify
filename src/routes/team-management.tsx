@@ -5,7 +5,6 @@ import { useState } from 'react'
 import {
   Download,
   Plus,
-  Search,
   Settings,
   Shield,
   Trash2,
@@ -36,6 +35,7 @@ interface TeamMember {
   id: string
   name?: string
   email?: string
+  role?: string
 }
 
 interface User {
@@ -45,8 +45,8 @@ interface User {
 }
 
 interface TeamData {
-  metrics?: TeamMetric[]
-  teams?: Team[]
+  metrics?: Array<TeamMetric>
+  teams?: Array<Team>
 }
 
 const fetchTeams = async () => {
@@ -169,11 +169,10 @@ function TeamManagementPage() {
       <div className="flex border-b border-slate-200 dark:border-slate-800">
         <button
           onClick={() => setActiveTab('teams')}
-          className={`px-6 py-3 text-sm font-semibold transition-colors relative ${
-            activeTab === 'teams'
-              ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-              : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
-          }`}
+          className={`px-6 py-3 text-sm font-semibold transition-colors relative ${activeTab === 'teams'
+            ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
+            : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+            }`}
         >
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4" /> Team Coverage
@@ -182,11 +181,10 @@ function TeamManagementPage() {
         {isAdmin && (
           <button
             onClick={() => setActiveTab('users')}
-            className={`px-6 py-3 text-sm font-semibold transition-colors relative ${
-              activeTab === 'users'
-                ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-                : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
-            }`}
+            className={`px-6 py-3 text-sm font-semibold transition-colors relative ${activeTab === 'users'
+              ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
+              : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+              }`}
           >
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4" /> User Management
@@ -441,7 +439,7 @@ function MemberManagementModal({
   const [newUserRole, setNewUserRole] = useState('User')
 
   // Fetch all users to add them to teams
-  const { data: allUsers = [] } = useQuery<User[]>({
+  const { data: allUsers = [] } = useQuery<Array<User>>({
     queryKey: ['allUsers'],
     queryFn: async () => {
       const res = await fetch('/api/users')
@@ -451,7 +449,7 @@ function MemberManagementModal({
   })
 
   // Fetch team members
-  const { data: teamMembers = [], isLoading } = useQuery<TeamMember[]>({
+  const { data: teamMembers = [], isLoading } = useQuery<Array<TeamMember>>({
     queryKey: ['teamMembers', teamId],
     queryFn: async () => {
       const res = await fetch(`/api/team-members?teamId=${teamId}`)

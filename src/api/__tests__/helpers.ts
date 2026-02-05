@@ -60,8 +60,8 @@ export function createMockDb(mockData: any = {}) {
   // It is thenable so it can be awaited to get the result
   const queryBuilder: any = {
     then: (resolve: any) => resolve(response),
-    catch: (reject: any) => {},
-    finally: (cb: any) => {},
+    catch: () => { },
+    finally: () => { },
   }
 
   // All methods on the query builder return the query builder itself

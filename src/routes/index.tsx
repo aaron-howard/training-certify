@@ -28,7 +28,8 @@ function DashboardPage() {
     enabled: !!user?.id,
   })
 
-  const permissions = usePermissions(dbUser?.role)
+  // Permissions hook (internal usage for conditional rendering)
+  usePermissions(dbUser?.role || 'User')
 
   const {
     data: stats = { activeCerts: 0, expiringSoon: 0, complianceRate: 0 },

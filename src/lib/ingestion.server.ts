@@ -124,8 +124,8 @@ export async function fetchVendors(): Promise<Array<VendorInfo>> {
     const vendors: Array<VendorInfo> = []
 
     vendorLinks.forEach((link) => {
-      const element = link as Element
-      const name = element.textContent?.trim() || ''
+      const element = link
+      const name = element.textContent.trim() || ''
       const href = element.getAttribute('href') || ''
       const slug = href.split('/').pop() || ''
       if (name && slug) {
@@ -167,12 +167,12 @@ export async function fetchExams(vendor: VendorInfo): Promise<Array<ExamInfo>> {
     const exams: Array<ExamInfo> = []
 
     examElements.forEach((el) => {
-      const element = el as Element
+      const element = el
       const strongTag = element.querySelector('strong')
-      const code = strongTag?.textContent?.replace(':', '').trim() || ''
+      const code = strongTag?.textContent.replace(':', '').trim() || ''
       // Get text content excluding the strong tag
       const name =
-        element.textContent?.replace(strongTag?.textContent || '', '').trim() || ''
+        element.textContent.replace(strongTag?.textContent || '', '').trim() || ''
 
       if (code && name) {
         exams.push({

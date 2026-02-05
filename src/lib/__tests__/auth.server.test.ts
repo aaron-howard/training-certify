@@ -9,7 +9,7 @@ import {
   getVerifiedAuth,
   requireRole,
 } from '../auth.server'
-import { factories, mockClerkAuth } from '../../test/factories'
+import { factories } from '../../test/factories'
 
 // Mock Clerk auth
 vi.mock('@clerk/tanstack-react-start/server')
