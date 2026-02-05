@@ -279,15 +279,17 @@ export const Route = createFileRoute('/api/teams')({
           console.error('❌ [API Teams GET] Error:', error)
           return json(
             {
-              error: 'Unauthorized or internal error',
+              error: 'Forbidden or internal error',
               details: error.message,
             },
             {
               status: error.message.includes('Forbidden')
                 ? 403
-                : error.message.includes('Rate limit')
-                  ? 429
-                  : 500,
+                : error.message === 'Unauthorized'
+                  ? 401
+                  : error.message.includes('Rate limit')
+                    ? 429
+                    : 500,
             },
           )
         }

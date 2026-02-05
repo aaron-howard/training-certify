@@ -11,6 +11,7 @@ import {
   userTeams,
 } from '../db/schema'
 import { requireRole } from '../lib/auth.server'
+import { RateLimitPresets, requireRateLimit } from '../lib/rateLimit.server'
 import type { AuthSession } from '../lib/auth.server'
 
 /**
@@ -146,6 +147,7 @@ export const Route = createFileRoute('/api/certifications')({
       POST: async ({ request }) => {
         try {
           const session = await requireRole(['Admin', 'Manager', 'User'])
+          await requireRateLimit(session.userId, RateLimitPresets.MUTATION)
           const data = await request.json()
 
           const db = await getDb()
@@ -234,6 +236,7 @@ export const Route = createFileRoute('/api/certifications')({
       PATCH: async ({ request }) => {
         try {
           const session = await requireRole(['Admin', 'Manager', 'User'])
+          await requireRateLimit(session.userId, RateLimitPresets.MUTATION)
           const data = await request.json()
           const db = await getDb()
           if (!db) {
@@ -318,6 +321,7 @@ export const Route = createFileRoute('/api/certifications')({
       DELETE: async ({ request }) => {
         try {
           const session = await requireRole(['Admin', 'Manager', 'User'])
+          await requireRateLimit(session.userId, RateLimitPresets.MUTATION)
           const url = new URL(request.url)
           const id = url.searchParams.get('id')
           if (!id) return json({ error: 'Missing id' }, { status: 400 })

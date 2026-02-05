@@ -10,7 +10,8 @@ import {
   userTeams,
   users,
 } from '../db/schema'
-import { requireRole } from '../lib/auth.server'
+import { getVerifiedAuth, requireRole } from '../lib/auth.server'
+import { RateLimitPresets, requireRateLimit } from '../lib/rateLimit.server'
 
 export const Route = createFileRoute('/api/users')({
   server: {
@@ -49,27 +50,69 @@ export const Route = createFileRoute('/api/users')({
         let db: any
 
         try {
-          data = await request.json()
-          console.log('🔍 [API Users POST] Received user data:', data)
-          db = await getDb()
+          // 1. Authenticate the requester via Clerk
+          const authenticatedId = await getVerifiedAuth()
 
+          // 2. Rate Limit based on the authenticated user
+          await requireRateLimit(authenticatedId, RateLimitPresets.AUTH)
+
+          data = await request.json()
+          console.log(
+            `🔍 [API Users POST] Requester ${authenticatedId} ensuring user:`,
+            data.id,
+          )
+
+          db = await getDb()
           if (!db) {
             console.error('❌ [API Users POST] Database not available')
             return json(
-              {
-                error: 'Database not available',
-                code: 'DB_UNAVAILABLE',
-              },
+              { error: 'Database not available', code: 'DB_UNAVAILABLE' },
               { status: 500 },
             )
           }
 
-          // Check if user exists
+          // 3. Security Check: Is the requester allowed to ensure this ID?
+          // They must be ensuring themselves, OR they must be an Admin.
+          if (authenticatedId !== data.id) {
+            const requester = await db
+              .select({ role: users.role })
+              .from(users)
+              .where(eq(users.id, authenticatedId))
+              .limit(1)
+
+            if (!requester.length || requester[0].role !== 'Admin') {
+              console.error(
+                `❌ [API Users POST] Forbidden: ${authenticatedId} tried to ensure ${data.id}`,
+              )
+              return json({ error: 'Forbidden' }, { status: 403 })
+            }
+          }
+
+          // 4. Role Protection: Non-admins cannot set a role other than 'User'
+          // We'll fetch the requester's role again (or use the one we just fetched if applicable)
+          const requesterRecord = await db
+            .select({ role: users.role })
+            .from(users)
+            .where(eq(users.id, authenticatedId))
+            .limit(1)
+
+          const isRequesterAdmin =
+            requesterRecord.length > 0 && requesterRecord[0].role === 'Admin'
+
+          if (!isRequesterAdmin && data.role && data.role !== 'User') {
+            console.warn(
+              `⚠️ [API Users POST] Non-admin ${authenticatedId} tried to set role ${data.role}. Forcing to 'User'.`,
+            )
+            data.role = 'User'
+          }
+
+          // Check if user already exists
           const existing = await db
             .select()
             .from(users)
             .where(eq(users.id, data.id))
             .limit(1)
+
           if (existing.length > 0) {
             console.log(
               `✅ [API Users POST] User found: ${data.id} (${existing[0].role})`,
@@ -97,6 +140,11 @@ export const Route = createFileRoute('/api/users')({
         } catch (error) {
           console.error('❌ [API Users POST] Failed to ensure user:', error)
           const err: any = error
+
+          // Handle "Unauthorized" from getVerifiedAuth
+          if (err.message === 'Unauthorized') {
+            return json({ error: 'Unauthorized' }, { status: 401 })
+          }
 
           const code = err.code || err.cause?.code
           const detail = err.detail || err.cause?.detail || ''
@@ -201,7 +249,7 @@ export const Route = createFileRoute('/api/users')({
           }
           return json(
             { error: err.message || 'Failed to process user' },
-            { status: 500 },
+            { status: err.message?.includes('Rate limit') ? 429 : 500 },
           )
         }
       },

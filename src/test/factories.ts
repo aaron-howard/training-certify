@@ -1,6 +1,7 @@
 /**
  * Test data factories for creating mock data
  */
+import { vi } from 'vitest'
 
 export const factories = {
   user: (overrides = {}) => ({

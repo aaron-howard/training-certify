@@ -14,7 +14,8 @@ export interface AuthSession {
  * Throws a 401 if the session is invalid.
  */
 export async function getVerifiedAuth() {
-  const { userId } = await auth()
+  const authObj = await auth()
+  const { userId } = authObj
   if (!userId) {
     throw new Error('Unauthorized')
   }

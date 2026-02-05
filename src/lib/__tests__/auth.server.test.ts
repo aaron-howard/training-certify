@@ -15,7 +15,7 @@ import { factories, mockClerkAuth } from '../../test/factories'
 vi.mock('@clerk/tanstack-react-start/server')
 
 // Mock database
-vi.mock('../db/db.server', () => ({
+vi.mock('../../db/db.server', () => ({
   getDb: vi.fn(),
 }))
 
@@ -27,7 +27,7 @@ describe('auth.server.ts', () => {
   describe('getVerifiedAuth', () => {
     it('should return userId when auth is valid', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
-      vi.mocked(auth).mockResolvedValue({ userId: 'user_test123' })
+      vi.mocked(auth).mockResolvedValue({ userId: 'user_test123' } as any)
 
       const userId = await getVerifiedAuth()
 
@@ -37,20 +37,16 @@ describe('auth.server.ts', () => {
 
     it('should throw error when userId is null', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
-      vi.mocked(auth).mockResolvedValue({ userId: null })
+      vi.mocked(auth).mockResolvedValue({ userId: null } as any)
 
-      await expect(getVerifiedAuth()).rejects.toThrow(
-        'Unauthorized: No user session',
-      )
+      await expect(getVerifiedAuth()).rejects.toThrow('Unauthorized')
     })
 
     it('should throw error when userId is undefined', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
-      vi.mocked(auth).mockResolvedValue({ userId: undefined })
+      vi.mocked(auth).mockResolvedValue({ userId: undefined } as any)
 
-      await expect(getVerifiedAuth()).rejects.toThrow(
-        'Unauthorized: No user session',
-      )
+      await expect(getVerifiedAuth()).rejects.toThrow('Unauthorized')
     })
 
     it('should throw error when auth fails', async () => {
@@ -64,9 +60,9 @@ describe('auth.server.ts', () => {
   describe('getAuthenticatedUser', () => {
     it('should return user with role when found in database', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
-      const { getDb } = await import('../db/db.server')
+      const { getDb } = await import('../../db/db.server')
 
-      vi.mocked(auth).mockResolvedValue({ userId: 'user_test123' })
+      vi.mocked(auth).mockResolvedValue({ userId: 'user_test123' } as any)
 
       const mockDb = {
         select: vi.fn().mockReturnThis(),
@@ -81,14 +77,15 @@ describe('auth.server.ts', () => {
       expect(session).toEqual({
         userId: 'user_test123',
         role: 'User',
+        email: 'test@example.com',
       })
     })
 
     it('should throw error when user not found in database', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
-      const { getDb } = await import('../db/db.server')
+      const { getDb } = await import('../../db/db.server')
 
-      vi.mocked(auth).mockResolvedValue({ userId: 'user_notfound' })
+      vi.mocked(auth).mockResolvedValue({ userId: 'user_notfound' } as any)
 
       const mockDb = {
         select: vi.fn().mockReturnThis(),
@@ -99,15 +96,15 @@ describe('auth.server.ts', () => {
       vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
       await expect(getAuthenticatedUser()).rejects.toThrow(
-        'Unauthorized: User not found',
+        'User record not found',
       )
     })
 
     it('should throw error when database is not available', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
-      const { getDb } = await import('../db/db.server')
+      const { getDb } = await import('../../db/db.server')
 
-      vi.mocked(auth).mockResolvedValue({ userId: 'user_test123' })
+      vi.mocked(auth).mockResolvedValue({ userId: 'user_test123' } as any)
       vi.mocked(getDb).mockResolvedValue(null)
 
       await expect(getAuthenticatedUser()).rejects.toThrow(
@@ -117,9 +114,9 @@ describe('auth.server.ts', () => {
 
     it('should handle database errors gracefully', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
-      const { getDb } = await import('../db/db.server')
+      const { getDb } = await import('../../db/db.server')
 
-      vi.mocked(auth).mockResolvedValue({ userId: 'user_test123' })
+      vi.mocked(auth).mockResolvedValue({ userId: 'user_test123' } as any)
 
       const mockDb = {
         select: vi.fn().mockReturnThis(),
@@ -136,9 +133,9 @@ describe('auth.server.ts', () => {
   describe('requireRole', () => {
     it('should allow access when user has required role', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
-      const { getDb } = await import('../db/db.server')
+      const { getDb } = await import('../../db/db.server')
 
-      vi.mocked(auth).mockResolvedValue({ userId: 'user_admin123' })
+      vi.mocked(auth).mockResolvedValue({ userId: 'user_admin123' } as any)
 
       const mockDb = {
         select: vi.fn().mockReturnThis(),
@@ -153,14 +150,15 @@ describe('auth.server.ts', () => {
       expect(session).toEqual({
         userId: 'user_admin123',
         role: 'Admin',
+        email: 'admin@example.com',
       })
     })
 
     it('should throw 403 when user lacks required role', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
-      const { getDb } = await import('../db/db.server')
+      const { getDb } = await import('../../db/db.server')
 
-      vi.mocked(auth).mockResolvedValue({ userId: 'user_test123' })
+      vi.mocked(auth).mockResolvedValue({ userId: 'user_test123' } as any)
 
       const mockDb = {
         select: vi.fn().mockReturnThis(),
@@ -170,16 +168,14 @@ describe('auth.server.ts', () => {
       }
       vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-      await expect(requireRole(['Admin'])).rejects.toThrow(
-        'Forbidden: Insufficient permissions',
-      )
+      await expect(requireRole(['Admin'])).rejects.toThrow('Forbidden')
     })
 
     it('should handle multiple allowed roles', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
-      const { getDb } = await import('../db/db.server')
+      const { getDb } = await import('../../db/db.server')
 
-      vi.mocked(auth).mockResolvedValue({ userId: 'user_manager123' })
+      vi.mocked(auth).mockResolvedValue({ userId: 'user_manager123' } as any)
 
       const mockDb = {
         select: vi.fn().mockReturnThis(),
@@ -196,9 +192,9 @@ describe('auth.server.ts', () => {
 
     it('should work with Admin role', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
-      const { getDb } = await import('../db/db.server')
+      const { getDb } = await import('../../db/db.server')
 
-      vi.mocked(auth).mockResolvedValue({ userId: 'user_admin123' })
+      vi.mocked(auth).mockResolvedValue({ userId: 'user_admin123' } as any)
 
       const mockDb = {
         select: vi.fn().mockReturnThis(),
@@ -215,9 +211,9 @@ describe('auth.server.ts', () => {
 
     it('should work with User role when allowed', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
-      const { getDb } = await import('../db/db.server')
+      const { getDb } = await import('../../db/db.server')
 
-      vi.mocked(auth).mockResolvedValue({ userId: 'user_test123' })
+      vi.mocked(auth).mockResolvedValue({ userId: 'user_test123' } as any)
 
       const mockDb = {
         select: vi.fn().mockReturnThis(),
@@ -234,9 +230,9 @@ describe('auth.server.ts', () => {
 
     it('should reject User role when not in allowed list', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
-      const { getDb } = await import('../db/db.server')
+      const { getDb } = await import('../../db/db.server')
 
-      vi.mocked(auth).mockResolvedValue({ userId: 'user_test123' })
+      vi.mocked(auth).mockResolvedValue({ userId: 'user_test123' } as any)
 
       const mockDb = {
         select: vi.fn().mockReturnThis(),
@@ -253,10 +249,10 @@ describe('auth.server.ts', () => {
 
     it('should handle Executive role', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
-      const { getDb } = await import('../db/db.server')
+      const { getDb } = await import('../../db/db.server')
 
       const executive = factories.user({ role: 'Executive' })
-      vi.mocked(auth).mockResolvedValue({ userId: executive.id })
+      vi.mocked(auth).mockResolvedValue({ userId: executive.id } as any)
 
       const mockDb = {
         select: vi.fn().mockReturnThis(),
@@ -273,10 +269,10 @@ describe('auth.server.ts', () => {
 
     it('should handle Auditor role', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
-      const { getDb } = await import('../db/db.server')
+      const { getDb } = await import('../../db/db.server')
 
       const auditor = factories.user({ role: 'Auditor' })
-      vi.mocked(auth).mockResolvedValue({ userId: auditor.id })
+      vi.mocked(auth).mockResolvedValue({ userId: auditor.id } as any)
 
       const mockDb = {
         select: vi.fn().mockReturnThis(),

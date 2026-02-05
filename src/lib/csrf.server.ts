@@ -3,14 +3,17 @@
  * Provides CSRF token generation and validation
  */
 
-import { createHash, randomBytes } from 'node:crypto'
+import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto'
 
 /**
  * Generate a CSRF token
  * @returns CSRF token string
  */
 export function generateCSRFToken(): string {
-  return randomBytes(32).toString('hex')
+  const secret = process.env.CSRF_SECRET || 'dev-secret'
+  const random = randomBytes(16).toString('hex')
+  const hmac = createHmac('sha256', secret).update(random).digest('hex')
+  return `${random}.${hmac}`
 }
 
 /**
@@ -25,13 +28,22 @@ export function validateCSRFToken(token: string, secret: string): boolean {
   }
 
   try {
-    // Simple validation - in production, use a more robust method
-    const hash = createHash('sha256')
-      .update(token + secret)
+    const [random, hmac] = token.split('.')
+    if (!random || !hmac) return false
+
+    const expectedHmac = createHmac('sha256', secret)
+      .update(random)
       .digest('hex')
 
-    // Token should be at least 32 characters
-    return token.length >= 32
+    // Use timingSafeEqual to prevent timing attacks
+    const hmacBuffer = Buffer.from(hmac)
+    const expectedBuffer = Buffer.from(expectedHmac)
+
+    if (hmacBuffer.length !== expectedBuffer.length) {
+      return false
+    }
+
+    return timingSafeEqual(hmacBuffer, expectedBuffer)
   } catch {
     return false
   }

@@ -3,7 +3,8 @@ import { json } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 import { getDb } from '../db/db.server'
 import { certifications } from '../db/schema'
-import { requireRole } from '../lib/auth.server'
+import { getVerifiedAuth, requireRole } from '../lib/auth.server'
+import { RateLimitPresets, requireRateLimit } from '../lib/rateLimit.server'
 
 export const Route = createFileRoute('/api/catalog')({
   server: {
@@ -45,7 +46,8 @@ export const Route = createFileRoute('/api/catalog')({
       },
       DELETE: async ({ request }) => {
         try {
-          await requireRole(['Admin'])
+          const session = await requireRole(['Admin'])
+          await requireRateLimit(session.userId, RateLimitPresets.ADMIN)
 
           const url = new URL(request.url)
           const id = url.searchParams.get('id')
@@ -71,7 +73,8 @@ export const Route = createFileRoute('/api/catalog')({
       },
       POST: async ({ request }) => {
         try {
-          await requireRole(['Admin'])
+          const session = await requireRole(['Admin'])
+          await requireRateLimit(session.userId, RateLimitPresets.ADMIN)
 
           const data = await request.json()
           const db = await getDb()

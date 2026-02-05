@@ -2,14 +2,16 @@ import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { getDb } from '../db/db.server'
 import { auditLogs } from '../db/schema'
-import { requireRole } from '../lib/auth.server'
+import { getVerifiedAuth, requireRole } from '../lib/auth.server'
+import { RateLimitPresets, requireRateLimit } from '../lib/rateLimit.server'
 
 export const Route = createFileRoute('/api/compliance')({
   server: {
     handlers: {
       GET: async () => {
         try {
-          await requireRole(['Admin', 'Auditor', 'Executive'])
+          const session = await requireRole(['Admin', 'Auditor', 'Executive'])
+          await requireRateLimit(session.userId, RateLimitPresets.READ)
 
           const db = await getDb()
           if (!db) {

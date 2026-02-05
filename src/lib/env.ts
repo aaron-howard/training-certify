@@ -146,7 +146,7 @@ export const ENV = new Proxy({} as Env & { CLERK_PUBLISHABLE_KEY: string }, {
       ) {
         // @ts-ignore - Basic fallback for local development if window.__ENV__ is missing
         return (
-          window.__ENV__?.CLERK_PUBLISHABLE_KEY ||
+          (window as any).__ENV__?.CLERK_PUBLISHABLE_KEY ||
           import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
         )
       }
