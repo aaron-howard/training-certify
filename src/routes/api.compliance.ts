@@ -1,9 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { getDb } from '../db/db.server'
+import { getDbOrThrow } from '../db/db.server'
 import { auditLogs } from '../db/schema'
-import { getVerifiedAuth, requireRole } from '../lib/auth.server'
+import { requireRole } from '../lib/auth.server'
 import { RateLimitPresets, requireRateLimit } from '../lib/rateLimit.server'
+import { AppError } from '../lib/errors'
 
 export const Route = createFileRoute('/api/compliance')({
   server: {
@@ -13,10 +14,7 @@ export const Route = createFileRoute('/api/compliance')({
           const session = await requireRole(['Admin', 'Auditor', 'Executive'])
           await requireRateLimit(session.userId, RateLimitPresets.READ)
 
-          const db = await getDb()
-          if (!db) {
-            return json({ error: 'Database not available' }, { status: 500 })
-          }
+          const db = await getDbOrThrow()
 
           const logs = await db.select().from(auditLogs).limit(50)
           const totalAudits = logs.length
@@ -40,12 +38,12 @@ export const Route = createFileRoute('/api/compliance')({
               issuesFound,
             },
           })
-        } catch (error: any) {
-          console.error('[API Compliance] Error:', error)
-          return json(
-            { error: 'Forbidden or internal error', details: error.message },
-            { status: error.message.includes('Forbidden') ? 403 : 500 },
-          )
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
+          }
+          console.error('❌ [API Compliance GET] Unexpected Error:', error)
+          return json({ error: 'Internal server error' }, { status: 500 })
         }
       },
     },

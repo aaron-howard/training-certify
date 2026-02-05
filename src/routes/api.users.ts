@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
-import { getDb } from '../db/db.server'
+import { getDbOrThrow } from '../db/db.server'
 import {
   auditLogs,
   notifications,
@@ -12,6 +12,9 @@ import {
 } from '../db/schema'
 import { getVerifiedAuth, requireRole } from '../lib/auth.server'
 import { RateLimitPresets, requireRateLimit } from '../lib/rateLimit.server'
+import { getCSRFTokenFromRequest, requireCSRFToken } from '../lib/csrf.server'
+import { AppError, ForbiddenError, UnauthorizedError, ValidationError } from '../lib/errors'
+import { UpdateUserSchema } from '../lib/validation'
 
 export const Route = createFileRoute('/api/users')({
   server: {
@@ -19,57 +22,30 @@ export const Route = createFileRoute('/api/users')({
       GET: async () => {
         try {
           await requireRole(['Admin', 'Auditor', 'Executive'])
-          const db = await getDb()
-          if (!db) {
-            return json(
-              {
-                error: 'Database not available',
-                code: 'DB_UNAVAILABLE',
-              },
-              { status: 500 },
-            )
-          }
+          const db = await getDbOrThrow()
           const allUsers = await db.select().from(users)
           return json(allUsers)
-        } catch (error: any) {
-          console.error(
-            '❌ [API Users GET] Authorization failure or error:',
-            error,
-          )
-          return json(
-            {
-              error: 'Forbidden or internal error',
-              details: error.message,
-            },
-            { status: error.message.includes('Forbidden') ? 403 : 500 },
-          )
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
+          }
+          console.error('❌ [API Users GET] Unexpected Error:', error)
+          return json({ error: 'Internal server error' }, { status: 500 })
         }
       },
       POST: async ({ request }) => {
-        let data: any
-        let db: any
-
         try {
           // 1. Authenticate the requester via Clerk
           const authenticatedId = await getVerifiedAuth()
 
           // 2. Rate Limit based on the authenticated user
           await requireRateLimit(authenticatedId, RateLimitPresets.AUTH)
+          requireCSRFToken(getCSRFTokenFromRequest(request))
 
-          data = await request.json()
-          console.log(
-            `🔍 [API Users POST] Requester ${authenticatedId} ensuring user:`,
-            data.id,
-          )
+          const data = await request.json()
+          console.log(`🔍 [API Users POST] Requester ${authenticatedId} ensuring user:`, data.id)
 
-          db = await getDb()
-          if (!db) {
-            console.error('❌ [API Users POST] Database not available')
-            return json(
-              { error: 'Database not available', code: 'DB_UNAVAILABLE' },
-              { status: 500 },
-            )
-          }
+          const db = await getDbOrThrow()
 
           // 3. Security Check: Is the requester allowed to ensure this ID?
           // They must be ensuring themselves, OR they must be an Admin.
@@ -81,10 +57,7 @@ export const Route = createFileRoute('/api/users')({
               .limit(1)
 
             if (!requester.length || requester[0].role !== 'Admin') {
-              console.error(
-                `❌ [API Users POST] Forbidden: ${authenticatedId} tried to ensure ${data.id}`,
-              )
-              return json({ error: 'Forbidden' }, { status: 403 })
+              throw new ForbiddenError('You can only ensure your own user record unless you are an Admin')
             }
           }
 
@@ -96,13 +69,9 @@ export const Route = createFileRoute('/api/users')({
             .where(eq(users.id, authenticatedId))
             .limit(1)
 
-          const isRequesterAdmin =
-            requesterRecord.length > 0 && requesterRecord[0].role === 'Admin'
+          const isRequesterAdmin = requesterRecord.length > 0 && requesterRecord[0].role === 'Admin'
 
           if (!isRequesterAdmin && data.role && data.role !== 'User') {
-            console.warn(
-              `⚠️ [API Users POST] Non-admin ${authenticatedId} tried to set role ${data.role}. Forcing to 'User'.`,
-            )
             data.role = 'User'
           }
 
@@ -113,54 +82,28 @@ export const Route = createFileRoute('/api/users')({
             .where(eq(users.id, data.id))
             .limit(1)
 
-          if (existing.length > 0) {
-            console.log(
-              `✅ [API Users POST] User found: ${data.id} (${existing[0].role})`,
-            )
-            return json(existing[0])
-          }
+          if (existing.length > 0) return json(existing[0])
 
-          // Create user
-          const defaultRole = data.role || 'User'
-          console.log(
-            `🚀 [API Users POST] Creating new user: ${data.id} with role: ${defaultRole}`,
-          )
-          const result = await db
-            .insert(users)
-            .values({
-              id: data.id,
-              name: data.name,
-              email: data.email,
-              avatarUrl: data.avatarUrl,
-              role: defaultRole,
-            })
-            .returning()
+          // Create user with a transaction to handle potential email conflicts safely
+          try {
+            const defaultRole = data.role || 'User'
+            const result = await db
+              .insert(users)
+              .values({
+                id: data.id,
+                name: data.name,
+                email: data.email,
+                avatarUrl: data.avatarUrl,
+                role: defaultRole,
+              })
+              .returning()
 
-          return json(result[0], { status: 201 })
-        } catch (error) {
-          console.error('❌ [API Users POST] Failed to ensure user:', error)
-          const err: any = error
-
-          // Handle "Unauthorized" from getVerifiedAuth
-          if (err.message === 'Unauthorized') {
-            return json({ error: 'Unauthorized' }, { status: 401 })
-          }
-
-          const code = err.code || err.cause?.code
-          const detail = err.detail || err.cause?.detail || ''
-
-          if (code === '23505' && detail.includes('email')) {
-            if (!data || !db) {
-              return json(
-                { error: 'System error during migration prep' },
-                { status: 500 },
-              )
-            }
-
-            try {
-              console.log(
-                '🔄 [API] Detected duplicate email with new ID. Starting migration...',
-              )
+            return json(result[0], { status: 201 })
+          } catch (error) {
+            const insertError = error as { code?: string; detail?: string }
+            // Handle duplicate email (migration case)
+            if (insertError.code === '23505' && insertError.detail?.includes('email')) {
+              console.log('🔄 [API] Detected duplicate email with new ID. Starting migration...')
 
               const existingUser = await db
                 .select()
@@ -168,24 +111,18 @@ export const Route = createFileRoute('/api/users')({
                 .where(eq(users.email, data.email))
                 .limit(1)
 
-              if (!existingUser.length) {
-                return json(
-                  { error: 'Conflict detected but existing user not found' },
-                  { status: 409 },
-                )
-              }
+              if (!existingUser.length) throw error
 
               const oldUserId = existingUser[0].id
-              console.log(
-                `🔄 [API] Migrating data from ${oldUserId} to ${data.id}`,
-              )
 
-              await db.transaction(async (tx: any) => {
+              await db.transaction(async (tx) => {
+                // Rename old user to avoid conflict during migration
                 await tx
                   .update(users)
                   .set({ email: `${data.email}_migrated_${Date.now()}` })
                   .where(eq(users.id, oldUserId))
 
+                // Insert new user record
                 await tx.insert(users).values({
                   id: data.id,
                   name: data.name,
@@ -194,92 +131,55 @@ export const Route = createFileRoute('/api/users')({
                   role: existingUser[0].role || data.role || 'User',
                 })
 
-                await tx
-                  .update(userCertifications)
-                  .set({ userId: data.id })
-                  .where(eq(userCertifications.userId, oldUserId))
+                // Move all related data
+                await tx.update(userCertifications).set({ userId: data.id }).where(eq(userCertifications.userId, oldUserId))
+                await tx.update(notifications).set({ userId: data.id }).where(eq(notifications.userId, oldUserId))
+                await tx.update(auditLogs).set({ userId: data.id }).where(eq(auditLogs.userId, oldUserId))
+                await tx.update(userTeams).set({ userId: data.id }).where(eq(userTeams.userId, oldUserId))
+                await tx.update(teams).set({ managerId: data.id }).where(eq(teams.managerId, oldUserId))
 
-                await tx
-                  .update(notifications)
-                  .set({ userId: data.id })
-                  .where(eq(notifications.userId, oldUserId))
-
-                await tx
-                  .update(auditLogs)
-                  .set({ userId: data.id })
-                  .where(eq(auditLogs.userId, oldUserId))
-
-                await tx
-                  .update(userTeams)
-                  .set({ userId: data.id })
-                  .where(eq(userTeams.userId, oldUserId))
-
-                await tx
-                  .update(teams)
-                  .set({ managerId: data.id })
-                  .where(eq(teams.managerId, oldUserId))
-
+                // Cleanup old user record
                 await tx.delete(users).where(eq(users.id, oldUserId))
               })
 
-              console.log('✅ [API] Migration successful')
-              const newUser = await db
-                .select()
-                .from(users)
-                .where(eq(users.id, data.id))
-                .limit(1)
+              const newUser = await db.select().from(users).where(eq(users.id, data.id)).limit(1)
               return json(newUser[0], { status: 201 })
-            } catch (migrationError) {
-              console.error('❌ [API] Migration failed:', migrationError)
-              return json(
-                {
-                  error: 'Failed to migrate user data',
-                  details: (migrationError as any).message,
-                },
-                { status: 500 },
-              )
             }
+            throw error
           }
-
-          if (err.code === '23505') {
-            return json(
-              { error: 'User with this ID or email already exists' },
-              { status: 409 },
-            )
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
           }
-          return json(
-            { error: err.message || 'Failed to process user' },
-            { status: err.message?.includes('Rate limit') ? 429 : 500 },
-          )
+          const message = error instanceof Error ? error.message : String(error)
+          if (message === 'Unauthorized') {
+            return json({ error: 'Unauthorized' }, { status: 401 })
+          }
+          console.error('❌ [API Users POST] Failed to ensure user:', error)
+          return json({ error: 'Internal server error', details: message }, { status: 500 })
         }
       },
       PATCH: async ({ request }) => {
         try {
           const session = await requireRole(['Admin'])
-          const data = await request.json()
-          console.log(
-            `🔧 [API Users PATCH] Admin ${session.userId} updating user ${data.id}`,
-          )
-          const db = await getDb()
-          if (!db) {
-            return json(
-              {
-                error: 'Database not available',
-                code: 'DB_UNAVAILABLE',
-              },
-              { status: 500 },
-            )
+          requireCSRFToken(getCSRFTokenFromRequest(request))
+
+          const rawData = await request.json()
+          const validation = UpdateUserSchema.safeParse(rawData)
+
+          if (!validation.success) {
+            throw new ValidationError('Invalid update data', validation.error.errors)
           }
 
-          if (!data.id) {
-            return json({ error: 'Missing user id' }, { status: 400 })
-          }
+          const data = validation.data
+          const db = await getDbOrThrow()
 
-          const updates: any = {}
-          if (data.role) updates.role = data.role
-          if (data.name) updates.name = data.name
-          if (data.email) updates.email = data.email
-          updates.updatedAt = new Date()
+          const updates: Partial<typeof users.$inferInsert> & { updatedAt: Date } = {
+            ...data,
+            updatedAt: new Date()
+          }
+          // Remove ID from updates
+          delete (updates as { id?: string }).id
 
           const result = await db
             .update(users)
@@ -287,60 +187,33 @@ export const Route = createFileRoute('/api/users')({
             .where(eq(users.id, data.id))
             .returning()
 
-          if (result.length === 0) {
-            console.error(`❌ [API Users PATCH] User not found: ${data.id}`)
-            return json({ error: 'User not found' }, { status: 404 })
-          }
+          if (result.length === 0) throw new NotFoundError('User not found')
 
-          console.log(
-            `✅ [API Users PATCH] Successfully updated user ${data.id}`,
-          )
           return json(result[0])
-        } catch (error: any) {
-          console.error(
-            '❌ [API Users PATCH] Authorization failure or error:',
-            error,
-          )
-          return json(
-            {
-              error: 'Unauthorized/Forbidden or internal error',
-              details: error.message,
-            },
-            {
-              status: error.message.includes('Forbidden')
-                ? 403
-                : error.message === 'Unauthorized'
-                  ? 401
-                  : 500,
-            },
-          )
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({
+              error: error.message,
+              code: error.code,
+              details: error instanceof ValidationError ? error.errors : undefined
+            }, { status: error.statusCode })
+          }
+          console.error('❌ [API Users PATCH] Unexpected Error:', error)
+          return json({ error: 'Internal server error' }, { status: 500 })
         }
       },
       DELETE: async ({ request }) => {
         try {
           const session = await requireRole(['Admin'])
+          requireCSRFToken(getCSRFTokenFromRequest(request))
+
           const url = new URL(request.url)
           const id = url.searchParams.get('id')
-          if (!id) {
-            return json({ error: 'Missing user id' }, { status: 400 })
-          }
+          if (!id) throw new ValidationError('Missing user ID')
 
-          console.log(
-            `🗑️ [API Users DELETE] Admin ${session.userId} deleting user ${id}`,
-          )
+          const db = await getDbOrThrow()
 
-          const db = await getDb()
-          if (!db) {
-            return json(
-              {
-                error: 'Database not available',
-                code: 'DB_UNAVAILABLE',
-              },
-              { status: 500 },
-            )
-          }
-
-          await db.transaction(async (tx: any) => {
+          await db.transaction(async (tx) => {
             await tx
               .delete(userCertifications)
               .where(eq(userCertifications.userId, id))
@@ -354,20 +227,13 @@ export const Route = createFileRoute('/api/users')({
             await tx.delete(users).where(eq(users.id, id))
           })
 
-          console.log(`✅ [API Users DELETE] Successfully deleted user ${id}`)
           return json({ success: true })
-        } catch (error: any) {
-          console.error(
-            '❌ [API Users DELETE] Authorization failure or error:',
-            error,
-          )
-          return json(
-            {
-              error: 'Forbidden or internal error',
-              details: error.message,
-            },
-            { status: error.message.includes('Forbidden') ? 403 : 500 },
-          )
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
+          }
+          console.error('❌ [API Users DELETE] Unexpected Error:', error)
+          return json({ error: 'Internal server error' }, { status: 500 })
         }
       },
     },

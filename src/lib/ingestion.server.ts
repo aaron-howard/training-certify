@@ -122,9 +122,10 @@ export async function fetchVendors(): Promise<Array<VendorInfo>> {
     const vendorLinks = doc.querySelectorAll('.allExams__vendors a')
     const vendors: Array<VendorInfo> = []
 
-    vendorLinks.forEach((link: any) => {
-      const name = link.textContent?.trim() || ''
-      const href = link.getAttribute('href') || ''
+    vendorLinks.forEach((link) => {
+      const element = link as Element
+      const name = element.textContent?.trim() || ''
+      const href = element.getAttribute('href') || ''
       const slug = href.split('/').pop() || ''
       if (name && slug) {
         vendors.push({ name, slug })
@@ -164,12 +165,13 @@ export async function fetchExams(vendor: VendorInfo): Promise<Array<ExamInfo>> {
     const examElements = doc.querySelectorAll('.allExams__exam a')
     const exams: Array<ExamInfo> = []
 
-    examElements.forEach((el: any) => {
-      const strongTag = el.querySelector('strong')
+    examElements.forEach((el) => {
+      const element = el as Element
+      const strongTag = element.querySelector('strong')
       const code = strongTag?.textContent?.replace(':', '').trim() || ''
       // Get text content excluding the strong tag
       const name =
-        el.textContent?.replace(strongTag?.textContent || '', '').trim() || ''
+        element.textContent?.replace(strongTag?.textContent || '', '').trim() || ''
 
       if (code && name) {
         exams.push({

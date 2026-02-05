@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { and, eq, inArray } from 'drizzle-orm'
-import { getDb } from '../db/db.server'
+import { getDbOrThrow } from '../db/db.server'
 import {
   teamRequirements,
   teams,
@@ -10,6 +10,9 @@ import {
 } from '../db/schema'
 import { requireRole } from '../lib/auth.server'
 import { RateLimitPresets, requireRateLimit } from '../lib/rateLimit.server'
+import { getCSRFTokenFromRequest, requireCSRFToken } from '../lib/csrf.server'
+import { AppError, ForbiddenError, NotFoundError, ValidationError } from '../lib/errors'
+import { TeamSchema } from '../lib/validation'
 
 export const Route = createFileRoute('/api/teams')({
   server: {
@@ -28,16 +31,7 @@ export const Route = createFileRoute('/api/teams')({
           // Rate limiting
           await requireRateLimit(session.userId, RateLimitPresets.READ)
 
-          const db = await getDb()
-          if (!db) {
-            return json(
-              {
-                error: 'Database not available',
-                code: 'DB_UNAVAILABLE',
-              },
-              { status: 500 },
-            )
-          }
+          const db = await getDbOrThrow()
 
           // Use cache for expensive team metrics calculation
           const { getOrCompute, CacheTTL } = await import('../lib/cache.server')
@@ -118,14 +112,14 @@ export const Route = createFileRoute('/api/teams')({
               const allMemberCerts =
                 allMemberIds.length > 0
                   ? await db
-                      .select({
-                        userId: userCertifications.userId,
-                        certificationId: userCertifications.certificationId,
-                        status: userCertifications.status,
-                        expirationDate: userCertifications.expirationDate,
-                      })
-                      .from(userCertifications)
-                      .where(inArray(userCertifications.userId, allMemberIds))
+                    .select({
+                      userId: userCertifications.userId,
+                      certificationId: userCertifications.certificationId,
+                      status: userCertifications.status,
+                      expirationDate: userCertifications.expirationDate,
+                    })
+                    .from(userCertifications)
+                    .where(inArray(userCertifications.userId, allMemberIds))
                   : []
 
               // Group certifications by user ID
@@ -237,7 +231,7 @@ export const Route = createFileRoute('/api/teams')({
                   (c.status === 'active' &&
                     c.expirationDate &&
                     new Date(c.expirationDate).getTime() <
-                      Date.now() + 30 * 24 * 60 * 60 * 1000),
+                    Date.now() + 30 * 24 * 60 * 60 * 1000),
               ).length
 
               const metrics = [
@@ -275,23 +269,12 @@ export const Route = createFileRoute('/api/teams')({
           )
 
           return json(data)
-        } catch (error: any) {
-          console.error('❌ [API Teams GET] Error:', error)
-          return json(
-            {
-              error: 'Forbidden or internal error',
-              details: error.message,
-            },
-            {
-              status: error.message.includes('Forbidden')
-                ? 403
-                : error.message === 'Unauthorized'
-                  ? 401
-                  : error.message.includes('Rate limit')
-                    ? 429
-                    : 500,
-            },
-          )
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
+          }
+          console.error('❌ [API Teams GET] Unexpected Error:', error)
+          return json({ error: 'Internal server error' }, { status: 500 })
         }
       },
       // POST - Create new team (Admin only)
@@ -299,22 +282,17 @@ export const Route = createFileRoute('/api/teams')({
         try {
           const session = await requireRole(['Admin'])
           await requireRateLimit(session.userId, RateLimitPresets.MUTATION)
+          requireCSRFToken(getCSRFTokenFromRequest(request))
 
-          const data = await request.json()
-          const db = await getDb()
-          if (!db) {
-            return json(
-              {
-                error: 'Database not available',
-                code: 'DB_UNAVAILABLE',
-              },
-              { status: 500 },
-            )
+          const rawData = await request.json()
+          const validation = TeamSchema.safeParse(rawData)
+
+          if (!validation.success) {
+            throw new ValidationError('Invalid team data', validation.error.errors)
           }
 
-          if (!data.name) {
-            return json({ error: 'Team name is required' }, { status: 400 })
-          }
+          const data = validation.data
+          const db = await getDbOrThrow()
 
           const result = await db
             .insert(teams)
@@ -330,21 +308,12 @@ export const Route = createFileRoute('/api/teams')({
           cache.invalidate('teams:')
 
           return json(result[0], { status: 201 })
-        } catch (error: any) {
-          console.error('❌ [API Teams POST] Error:', error)
-          return json(
-            {
-              error: 'Forbidden or internal error',
-              details: error.message,
-            },
-            {
-              status: error.message.includes('Forbidden')
-                ? 403
-                : error.message.includes('Rate limit')
-                  ? 429
-                  : 500,
-            },
-          )
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({ error: error.message, code: error.code, details: (error as any).errors }, { status: error.statusCode })
+          }
+          console.error('❌ [API Teams POST] Unexpected Error:', error)
+          return json({ error: 'Internal server error' }, { status: 500 })
         }
       },
       // DELETE - Delete team (Admin only)
@@ -352,23 +321,13 @@ export const Route = createFileRoute('/api/teams')({
         try {
           const session = await requireRole(['Admin'])
           await requireRateLimit(session.userId, RateLimitPresets.MUTATION)
+          requireCSRFToken(getCSRFTokenFromRequest(request))
 
           const url = new URL(request.url)
           const id = url.searchParams.get('id')
-          if (!id) {
-            return json({ error: 'Missing team id' }, { status: 400 })
-          }
+          if (!id) throw new ValidationError('Missing team ID')
 
-          const db = await getDb()
-          if (!db) {
-            return json(
-              {
-                error: 'Database not available',
-                code: 'DB_UNAVAILABLE',
-              },
-              { status: 500 },
-            )
-          }
+          const db = await getDbOrThrow()
 
           await db.transaction(async (tx) => {
             await tx.delete(userTeams).where(eq(userTeams.teamId, id))
@@ -380,21 +339,12 @@ export const Route = createFileRoute('/api/teams')({
           cache.invalidate('teams:')
 
           return json({ success: true })
-        } catch (error: any) {
-          console.error('❌ [API Teams DELETE] Error:', error)
-          return json(
-            {
-              error: 'Forbidden or internal error',
-              details: error.message,
-            },
-            {
-              status: error.message.includes('Forbidden')
-                ? 403
-                : error.message.includes('Rate limit')
-                  ? 429
-                  : 500,
-            },
-          )
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
+          }
+          console.error('❌ [API Teams DELETE] Unexpected Error:', error)
+          return json({ error: 'Internal server error' }, { status: 500 })
         }
       },
       // PATCH - Add/remove team members (Manager+)
@@ -402,26 +352,15 @@ export const Route = createFileRoute('/api/teams')({
         try {
           const session = await requireRole(['Admin', 'Manager'])
           await requireRateLimit(session.userId, RateLimitPresets.MUTATION)
+          requireCSRFToken(getCSRFTokenFromRequest(request))
 
           const data = await request.json()
-          const db = await getDb()
-          if (!db) {
-            return json(
-              {
-                error: 'Database not available',
-                code: 'DB_UNAVAILABLE',
-              },
-              { status: 500 },
-            )
-          }
+          const db = await getDbOrThrow()
 
           const { action, teamId, userId } = data
 
           if (!teamId || !userId) {
-            return json(
-              { error: 'teamId and userId are required' },
-              { status: 400 },
-            )
+            throw new ValidationError('teamId and userId are required')
           }
 
           // Security: If session user is a Manager (not Admin), check if they manage this team
@@ -433,10 +372,7 @@ export const Route = createFileRoute('/api/teams')({
               .limit(1)
 
             if (!team.length || team[0].managerId !== session.userId) {
-              return json(
-                { error: 'Forbidden: You are not the manager of this team' },
-                { status: 403 },
-              )
+              throw new ForbiddenError('You are not the manager of this team')
             }
           }
 
@@ -464,26 +400,14 @@ export const Route = createFileRoute('/api/teams')({
 
             return json({ success: true, action: 'removed' })
           } else {
-            return json(
-              { error: 'Invalid action. Use "add" or "remove"' },
-              { status: 400 },
-            )
+            throw new ValidationError('Invalid action. Use "add" or "remove"')
           }
-        } catch (error: any) {
-          console.error('❌ [API Teams PATCH] Error:', error)
-          return json(
-            {
-              error: 'Forbidden or internal error',
-              details: error.message,
-            },
-            {
-              status: error.message.includes('Forbidden')
-                ? 403
-                : error.message.includes('Rate limit')
-                  ? 429
-                  : 500,
-            },
-          )
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
+          }
+          console.error('❌ [API Teams PATCH] Unexpected Error:', error)
+          return json({ error: 'Internal server error' }, { status: 500 })
         }
       },
     },

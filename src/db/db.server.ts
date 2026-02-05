@@ -2,15 +2,17 @@
 import { ENV, envReady } from '../lib/env'
 import * as schema from './schema'
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
+import type { Pool } from 'pg'
 
 // Prevent multiple instances in development using globalThis
 const globalForDb = globalThis as unknown as {
   db: NodePgDatabase<typeof schema> | undefined
+  pool: Pool | undefined
   initPromise: Promise<NodePgDatabase<typeof schema> | null> | undefined
 }
 
 const isServer =
-  typeof window === 'undefined' || !!(import.meta as any).env?.SSR
+  typeof window === 'undefined' || !!(import.meta as { env?: { SSR?: boolean } }).env?.SSR
 const instanceId = Math.random().toString(36).substring(7)
 
 if (isServer) {
@@ -61,12 +63,14 @@ async function initializeDb() {
     )
     client.release()
 
+    globalForDb.pool = pool
     globalForDb.db = drizzle(pool, { schema })
     return globalForDb.db
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
     console.error(
       `❌ [DB Init] Instance ${instanceId} - Critical failure:`,
-      error.message,
+      message,
     )
     return null
   }
@@ -92,6 +96,18 @@ export const getDb = async (): Promise<NodePgDatabase<
   return null
 }
 
+/** 
+ * Helper to obtain the DB instance or throw a descriptive error.
+ * Use this in API handlers to avoid repetitive null checks.
+ */
+export const getDbOrThrow = async (): Promise<NodePgDatabase<typeof schema>> => {
+  const database = await getDb()
+  if (!database) {
+    throw new Error('Database not available. Please check environment variables and connection string.')
+  }
+  return database
+}
+
 export const db = globalForDb.db
 export { instanceId }
 
@@ -99,13 +115,13 @@ export { instanceId }
  * Close database connections
  * Used during graceful shutdown
  */
-export function closeDb(): void {
-  if (globalForDb.db) {
+export async function closeDb(): Promise<void> {
+  if (globalForDb.pool) {
     try {
-      // The pool is embedded in the drizzle instance
-      // We need to access it to close connections
       console.log('💾 Closing database connection pool...')
+      await globalForDb.pool.end()
       globalForDb.db = undefined
+      globalForDb.pool = undefined
       globalForDb.initPromise = undefined
       console.log('✅ Database connections closed')
     } catch (error) {

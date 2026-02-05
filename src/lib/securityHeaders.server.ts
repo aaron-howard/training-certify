@@ -60,7 +60,7 @@ export function applySecurityHeaders(response: Response): Response {
 /**
  * Create a response with security headers
  */
-export function createSecureResponse(body: any, init?: ResponseInit): Response {
+export function createSecureResponse(body: BodyInit | null, init?: ResponseInit): Response {
   const response = new Response(body, init)
   return applySecurityHeaders(response)
 }

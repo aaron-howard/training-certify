@@ -1,17 +1,20 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
-import { getDb } from '../db/db.server'
+import { getDbOrThrow } from '../db/db.server'
 import { certifications, teamRequirements, teams } from '../db/schema'
 import { requireRole } from '../lib/auth.server'
 import type { AuthSession } from '../lib/auth.server'
+import { getCSRFTokenFromRequest, requireCSRFToken } from '../lib/csrf.server'
+import { AppError, ForbiddenError, ValidationError } from '../lib/errors'
+import { TeamRequirementSchema } from '../lib/validation'
 
-async function checkTeamManagement(
-  db: any,
+async function checkTeamManagementOrThrow(
+  db: Awaited<ReturnType<typeof getDbOrThrow>>,
   session: AuthSession,
   teamId: string,
 ) {
-  if (session.role === 'Admin') return true
+  if (session.role === 'Admin') return
   if (session.role === 'Manager') {
     const team = await db
       .select({ managerId: teams.managerId })
@@ -19,9 +22,10 @@ async function checkTeamManagement(
       .where(eq(teams.id, teamId))
       .limit(1)
 
-    return team.length > 0 && team[0].managerId === session.userId
+    if (team.length > 0 && team[0].managerId === session.userId) return
   }
-  return false
+
+  throw new ForbiddenError('You do not have permission to manage this team')
 }
 
 export const Route = createFileRoute('/api/team-requirements')({
@@ -39,10 +43,9 @@ export const Route = createFileRoute('/api/team-requirements')({
 
           const url = new URL(request.url)
           const teamId = url.searchParams.get('teamId')
-          if (!teamId) return json({ error: 'Missing teamId' }, { status: 400 })
+          if (!teamId) throw new ValidationError('Missing teamId')
 
-          const db = await getDb()
-          if (!db) return json({ error: 'DB not available' }, { status: 500 })
+          const db = await getDbOrThrow()
 
           const requirements = await db
             .select({
@@ -60,67 +63,66 @@ export const Route = createFileRoute('/api/team-requirements')({
             .where(eq(teamRequirements.teamId, teamId))
 
           return json(requirements)
-        } catch (error: any) {
-          console.error('[API Team Requirements GET] Error:', error)
-          return json(
-            { error: 'Forbidden or internal error', details: error.message },
-            { status: error.message.includes('Forbidden') ? 403 : 500 },
-          )
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
+          }
+          console.error('❌ [API Team Requirements GET] Unexpected Error:', error)
+          return json({ error: 'Internal server error' }, { status: 500 })
         }
       },
       POST: async ({ request }) => {
         try {
           const session = await requireRole(['Admin', 'Manager'])
-          const data = await request.json()
+          requireCSRFToken(getCSRFTokenFromRequest(request))
 
-          const db = await getDb()
-          if (!db) return json({ error: 'DB not available' }, { status: 500 })
+          const rawData = await request.json()
+          const validation = TeamRequirementSchema.safeParse(rawData)
 
-          if (!data.teamId || !data.certificationId) {
-            return json({ error: 'Missing fields' }, { status: 400 })
+          if (!validation.success) {
+            throw new ValidationError('Invalid team requirement data', validation.error.errors)
           }
 
-          if (!(await checkTeamManagement(db, session, data.teamId))) {
-            return json(
-              { error: 'Forbidden: You do not manage this team' },
-              { status: 403 },
-            )
-          }
+          const data = validation.data
+          const db = await getDbOrThrow()
+
+          await checkTeamManagementOrThrow(db, session, data.teamId)
 
           const result = await db
             .insert(teamRequirements)
             .values({
               teamId: data.teamId,
               certificationId: data.certificationId,
-              targetCount: data.targetCount || 1,
+              targetCount: data.targetCount,
             })
             .onConflictDoUpdate({
               target: [
                 teamRequirements.teamId,
                 teamRequirements.certificationId,
               ],
-              set: { targetCount: data.targetCount || 1 },
+              set: { targetCount: data.targetCount },
             })
             .returning()
 
           return json(result[0], { status: 201 })
-        } catch (error: any) {
-          console.error('[API Team Requirements POST] Error:', error)
-          return json(
-            { error: 'Forbidden or internal error', details: error.message },
-            { status: error.message.includes('Forbidden') ? 403 : 500 },
-          )
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
+          }
+          console.error('❌ [API Team Requirements POST] Unexpected Error:', error)
+          return json({ error: 'Internal server error' }, { status: 500 })
         }
       },
       DELETE: async ({ request }) => {
         try {
           const session = await requireRole(['Admin', 'Manager'])
+          requireCSRFToken(getCSRFTokenFromRequest(request))
+
           const url = new URL(request.url)
           const id = url.searchParams.get('id')
-          if (!id) return json({ error: 'Missing id' }, { status: 400 })
+          if (!id) throw new ValidationError('Missing id')
 
-          const db = await getDb()
-          if (!db) return json({ error: 'DB not available' }, { status: 500 })
+          const db = await getDbOrThrow()
 
           // Find the requirement to check team management
           const reqResult = await db
@@ -130,23 +132,18 @@ export const Route = createFileRoute('/api/team-requirements')({
             .limit(1)
 
           if (reqResult.length === 0)
-            return json({ error: 'Not found' }, { status: 404 })
+            throw new ValidationError('Team requirement not found')
 
-          if (!(await checkTeamManagement(db, session, reqResult[0].teamId))) {
-            return json(
-              { error: 'Forbidden: You do not manage this team' },
-              { status: 403 },
-            )
-          }
+          await checkTeamManagementOrThrow(db, session, reqResult[0].teamId)
 
           await db.delete(teamRequirements).where(eq(teamRequirements.id, id))
           return json({ success: true })
-        } catch (error: any) {
-          console.error('[API Team Requirements DELETE] Error:', error)
-          return json(
-            { error: 'Forbidden or internal error', details: error.message },
-            { status: error.message.includes('Forbidden') ? 403 : 500 },
-          )
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
+          }
+          console.error('❌ [API Team Requirements DELETE] Unexpected Error:', error)
+          return json({ error: 'Internal server error' }, { status: 500 })
         }
       },
     },

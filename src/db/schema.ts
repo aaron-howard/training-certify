@@ -55,7 +55,7 @@ export const users = pgTable('users', {
   id: text('id').primaryKey(), // Clerk ID
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
-  role: text('role').notNull().default('User'), // Use text for storage, but we'll enforce the values in code/enum
+  role: roleEnum('role').notNull().default('User'),
   avatarUrl: text('avatar_url'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -95,8 +95,8 @@ export const certifications = pgTable('certifications', {
   vendorId: text('vendor_id').notNull(),
   vendorName: text('vendor_name').notNull(),
   vendorLogo: text('vendor_logo'),
-  category: text('category'),
-  difficulty: text('difficulty'),
+  category: certificationCategoryEnum('category'),
+  difficulty: certificationDifficultyEnum('difficulty'),
   validityPeriod: text('validity_period'),
   renewalCycle: integer('renewal_cycle'), // in months
   price: text('price'),
@@ -120,7 +120,7 @@ export const userCertifications = pgTable(
     certificationNumber: text('certification_number'),
     issueDate: text('issue_date'), // ISO string or date
     expirationDate: text('expiration_date'), // ISO string or date
-    status: text('status').notNull().default('active'),
+    status: certificationStatusEnum('status').notNull().default('active'),
     daysUntilExpiration: integer('days_until_expiration'),
     documentUrl: text('document_url'),
     verifiedAt: timestamp('verified_at'),
@@ -164,8 +164,8 @@ export const notifications = pgTable(
     userId: text('user_id')
       .notNull()
       .references(() => users.id),
-    type: text('type').notNull(),
-    severity: text('severity').notNull().default('info'),
+    type: notificationTypeEnum('type').notNull(),
+    severity: notificationSeverityEnum('severity').notNull().default('info'),
     title: text('title').notNull(),
     description: text('description'),
     timestamp: timestamp('timestamp').defaultNow().notNull(),

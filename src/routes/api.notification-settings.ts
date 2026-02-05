@@ -1,9 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { and, eq } from 'drizzle-orm'
-import { getDb } from '../db/db.server'
+import { getDbOrThrow } from '../db/db.server'
 import { notifications } from '../db/schema'
 import { requireRole } from '../lib/auth.server'
+import { getCSRFTokenFromRequest, requireCSRFToken } from '../lib/csrf.server'
+import { AppError, ForbiddenError, ValidationError } from '../lib/errors'
+import { NotificationActionSchema, NotificationPreferenceSchema } from '../lib/validation'
 
 // Default notification categories
 const defaultCategories = [
@@ -54,12 +57,12 @@ export const Route = createFileRoute('/api/notification-settings')({
               pushEnabled: false,
             },
           })
-        } catch (error: any) {
-          console.error('[API Notification Settings GET] Error:', error)
-          return json(
-            { error: 'Forbidden or internal error', details: error.message },
-            { status: error.message.includes('Forbidden') ? 403 : 500 },
-          )
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
+          }
+          console.error('❌ [API Notification Settings GET] Unexpected Error:', error)
+          return json({ error: 'Internal server error' }, { status: 500 })
         }
       },
       // PATCH - Update user notification preferences
@@ -72,24 +75,29 @@ export const Route = createFileRoute('/api/notification-settings')({
             'Executive',
             'User',
           ])
-          const data = await request.json()
-          const { userId, preferences } = data
+          requireCSRFToken(getCSRFTokenFromRequest(request))
 
-          if (userId && userId !== session.userId) {
-            return json(
-              { error: 'Forbidden: Cannot update other user settings' },
-              { status: 403 },
-            )
+          const rawData = await request.json()
+          const validation = NotificationPreferenceSchema.safeParse(rawData)
+
+          if (!validation.success) {
+            throw new ValidationError('Invalid preference data', validation.error.errors)
           }
 
-          console.log(`✅ [API] Updated preferences for ${session.userId}`)
+          const { userId, preferences } = validation.data
+
+          if (userId && userId !== session.userId) {
+            throw new ForbiddenError('Cannot update other user settings')
+          }
+
+          console.log(`✅ [API Settings PATCH] Updated preferences for ${session.userId}`)
           return json({ success: true, preferences })
-        } catch (error: any) {
-          console.error('[API Notification Settings PATCH] Error:', error)
-          return json(
-            { error: 'Forbidden or internal error', details: error.message },
-            { status: error.message.includes('Forbidden') ? 403 : 500 },
-          )
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
+          }
+          console.error('❌ [API Notification Settings PATCH] Unexpected Error:', error)
+          return json({ error: 'Internal server error' }, { status: 500 })
         }
       },
       // POST - Mark notifications as read/dismissed
@@ -102,11 +110,17 @@ export const Route = createFileRoute('/api/notification-settings')({
             'Executive',
             'User',
           ])
-          const data = await request.json()
-          const { action, notificationId, userId } = data
+          requireCSRFToken(getCSRFTokenFromRequest(request))
 
-          const db = await getDb()
-          if (!db) return json({ error: 'DB not available' }, { status: 500 })
+          const rawData = await request.json()
+          const validation = NotificationActionSchema.safeParse(rawData)
+
+          if (!validation.success) {
+            throw new ValidationError('Invalid notification action', validation.error.errors)
+          }
+
+          const { action, notificationId, userId } = validation.data
+          const db = await getDbOrThrow()
 
           if (action === 'markRead' && notificationId) {
             await db
@@ -122,7 +136,7 @@ export const Route = createFileRoute('/api/notification-settings')({
           } else if (action === 'markAllRead') {
             const targetId = userId || session.userId
             if (targetId !== session.userId) {
-              return json({ error: 'Forbidden' }, { status: 403 })
+              throw new ForbiddenError('Cannot mark notifications as read for another user')
             }
             await db
               .update(notifications)
@@ -142,13 +156,13 @@ export const Route = createFileRoute('/api/notification-settings')({
             return json({ success: true })
           }
 
-          return json({ error: 'Invalid action' }, { status: 400 })
-        } catch (error: any) {
-          console.error('[API Notification Settings POST] Error:', error)
-          return json(
-            { error: 'Forbidden or internal error', details: error.message },
-            { status: error.message.includes('Forbidden') ? 403 : 500 },
-          )
+          throw new ValidationError('Invalid action or missing notificationId')
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
+          }
+          console.error('❌ [API Notification Settings POST] Unexpected Error:', error)
+          return json({ error: 'Internal server error' }, { status: 500 })
         }
       },
     },

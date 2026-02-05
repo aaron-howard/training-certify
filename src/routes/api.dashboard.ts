@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
-import { getDb } from '../db/db.server'
+import { getDbOrThrow } from '../db/db.server'
 import {
   teamRequirements,
   teams,
@@ -9,6 +9,7 @@ import {
   users,
 } from '../db/schema'
 import { requireRole } from '../lib/auth.server'
+import { AppError, ForbiddenError } from '../lib/errors'
 
 export const Route = createFileRoute('/api/dashboard')({
   server: {
@@ -23,16 +24,7 @@ export const Route = createFileRoute('/api/dashboard')({
             'User',
           ])
 
-          const db = await getDb()
-          if (!db) {
-            return json(
-              {
-                error: 'Database not available',
-                code: 'DB_UNAVAILABLE',
-              },
-              { status: 500 },
-            )
-          }
+          const db = await getDbOrThrow()
 
           const url = new URL(request.url)
           const userIdParam = url.searchParams.get('userId')
@@ -41,10 +33,7 @@ export const Route = createFileRoute('/api/dashboard')({
           // Executive view security: Only Admin or Executive
           if (roleParam === 'Executive') {
             if (session.role !== 'Executive' && session.role !== 'Admin') {
-              return json(
-                { error: 'Forbidden: Executive view required' },
-                { status: 403 },
-              )
+              throw new ForbiddenError('Executive view required')
             }
 
             const allUsers = await db.select().from(users)
@@ -73,12 +62,12 @@ export const Route = createFileRoute('/api/dashboard')({
               criticalGaps++
             }
 
-            const vendorMap = new Map()
+            const vendorMap = new Map<string, { total: number; active: number }>()
             for (const cert of allUserCerts) {
               const vendor = cert.vendorName || 'Other'
               if (!vendorMap.has(vendor))
                 vendorMap.set(vendor, { total: 0, active: 0 })
-              const v = vendorMap.get(vendor)
+              const v = vendorMap.get(vendor)!
               v.total++
               if (cert.status === 'active') v.active++
             }
@@ -110,7 +99,7 @@ export const Route = createFileRoute('/api/dashboard')({
 
           // Authority check: can you see this user's stats?
           if (effectiveUserId !== session.userId && session.role === 'User') {
-            return json({ error: 'Forbidden' }, { status: 403 })
+            throw new ForbiddenError('You do not have permission to view stats for another user')
           }
 
           // TODO: If Manager, check if user is in their team (optional refinement)
@@ -137,15 +126,12 @@ export const Route = createFileRoute('/api/dashboard')({
             expiringSoon,
             complianceRate,
           })
-        } catch (error: any) {
-          console.error('❌ [API Dashboard GET] Error:', error)
-          return json(
-            {
-              error: 'Forbidden or internal error',
-              details: error.message,
-            },
-            { status: error.message.includes('Forbidden') ? 403 : 500 },
-          )
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
+          }
+          console.error('❌ [API Dashboard GET] Unexpected Error:', error)
+          return json({ error: 'Internal server error' }, { status: 500 })
         }
       },
     },

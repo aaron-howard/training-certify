@@ -48,10 +48,8 @@ async function checkDatabase(): Promise<{
     }
 
     // Simple query to verify database connectivity
-    await db
-      .select()
-      .from({ id: 1 } as any)
-      .limit(1)
+    const { sql } = await import('drizzle-orm')
+    await db.execute(sql`SELECT 1`)
 
     const responseTime = Date.now() - startTime
 
@@ -59,10 +57,11 @@ async function checkDatabase(): Promise<{
       status: 'healthy',
       responseTime,
     }
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
     return {
       status: 'unhealthy',
-      error: error.message,
+      error: message,
       responseTime: Date.now() - startTime,
     }
   }

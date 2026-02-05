@@ -22,10 +22,8 @@ async function isDatabaseReady(): Promise<boolean> {
     if (!db) return false
 
     // Quick connectivity check
-    await db
-      .select()
-      .from({ id: 1 } as any)
-      .limit(1)
+    const { sql } = await import('drizzle-orm')
+    await db.execute(sql`SELECT 1`)
     return true
   } catch {
     return false

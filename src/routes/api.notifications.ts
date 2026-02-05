@@ -1,9 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { and, desc, eq } from 'drizzle-orm'
-import { getDb } from '../db/db.server'
+import { getDbOrThrow } from '../db/db.server'
 import { notifications } from '../db/schema'
 import { requireRole } from '../lib/auth.server'
+import { AppError } from '../lib/errors'
 
 export const Route = createFileRoute('/api/notifications')({
   server: {
@@ -19,10 +20,7 @@ export const Route = createFileRoute('/api/notifications')({
             'User',
           ])
 
-          const db = await getDb()
-          if (!db) {
-            return json({ error: 'Database not available' }, { status: 500 })
-          }
+          const db = await getDbOrThrow()
 
           // Security: Filter by the authenticated user's ID
           const result = await db
@@ -47,12 +45,12 @@ export const Route = createFileRoute('/api/notifications')({
               read: n.isRead,
             })),
           )
-        } catch (error: any) {
-          console.error('[API Notifications] Error:', error)
-          return json(
-            { error: 'Forbidden or internal error', details: error.message },
-            { status: error.message.includes('Forbidden') ? 403 : 500 },
-          )
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
+          }
+          console.error('❌ [API Notifications GET] Unexpected Error:', error)
+          return json({ error: 'Internal server error' }, { status: 500 })
         }
       },
     },

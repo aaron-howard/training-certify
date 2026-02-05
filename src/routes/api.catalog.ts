@@ -1,10 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
-import { getDb } from '../db/db.server'
+import { getDbOrThrow } from '../db/db.server'
 import { certifications } from '../db/schema'
-import { getVerifiedAuth, requireRole } from '../lib/auth.server'
+import { requireRole } from '../lib/auth.server'
 import { RateLimitPresets, requireRateLimit } from '../lib/rateLimit.server'
+import { getCSRFTokenFromRequest, requireCSRFToken } from '../lib/csrf.server'
+import { AppError, ForbiddenError, NotFoundError, ValidationError } from '../lib/errors'
+import { CatalogCertificationSchema } from '../lib/validation'
 
 export const Route = createFileRoute('/api/catalog')({
   server: {
@@ -19,12 +22,9 @@ export const Route = createFileRoute('/api/catalog')({
             'User',
           ])
 
-          const db = await getDb()
-          if (!db) {
-            return json({ error: 'Database not available' }, { status: 500 })
-          }
-
+          const db = await getDbOrThrow()
           const result = await db.select().from(certifications)
+
           return json({
             certifications: result.map((c) => ({
               id: c.id,
@@ -36,58 +36,51 @@ export const Route = createFileRoute('/api/catalog')({
               description: c.description,
             })),
           })
-        } catch (error: any) {
-          console.error('Failed to fetch catalog:', error)
-          return json(
-            { error: 'Forbidden or internal error', details: error.message },
-            { status: error.message.includes('Forbidden') ? 403 : 500 },
-          )
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
+          }
+          console.error('❌ [API Catalog GET] Unexpected Error:', error)
+          return json({ error: 'Internal server error' }, { status: 500 })
         }
       },
       DELETE: async ({ request }) => {
         try {
           const session = await requireRole(['Admin'])
           await requireRateLimit(session.userId, RateLimitPresets.ADMIN)
+          requireCSRFToken(getCSRFTokenFromRequest(request))
 
           const url = new URL(request.url)
           const id = url.searchParams.get('id')
+          if (!id) throw new ValidationError('Missing id parameter')
 
-          if (!id) {
-            return json({ error: 'Missing id parameter' }, { status: 400 })
-          }
-
-          const db = await getDb()
-          if (!db) {
-            return json({ error: 'Database not available' }, { status: 500 })
-          }
+          const db = await getDbOrThrow()
 
           await db.delete(certifications).where(eq(certifications.id, id))
           return json({ success: true, deletedId: id })
-        } catch (error: any) {
-          console.error('Failed to delete certification:', error)
-          return json(
-            { error: 'Forbidden or internal error', details: error.message },
-            { status: error.message.includes('Forbidden') ? 403 : 500 },
-          )
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
+          }
+          console.error('❌ [API Catalog DELETE] Unexpected Error:', error)
+          return json({ error: 'Internal server error' }, { status: 500 })
         }
       },
       POST: async ({ request }) => {
         try {
           const session = await requireRole(['Admin'])
           await requireRateLimit(session.userId, RateLimitPresets.ADMIN)
+          requireCSRFToken(getCSRFTokenFromRequest(request))
 
-          const data = await request.json()
-          const db = await getDb()
-          if (!db) {
-            return json({ error: 'Database not available' }, { status: 500 })
+          const rawData = await request.json()
+          const validation = CatalogCertificationSchema.safeParse(rawData)
+
+          if (!validation.success) {
+            throw new ValidationError('Invalid certification data', validation.error.errors)
           }
 
-          if (!data.id || !data.name || !data.vendorName) {
-            return json(
-              { error: 'id, name, and vendorName are required' },
-              { status: 400 },
-            )
-          }
+          const data = validation.data
+          const db = await getDbOrThrow()
 
           const result = await db
             .insert(certifications)
@@ -100,24 +93,26 @@ export const Route = createFileRoute('/api/catalog')({
               vendorName: data.vendorName,
               category: data.category || 'Cloud',
               difficulty: data.difficulty || 'Intermediate',
-              price: data.price || null,
+              price: data.price ? String(data.price) : null, // Schema uses text for price unfortunately, or does it? checking schema...
               description: data.description || null,
             })
             .returning()
 
           return json(result[0], { status: 201 })
-        } catch (error: any) {
-          if (error.code === '23505') {
-            return json(
-              { error: 'Certification with this ID already exists' },
-              { status: 409 },
-            )
+        } catch (error) {
+          if (error instanceof AppError) {
+            return json({
+              error: error.message,
+              code: error.code,
+              details: error instanceof ValidationError ? error.errors : undefined
+            }, { status: error.statusCode })
           }
-          console.error('Failed to add certification:', error)
-          return json(
-            { error: 'Forbidden or internal error', details: error.message },
-            { status: error.message.includes('Forbidden') ? 403 : 500 },
-          )
+          const insertError = error as { code?: string }
+          if (insertError.code === '23505') {
+            return json({ error: 'Certification with this ID already exists' }, { status: 409 })
+          }
+          console.error('❌ [API Catalog POST] Unexpected Error:', error)
+          return json({ error: 'Internal server error' }, { status: 500 })
         }
       },
     },
