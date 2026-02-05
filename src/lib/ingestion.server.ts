@@ -1,4 +1,5 @@
 import { certifications } from '../db/schema'
+import { validateCategory, validateDifficulty } from './enum-helpers'
 
 const BASE_URL = 'https://www.itexams.com'
 const ALL_EXAMS_URL = `${BASE_URL}/all-exams/`
@@ -229,8 +230,8 @@ export async function syncCatalogFromITExams(limitVendors?: number) {
         vendorId: exam.vendorId,
         vendorName: exam.vendorName,
         description: `Official Exam ${exam.code}: ${exam.name}`,
-        category: 'IT Certification', // Default category
-        difficulty: 'Intermediate', // Default difficulty
+        category: validateCategory('IT') || 'Cloud', // IT Certification not in enum, using IT
+        difficulty: validateDifficulty('Intermediate') || 'Intermediate', // Default difficulty
       }
 
       try {

@@ -2,6 +2,7 @@ import 'dotenv/config'
 import { Pool } from 'pg'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import * as schema from './schema'
+import { validateRole, validateCategory, validateDifficulty } from '../lib/enum-helpers'
 
 if (!process.env.DATABASE_URL) {
   throw new Error('DATABASE_URL must be set')
@@ -20,7 +21,7 @@ async function main() {
     id: 'user-001',
     name: 'Marcus Williams',
     email: 'marcus@example.com',
-    role: 'Architect',
+    role: validateRole('Manager') || 'User', // 'Architect' is not a valid role, using 'Manager'
   }
   await db.insert(schema.users).values(user1).onConflictDoNothing()
 
@@ -48,24 +49,24 @@ async function main() {
       name: 'AWS Certified Solutions Architect - Associate',
       vendorId: 'aws',
       vendorName: 'Amazon Web Services',
-      category: 'Cloud',
-      difficulty: 'Intermediate',
+      category: validateCategory('Cloud') || 'Cloud',
+      difficulty: validateDifficulty('Intermediate') || 'Intermediate',
     },
     {
       id: 'cert-azure-admin',
       name: 'Microsoft Certified: Azure Administrator Associate',
       vendorId: 'microsoft',
       vendorName: 'Microsoft',
-      category: 'Cloud',
-      difficulty: 'Intermediate',
+      category: validateCategory('Cloud') || 'Cloud',
+      difficulty: validateDifficulty('Intermediate') || 'Intermediate',
     },
     {
       id: 'cert-cissp',
       name: 'Certified Information Systems Security Professional (CISSP)',
       vendorId: 'isc2',
       vendorName: '(ISC)²',
-      category: 'Security',
-      difficulty: 'Expert',
+      category: validateCategory('Security') || 'Security',
+      difficulty: validateDifficulty('Expert') || 'Expert',
     },
   ]
   for (const cert of certs) {

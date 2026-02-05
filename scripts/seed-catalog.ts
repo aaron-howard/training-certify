@@ -1,9 +1,9 @@
 import 'dotenv/config'
 import fs from 'node:fs'
 import path from 'node:path'
-import { sql } from 'drizzle-orm'
 import { getDb } from '../src/db/db.server'
 import { certifications } from '../src/db/schema'
+import { validateDifficulty } from '../src/lib/enum-helpers'
 
 async function main() {
   const csvPath = path.resolve(process.cwd(), 'itexams_certifications.csv')
@@ -64,7 +64,7 @@ async function main() {
     }
 
     const [id, name, vendorName, difficultyRaw] = parts
-    const difficulty = difficultyRaw || 'Intermediate'
+    const difficulty = validateDifficulty(difficultyRaw) || 'Intermediate'
     const vendorId = vendorName.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 
     try {

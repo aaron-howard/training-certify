@@ -1,9 +1,9 @@
 import 'dotenv/config'
 import fs from 'node:fs'
 import path from 'node:path'
-import { sql } from 'drizzle-orm'
 import { getDb } from '../src/db/db.server'
 import { certifications } from '../src/db/schema'
+import { validateCategory, validateDifficulty } from '../src/lib/enum-helpers'
 
 async function main() {
   const csvPath = path.resolve(process.cwd(), 'additional_certifications.csv')
@@ -87,6 +87,9 @@ async function main() {
     }
 
     try {
+      const category = validateCategory(subject)
+      const difficulty = validateDifficulty(level)
+      
       await db
         .insert(certifications)
         .values({
@@ -94,8 +97,8 @@ async function main() {
           name: examTitle,
           vendorId,
           vendorName: vendor,
-          difficulty: level,
-          category: subject,
+          difficulty,
+          category,
           price: price,
           description: `${product} - Roles: ${roles}. Time Limit: ${timeLimit}`,
         })
@@ -103,8 +106,8 @@ async function main() {
           target: certifications.id,
           set: {
             name: examTitle,
-            difficulty: level,
-            category: subject,
+            difficulty,
+            category,
             price: price,
             description: `${product} - Roles: ${roles}. Time Limit: ${timeLimit}`,
           },

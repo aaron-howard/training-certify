@@ -8,6 +8,7 @@ import {
   users,
 } from '../db/schema'
 import { syncCatalogFromITExams } from '../lib/ingestion.server'
+import { validateCategory, validateDifficulty } from '../lib/enum-helpers'
 
 export const getCatalog = createServerFn({ method: 'GET' }).handler(
   async () => {
@@ -150,9 +151,11 @@ export const createCatalogCertification = createServerFn({ method: 'POST' })
         name: String(data.cert.name),
         vendorId: String(data.cert.vendorId),
         vendorName: String(data.cert.vendorName),
-        category: data.cert.category ? String(data.cert.category) : undefined,
+        category: data.cert.category
+          ? validateCategory(String(data.cert.category))
+          : undefined,
         difficulty: data.cert.difficulty
-          ? String(data.cert.difficulty)
+          ? validateDifficulty(String(data.cert.difficulty))
           : undefined,
         description: data.cert.description
           ? String(data.cert.description)
@@ -243,8 +246,8 @@ export const seedCatalog = createServerFn({ method: 'POST' }).handler(
           name: 'Microsoft Azure Administrator',
           vendorId: 'msft',
           vendorName: 'Microsoft',
-          category: 'Cloud',
-          difficulty: 'Intermediate',
+          category: validateCategory('Cloud') || 'Cloud',
+          difficulty: validateDifficulty('Intermediate') || 'Intermediate',
           description: 'Exam AZ-104: Microsoft Azure Administrator',
         },
         {
@@ -252,8 +255,8 @@ export const seedCatalog = createServerFn({ method: 'POST' }).handler(
           name: 'Azure Solutions Architect Expert',
           vendorId: 'msft',
           vendorName: 'Microsoft',
-          category: 'Cloud',
-          difficulty: 'Expert',
+          category: validateCategory('Cloud') || 'Cloud',
+          difficulty: validateDifficulty('Expert') || 'Expert',
           description:
             'Exam AZ-305: Designing Microsoft Azure Infrastructure Solutions',
         },
@@ -262,8 +265,8 @@ export const seedCatalog = createServerFn({ method: 'POST' }).handler(
           name: 'Certified System Administrator',
           vendorId: 'snow',
           vendorName: 'ServiceNow',
-          category: 'ITSM',
-          difficulty: 'Beginner',
+          category: validateCategory('IT') || 'Cloud', // ITSM not in enum, using IT
+          difficulty: validateDifficulty('Beginner') || 'Beginner',
           description: 'ServiceNow Certified System Administrator',
         },
         {
@@ -271,8 +274,8 @@ export const seedCatalog = createServerFn({ method: 'POST' }).handler(
           name: 'Certified Application Developer',
           vendorId: 'snow',
           vendorName: 'ServiceNow',
-          category: 'Development',
-          difficulty: 'Intermediate',
+          category: validateCategory('IT') || 'Cloud', // Development not in enum, using IT
+          difficulty: validateDifficulty('Intermediate') || 'Intermediate',
           description: 'ServiceNow Certified Application Developer',
         },
       ]

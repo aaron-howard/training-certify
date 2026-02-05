@@ -3,6 +3,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { getDb } from '../src/db/db.server'
 import { certifications } from '../src/db/schema'
+import { validateCategory, validateDifficulty } from '../src/lib/enum-helpers'
 
 async function main() {
   const csvPath = path.resolve(process.cwd(), 'cisco_certifications_seed.csv')
@@ -82,6 +83,9 @@ async function main() {
       continue
     }
 
+    const validatedCategory = validateCategory(category)
+    const validatedDifficulty = validateDifficulty(difficulty)
+
     try {
       await db
         .insert(certifications)
@@ -91,8 +95,8 @@ async function main() {
           vendorId,
           vendorName,
           vendorLogo,
-          category,
-          difficulty,
+          category: validatedCategory,
+          difficulty: validatedDifficulty,
           validityPeriod,
           renewalCycle: parseInt(renewalCycle) || 0,
           description,
@@ -105,8 +109,8 @@ async function main() {
             vendorId,
             vendorName,
             vendorLogo,
-            category,
-            difficulty,
+            category: validatedCategory,
+            difficulty: validatedDifficulty,
             validityPeriod,
             renewalCycle: parseInt(renewalCycle) || 0,
             description,
