@@ -1,0 +1,70 @@
+app.config.ts(1,30): error TS2307: Cannot find module '@tanstack/react-start/config' or its corresponding type declarations.
+product-plan/sections/certification-catalog/components/CertificationBrowse.tsx(9,3): error TS6133: 'vendors' is declared but its value is never read.
+product-plan/sections/compliance-and-audit/components/ComplianceDashboard.tsx(1,10): error TS6133: 'Clock' is declared but its value is never read.
+product-plan/sections/compliance-and-audit/components/ComplianceDashboard.tsx(1,17): error TS6133: 'FileText' is declared but its value is never read.
+product-plan/sections/compliance-and-audit/components/ComplianceDashboard.tsx(1,35): error TS6133: 'TrendingUp' is declared but its value is never read.
+product-plan/sections/compliance-and-audit/components/ComplianceMetricsOverview.tsx(32,9): error TS6133: 'getTrendColor' is declared but its value is never read.
+product-plan/sections/team-and-workforce-management/components/GapAlerts.tsx(17,3): error TS6133: 'certifications' is declared but its value is never read.
+product-plan/shell/components/UserMenu.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+scripts/verify-notifications.ts(4,19): error TS6133: 'gt' is declared but its value is never read.
+scripts/verify-notifications.ts(4,23): error TS6133: 'lt' is declared but its value is never read.
+scripts/verify-notifications.ts(21,9): error TS6133: 'sixtyDaysFromNow' is declared but its value is never read.
+src/api/__tests__/api.teams.test.ts(30,24): error TS6133: 'key' is declared but its value is never read.
+src/api/__tests__/api.teams.test.ts(30,29): error TS6133: 'ttl' is declared but its value is never read.
+src/api/__tests__/helpers.ts(63,13): error TS6133: 'reject' is declared but its value is never read.
+src/api/__tests__/helpers.ts(64,15): error TS6133: 'cb' is declared but its value is never read.
+src/components/admin/UserManagement.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/lib/__tests__/auth.server.test.ts(12,21): error TS6133: 'mockClerkAuth' is declared but its value is never read.
+src/lib/api-helpers.server.ts(7,10): error TS2305: Module '"@tanstack/react-router"' has no exported member 'Request'.
+src/lib/api-helpers.server.ts(27,49): error TS2339: Property 'ValidationError' does not exist on type 'Promise<typeof import("D:/repos/training-certify/src/lib/errors")>'.
+src/lib/api-helpers.server.ts(27,85): error TS2339: Property 'errors' does not exist on type 'AppError'.
+src/lib/api-helpers.server.ts(33,9): error TS6133: 'message' is declared but its value is never read.
+src/lib/api-helpers.server.ts(50,3): error TS2322: Type 'Promise<Response | T>' is not assignable to type 'Promise<Response>'.
+  Type 'Response | T' is not assignable to type 'Response'.
+    Type 'T' is not assignable to type 'Response'.
+src/lib/api-helpers.server.ts(142,24): error TS2339: Property 'rateLimit' does not exist on type 'Omit<ApiHandlerOptions, "rateLimit">'.
+src/routes/api.catalog.ts(9,20): error TS6133: 'ForbiddenError' is declared but its value is never read.
+src/routes/api.catalog.ts(9,36): error TS6133: 'NotFoundError' is declared but its value is never read.
+src/routes/api.catalog.ts(87,14): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(value: { id: string | SQL<unknown> | Placeholder<string, any>; name: string | SQL<unknown> | Placeholder<string, any>; vendorId: string | SQL<unknown> | Placeholder<string, any>; ... 8 more ...; price?: string | ... 3 more ... | undefined; }): PgInsertBase<...>', gave the following error.
+    Type 'string' is not assignable to type '"AI" | "AppDynamics" | "Business Applications" | "Channel/Partner" | "Cloud" | "Collaboration" | "Cybersecurity" | "Data" | "Data Center" | "Design" | "DevNet" | "DevOps" | ... 15 more ... | undefined'.
+  Overload 2 of 2, '(values: { id: string | SQL<unknown> | Placeholder<string, any>; name: string | SQL<unknown> | Placeholder<string, any>; vendorId: string | SQL<unknown> | Placeholder<string, any>; ... 8 more ...; price?: string | ... 3 more ... | undefined; }[]): PgInsertBase<...>', gave the following error.
+    Object literal may only specify known properties, and 'id' does not exist in type '{ id: string | SQL<unknown> | Placeholder<string, any>; name: string | SQL<unknown> | Placeholder<string, any>; vendorId: string | SQL<unknown> | Placeholder<string, any>; ... 8 more ...; price?: string | ... 3 more ... | undefined; }[]'.
+src/routes/api.health.ts(5,38): error TS2345: Argument of type '"/api/health"' is not assignable to parameter of type 'keyof FileRoutesByPath | undefined'.
+src/routes/api.teams.ts(14,36): error TS6133: 'NotFoundError' is declared but its value is never read.
+src/routes/api.users.ts(16,36): error TS6133: 'UnauthorizedError' is declared but its value is never read.
+src/routes/api.users.ts(164,17): error TS6133: 'session' is declared but its value is never read.
+src/routes/api.users.ts(190,46): error TS2304: Cannot find name 'NotFoundError'.
+src/routes/api.users.ts(207,17): error TS6133: 'session' is declared but its value is never read.
+src/routes/catalog.tsx(112,42): error TS2345: Argument of type '() => (string | undefined)[]' is not assignable to parameter of type '() => string[]'.
+  Type '(string | undefined)[]' is not assignable to type 'string[]'.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+src/routes/catalog.tsx(121,45): error TS2345: Argument of type '() => (string | undefined)[]' is not assignable to parameter of type '() => string[]'.
+  Type '(string | undefined)[]' is not assignable to type 'string[]'.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+src/routes/compliance-audit.tsx(130,26): error TS2339: Property 'user' does not exist on type 'AuditLog'.
+src/routes/compliance-audit.tsx(137,28): error TS2339: Property 'user' does not exist on type 'AuditLog'.
+src/routes/compliance-audit.tsx(137,41): error TS2339: Property 'date' does not exist on type 'AuditLog'.
+src/routes/compliance-audit.tsx(142,109): error TS2339: Property 'status' does not exist on type 'AuditLog'.
+src/routes/compliance-audit.tsx(144,24): error TS2339: Property 'status' does not exist on type 'AuditLog'.
+src/routes/demo/start.ssr.spa-mode.tsx(13,5): error TS2345: Argument of type '[]' is not assignable to parameter of type '[{ id: 1; name: "Teenage Dirtbag"; artist: "Wheatus"; }, { id: 2; name: "Smells Like Teen Spirit"; artist: "Nirvana"; }, { id: 3; name: "The Middle"; artist: "Jimmy Eat World"; }, { id: 4; name: "My Own Worst Enemy"; artist: "Lit"; }, { ...; }, { ...; }, { ...; }] | (() => [...])'.
+  Type '[]' is not assignable to type '() => [{ id: 1; name: "Teenage Dirtbag"; artist: "Wheatus"; }, { id: 2; name: "Smells Like Teen Spirit"; artist: "Nirvana"; }, { id: 3; name: "The Middle"; artist: "Jimmy Eat World"; }, { id: 4; name: "My Own Worst Enemy"; artist: "Lit"; }, { ...; }, { ...; }, { ...; }]'.
+    Type '[]' provides no match for the signature '(): [{ id: 1; name: "Teenage Dirtbag"; artist: "Wheatus"; }, { id: 2; name: "Smells Like Teen Spirit"; artist: "Nirvana"; }, { id: 3; name: "The Middle"; artist: "Jimmy Eat World"; }, { id: 4; name: "My Own Worst Enemy"; artist: "Lit"; }, { ...; }, { ...; }, { ...; }]'.
+src/routes/index.tsx(31,9): error TS6133: 'permissions' is declared but its value is never read.
+src/routes/notifications.tsx(65,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(options: DefinedInitialDataOptions<NotificationSettings, Error, NotificationSettings, readonly unknown[]>, queryClient?: QueryClient | undefined): DefinedUseQueryResult<...>', gave the following error.
+    Object literal may only specify known properties, and 'onSuccess' does not exist in type 'DefinedInitialDataOptions<NotificationSettings, Error, NotificationSettings, readonly unknown[]>'.
+  Overload 2 of 3, '(options: UndefinedInitialDataOptions<NotificationSettings, Error, NotificationSettings, readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Object literal may only specify known properties, and 'onSuccess' does not exist in type 'UndefinedInitialDataOptions<NotificationSettings, Error, NotificationSettings, readonly unknown[]>'.
+  Overload 3 of 3, '(options: UseQueryOptions<NotificationSettings, Error, NotificationSettings, readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Object literal may only specify known properties, and 'onSuccess' does not exist in type 'UseQueryOptions<NotificationSettings, Error, NotificationSettings, readonly unknown[]>'.
+src/routes/notifications.tsx(65,17): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/routes/notifications.tsx(216,26): error TS2339: Property 'categories' does not exist on type 'NonNullable<NoInfer<TQueryFnData>>'.
+src/routes/notifications.tsx(216,43): error TS7006: Parameter 'cat' implicitly has an 'any' type.
+src/routes/team-management.tsx(8,3): error TS6133: 'Search' is declared but its value is never read.
+src/routes/team-management.tsx(703,41): error TS2339: Property 'role' does not exist on type 'TeamMember'.
+src/routes/team-management.tsx(720,35): error TS2339: Property 'role' does not exist on type 'TeamMember'.
+src/start.ts(3,1): error TS6133: 'ENV' is declared but its value is never read.
+src/test/setup.ts(28,8): error TS7017: Element implicitly has an 'any' type because type 'typeof globalThis' has no index signature.

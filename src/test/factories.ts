@@ -77,7 +77,7 @@ export const mockClerkAuth = (userId: string | null = 'user_test123') => {
   auth.mockResolvedValue({ userId })
 }
 
-export const mockDatabase = (mockData: any = {}) => {
+export const mockDatabase = (mockData: Record<string, unknown> = {}) => {
   return {
     select: vi.fn().mockReturnThis(),
     from: vi.fn().mockReturnThis(),

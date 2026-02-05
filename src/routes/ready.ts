@@ -50,12 +50,14 @@ export const Route = createFileRoute('/ready')({
           const statusCode = readinessCheck.ready ? 200 : 503
 
           return json(readinessCheck, { status: statusCode })
-        } catch (error: any) {
+        } catch (error: unknown) {
+          const message =
+            error instanceof Error ? error.message : 'Unknown error'
           return json(
             {
               ready: false,
               timestamp: new Date().toISOString(),
-              error: error.message,
+              error: message,
             },
             { status: 503 },
           )

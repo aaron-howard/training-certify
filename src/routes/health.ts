@@ -117,12 +117,14 @@ export const Route = createFileRoute('/health')({
           const statusCode = healthCheck.status === 'healthy' ? 200 : 503
 
           return json(healthCheck, { status: statusCode })
-        } catch (error: any) {
+        } catch (error: unknown) {
+          const message =
+            error instanceof Error ? error.message : 'Unknown error'
           return json(
             {
               status: 'unhealthy',
               timestamp: new Date().toISOString(),
-              error: error.message,
+              error: message,
             },
             { status: 503 },
           )

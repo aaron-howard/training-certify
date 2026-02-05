@@ -4,6 +4,21 @@ This document provides a detailed, actionable task list for implementing the imp
 
 ---
 
+## Review Findings (Feb 5, 2026)
+
+- [x] Remove remaining `any` usage in route handlers and client routes
+   - `src/routes/certification-management.tsx`
+   - `src/routes/catalog.tsx`
+   - `src/routes/index.tsx`
+   - `src/routes/team-management.tsx`
+   - `src/routes/api.teams.ts`
+- [x] Replace `catch (error: any)` with `unknown` + safe message extraction
+   - `src/routes/ready.ts`
+   - `src/routes/metrics.ts`
+   - `src/routes/health.ts`
+- [x] Tighten test factory typing for mocked DB helpers
+   - `src/test/factories.ts`
+
 ## High Priority Tasks
 
 ### Task 1: Strengthen Input Validation in Certifications API

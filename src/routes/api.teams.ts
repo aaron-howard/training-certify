@@ -309,8 +309,14 @@ export const Route = createFileRoute('/api/teams')({
 
           return json(result[0], { status: 201 })
         } catch (error) {
+          if (error instanceof ValidationError) {
+            return json(
+              { error: error.message, code: error.code, details: error.errors },
+              { status: error.statusCode },
+            )
+          }
           if (error instanceof AppError) {
-            return json({ error: error.message, code: error.code, details: (error as any).errors }, { status: error.statusCode })
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
           }
           console.error('❌ [API Teams POST] Unexpected Error:', error)
           return json({ error: 'Internal server error' }, { status: 500 })

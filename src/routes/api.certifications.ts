@@ -210,8 +210,14 @@ export const Route = createFileRoute('/api/certifications')({
 
           return json(result, { status: 201 })
         } catch (error) {
+          if (error instanceof ValidationError) {
+            return json(
+              { error: error.message, code: error.code, details: error.errors },
+              { status: error.statusCode },
+            )
+          }
           if (error instanceof AppError) {
-            return json({ error: error.message, code: error.code, details: (error as any).errors }, { status: error.statusCode })
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
           }
           console.error('❌ [API Certifications POST] Unexpected Error:', error)
           return json({ error: 'Internal server error' }, { status: 500 })
@@ -288,8 +294,14 @@ export const Route = createFileRoute('/api/certifications')({
 
           throw new ValidationError('Invalid action')
         } catch (error) {
+          if (error instanceof ValidationError) {
+            return json(
+              { error: error.message, code: error.code, details: error.errors },
+              { status: error.statusCode },
+            )
+          }
           if (error instanceof AppError) {
-            return json({ error: error.message, code: error.code, details: (error as any).errors }, { status: error.statusCode })
+            return json({ error: error.message, code: error.code }, { status: error.statusCode })
           }
           console.error('❌ [API Certifications PATCH] Unexpected Error:', error)
           return json({ error: 'Internal server error' }, { status: 500 })

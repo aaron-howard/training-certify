@@ -18,14 +18,18 @@ interface CatalogCertification {
   name: string
   vendor?: string
   vendorName?: string
+  level?: string
   category?: string
-  difficulty?: string
   price?: string | number
   description?: string
 }
 
+interface CatalogResponse {
+  certifications: CatalogCertification[]
+}
+
 // API fetch functions (using traditional fetch instead of broken createServerFn)
-const fetchCatalog = async () => {
+const fetchCatalog = async (): Promise<CatalogResponse> => {
   const res = await fetch('/api/catalog')
   if (!res.ok) throw new Error('Failed to fetch catalog')
   return res.json()
@@ -91,7 +95,7 @@ function CatalogPage() {
     data: catalog,
     isLoading,
     error,
-  } = useQuery({
+  } = useQuery<CatalogResponse>({
     queryKey: ['catalog'],
     queryFn: fetchCatalog,
   })
@@ -141,27 +145,32 @@ function CatalogPage() {
 
     // 2. Vendor Filter
     if (vendorFilter !== 'All') {
-      processed = processed.filter((cert: any) => cert.vendor === vendorFilter)
+      processed = processed.filter(
+        (cert: CatalogCertification) => cert.vendor === vendorFilter,
+      )
     }
 
     // 3. Difficulty Filter
     if (difficultyFilter !== 'All') {
       processed = processed.filter(
-        (cert: any) => cert.level === difficultyFilter,
+        (cert: CatalogCertification) => cert.level === difficultyFilter,
       )
     }
 
     // 4. Category Filter
     if (categoryFilter !== 'All') {
       processed = processed.filter(
-        (cert: any) => cert.category === categoryFilter,
+        (cert: CatalogCertification) => cert.category === categoryFilter,
       )
     }
 
     // 4. Sorting
-    processed.sort((a: any, b: any) => {
+    processed.sort((a: CatalogCertification, b: CatalogCertification) => {
+      const vendorA = a.vendor ?? ''
+      const vendorB = b.vendor ?? ''
+
       if (sortBy === 'name') return a.name.localeCompare(b.name)
-      if (sortBy === 'vendor') return a.vendor.localeCompare(b.vendor)
+      if (sortBy === 'vendor') return vendorA.localeCompare(vendorB)
       if (sortBy === 'level') {
         const ranks: Record<string, number> = {
           Beginner: 1,
@@ -169,7 +178,7 @@ function CatalogPage() {
           Advanced: 3,
           Expert: 4,
         }
-        return (ranks[a.level] || 0) - (ranks[b.level] || 0)
+        return (ranks[a.level ?? ''] || 0) - (ranks[b.level ?? ''] || 0)
       }
       return 0
     })
@@ -232,7 +241,10 @@ function CatalogPage() {
       })
       alert('Certification added successfully!')
     },
-    onError: (err: any) => alert(`Add failed: ${err.message}`),
+    onError: (err: unknown) => {
+      const message = err instanceof Error ? err.message : 'Unknown error'
+      alert(`Add failed: ${message}`)
+    },
   })
 
   const handleDelete = (id: string) => {

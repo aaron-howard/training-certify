@@ -3,6 +3,49 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useUser } from '@clerk/tanstack-react-start'
 import { CertificationManagement } from '../components/sections/certification-management/CertificationManagement'
 
+type CertificationStatus =
+  | 'active'
+  | 'expiring'
+  | 'expiring-soon'
+  | 'expired'
+  | 'assigned'
+
+type CertificationCreateData = {
+  certificationId: string
+  certificationNumber?: string | null
+  issueDate?: string | null
+  expirationDate?: string | null
+  certificationName?: string
+  vendorName?: string
+  status?: CertificationStatus
+}
+
+type CertificationCreateRequest = CertificationCreateData & {
+  userId: string
+}
+
+type CertificationUpdateData = {
+  status?: CertificationStatus
+  issueDate?: string | null
+  expirationDate?: string | null
+  certificationNumber?: string | null
+}
+
+type CertificationUpdateRequest = {
+  id: string
+  updates: CertificationUpdateData
+}
+
+type CertificationProof = {
+  fileName: string
+  fileUrl?: string
+}
+
+type UploadProofRequest = {
+  id: string
+  proof: CertificationProof
+}
+
 // Use fetch API instead of server imports
 const fetchUserCertifications = async (userId: string) => {
   const res = await fetch(`/api/certifications?userId=${userId}`)
@@ -25,7 +68,7 @@ const fetchEnsureUser = async (data: {
   return res.json()
 }
 
-const createCertification = async (data: any) => {
+const createCertification = async (data: CertificationCreateRequest) => {
   const res = await fetch('/api/certifications', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -43,7 +86,7 @@ const deleteCertification = async (id: string) => {
   return res.json()
 }
 
-const uploadProof = async ({ id, proof }: { id: string; proof: any }) => {
+const uploadProof = async ({ id, proof }: UploadProofRequest) => {
   const res = await fetch('/api/certifications', {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
@@ -53,13 +96,7 @@ const uploadProof = async ({ id, proof }: { id: string; proof: any }) => {
   return res.json()
 }
 
-const updateCertification = async ({
-  id,
-  updates,
-}: {
-  id: string
-  updates: any
-}) => {
+const updateCertification = async ({ id, updates }: CertificationUpdateRequest) => {
   const res = await fetch('/api/certifications', {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
@@ -127,14 +164,14 @@ function CertificationManagementPage() {
       queryClient.invalidateQueries({ queryKey: ['userCertifications'] }),
   })
 
-  const handleCreate = (data: any) => {
+  const handleCreate = (data: CertificationCreateData) => {
     createMutation.mutate({
       ...data,
       userId: user?.id || 'unknown',
     })
   }
 
-  const handleEdit = (id: string, updates: any) => {
+  const handleEdit = (id: string, updates: CertificationUpdateData) => {
     updateMutation.mutate({ id, updates })
   }
 

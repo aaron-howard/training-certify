@@ -19,8 +19,10 @@ export const Route = createFileRoute('/metrics')({
               'Content-Type': 'text/plain; version=0.0.4',
             },
           })
-        } catch (error: any) {
-          return new Response(`# Error generating metrics: ${error.message}`, {
+        } catch (error: unknown) {
+          const message =
+            error instanceof Error ? error.message : 'Unknown error'
+          return new Response(`# Error generating metrics: ${message}`, {
             status: 500,
             headers: {
               'Content-Type': 'text/plain',

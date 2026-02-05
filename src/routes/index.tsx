@@ -5,6 +5,11 @@ import { useQuery } from '@tanstack/react-query'
 import { ExecutiveDashboard } from '../components/dashboard/ExecutiveDashboard'
 import { usePermissions } from '../hooks/usePermissions'
 
+type DbUser = {
+  id: string
+  role?: string
+}
+
 export const Route = createFileRoute('/')({
   component: DashboardPage,
 })
@@ -18,7 +23,7 @@ function DashboardPage() {
       const res = await fetch(`/api/users`)
       if (!res.ok) return null
       const allUsers = await res.json()
-      return allUsers.find((u: any) => u.id === user?.id) || null
+      return allUsers.find((u: DbUser) => u.id === user?.id) || null
     },
     enabled: !!user?.id,
   })

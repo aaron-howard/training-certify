@@ -399,7 +399,7 @@ function TeamManagementPage() {
         <MemberManagementModal
           teamId={showMemberModal}
           teamName={
-            teamData.teams?.find((t: any) => t.id === showMemberModal)?.name ||
+            teamData.teams?.find((t: Team) => t.id === showMemberModal)?.name ||
             'Team'
           }
           isAdmin={isAdmin}
@@ -412,7 +412,7 @@ function TeamManagementPage() {
         <TeamRequirementsModal
           teamId={showRequirementsModal}
           teamName={
-            teamData.teams?.find((t: any) => t.id === showRequirementsModal)
+            teamData.teams?.find((t: Team) => t.id === showRequirementsModal)
               ?.name || 'Team'
           }
           onClose={() => setShowRequirementsModal(null)}
