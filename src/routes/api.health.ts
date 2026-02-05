@@ -1,13 +1,24 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { getDb } from '../db/db.server'
+import { requireRateLimit } from '../lib/rateLimit.server'
 
 export const Route = createFileRoute('/api/health' as any)({
   ssr: true,
   server: {
     handlers: {
-      GET: async () => {
+      GET: async ({ request }) => {
         try {
+          // Apply rate limiting (health checks can be abused for DoS)
+          // Use IP address or a generic identifier since health checks may not be authenticated
+          const clientId = request.headers.get('x-forwarded-for')?.split(',')[0] || 
+                          request.headers.get('x-real-ip') || 
+                          'unknown'
+          await requireRateLimit(`health:${clientId}`, {
+            windowMs: 60000, // 1 minute
+            maxRequests: 10, // 10 requests per minute per IP
+          })
+
           const db = await getDb()
           const isHealthy = db !== null
 

@@ -118,6 +118,19 @@ export const CatalogCertificationSchema = z.object({
     description: z.string().max(1000, 'Description must be 1000 characters or less').optional().nullable(),
 })
 
+// Schema for catalog certification updates (partial updates)
+export const UpdateCatalogCertificationSchema = z.object({
+    name: z.string().min(1, 'Name is required').max(255, 'Name must be 255 characters or less').optional(),
+    vendorId: z.string().max(255, 'Vendor ID too long').optional(),
+    vendorName: z.string().min(1, 'Vendor name is required').max(255, 'Vendor name must be 255 characters or less').optional(),
+    category: z.string().max(255, 'Category must be 255 characters or less').optional(),
+    difficulty: z.enum(['Beginner', 'Intermediate', 'Advanced', 'Expert']).optional(),
+    price: z.number().optional().nullable(),
+    description: z.string().max(1000, 'Description must be 1000 characters or less').optional().nullable(),
+    validityPeriod: z.string().max(255, 'Validity period must be 255 characters or less').optional(),
+    renewalCycle: z.number().int().positive().optional(),
+})
+
 // Notification schemas
 export const NotificationPreferenceSchema = z.object({
     userId: z.string().max(255, 'User ID too long').optional(),

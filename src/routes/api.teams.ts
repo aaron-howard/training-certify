@@ -27,7 +27,7 @@ export const Route = createFileRoute('/api/teams')({
             'Auditor',
             'Executive',
             'User',
-          ] as Role[])
+          ] as Array<Role>)
 
           // Rate limiting
           await requireRateLimit(session.userId, RateLimitPresets.READ)
@@ -281,7 +281,7 @@ export const Route = createFileRoute('/api/teams')({
       // POST - Create new team (Admin only)
       POST: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin'] as Role[])
+          const session = await requireRole(['Admin'] as Array<Role>)
           await requireRateLimit(session.userId, RateLimitPresets.MUTATION)
           requireCSRFToken(getCSRFTokenFromRequest(request))
 
@@ -326,7 +326,7 @@ export const Route = createFileRoute('/api/teams')({
       // DELETE - Delete team (Admin only)
       DELETE: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin'] as Role[])
+          const session = await requireRole(['Admin'] as Array<Role>)
           await requireRateLimit(session.userId, RateLimitPresets.MUTATION)
           requireCSRFToken(getCSRFTokenFromRequest(request))
 
@@ -357,7 +357,7 @@ export const Route = createFileRoute('/api/teams')({
       // PATCH - Add/remove team members (Manager+)
       PATCH: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin', 'Manager'] as Role[])
+          const session = await requireRole(['Admin', 'Manager'] as Array<Role>)
           await requireRateLimit(session.userId, RateLimitPresets.MUTATION)
           requireCSRFToken(getCSRFTokenFromRequest(request))
 

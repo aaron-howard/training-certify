@@ -22,7 +22,7 @@ export const Route = createFileRoute('/api/users')({
     handlers: {
       GET: async () => {
         try {
-          await requireRole(['Admin', 'Auditor', 'Executive'] as Role[])
+          await requireRole(['Admin', 'Auditor', 'Executive'] as Array<Role>)
           const db = await getDbOrThrow()
           const allUsers = await db.select().from(users)
           return json(allUsers)
@@ -157,12 +157,17 @@ export const Route = createFileRoute('/api/users')({
             return json({ error: 'Unauthorized' }, { status: 401 })
           }
           console.error('❌ [API Users POST] Failed to ensure user:', error)
-          return json({ error: 'Internal server error', details: message }, { status: 500 })
+          // Don't expose error details to client in production
+          const isProduction = process.env.NODE_ENV === 'production'
+          return json(
+            { error: 'Internal server error', ...(isProduction ? {} : { details: message }) },
+            { status: 500 }
+          )
         }
       },
       PATCH: async ({ request }) => {
         try {
-          await requireRole(['Admin'] as Role[])
+          await requireRole(['Admin'] as Array<Role>)
           requireCSRFToken(getCSRFTokenFromRequest(request))
 
           const rawData = await request.json()
@@ -205,7 +210,7 @@ export const Route = createFileRoute('/api/users')({
       },
       DELETE: async ({ request }) => {
         try {
-          await requireRole(['Admin'] as Role[])
+          await requireRole(['Admin'] as Array<Role>)
           requireCSRFToken(getCSRFTokenFromRequest(request))
 
           const url = new URL(request.url)

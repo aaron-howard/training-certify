@@ -4,11 +4,11 @@ import { eq } from 'drizzle-orm'
 import { getDbOrThrow } from '../db/db.server'
 import { certifications } from '../db/schema'
 import { requireRole } from '../lib/auth.server'
-import type { Role } from '../hooks/usePermissions'
 import { RateLimitPresets, requireRateLimit } from '../lib/rateLimit.server'
 import { getCSRFTokenFromRequest, requireCSRFToken } from '../lib/csrf.server'
 import * as Errors from '../lib/errors'
 import { CatalogCertificationSchema } from '../lib/validation'
+import type { Role } from '../hooks/usePermissions'
 
 export const Route = createFileRoute('/api/catalog')({
   server: {
@@ -22,7 +22,7 @@ export const Route = createFileRoute('/api/catalog')({
             'Auditor',
             'Executive',
             'User',
-          ] as Role[])
+          ] as Array<Role>)
 
           const db = await getDbOrThrow()
           const result = await db.select().from(certifications)
@@ -48,7 +48,7 @@ export const Route = createFileRoute('/api/catalog')({
       },
       DELETE: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin'] as Role[])
+          const session = await requireRole(['Admin'] as Array<Role>)
           await requireRateLimit(session.userId, RateLimitPresets.ADMIN)
           requireCSRFToken(getCSRFTokenFromRequest(request))
 
@@ -70,7 +70,7 @@ export const Route = createFileRoute('/api/catalog')({
       },
       POST: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin'] as Role[])
+          const session = await requireRole(['Admin'] as Array<Role>)
           await requireRateLimit(session.userId, RateLimitPresets.ADMIN)
           requireCSRFToken(getCSRFTokenFromRequest(request))
 

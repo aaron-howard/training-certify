@@ -13,6 +13,7 @@ import {
   useAuth,
   useUser,
 } from '@clerk/tanstack-react-start'
+import { createServerFn } from '@tanstack/react-start'
 import { useEffect } from 'react'
 import { AppShell } from '../components/shell/AppShell'
 import { ENV } from '../lib/env'
@@ -20,6 +21,57 @@ import { initSentry } from '../lib/sentry.server'
 import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
+
+// Server function to sync user - handles CSRF automatically via TanStack Start
+const syncUser = createServerFn({ method: 'POST' })
+  .inputValidator((data: { id: string; name: string; email: string; avatarUrl?: string }) => data)
+  .handler(async ({ data }) => {
+    const { getVerifiedAuth } = await import('../lib/auth.server')
+    const { getDbOrThrow } = await import('../db/db.server')
+    const { users } = await import('../db/schema')
+    const { eq } = await import('drizzle-orm')
+    const { ForbiddenError } = await import('../lib/errors')
+    
+    const authenticatedId = await getVerifiedAuth()
+    
+    // Security: User can only sync themselves unless they're an admin
+    if (authenticatedId !== data.id) {
+      const db = await getDbOrThrow()
+      const requester = await db
+        .select({ role: users.role })
+        .from(users)
+        .where(eq(users.id, authenticatedId))
+        .limit(1)
+      
+      if (!requester.length || requester[0].role !== 'Admin') {
+        throw new ForbiddenError('You can only sync your own user record unless you are an Admin')
+      }
+    }
+    
+    const db = await getDbOrThrow()
+    const existing = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, data.id))
+      .limit(1)
+    
+    if (existing.length > 0) {
+      return existing[0]
+    }
+    
+    const result = await db
+      .insert(users)
+      .values({
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        avatarUrl: data.avatarUrl,
+        role: 'User',
+      })
+      .returning()
+    
+    return result[0]
+  })
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
@@ -122,11 +174,9 @@ function RootComponent() {
 
   useEffect(() => {
     if (isSignedIn && user) {
-      // Use fetch API instead of broken createServerFn
-      fetch('/api/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      // Use server function which handles CSRF automatically via TanStack Start
+      syncUser({
+        data: {
           id: user.id,
           name:
             `${user.firstName} ${user.lastName}`.trim() ||
@@ -134,9 +184,8 @@ function RootComponent() {
             'User',
           email: user.emailAddresses[0]?.emailAddress || '',
           avatarUrl: user.imageUrl,
-        }),
+        },
       })
-        .then((res) => res.json())
         .then((data) => {
           console.log('👤 [Client] User synced with DB:', data.role)
         })

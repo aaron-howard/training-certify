@@ -163,16 +163,15 @@ async function initializeDb() {
   try {
     await envReady
 
-    // Explicit fallback for local development if ENV fails
-    const url =
-      ENV.DATABASE_URL ||
-      process.env.DATABASE_URL ||
-      'postgresql://postgres:password@127.0.0.1:5433/devdb'
+    // Get DATABASE_URL from validated environment
+    const url = ENV.DATABASE_URL || process.env.DATABASE_URL
 
     if (!url) {
-      console.error(
-        `❌ [DB Init] Instance ${instanceId} - No DATABASE_URL found.`,
-      )
+      const errorMessage = `❌ [DB Init] Instance ${instanceId} - DATABASE_URL is required but not found.`
+      console.error(errorMessage)
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error('DATABASE_URL environment variable is required')
+      }
       return null
     }
 

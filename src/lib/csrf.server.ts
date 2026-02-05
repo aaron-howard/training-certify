@@ -10,9 +10,27 @@ import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto'
  * Token format: {random}.{hmac}
  * 
  * @returns CSRF token string in format "random.hmac"
+ * @throws {Error} If CSRF_SECRET is not set in production
  */
 export function generateCSRFToken(): string {
-  const secret = process.env.CSRF_SECRET || 'dev-secret'
+  const secret = process.env.CSRF_SECRET
+  const isProduction = process.env.NODE_ENV === 'production'
+  
+  if (!secret) {
+    if (isProduction) {
+      throw new Error(
+        'CSRF_SECRET is required in production. Cannot generate CSRF token without secret.'
+      )
+    }
+    // In development, generate a random secret per session if not configured
+    // This prevents using a weak default but allows development without config
+    const devSecret = `dev-${randomBytes(16).toString('hex')}`
+    console.warn('⚠️  CSRF_SECRET not configured - using temporary dev secret (development only)')
+    const random = randomBytes(16).toString('hex')
+    const hmac = createHmac('sha256', devSecret).update(random).digest('hex')
+    return `${random}.${hmac}`
+  }
+  
   const random = randomBytes(16).toString('hex')
   const hmac = createHmac('sha256', secret).update(random).digest('hex')
   return `${random}.${hmac}`

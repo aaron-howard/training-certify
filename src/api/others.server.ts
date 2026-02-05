@@ -5,10 +5,12 @@ import {
   certifications,
   notifications,
   userCertifications,
-  users,
 } from '../db/schema'
 import { syncCatalogFromITExams } from '../lib/ingestion.server'
 import { validateCategory, validateDifficulty } from '../lib/enum-helpers'
+import { UpdateCatalogCertificationSchema } from '../lib/validation'
+import { ValidationError } from '../lib/errors'
+import { getAuthenticatedUser, requireRole } from '../lib/auth.server'
 
 export const getCatalog = createServerFn({ method: 'GET' }).handler(
   async () => {
@@ -136,15 +138,8 @@ export const createCatalogCertification = createServerFn({ method: 'POST' })
     if (!db) throw new Error('Database not available')
 
     try {
-      // Role Check
-      const requester = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, data.adminId))
-        .limit(1)
-      if (!requester.length || requester[0].role !== 'Admin') {
-        throw new Error('Unauthorized')
-      }
+      // Use centralized auth helper
+      await requireRole(['Admin'])
 
       const certData = {
         id: String(data.cert.id),
@@ -184,21 +179,33 @@ export const updateCatalogCertification = createServerFn({ method: 'POST' })
     if (!db) throw new Error('Database not available')
 
     try {
-      // Role Check
-      const requester = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, data.adminId))
-        .limit(1)
-      if (!requester.length || requester[0].role !== 'Admin') {
-        throw new Error('Unauthorized')
+      // Use centralized auth helper
+      await requireRole(['Admin'])
+
+      // Validate updates with Zod schema
+      const validation = UpdateCatalogCertificationSchema.safeParse(data.updates)
+      if (!validation.success) {
+        throw new ValidationError('Invalid catalog update data', validation.error.errors)
+      }
+
+      // Validate category and difficulty if provided
+      const validatedUpdates: Record<string, unknown> = { ...validation.data }
+      if (validatedUpdates.category) {
+        validatedUpdates.category = validateCategory(String(validatedUpdates.category))
+      }
+      if (validatedUpdates.difficulty) {
+        validatedUpdates.difficulty = validateDifficulty(String(validatedUpdates.difficulty))
       }
 
       const result = await db
         .update(certifications)
-        .set(data.updates)
+        .set(validatedUpdates)
         .where(eq(certifications.id, data.id))
         .returning()
+
+      if (result.length === 0) {
+        throw new Error('Certification not found')
+      }
 
       return result[0]
     } catch (error) {
@@ -215,15 +222,8 @@ export const deleteCatalogCertification = createServerFn({ method: 'POST' })
     if (!db) throw new Error('Database not available')
 
     try {
-      // Role Check
-      const requester = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, data.adminId))
-        .limit(1)
-      if (!requester.length || requester[0].role !== 'Admin') {
-        throw new Error('Unauthorized')
-      }
+      // Use centralized auth helper
+      await requireRole(['Admin'])
 
       await db.delete(certifications).where(eq(certifications.id, data.id))
       return { success: true }
@@ -304,22 +304,16 @@ export const syncCatalog = createServerFn({ method: 'POST' })
     if (!db) throw new Error('Database not available')
 
     try {
-      // Role Check
-      const requester = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, data.adminId))
-        .limit(1)
-      if (!requester.length || requester[0].role !== 'Admin') {
-        throw new Error('Unauthorized')
-      }
+      // Use centralized auth helper
+      await requireRole(['Admin'])
 
       console.log('🔄 [Server] Triggering ITExams Sync...')
       const result = await syncCatalogFromITExams(data.limit)
 
-      // Log the action
+      // Log the action using authenticated user
+      const session = await getAuthenticatedUser()
       await db.insert(auditLogs).values({
-        userId: data.adminId,
+        userId: session.userId,
         action: 'Sync Catalog',
         resourceType: 'Certification',
         resourceId: 'ITExams',
@@ -334,21 +328,14 @@ export const syncCatalog = createServerFn({ method: 'POST' })
   })
 export const clearCatalog = createServerFn({ method: 'POST' })
   .inputValidator((data: { adminId: string }) => data)
-  .handler(async ({ data }) => {
+  .handler(async () => {
     const { getDb } = await import('../db/db.server')
     const db = await getDb()
     if (!db) throw new Error('Database not available')
 
     try {
-      // Role Check
-      const requester = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, data.adminId))
-        .limit(1)
-      if (!requester.length || requester[0].role !== 'Admin') {
-        throw new Error('Unauthorized')
-      }
+      // Use centralized auth helper
+      await requireRole(['Admin'])
 
       console.log('⚠️ [Server] Clearing catalog...')
       await db.delete(userCertifications)

@@ -12,6 +12,33 @@ import type { AuthSession } from './auth.server';
 // Request is a global type in modern environments
 
 /**
+ * Sanitize error message for client consumption.
+ * In production, removes sensitive details like stack traces, file paths, etc.
+ */
+function sanitizeErrorMessage(message: string, isProduction: boolean): string {
+  if (!isProduction) {
+    return message
+  }
+
+  // Remove file paths
+  let sanitized = message.replace(/\/[^\s]+/g, '[path]')
+  
+  // Remove stack trace indicators
+  sanitized = sanitized.replace(/at\s+.*/g, '')
+  
+  // Remove sensitive patterns (database connection strings, etc.)
+  sanitized = sanitized.replace(/postgresql:\/\/[^\s]+/g, '[database]')
+  sanitized = sanitized.replace(/mongodb:\/\/[^\s]+/g, '[database]')
+  
+  // Remove common sensitive info
+  sanitized = sanitized.replace(/password[=:]\S+/gi, 'password=[redacted]')
+  sanitized = sanitized.replace(/secret[=:]\S+/gi, 'secret=[redacted]')
+  sanitized = sanitized.replace(/key[=:]\S+/gi, 'key=[redacted]')
+  
+  return sanitized.trim() || 'An error occurred'
+}
+
+/**
  * Standard error handler for API routes.
  * Returns appropriate JSON response based on error type.
  * 
@@ -20,10 +47,13 @@ import type { AuthSession } from './auth.server';
  * @returns JSON response with appropriate status code
  */
 export function handleApiError(error: unknown, context: string): Response {
+  const isProduction = process.env.NODE_ENV === 'production'
+  
   if (error instanceof AppError) {
+    const sanitizedMessage = sanitizeErrorMessage(error.message, isProduction)
     return json(
       {
-        error: error.message,
+        error: sanitizedMessage,
         code: error.code,
         ...(error instanceof ValidationError && { details: error.errors }),
       },
@@ -31,7 +61,10 @@ export function handleApiError(error: unknown, context: string): Response {
     )
   }
 
+  // Log full error details server-side
   console.error(`❌ [${context}] Unexpected Error:`, error)
+  
+  // Return generic message to client in production
   return json({ error: 'Internal server error' }, { status: 500 })
 }
 
