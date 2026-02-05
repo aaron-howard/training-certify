@@ -18,6 +18,37 @@ import { usePermissions } from '../hooks/usePermissions'
 import { UserManagement } from '../components/admin/UserManagement'
 import { TeamRequirementsModal } from '../components/admin/TeamRequirementsModal'
 
+interface TeamMetric {
+  label: string
+  trend: 'up' | 'down'
+  change: number
+  value: string | number
+}
+
+interface Team {
+  id: string
+  name: string
+  memberCount: number
+  coverage: number
+}
+
+interface TeamMember {
+  id: string
+  name?: string
+  email?: string
+}
+
+interface User {
+  id: string
+  name?: string
+  email?: string
+}
+
+interface TeamData {
+  metrics?: TeamMetric[]
+  teams?: Team[]
+}
+
 const fetchTeams = async () => {
   const res = await fetch('/api/teams')
   if (!res.ok) throw new Error('Failed to fetch teams')
@@ -65,7 +96,7 @@ function TeamManagementPage() {
   const isAdmin = dbUser?.role === 'Admin'
   const isManager = dbUser?.role === 'Manager' || isAdmin
 
-  const { data: teamData, isLoading } = useQuery({
+  const { data: teamData, isLoading } = useQuery<TeamData>({
     queryKey: ['teamData'],
     queryFn: fetchTeams,
   })
@@ -168,7 +199,7 @@ function TeamManagementPage() {
         <>
           {/* Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {teamData.metrics?.map((metric: any) => (
+            {teamData.metrics?.map((metric) => (
               <div
                 key={metric.label}
                 className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"
@@ -209,7 +240,7 @@ function TeamManagementPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                  {teamData.teams?.map((team: any) => (
+                  {teamData.teams?.map((team) => (
                     <tr
                       key={team.id}
                       className="hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors"
@@ -410,7 +441,7 @@ function MemberManagementModal({
   const [newUserRole, setNewUserRole] = useState('User')
 
   // Fetch all users to add them to teams
-  const { data: allUsers = [] } = useQuery({
+  const { data: allUsers = [] } = useQuery<User[]>({
     queryKey: ['allUsers'],
     queryFn: async () => {
       const res = await fetch('/api/users')
@@ -420,7 +451,7 @@ function MemberManagementModal({
   })
 
   // Fetch team members
-  const { data: teamMembers = [], isLoading } = useQuery({
+  const { data: teamMembers = [], isLoading } = useQuery<TeamMember[]>({
     queryKey: ['teamMembers', teamId],
     queryFn: async () => {
       const res = await fetch(`/api/team-members?teamId=${teamId}`)
@@ -467,7 +498,7 @@ function MemberManagementModal({
       setNewUserEmail('')
       setShowInviteForm(false)
     },
-    onError: (err: any) => alert(`Failed to create user: ${err.message}`),
+    onError: (err: Error) => alert(`Failed to create user: ${err.message}`),
   })
 
   const addMemberMutation = useMutation({
@@ -520,8 +551,8 @@ function MemberManagementModal({
     },
   })
 
-  const memberIds = new Set(teamMembers.map((m: any) => m.id))
-  const availableUsers = allUsers.filter((u: any) => !memberIds.has(u.id))
+  const memberIds = new Set(teamMembers.map((m) => m.id))
+  const availableUsers = allUsers.filter((u) => !memberIds.has(u.id))
 
   const handleInviteSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -620,7 +651,7 @@ function MemberManagementModal({
                     ? 'No users available - Invite new users'
                     : 'Select a user...'}
                 </option>
-                {availableUsers.map((user: any) => (
+                {availableUsers.map((user) => (
                   <option key={user.id} value={user.id}>
                     {user.name} ({user.email})
                   </option>
@@ -651,7 +682,7 @@ function MemberManagementModal({
             </div>
           ) : (
             <div className="space-y-2 max-h-64 overflow-y-auto">
-              {teamMembers.map((member: any) => (
+              {teamMembers.map((member) => (
                 <div
                   key={member.id}
                   className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-950 rounded-lg"

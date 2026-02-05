@@ -13,6 +13,17 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { CertificationAssignmentModal } from '../components/catalog/CertificationAssignmentModal'
 
+interface CatalogCertification {
+  id: string
+  name: string
+  vendor?: string
+  vendorName?: string
+  category?: string
+  difficulty?: string
+  price?: string | number
+  description?: string
+}
+
 // API fetch functions (using traditional fetch instead of broken createServerFn)
 const fetchCatalog = async () => {
   const res = await fetch('/api/catalog')
@@ -49,8 +60,8 @@ function CatalogPage() {
   const [difficultyFilter, setDifficultyFilter] = useState('All')
   const [categoryFilter, setCategoryFilter] = useState('All')
   const [showAddModal, setShowAddModal] = useState(false)
-  const [selectedCert, setSelectedCert] = useState<any>(null)
-  const [assigningCert, setAssigningCert] = useState<any>(null)
+  const [selectedCert, setSelectedCert] = useState<CatalogCertification | null>(null)
+  const [assigningCert, setAssigningCert] = useState<CatalogCertification | null>(null)
   const [newCert, setNewCert] = useState({
     id: '',
     name: '',
@@ -97,7 +108,7 @@ function CatalogPage() {
   const vendors = useMemo<Array<string>>(() => {
     if (!catalog?.certifications) return ['All']
     const uniqueVendors = Array.from(
-      new Set(catalog.certifications.map((c: any) => c.vendor)),
+      new Set(catalog.certifications.map((c) => c.vendor)),
     )
     return ['All', ...uniqueVendors.filter(Boolean).sort()]
   }, [catalog?.certifications])
@@ -106,7 +117,7 @@ function CatalogPage() {
   const categories = useMemo<Array<string>>(() => {
     if (!catalog?.certifications) return ['All']
     const uniqueCategories = Array.from(
-      new Set(catalog.certifications.map((c: any) => c.category)),
+      new Set(catalog.certifications.map((c) => c.category)),
     )
     return ['All', ...uniqueCategories.filter(Boolean).sort()]
   }, [catalog?.certifications])
@@ -121,7 +132,7 @@ function CatalogPage() {
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
       processed = processed.filter(
-        (cert: any) =>
+        (cert) =>
           cert.name?.toLowerCase().includes(query) ||
           cert.vendor?.toLowerCase().includes(query) ||
           cert.level?.toLowerCase().includes(query),
@@ -345,7 +356,7 @@ function CatalogPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredCertifications.map((cert: any) => (
+        {filteredCertifications.map((cert) => (
           <div
             key={cert.id}
             className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group relative"

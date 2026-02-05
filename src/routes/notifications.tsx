@@ -12,6 +12,26 @@ import {
   X,
 } from 'lucide-react'
 
+interface Notification {
+  id: string
+  type: 'alert' | 'info'
+  title: string
+  message: string
+  date: string
+  read: boolean
+}
+
+interface NotificationCategory {
+  id: string
+  name: string
+  description: string
+}
+
+interface NotificationSettings {
+  categories?: NotificationCategory[]
+  userPreferences?: Record<string, boolean>
+}
+
 const fetchNotifications = async () => {
   const res = await fetch('/api/notifications')
   if (!res.ok) return []
@@ -34,15 +54,15 @@ function NotificationsPage() {
   const [showSettings, setShowSettings] = useState(false)
   const [preferences, setPreferences] = useState<Record<string, boolean>>({})
 
-  const { data: notifications = [], isLoading } = useQuery({
+  const { data: notifications = [], isLoading } = useQuery<Notification[]>({
     queryKey: ['notifications'],
     queryFn: fetchNotifications,
   })
 
-  const { data: settings } = useQuery({
+  const { data: settings } = useQuery<NotificationSettings>({
     queryKey: ['notificationSettings'],
     queryFn: fetchSettings,
-    onSuccess: (data: any) => {
+    onSuccess: (data) => {
       setPreferences(data.userPreferences || {})
     },
   })
@@ -126,7 +146,7 @@ function NotificationsPage() {
             No notifications yet.
           </div>
         ) : (
-          notifications.map((notif: any) => (
+          notifications.map((notif) => (
             <div
               key={notif.id}
               className={`p-6 flex gap-4 hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors ${!notif.read ? 'border-l-4 border-l-blue-600' : ''}`}
@@ -193,7 +213,7 @@ function NotificationsPage() {
               <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
                 Categories
               </h3>
-              {settings?.categories?.map((cat: any) => (
+              {settings?.categories?.map((cat) => (
                 <div
                   key={cat.id}
                   className="flex items-center justify-between py-2"

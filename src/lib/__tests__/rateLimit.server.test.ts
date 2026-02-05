@@ -21,166 +21,167 @@ describe('rateLimit.server.ts', () => {
   })
 
   describe('RateLimiter.check', () => {
-    it('should allow requests within limit', () => {
+    it('should allow requests within limit', async () => {
       const config = { windowMs: 60000, maxRequests: 5 }
 
-      expect(rateLimiter.check('user1', config)).toBe(true)
-      expect(rateLimiter.check('user1', config)).toBe(true)
-      expect(rateLimiter.check('user1', config)).toBe(true)
+      expect(await rateLimiter.check('user1', config)).toBe(true)
+      expect(await rateLimiter.check('user1', config)).toBe(true)
+      expect(await rateLimiter.check('user1', config)).toBe(true)
     })
 
-    it('should block requests exceeding limit', () => {
+    it('should block requests exceeding limit', async () => {
       const config = { windowMs: 60000, maxRequests: 3 }
 
-      expect(rateLimiter.check('user1', config)).toBe(true)
-      expect(rateLimiter.check('user1', config)).toBe(true)
-      expect(rateLimiter.check('user1', config)).toBe(true)
-      expect(rateLimiter.check('user1', config)).toBe(false)
-      expect(rateLimiter.check('user1', config)).toBe(false)
+      expect(await rateLimiter.check('user1', config)).toBe(true)
+      expect(await rateLimiter.check('user1', config)).toBe(true)
+      expect(await rateLimiter.check('user1', config)).toBe(true)
+      expect(await rateLimiter.check('user1', config)).toBe(false)
+      expect(await rateLimiter.check('user1', config)).toBe(false)
     })
 
-    it('should reset after time window', () => {
+    it('should reset after time window', async () => {
       const config = { windowMs: 60000, maxRequests: 2 }
 
-      expect(rateLimiter.check('user1', config)).toBe(true)
-      expect(rateLimiter.check('user1', config)).toBe(true)
-      expect(rateLimiter.check('user1', config)).toBe(false)
+      expect(await rateLimiter.check('user1', config)).toBe(true)
+      expect(await rateLimiter.check('user1', config)).toBe(true)
+      expect(await rateLimiter.check('user1', config)).toBe(false)
 
       // Advance time past window
       vi.advanceTimersByTime(61000)
 
-      expect(rateLimiter.check('user1', config)).toBe(true)
+      expect(await rateLimiter.check('user1', config)).toBe(true)
     })
 
-    it('should handle multiple identifiers independently', () => {
+    it('should handle multiple identifiers independently', async () => {
       const config = { windowMs: 60000, maxRequests: 2 }
 
-      expect(rateLimiter.check('user1', config)).toBe(true)
-      expect(rateLimiter.check('user1', config)).toBe(true)
-      expect(rateLimiter.check('user1', config)).toBe(false)
+      expect(await rateLimiter.check('user1', config)).toBe(true)
+      expect(await rateLimiter.check('user1', config)).toBe(true)
+      expect(await rateLimiter.check('user1', config)).toBe(false)
 
       // Different user should have separate limit
-      expect(rateLimiter.check('user2', config)).toBe(true)
-      expect(rateLimiter.check('user2', config)).toBe(true)
-      expect(rateLimiter.check('user2', config)).toBe(false)
+      expect(await rateLimiter.check('user2', config)).toBe(true)
+      expect(await rateLimiter.check('user2', config)).toBe(true)
+      expect(await rateLimiter.check('user2', config)).toBe(false)
     })
 
-    it('should clean up old timestamps', () => {
+    it('should clean up old timestamps', async () => {
       const config = { windowMs: 60000, maxRequests: 3 }
 
-      rateLimiter.check('user1', config)
-      rateLimiter.check('user1', config)
+      await rateLimiter.check('user1', config)
+      await rateLimiter.check('user1', config)
 
       // Advance time to trigger cleanup
       vi.advanceTimersByTime(61000)
 
       // Old timestamps should be cleaned up
-      rateLimiter.check('user1', config)
-      expect(rateLimiter.getRemaining('user1', config)).toBe(2)
+      await rateLimiter.check('user1', config)
+      expect(await rateLimiter.getRemaining('user1', config)).toBe(2)
     })
   })
 
   describe('RateLimiter.getRemaining', () => {
-    it('should return correct remaining count', () => {
+    it('should return correct remaining count', async () => {
       const config = { windowMs: 60000, maxRequests: 5 }
 
-      expect(rateLimiter.getRemaining('user1', config)).toBe(5)
+      expect(await rateLimiter.getRemaining('user1', config)).toBe(5)
 
-      rateLimiter.check('user1', config)
-      expect(rateLimiter.getRemaining('user1', config)).toBe(4)
+      await rateLimiter.check('user1', config)
+      expect(await rateLimiter.getRemaining('user1', config)).toBe(4)
 
-      rateLimiter.check('user1', config)
-      expect(rateLimiter.getRemaining('user1', config)).toBe(3)
+      await rateLimiter.check('user1', config)
+      expect(await rateLimiter.getRemaining('user1', config)).toBe(3)
     })
 
-    it('should return max when no requests made', () => {
+    it('should return max when no requests made', async () => {
       const config = { windowMs: 60000, maxRequests: 10 }
 
-      expect(rateLimiter.getRemaining('newuser', config)).toBe(10)
+      expect(await rateLimiter.getRemaining('newuser', config)).toBe(10)
     })
 
-    it('should return 0 when limit exceeded', () => {
+    it('should return 0 when limit exceeded', async () => {
       const config = { windowMs: 60000, maxRequests: 2 }
 
-      rateLimiter.check('user1', config)
-      rateLimiter.check('user1', config)
+      await rateLimiter.check('user1', config)
+      await rateLimiter.check('user1', config)
 
-      expect(rateLimiter.getRemaining('user1', config)).toBe(0)
+      expect(await rateLimiter.getRemaining('user1', config)).toBe(0)
     })
   })
 
   describe('RateLimiter.reset', () => {
-    it('should clear rate limit for identifier', () => {
+    it('should clear rate limit for identifier', async () => {
       const config = { windowMs: 60000, maxRequests: 2 }
 
-      rateLimiter.check('user1', config)
-      rateLimiter.check('user1', config)
-      expect(rateLimiter.check('user1', config)).toBe(false)
+      await rateLimiter.check('user1', config)
+      await rateLimiter.check('user1', config)
+      expect(await rateLimiter.check('user1', config)).toBe(false)
 
-      rateLimiter.reset('user1')
+      await rateLimiter.reset('user1')
 
-      expect(rateLimiter.check('user1', config)).toBe(true)
+      expect(await rateLimiter.check('user1', config)).toBe(true)
     })
 
-    it('should not affect other identifiers', () => {
+    it('should not affect other identifiers', async () => {
       const config = { windowMs: 60000, maxRequests: 2 }
 
-      rateLimiter.check('user1', config)
-      rateLimiter.check('user2', config)
+      await rateLimiter.check('user1', config)
+      await rateLimiter.check('user2', config)
 
-      rateLimiter.reset('user1')
+      await rateLimiter.reset('user1')
 
-      expect(rateLimiter.getRemaining('user1', config)).toBe(2)
-      expect(rateLimiter.getRemaining('user2', config)).toBe(1)
+      expect(await rateLimiter.getRemaining('user1', config)).toBe(2)
+      expect(await rateLimiter.getRemaining('user2', config)).toBe(1)
     })
   })
 
   describe('RateLimiter.clear', () => {
-    it('should remove all rate limit data', () => {
+    it('should remove all rate limit data', async () => {
       const config = { windowMs: 60000, maxRequests: 2 }
 
-      rateLimiter.check('user1', config)
-      rateLimiter.check('user2', config)
-      rateLimiter.check('user3', config)
+      await rateLimiter.check('user1', config)
+      await rateLimiter.check('user2', config)
+      await rateLimiter.check('user3', config)
 
       rateLimiter.clear()
 
-      expect(rateLimiter.getRemaining('user1', config)).toBe(2)
-      expect(rateLimiter.getRemaining('user2', config)).toBe(2)
-      expect(rateLimiter.getRemaining('user3', config)).toBe(2)
+      expect(await rateLimiter.getRemaining('user1', config)).toBe(2)
+      expect(await rateLimiter.getRemaining('user2', config)).toBe(2)
+      expect(await rateLimiter.getRemaining('user3', config)).toBe(2)
     })
   })
 
   describe('requireRateLimit', () => {
-    it('should pass when under limit', () => {
+    it('should pass when under limit', async () => {
       const config = { windowMs: 60000, maxRequests: 5 }
 
-      expect(() => requireRateLimit('user1', config)).not.toThrow()
-      expect(() => requireRateLimit('user1', config)).not.toThrow()
+      await expect(requireRateLimit('user1', config)).resolves.not.toThrow()
+      await expect(requireRateLimit('user1', config)).resolves.not.toThrow()
     })
 
-    it('should throw error when limit exceeded', () => {
+    it('should throw error when limit exceeded', async () => {
       const config = { windowMs: 60000, maxRequests: 2 }
 
-      requireRateLimit('user1', config)
-      requireRateLimit('user1', config)
+      await requireRateLimit('user1', config)
+      await requireRateLimit('user1', config)
 
-      expect(() => requireRateLimit('user1', config)).toThrow(
+      await expect(requireRateLimit('user1', config)).rejects.toThrow(
         'Rate limit exceeded',
       )
     })
 
-    it('should include reset time in error message', () => {
+    it('should include reset time in error message', async () => {
       const config = { windowMs: 60000, maxRequests: 1 }
 
-      requireRateLimit('user1', config)
+      await requireRateLimit('user1', config)
 
       try {
-        requireRateLimit('user1', config)
+        await requireRateLimit('user1', config)
         expect.fail('Should have thrown error')
-      } catch (error: any) {
-        expect(error.message).toContain('Reset at:')
-        expect(error.message).toContain('Remaining: 0')
+      } catch (error: unknown) {
+        const err = error as Error
+        expect(err.message).toContain('Reset at:')
+        expect(err.message).toContain('Remaining: 0')
       }
     })
   })
@@ -223,34 +224,33 @@ describe('rateLimit.server.ts', () => {
   })
 
   describe('Edge cases', () => {
-    it('should handle very short time windows', () => {
+    it('should handle very short time windows', async () => {
       const config = { windowMs: 100, maxRequests: 2 }
 
-      rateLimiter.check('user1', config)
-      rateLimiter.check('user1', config)
-      expect(rateLimiter.check('user1', config)).toBe(false)
+      await rateLimiter.check('user1', config)
+      await rateLimiter.check('user1', config)
+      expect(await rateLimiter.check('user1', config)).toBe(false)
 
       vi.advanceTimersByTime(101)
-      expect(rateLimiter.check('user1', config)).toBe(true)
+      expect(await rateLimiter.check('user1', config)).toBe(true)
     })
 
-    it('should handle very high request limits', () => {
+    it('should handle very high request limits', async () => {
       const config = { windowMs: 60000, maxRequests: 1000 }
 
       for (let i = 0; i < 999; i++) {
-        expect(rateLimiter.check('user1', config)).toBe(true)
+        expect(await rateLimiter.check('user1', config)).toBe(true)
       }
 
-      expect(rateLimiter.getRemaining('user1', config)).toBe(1)
+      expect(await rateLimiter.getRemaining('user1', config)).toBe(1)
     })
 
-    it('should handle concurrent requests from same identifier', () => {
+    it('should handle concurrent requests from same identifier', async () => {
       const config = { windowMs: 60000, maxRequests: 5 }
 
-      const results = []
-      for (let i = 0; i < 10; i++) {
-        results.push(rateLimiter.check('user1', config))
-      }
+      const results = await Promise.all(
+        Array.from({ length: 10 }, () => rateLimiter.check('user1', config))
+      )
 
       const allowed = results.filter((r) => r).length
       expect(allowed).toBe(5)

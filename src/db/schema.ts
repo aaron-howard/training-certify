@@ -26,17 +26,48 @@ export const certificationStatusEnum = pgEnum('certification_status', [
   'assigned',
 ])
 export const certificationCategoryEnum = pgEnum('certification_category', [
+  'AI',
+  'AppDynamics',
+  'Business Applications',
+  'Channel/Partner',
   'Cloud',
-  'Security',
-  'Networking',
+  'Collaboration',
+  'Cybersecurity',
   'Data',
+  'Data Center',
+  'Design',
+  'DevNet',
+  'DevOps',
+  'Dynamics 365',
+  'Enterprise',
+  'Field Technician',
+  'IT',
+  'Meraki',
+  'Modern Workplace',
+  'Networking',
+  'Power Platform',
   'Project Management',
+  'Security',
+  'Service Provider',
+  'Support Technician',
 ])
 export const certificationDifficultyEnum = pgEnum('certification_difficulty', [
-  'Beginner',
-  'Intermediate',
   'Advanced',
+  'Associate',
+  'Beginner',
+  'Cybersecurity',
   'Expert',
+  'Financial App',
+  'Information Technology',
+  'Intermediate',
+  'IT Finance',
+  'Networking',
+  'Professional',
+  'Project Management',
+  'ServiceNow',
+  'ServiceNow*',
+  'Software and Quality',
+  'Virtualization',
 ])
 export const notificationSeverityEnum = pgEnum('notification_severity', [
   'critical',
@@ -212,3 +243,22 @@ export const auditLogs = pgTable('audit_logs', {
   details: text('details'),
   timestamp: timestamp('timestamp').defaultNow().notNull(),
 })
+
+// Rate Limit Logs (for distributed rate limiting)
+export const rateLimitLogs = pgTable(
+  'rate_limit_logs',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    identifier: text('identifier').notNull(), // User ID or IP address
+    timestamp: timestamp('timestamp').defaultNow().notNull(),
+  },
+  (t) => ({
+    identifierIdx: index('rate_limit_logs_identifier_idx').on(t.identifier),
+    timestampIdx: index('rate_limit_logs_timestamp_idx').on(t.timestamp),
+    // Composite index for efficient queries
+    identifierTimestampIdx: index('rate_limit_logs_identifier_timestamp_idx').on(
+      t.identifier,
+      t.timestamp,
+    ),
+  }),
+)

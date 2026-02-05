@@ -2,6 +2,25 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { AlertCircle, FileCheck, History, Shield } from 'lucide-react'
 
+interface AuditLog {
+  id: string
+  userId: string
+  action: string
+  resourceType: string
+  resourceId: string
+  details?: string
+  timestamp: string
+}
+
+interface ComplianceData {
+  auditLogs: AuditLog[]
+  stats: {
+    complianceRate: number
+    totalAudits: number
+    issuesFound: number
+  }
+}
+
 // Use fetch API instead of server imports
 const fetchComplianceData = async () => {
   const res = await fetch('/api/compliance')
@@ -18,7 +37,7 @@ export const Route = createFileRoute('/compliance-audit')({
 })
 
 function ComplianceAuditPage() {
-  const { data: compliance, isLoading } = useQuery({
+  const { data: compliance, isLoading } = useQuery<ComplianceData>({
     queryKey: ['complianceData'],
     queryFn: fetchComplianceData,
   })
@@ -101,7 +120,7 @@ function ComplianceAuditPage() {
               No audit logs yet.
             </div>
           ) : (
-            compliance?.auditLogs.map((log: any) => (
+            compliance?.auditLogs.map((log) => (
               <div
                 key={log.id}
                 className="px-6 py-4 flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors"

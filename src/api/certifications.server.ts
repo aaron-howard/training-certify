@@ -2,13 +2,13 @@ import { createServerFn } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 import { userCertifications } from '../db/schema'
 import type { UserCertification } from '../types'
+import { CreateCertificationInputSchema, UpdateCertificationInputSchema } from '../lib/validation'
+import { DatabaseError } from '../lib/errors'
 
 export const getUserCertifications = createServerFn({ method: 'GET' }).handler(
   async () => {
-    const { getDb, instanceId } = await import('../db/db.server')
-    const db = await getDb()
-    if (!db)
-      throw new Error(`Database not available (Server Instance: ${instanceId})`)
+    const { getDbOrThrow } = await import('../db/db.server')
+    const db = await getDbOrThrow()
 
     try {
       const result = await db.select().from(userCertifications)
@@ -21,36 +21,20 @@ export const getUserCertifications = createServerFn({ method: 'GET' }).handler(
       return mapped
     } catch (error) {
       console.error('❌ [Server] Failed to fetch user certifications:', error)
-      return []
+      throw new DatabaseError(
+        `Failed to fetch user certifications: ${error instanceof Error ? error.message : String(error)}`
+      )
     }
   },
 )
 
-interface CreateCertificationInput {
-  userId?: string
-  certificationId?: string
-  certificationName?: string
-  vendorName?: string
-  certificationNumber?: string
-  issueDate?: string
-  expirationDate?: string
-  status?: string
-  daysUntilExpiration?: number
-  documentUrl?: string
-  verifiedAt?: string | Date
-}
-
 export const createCertification = createServerFn({ method: 'POST' })
-  .inputValidator((data: unknown): CreateCertificationInput => {
-    if (typeof data === 'object' && data !== null) {
-      return data as CreateCertificationInput
-    }
-    throw new Error('Invalid input data')
+  .inputValidator((data: unknown) => {
+    return CreateCertificationInputSchema.parse(data)
   })
   .handler(async ({ data }) => {
-    const { getDb } = await import('../db/db.server')
-    const db = await getDb()
-    if (!db) throw new Error('Database not available')
+    const { getDbOrThrow } = await import('../db/db.server')
+    const db = await getDbOrThrow()
 
     try {
       const verifiedAtValue = data.verifiedAt
@@ -84,43 +68,22 @@ export const createCertification = createServerFn({ method: 'POST' })
       } as UserCertification
     } catch (error) {
       console.error('❌ [Server] Failed to create certification:', error)
-      throw error
+      if (error instanceof Error && error.message.includes('validation')) {
+        throw error
+      }
+      throw new DatabaseError(
+        `Failed to create certification: ${error instanceof Error ? error.message : String(error)}`
+      )
     }
   })
-
-interface UpdateCertificationInput {
-  id: string
-  updates: {
-    userId?: string
-    certificationId?: string
-    certificationName?: string
-    vendorName?: string
-    certificationNumber?: string
-    issueDate?: string
-    expirationDate?: string
-    status?: string
-    daysUntilExpiration?: number
-    documentUrl?: string
-    verifiedAt?: string | Date
-  }
-}
 
 export const updateCertification = createServerFn({ method: 'POST' })
-  .inputValidator((data: unknown): UpdateCertificationInput => {
-    if (
-      typeof data === 'object' &&
-      data !== null &&
-      'id' in data &&
-      'updates' in data
-    ) {
-      return data as UpdateCertificationInput
-    }
-    throw new Error('Invalid input data')
+  .inputValidator((data: unknown) => {
+    return UpdateCertificationInputSchema.parse(data)
   })
   .handler(async ({ data }) => {
-    const { getDb } = await import('../db/db.server')
-    const db = await getDb()
-    if (!db) throw new Error('Database not available')
+    const { getDbOrThrow } = await import('../db/db.server')
+    const db = await getDbOrThrow()
 
     try {
       const { id, updates } = data
@@ -146,22 +109,33 @@ export const updateCertification = createServerFn({ method: 'POST' })
       } as UserCertification
     } catch (error) {
       console.error('❌ [Server] Failed to update certification:', error)
-      throw error
+      if (error instanceof Error && error.message.includes('validation')) {
+        throw error
+      }
+      throw new DatabaseError(
+        `Failed to update certification: ${error instanceof Error ? error.message : String(error)}`
+      )
     }
   })
 
 export const deleteCertification = createServerFn({ method: 'POST' })
-  .inputValidator((data: string) => data)
+  .inputValidator((data: unknown) => {
+    if (typeof data === 'string' && data.length > 0) {
+      return data
+    }
+    throw new Error('Invalid certification ID')
+  })
   .handler(async ({ data: id }) => {
-    const { getDb } = await import('../db/db.server')
-    const db = await getDb()
-    if (!db) throw new Error('Database not available')
+    const { getDbOrThrow } = await import('../db/db.server')
+    const db = await getDbOrThrow()
 
     try {
       await db.delete(userCertifications).where(eq(userCertifications.id, id))
       return { success: true }
     } catch (error) {
       console.error('❌ [Server] Failed to delete certification:', error)
-      throw error
+      throw new DatabaseError(
+        `Failed to delete certification: ${error instanceof Error ? error.message : String(error)}`
+      )
     }
   })
