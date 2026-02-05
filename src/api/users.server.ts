@@ -1,7 +1,8 @@
 import { createServerFn } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 import { users } from '../db/schema'
-import { getVerifiedAuth, requireRole } from '../lib/auth.server'
+import { getVerifiedAuth, requireRole, getAuthenticatedUser } from '../lib/auth.server'
+import { auditRoleChange, createAuditLog } from '../lib/audit.server'
 
 /**
  * Ensures a user exists in the local database.
@@ -68,37 +69,55 @@ export const updateUserRole = createServerFn({ method: 'POST' })
   )
   .handler(async ({ data }) => {
     // Security: Require Admin role
-    await requireRole(['Admin'])
+    const session = await requireRole(['Admin'])
 
     const { getDb } = await import('../db/db.server')
     const db = await getDb()
     if (!db) throw new Error('Database not available')
 
     try {
+      // Get old role for audit logging
+      const existingUser = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, data.userId))
+        .limit(1)
+      
+      if (existingUser.length === 0) {
+        throw new Error('User not found')
+      }
+      
+      const oldRole = existingUser[0].role
+      
       const result = await db
         .update(users)
         .set({ role: data.role, updatedAt: new Date() })
         .where(eq(users.id, data.userId))
         .returning()
 
-      if (result.length === 0) {
-        throw new Error('User not found')
-      }
+      // Audit log the role change
+      await auditRoleChange(session.userId, data.userId, oldRole, data.role)
 
       return result[0]
     } catch (error) {
-      console.error('❌ [Server] Failed to update role:', error)
+      console.error('[Server] Failed to update role:', error)
       throw error
     }
   })
 
 /**
- * Development utility to promote a user to Admin.
- * Hardened to only allow the authenticated user to promote themselves.
+ * Development utility to create the first Admin user.
+ * SECURITY: Only works if NO admins exist in the database.
+ * This is a bootstrap mechanism for initial setup only.
  */
 export const makeMeAdmin = createServerFn({ method: 'POST' })
   .inputValidator((data: { userId: string }) => data)
   .handler(async ({ data }) => {
+    // SECURITY: Disabled in production unless explicitly enabled
+    if (process.env.NODE_ENV === 'production' && !process.env.ALLOW_ADMIN_BOOTSTRAP) {
+      throw new Error('This endpoint is disabled in production')
+    }
+
     // Security: Get verified ID from session
     const authenticatedId = await getVerifiedAuth()
 
@@ -111,6 +130,17 @@ export const makeMeAdmin = createServerFn({ method: 'POST' })
     const db = await getDb()
     if (!db) throw new Error('Database not available')
 
+    // SECURITY: Only allow if NO admins exist (bootstrap scenario)
+    const existingAdmins = await db
+      .select()
+      .from(users)
+      .where(eq(users.role, 'Admin'))
+      .limit(1)
+
+    if (existingAdmins.length > 0) {
+      throw new Error('Admin already exists. Use the admin panel to manage roles.')
+    }
+
     try {
       const result = await db
         .update(users)
@@ -118,10 +148,13 @@ export const makeMeAdmin = createServerFn({ method: 'POST' })
         .where(eq(users.id, authenticatedId))
         .returning()
 
-      console.log(`🪄 [Server] User ${authenticatedId} promoted to Admin`)
+      // Audit log the first admin creation
+      await auditRoleChange(authenticatedId, authenticatedId, 'User', 'Admin')
+
+      console.log(`[Server] First admin created: ${authenticatedId}`)
       return result[0]
     } catch (error) {
-      console.error('❌ [Server] Failed to promote:', error)
+      console.error('[Server] Failed to promote:', error)
       throw error
     }
   })

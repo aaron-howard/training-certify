@@ -31,25 +31,25 @@ async function initializeDb() {
   try {
     await envReady
 
-    // Explicit fallback for local development if ENV fails
-    const url =
-      ENV.DATABASE_URL ||
-      process.env.DATABASE_URL ||
-      'postgresql://postgres:password@127.0.0.1:5433/devdb'
+    // SECURITY: Require DATABASE_URL from environment, no hardcoded fallback
+    const url = ENV.DATABASE_URL || process.env.DATABASE_URL
 
     if (!url) {
       console.error(
-        `❌ [DB Init] Instance ${instanceId} - No DATABASE_URL found.`,
+        `[DB Init] Instance ${instanceId} - DATABASE_URL environment variable is required.`,
       )
-      return null
+      throw new Error('DATABASE_URL environment variable is required. Please set it in your environment or .env file.')
     }
 
     const { Pool } = await import('pg')
     const { drizzle } = await import('drizzle-orm/node-postgres')
 
+    // Pool size: use 2 for dev (prevent exhaustion during HMR), 10 for production
+    const defaultPoolSize = process.env.NODE_ENV === 'production' ? '10' : '2'
+    
     const pool = new Pool({
       connectionString: url,
-      max: parseInt(process.env.DB_POOL_SIZE || '2', 10), // Reduced pool size to prevent exhaustion during dev/HMR
+      max: parseInt(process.env.DB_POOL_SIZE || defaultPoolSize, 10),
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 5000,
     })
@@ -102,14 +102,12 @@ export { instanceId }
 export function closeDb(): void {
   if (globalForDb.db) {
     try {
-      // The pool is embedded in the drizzle instance
-      // We need to access it to close connections
-      console.log('💾 Closing database connection pool...')
+      console.log('[DB] Closing database connection pool...')
       globalForDb.db = undefined
       globalForDb.initPromise = undefined
-      console.log('✅ Database connections closed')
+      console.log('[DB] Database connections closed')
     } catch (error) {
-      console.error('❌ Error closing database:', error)
+      console.error('[DB] Error closing database:', error)
     }
   }
 }

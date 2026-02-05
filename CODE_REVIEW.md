@@ -477,24 +477,56 @@ await createAuditLog(
 
 ## 🔒 SECURITY CHECKLIST
 
-- [ ] Remove `makeMeAdmin` endpoint or add proper guards
-- [ ] Add authentication to `getUserCertifications`
-- [ ] Add authentication to `createCertification`
-- [ ] Add authentication to `updateCertification`
-- [ ] Add authentication to `deleteCertification`
-- [ ] Implement RLS policies
-- [ ] Add input validation (Zod) to all endpoints
-- [ ] Remove hardcoded database credentials
-- [ ] Enable audit logging
+- [x] Remove `makeMeAdmin` endpoint or add proper guards - **FIXED**: Now only works when no admins exist and disabled in production
+- [x] Add authentication to `getUserCertifications` - **FIXED**: Role-based access control implemented
+- [x] Add authentication to `createCertification` - **FIXED**: Auth + ownership validation added
+- [x] Add authentication to `updateCertification` - **FIXED**: Auth + ownership validation added
+- [x] Add authentication to `deleteCertification` - **FIXED**: Auth + ownership validation added
+- [ ] Implement RLS policies - Recommended for additional security layer
+- [x] Add input validation (Zod) to all endpoints - **FIXED**: Full Zod schemas implemented
+- [x] Remove hardcoded database credentials - **FIXED**: Now requires DATABASE_URL env var
+- [x] Enable audit logging - **FIXED**: New `audit.server.ts` utility with logging on all critical operations
 - [ ] Add rate limiting to all mutation endpoints
 - [ ] Implement CSRF protection
 - [ ] Add security headers (helmet.js or equivalent)
 
 ---
 
-## Previous Fixes Applied
+## Fixes Applied (February 4, 2026)
 
-The following issues from the previous review have been addressed:
+### Phase 1: Critical Security Fixes - COMPLETED
+
+1. **✅ `makeMeAdmin` Vulnerability Fixed**
+   - Added production environment check
+   - Added check to only allow if NO admins exist (bootstrap only)
+   - File: `src/api/users.server.ts`
+
+2. **✅ Authentication Added to All Certification Endpoints**
+   - `getUserCertifications`: Role-based access (Admins/Managers see all, users see own)
+   - `createCertification`: Auth required, can only create for self unless Admin/Manager
+   - `updateCertification`: Auth required, ownership check or Admin/Manager role
+   - `deleteCertification`: Auth required, ownership check or Admin role
+   - File: `src/api/certifications.server.ts`
+
+3. **✅ Zod Input Validation Implemented**
+   - Created comprehensive Zod schemas for all certification operations
+   - Validates field types, lengths, and formats
+   - Returns detailed error messages
+   - File: `src/api/certifications.server.ts`
+
+4. **✅ Audit Logging Utility Created**
+   - New file: `src/lib/audit.server.ts`
+   - Logs all role changes, certification CRUD operations
+   - Structured logging with action types and resource types
+   - Non-blocking (failures don't break main operations)
+
+5. **✅ Hardcoded Credentials Removed**
+   - Removed fallback database URL from `db.server.ts`
+   - Now throws explicit error if `DATABASE_URL` not set
+   - Improved pool size configuration (2 for dev, 10 for production)
+   - File: `src/db/db.server.ts`
+
+### Previous Fixes
 
 1. **✅ Database Consistency** - Updated to use `pg` driver exclusively
 2. **✅ Database Type Definitions** - Added proper `NodePgDatabase<typeof schema>` types
