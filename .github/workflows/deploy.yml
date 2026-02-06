@@ -16,6 +16,7 @@ on:
 permissions:
   contents: read
   deployments: write
+  id-token: write # Required for OIDC authentication (if using AWS/GCP)
 
 jobs:
   deploy-staging:
@@ -53,12 +54,19 @@ jobs:
         id: deploy
         run: |
           echo "Deploying to staging environment..."
-          # Add your deployment commands here
-          # Examples:
-          # - Vercel: vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
-          # - AWS: aws s3 sync dist/ s3://your-bucket
-          # - Custom: your-deployment-script.sh
-          echo "url=https://staging.example.com" >> $GITHUB_OUTPUT
+          # Vercel deployment (if using Vercel)
+          if [ -n "${{ secrets.VERCEL_TOKEN }}" ]; then
+            npx vercel --token ${{ secrets.VERCEL_TOKEN }} --yes
+            echo "url=$(npx vercel inspect --token ${{ secrets.VERCEL_TOKEN }} | grep -o 'https://[^ ]*' | head -1)" >> $GITHUB_OUTPUT
+          else
+            # Add other deployment commands here
+            # Examples:
+            # - Railway: railway up --environment staging
+            # - AWS: aws s3 sync dist/ s3://your-bucket
+            # - Custom: your-deployment-script.sh
+            echo "url=https://staging.example.com" >> $GITHUB_OUTPUT
+            echo "⚠️ NOTE: Configure VERCEL_TOKEN secret or update with your deployment commands"
+          fi
 
       - name: Create deployment
         uses: actions/github-script@v7
@@ -76,6 +84,8 @@ jobs:
   deploy-production:
     name: Deploy to Production
     runs-on: ubuntu-latest
+    # Production deployments require manual approval via workflow_dispatch
+    # This prevents accidental production deployments
     if: github.event.inputs.environment == 'production'
     environment:
       name: production
@@ -108,12 +118,19 @@ jobs:
         id: deploy
         run: |
           echo "Deploying to production environment..."
-          # Add your deployment commands here
-          # Examples:
-          # - Vercel: vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
-          # - AWS: aws s3 sync dist/ s3://your-bucket
-          # - Custom: your-deployment-script.sh
-          echo "url=https://example.com" >> $GITHUB_OUTPUT
+          # Vercel production deployment (if using Vercel)
+          if [ -n "${{ secrets.VERCEL_TOKEN }}" ]; then
+            npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
+            echo "url=$(npx vercel inspect --token ${{ secrets.VERCEL_TOKEN }} --prod | grep -o 'https://[^ ]*' | head -1)" >> $GITHUB_OUTPUT
+          else
+            # Add other deployment commands here
+            # Examples:
+            # - Railway: railway up --environment production
+            # - AWS: aws s3 sync dist/ s3://your-bucket
+            # - Custom: your-deployment-script.sh
+            echo "url=https://example.com" >> $GITHUB_OUTPUT
+            echo "⚠️ NOTE: Configure VERCEL_TOKEN secret or update with your deployment commands"
+          fi
 
       - name: Create deployment
         uses: actions/github-script@v7

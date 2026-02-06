@@ -1,21 +1,25 @@
 # Support policy
 
-Design OS is free and open source. To keep it sustainable, you can seek support in any of these ways:
+Training Certify is free and open source. To keep it sustainable, you can seek support in any of these ways:
 
-- **[Documentation](https://buildermethods.com/design-os):** Complete and up-to-date guides for installation, updating, and usage of Design OS.
+- **[Documentation](https://github.com/aaron-howard/training-certify):** Complete and up-to-date guides for installation, updating, and usage of Training Certify.
 
-- **[Community Support (Free)](https://github.com/buildermethods/design-os/discussions):** Ask & answer questions with other users in the **Q&A** category of GitHub Discussions.
+- **[Community Support (Free)](https://github.com/aaron-howard/training-certify/discussions):** Ask & answer questions with other users in the **Q&A** category of GitHub Discussions.
 
-- **[Official Support (Paid)](https://buildermethods.com/pro):** For guaranteed responses from Brian & team, join **Builder Methods Pro**.
+- **[Issues](https://github.com/aaron-howard/training-certify/issues):** Report bugs or request features through GitHub Issues.
 
 ---
 
 ## Bugs
 
-- Post suspected bugs in the **Bugs category** of Discussions. Maintainers may promote confirmed bugs to Issues for tracking and fixes.
+- Post suspected bugs in GitHub Issues. Please include:
+  - Steps to reproduce
+  - Expected behavior
+  - Actual behavior
+  - Environment details (OS, Node version, etc.)
 
 ---
 
 ## Feature ideas
 
-Use the **Ideas category** of Discussions to propose and upvote new features and integration requests.
+Use GitHub Issues with the `enhancement` label to propose and discuss new features and integration requests.

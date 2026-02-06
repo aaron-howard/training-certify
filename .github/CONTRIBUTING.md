@@ -1,20 +1,22 @@
-# Contributing to Design OS
+# Contributing to Training Certify
 
-Thanks for considering a contribution! Design OS is free and open source, but to keep things manageable we follow a **Discussions-first workflow**.
+Thanks for considering a contribution! Training Certify is free and open source, but to keep things manageable we follow a structured workflow.
 
 ---
 
 ## Where things go
 
-- **Discussions (Bugs):** Report suspected bugs. Maintainers may promote confirmed bugs into Issues.
-  👉 **Check the docs before posting:** [buildermethods.com/design-os](https://buildermethods.com/design-os)
+- **Issues (Bugs):** Report suspected bugs. Please include:
+  - Steps to reproduce
+  - Expected behavior
+  - Actual behavior
+  - Environment details
+    👉 **Check existing issues first** to avoid duplicates: [GitHub Issues](https://github.com/aaron-howard/training-certify/issues)
 
-- **Discussions (Ideas):** Share feature ideas and proposals.
-  👉 **Check the docs first** to ensure it’s not already supported.
+- **Issues (Feature Requests):** Share feature ideas and proposals.
+  👉 **Check existing issues first** to ensure it's not already proposed.
 
-- **Discussions (Q&A):** Ask & answer community questions.
-
-- **Builder Methods Pro:** Paid membership with guaranteed support responses → https://buildermethods.com/pro
+- **Discussions (Q&A):** Ask & answer community questions in [GitHub Discussions](https://github.com/aaron-howard/training-certify/discussions).
 
 ---
 
@@ -27,8 +29,8 @@ To avoid wasted effort and to protect maintainer time:
 
 - **Feature PRs:**
 
-  > 💡 **Ideas welcome!** We strongly recommend starting with a Discussion in our **Ideas** section to gather feedback and community support before submitting a PR. This helps us understand your use case and explore the best approach together.
-  > Please note: New features are rarely accepted into core as we must consider long-term roadmap, maintainability, and support implications. A declined PR doesn't mean "never"—it means "not now." Starting with a Discussion gives your idea the best chance of success.
+  > 💡 **Ideas welcome!** We strongly recommend starting with a GitHub Issue to gather feedback and community support before submitting a PR. This helps us understand your use case and explore the best approach together.
+  > Please note: New features are evaluated based on long-term roadmap, maintainability, and support implications. A declined PR doesn't mean "never"—it means "not now." Starting with an Issue gives your idea the best chance of success.
 
 - **Docs-only PRs:**
   Typos, clarifications, and doc improvements are always welcomed.
@@ -37,7 +39,7 @@ To avoid wasted effort and to protect maintainer time:
 
 ## How to propose a new feature or integration
 
-Open a Discussion in **Ideas** with:
+Open a GitHub Issue with the `enhancement` label and include:
 
 - Problem & motivation
 - Proposed change & alternatives

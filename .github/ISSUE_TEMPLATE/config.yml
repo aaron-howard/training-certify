@@ -2,21 +2,17 @@ blank_issues_enabled: false
 
 contact_links:
   - name: 🐛 Report a bug or propose a fix
-    url: https://github.com/buildermethods/design-os/discussions/categories/bugs
-    about: Already checked the docs and found a reproducible bug? Please report it in the 'Bugs' discussion area.
+    url: https://github.com/aaron-howard/training-certify/issues/new?template=bug_report.md
+    about: Already checked existing issues and found a reproducible bug? Please report it using the bug report template.
 
   - name: 💡 Feature request or idea
-    url: https://github.com/buildermethods/design-os/discussions/categories/ideas
-    about: Request new features, integrations, or other improvements in the 'Ideas' discussion area.
+    url: https://github.com/aaron-howard/training-certify/issues/new?template=feature_request.md
+    about: Request new features, integrations, or other improvements using the feature request template.
 
   - name: ❓ Ask a question
-    url: https://github.com/buildermethods/design-os/discussions/categories/q-a
-    about: For community support and general questions, use the 'Q&A' discussion area.
+    url: https://github.com/aaron-howard/training-certify/discussions
+    about: For community support and general questions, use GitHub Discussions.
 
-  - name: 🎯 Member support request
-    url: https://buildermethods.com/pro
-    about: Join Builder Methods Pro for official Design OS support with guaranteed responses from Brian & team, plus access to community chat, workshops, courses and more.
-
-  - name: 📗 Check the official docs
-    url: https://buildermethods.com/design-os
-    about: Please review the docs before posting a bug, question, or idea.
+  - name: 📗 Check the documentation
+    url: https://github.com/aaron-howard/training-certify
+    about: Please review the README and documentation before posting a bug, question, or idea.
