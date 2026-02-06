@@ -5,18 +5,52 @@ import viteReact from '@vitejs/plugin-react'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 import tailwindcss from '@tailwindcss/vite'
 import { nitro } from 'nitro/vite'
+import path from 'path'
+import type { Plugin } from 'vite'
 
-// Plugin to stub server-only files was removed
-// TanStack Start handles server-only files correctly via Nitro
-// The Vercel build warning about node:crypto externalization is informational and harmless
+// Plugin to stub server-only files for client builds ONLY
+const stubServerFiles = (): Plugin => ({
+  name: 'stub-server-files',
+  enforce: 'pre' as const,
+  resolveId(id, importer) {
+    // Only stub logging.server imports
+    if (
+      (id === './logging.server' ||
+        id === '../lib/logging.server' ||
+        id.endsWith('/logging.server') ||
+        id.includes('logging.server')) &&
+      !id.includes('.nitro')
+    ) {
+      // Check if this is a server build (SSR/Nitro)
+      // Only allow real imports in clearly server contexts
+      // For client builds, stub the import to prevent bundling errors
+      const isServerBuild =
+        importer?.includes('services/ssr') ||
+        importer?.includes('.nitro') ||
+        importer?.includes('entry-server.tsx') ||
+        importer?.includes('start.ts') ||
+        importer?.includes('.server.ts') ||
+        importer?.includes('.server.tsx') ||
+        importer?.includes('api/') ||
+        importer?.includes('routes/api.') ||
+        process.env.NITRO_PRESET === 'vercel'
+
+      // Stub for client builds (when NOT a server build)
+      // This prevents logging.server.ts from being bundled into client code
+      if (!isServerBuild) {
+        return path.resolve(process.cwd(), 'src/lib/logging.client-stub.ts')
+      }
+    }
+    return null
+  },
+})
 
 const config = defineConfig({
   envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
   plugins: [
     devtools(),
-    // Disabled stubServerFiles plugin - TanStack Start handles server-only files correctly
-    // The warning about node:crypto externalization is informational and harmless
-    // stubServerFiles(),
+    // Stub server files for client builds to prevent bundling errors
+    stubServerFiles(),
     // this is the plugin that enables path aliases
     viteTsConfigPaths({
       projects: ['./tsconfig.json'],
@@ -40,7 +74,6 @@ const config = defineConfig({
   },
   resolve: {
     conditions: ['import', 'module', 'browser', 'default'],
-    // Removed alias - using plugin instead for more control
   },
   ssr: {
     // Don't externalize anything - let Nitro handle it
