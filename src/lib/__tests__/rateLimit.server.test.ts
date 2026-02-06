@@ -249,7 +249,7 @@ describe('rateLimit.server.ts', () => {
       const config = { windowMs: 60000, maxRequests: 5 }
 
       const results = await Promise.all(
-        Array.from({ length: 10 }, () => rateLimiter.check('user1', config))
+        Array.from({ length: 10 }, () => rateLimiter.check('user1', config)),
       )
 
       const allowed = results.filter((r) => r).length

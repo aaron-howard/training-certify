@@ -2,17 +2,16 @@ import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { getDbOrThrow } from '../db/db.server'
 import { auditLogs } from '../db/schema'
-import { requireRole } from '../lib/auth.server'
-import { RateLimitPresets, requireRateLimit } from '../lib/rateLimit.server'
-import { AppError } from '../lib/errors'
+import { handleApiError, setupReadHandler } from '../lib/api-helpers.server'
 
 export const Route = createFileRoute('/api/compliance')({
   server: {
     handlers: {
-      GET: async () => {
+      GET: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin', 'Auditor', 'Executive'])
-          await requireRateLimit(session.userId, RateLimitPresets.READ)
+          await setupReadHandler(request, {
+            allowedRoles: ['Admin', 'Auditor', 'Executive'],
+          })
 
           const db = await getDbOrThrow()
 
@@ -39,11 +38,7 @@ export const Route = createFileRoute('/api/compliance')({
             },
           })
         } catch (error) {
-          if (error instanceof AppError) {
-            return json({ error: error.message, code: error.code }, { status: error.statusCode })
-          }
-          console.error('❌ [API Compliance GET] Unexpected Error:', error)
-          return json({ error: 'Internal server error' }, { status: 500 })
+          return handleApiError(error, 'GET /api/compliance')
         }
       },
     },

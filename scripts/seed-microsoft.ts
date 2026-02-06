@@ -92,7 +92,7 @@ async function main() {
     try {
       const category = validateCategory(subject)
       const difficulty = validateDifficulty(level)
-      
+
       await db
         .insert(certifications)
         .values({

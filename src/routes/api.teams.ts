@@ -8,36 +8,38 @@ import {
   userCertifications,
   userTeams,
 } from '../db/schema'
-import { requireRole } from '../lib/auth.server'
-import { RateLimitPresets, requireRateLimit } from '../lib/rateLimit.server'
-import { getCSRFTokenFromRequest, requireCSRFToken } from '../lib/csrf.server'
-import * as Errors from '../lib/errors'
+import { ForbiddenError, ValidationError } from '../lib/errors'
 import { TeamSchema } from '../lib/validation'
-import type { Role } from '../hooks/usePermissions'
+import { logError } from '../lib/logging.server'
+import {
+  handleApiError,
+  setupMutationHandler,
+  setupReadHandler,
+} from '../lib/api-helpers.server'
+import {
+  createPaginatedResponse,
+  parsePaginationParams,
+} from '../lib/pagination.server'
 
 export const Route = createFileRoute('/api/teams')({
   server: {
     handlers: {
       // GET teams with member counts and metrics
-      GET: async () => {
+      GET: async ({ request }) => {
         try {
-          const session = await requireRole([
-            'Admin',
-            'Manager',
-            'Auditor',
-            'Executive',
-            'User',
-          ] as Array<Role>)
-
-          // Rate limiting
-          await requireRateLimit(session.userId, RateLimitPresets.READ)
+          const session = await setupReadHandler(request)
 
           const db = await getDbOrThrow()
+          const url = new URL(request.url)
+
+          // Parse pagination parameters
+          const { page, limit } = parsePaginationParams(url, 20, 100)
+          const offset = (page - 1) * limit
 
           // Use cache for expensive team metrics calculation
           const { getOrCompute, CacheTTL } = await import('../lib/cache.server')
           const cacheKey = `teams:all:${session.userId}`
-          const data = await getOrCompute(
+          const cachedData = await getOrCompute(
             cacheKey,
             CacheTTL.MEDIUM,
             async () => {
@@ -113,14 +115,14 @@ export const Route = createFileRoute('/api/teams')({
               const allMemberCerts =
                 allMemberIds.length > 0
                   ? await db
-                    .select({
-                      userId: userCertifications.userId,
-                      certificationId: userCertifications.certificationId,
-                      status: userCertifications.status,
-                      expirationDate: userCertifications.expirationDate,
-                    })
-                    .from(userCertifications)
-                    .where(inArray(userCertifications.userId, allMemberIds))
+                      .select({
+                        userId: userCertifications.userId,
+                        certificationId: userCertifications.certificationId,
+                        status: userCertifications.status,
+                        expirationDate: userCertifications.expirationDate,
+                      })
+                      .from(userCertifications)
+                      .where(inArray(userCertifications.userId, allMemberIds))
                   : []
 
               // Group certifications by user ID
@@ -151,7 +153,7 @@ export const Route = createFileRoute('/api/teams')({
                 try {
                   const memberIds = membersByTeam.get(team.id) || []
                   const requirements = requirementsByTeam.get(team.id) || []
-                  const memberCount = memberIds.length
+                  const teamMemberCount = memberIds.length
 
                   let coverage = 0
                   if (requirements.length > 0) {
@@ -163,7 +165,7 @@ export const Route = createFileRoute('/api/teams')({
                       }
 
                       // Count members with this certification
-                      let count = 0
+                      let certMemberCount = 0
                       for (const memberId of memberIds) {
                         const memberCerts = certsByUser.get(memberId) || []
                         if (
@@ -171,19 +173,22 @@ export const Route = createFileRoute('/api/teams')({
                             (c) => c.certificationId === req.certificationId,
                           )
                         ) {
-                          count++
+                          certMemberCount++
                         }
                       }
 
-                      totalCompliance += Math.min(count / req.targetCount, 1)
-                      if (count < req.targetCount) {
+                      totalCompliance += Math.min(
+                        certMemberCount / req.targetCount,
+                        1,
+                      )
+                      if (certMemberCount < req.targetCount) {
                         totalCriticalGaps++
                       }
                     }
                     coverage = Math.round(
                       (totalCompliance / requirements.length) * 100,
                     )
-                  } else if (memberCount > 0) {
+                  } else if (teamMemberCount > 0) {
                     // Fallback: count members with any certification
                     let membersWithCerts = 0
                     for (const memberId of memberIds) {
@@ -192,21 +197,28 @@ export const Route = createFileRoute('/api/teams')({
                       }
                     }
                     coverage = Math.round(
-                      (membersWithCerts / memberCount) * 100,
+                      (membersWithCerts / teamMemberCount) * 100,
                     )
                   }
 
                   totalCoverageSum += coverage
                   result.push({
                     ...team,
-                    memberCount,
+                    memberCount: teamMemberCount,
                     coverage,
                     requirementCount: requirements.length,
                   })
                 } catch (teamError) {
-                  console.error(
-                    `❌ [API Teams GET] Error processing team ${team.name} (${team.id}):`,
-                    teamError,
+                  logError(
+                    teamError instanceof Error
+                      ? teamError
+                      : new Error(String(teamError)),
+                    {
+                      route: 'GET /api/teams',
+                      teamId: team.id,
+                      teamName: team.name,
+                    },
+                    `Error processing team ${team.name} (${team.id})`,
                   )
                   result.push({
                     ...team,
@@ -232,7 +244,7 @@ export const Route = createFileRoute('/api/teams')({
                   (c.status === 'active' &&
                     c.expirationDate &&
                     new Date(c.expirationDate).getTime() <
-                    Date.now() + 30 * 24 * 60 * 60 * 1000),
+                      Date.now() + 30 * 24 * 60 * 60 * 1000),
               ).length
 
               const metrics = [
@@ -269,27 +281,41 @@ export const Route = createFileRoute('/api/teams')({
             },
           )
 
-          return json(data)
+          // Paginate the teams array
+          const total = cachedData.teams.length
+          const paginatedTeams = cachedData.teams.slice(offset, offset + limit)
+
+          const paginatedResponse = createPaginatedResponse(
+            paginatedTeams,
+            total,
+            page,
+            limit,
+          )
+
+          // Return paginated teams with metrics
+          return json({
+            ...paginatedResponse,
+            metrics: cachedData.metrics,
+          })
         } catch (error) {
-          if (error instanceof Errors.AppError) {
-            return json({ error: error.message, code: error.code }, { status: error.statusCode })
-          }
-          console.error('❌ [API Teams GET] Unexpected Error:', error)
-          return json({ error: 'Internal server error' }, { status: 500 })
+          return handleApiError(error, 'GET /api/teams')
         }
       },
       // POST - Create new team (Admin only)
       POST: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin'] as Array<Role>)
-          await requireRateLimit(session.userId, RateLimitPresets.MUTATION)
-          requireCSRFToken(getCSRFTokenFromRequest(request))
+          await setupMutationHandler(request, {
+            allowedRoles: ['Admin'],
+          })
 
           const rawData = await request.json()
           const validation = TeamSchema.safeParse(rawData)
 
           if (!validation.success) {
-            throw new Errors.ValidationError('Invalid team data', validation.error.errors)
+            throw new ValidationError(
+              'Invalid team data',
+              validation.error.errors,
+            )
           }
 
           const data = validation.data
@@ -310,29 +336,19 @@ export const Route = createFileRoute('/api/teams')({
 
           return json(result[0], { status: 201 })
         } catch (error) {
-          if (error instanceof Errors.ValidationError) {
-            return json(
-              { error: error.message, code: error.code, details: error.errors },
-              { status: error.statusCode },
-            )
-          }
-          if (error instanceof Errors.AppError) {
-            return json({ error: error.message, code: error.code }, { status: error.statusCode })
-          }
-          console.error('❌ [API Teams POST] Unexpected Error:', error)
-          return json({ error: 'Internal server error' }, { status: 500 })
+          return handleApiError(error, 'POST /api/teams')
         }
       },
       // DELETE - Delete team (Admin only)
       DELETE: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin'] as Array<Role>)
-          await requireRateLimit(session.userId, RateLimitPresets.MUTATION)
-          requireCSRFToken(getCSRFTokenFromRequest(request))
+          await setupMutationHandler(request, {
+            allowedRoles: ['Admin'],
+          })
 
           const url = new URL(request.url)
           const id = url.searchParams.get('id')
-          if (!id) throw new Errors.ValidationError('Missing team ID')
+          if (!id) throw new ValidationError('Missing team ID')
 
           const db = await getDbOrThrow()
 
@@ -347,19 +363,15 @@ export const Route = createFileRoute('/api/teams')({
 
           return json({ success: true })
         } catch (error) {
-          if (error instanceof Errors.AppError) {
-            return json({ error: error.message, code: error.code }, { status: error.statusCode })
-          }
-          console.error('❌ [API Teams DELETE] Unexpected Error:', error)
-          return json({ error: 'Internal server error' }, { status: 500 })
+          return handleApiError(error, 'DELETE /api/teams')
         }
       },
       // PATCH - Add/remove team members (Manager+)
       PATCH: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin', 'Manager'] as Array<Role>)
-          await requireRateLimit(session.userId, RateLimitPresets.MUTATION)
-          requireCSRFToken(getCSRFTokenFromRequest(request))
+          const session = await setupMutationHandler(request, {
+            allowedRoles: ['Admin', 'Manager'],
+          })
 
           const data = await request.json()
           const db = await getDbOrThrow()
@@ -367,7 +379,7 @@ export const Route = createFileRoute('/api/teams')({
           const { action, teamId, userId } = data
 
           if (!teamId || !userId) {
-            throw new Errors.ValidationError('teamId and userId are required')
+            throw new ValidationError('teamId and userId are required')
           }
 
           // Security: If session user is a Manager (not Admin), check if they manage this team
@@ -379,7 +391,7 @@ export const Route = createFileRoute('/api/teams')({
               .limit(1)
 
             if (!team.length || team[0].managerId !== session.userId) {
-              throw new Errors.ForbiddenError('You are not the manager of this team')
+              throw new ForbiddenError('You are not the manager of this team')
             }
           }
 
@@ -407,14 +419,10 @@ export const Route = createFileRoute('/api/teams')({
 
             return json({ success: true, action: 'removed' })
           } else {
-            throw new Errors.ValidationError('Invalid action. Use "add" or "remove"')
+            throw new ValidationError('Invalid action. Use "add" or "remove"')
           }
         } catch (error) {
-          if (error instanceof Errors.AppError) {
-            return json({ error: error.message, code: error.code }, { status: error.statusCode })
-          }
-          console.error('❌ [API Teams PATCH] Unexpected Error:', error)
-          return json({ error: 'Internal server error' }, { status: 500 })
+          return handleApiError(error, 'PATCH /api/teams')
         }
       },
     },

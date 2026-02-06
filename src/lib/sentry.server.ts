@@ -4,6 +4,7 @@
  */
 
 import * as Sentry from '@sentry/tanstackstart-react'
+import { logWarning, logger } from './logging.server'
 
 let sentryInitialized = false
 
@@ -17,7 +18,7 @@ export function initSentry() {
   const dsn = process.env.SENTRY_DSN
 
   if (!dsn) {
-    console.log('⚠️  Sentry DSN not configured - monitoring disabled')
+    logWarning('Sentry DSN not configured - monitoring disabled', {})
     return
   }
 
@@ -66,7 +67,7 @@ export function initSentry() {
   })
 
   sentryInitialized = true
-  console.log('✅ Sentry monitoring initialized')
+  logger.info({}, 'Sentry monitoring initialized')
 }
 
 /**

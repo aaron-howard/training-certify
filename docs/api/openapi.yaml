@@ -1,0 +1,1472 @@
+openapi: 3.0.3
+info:
+  title: Training Certify API
+  description: |
+    REST API for the Training Certify application - a certification management system.
+
+    ## Authentication
+    All endpoints require Clerk authentication via Bearer token in the Authorization header.
+
+    ## Rate Limiting
+    Different endpoints have different rate limits:
+    - **AUTH**: 5 requests/minute
+    - **MUTATION**: 30 requests/minute
+    - **READ**: 100 requests/minute
+    - **EXPORT**: 5 requests/minute
+    - **ADMIN**: 50 requests/minute
+
+    ## CSRF Protection
+    All mutation endpoints (POST, PATCH, DELETE) require a CSRF token in the `X-CSRF-Token` header.
+
+    ## Error Responses
+    All errors follow a consistent format:
+    ```json
+    {
+      "error": "Error message",
+      "code": "ERROR_CODE"
+    }
+    ```
+
+    Common error codes:
+    - `UNAUTHORIZED` (401): Authentication required
+    - `FORBIDDEN` (403): Insufficient permissions
+    - `VALIDATION_FAILED` (400): Invalid input data
+    - `NOT_FOUND` (404): Resource not found
+    - `DATABASE_ERROR` (500): Database operation failed
+  version: 1.0.0
+  contact:
+    name: Training Certify API Support
+    email: support@training-certify.com
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+  - url: https://api.training-certify.com
+    description: Production server
+
+tags:
+  - name: Users
+    description: User management endpoints
+  - name: Teams
+    description: Team management endpoints
+  - name: Certifications
+    description: User certification management
+  - name: Catalog
+    description: Certification catalog management
+  - name: Dashboard
+    description: Dashboard statistics
+  - name: Compliance
+    description: Compliance and audit logs
+  - name: Notifications
+    description: User notifications
+  - name: Health
+    description: Health check endpoints
+  - name: Export
+    description: Data export endpoints
+
+paths:
+  /api/users:
+    get:
+      tags:
+        - Users
+      summary: List all users
+      description: Retrieves a list of all users in the system. Requires Admin, Auditor, or Executive role.
+      operationId: listUsers
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - Users
+      summary: Create or update user
+      description: Creates a new user record or updates existing one. Users can create their own record, Admins can create any record.
+      operationId: createUser
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '200':
+          description: User updated (existing user)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '201':
+          description: User created (new user)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/users/{userId}:
+    patch:
+      tags:
+        - Users
+      summary: Update user
+      description: Updates user information. Users can update themselves, Admins can update anyone.
+      operationId: updateUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/teams:
+    get:
+      tags:
+        - Teams
+      summary: List all teams
+      description: Retrieves all teams with member counts and metrics. Requires authentication.
+      operationId: listTeams
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of teams with metrics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  teams:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Team'
+                  metrics:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TeamMetrics'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - Teams
+      summary: Create team
+      description: Creates a new team. Requires Admin or Manager role.
+      operationId: createTeam
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTeamRequest'
+      responses:
+        '201':
+          description: Team created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/teams/{teamId}:
+    patch:
+      tags:
+        - Teams
+      summary: Update team
+      description: Updates team information. Requires Admin or team Manager role.
+      operationId: updateTeam
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TeamId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTeamRequest'
+      responses:
+        '200':
+          description: Team updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags:
+        - Teams
+      summary: Delete team
+      description: Deletes a team. Requires Admin role.
+      operationId: deleteTeam
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TeamId'
+      responses:
+        '200':
+          description: Team deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/team-members:
+    get:
+      tags:
+        - Teams
+      summary: Get team members
+      description: Retrieves all members of a specific team. Requires authentication.
+      operationId: getTeamMembers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: teamId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Team ID
+      responses:
+        '200':
+          description: List of team members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/team-requirements:
+    get:
+      tags:
+        - Teams
+      summary: Get team requirements
+      description: Retrieves certification requirements for a team. Requires authentication.
+      operationId: getTeamRequirements
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: teamId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Team ID
+      responses:
+        '200':
+          description: List of team requirements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeamRequirement'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - Teams
+      summary: Create team requirement
+      description: Creates a certification requirement for a team. Requires Admin or Manager role.
+      operationId: createTeamRequirement
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTeamRequirementRequest'
+      responses:
+        '201':
+          description: Team requirement created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamRequirement'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags:
+        - Teams
+      summary: Delete team requirement
+      description: Deletes a team requirement. Requires Admin or Manager role.
+      operationId: deleteTeamRequirement
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Team requirement ID
+      responses:
+        '200':
+          description: Team requirement deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/certifications:
+    get:
+      tags:
+        - Certifications
+      summary: Get user certifications
+      description: Retrieves certifications for a user or a specific certification by ID. Users can view their own, Admins can view all.
+      operationId: getUserCertifications
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: query
+          required: false
+          schema:
+            type: string
+          description: User ID (optional, defaults to authenticated user)
+        - name: id
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+          description: Certification ID (optional, for specific certification)
+      responses:
+        '200':
+          description: List of certifications or single certification
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: '#/components/schemas/UserCertification'
+                  - $ref: '#/components/schemas/UserCertification'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - Certifications
+      summary: Create user certification
+      description: Creates a new certification record for a user. Users can create their own, Admins can create for anyone.
+      operationId: createUserCertification
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserCertificationRequest'
+      responses:
+        '201':
+          description: Certification created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCertification'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    patch:
+      tags:
+        - Certifications
+      summary: Update user certification
+      description: Updates certification details or adds proof. Users can update their own, Admins can update any.
+      operationId: updateUserCertification
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCertificationRequest'
+      responses:
+        '200':
+          description: Certification updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCertification'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags:
+        - Certifications
+      summary: Delete user certification
+      description: Deletes a certification. Users can delete their own, Admins can delete any.
+      operationId: deleteUserCertification
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Certification ID
+      responses:
+        '200':
+          description: Certification deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/catalog:
+    get:
+      tags:
+        - Catalog
+      summary: List catalog certifications
+      description: Retrieves all certifications in the catalog. Requires authentication.
+      operationId: listCatalogCertifications
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of catalog certifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  certifications:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CatalogCertification'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - Catalog
+      summary: Create catalog certification
+      description: Adds a new certification to the catalog. Requires Admin role.
+      operationId: createCatalogCertification
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCatalogCertificationRequest'
+      responses:
+        '201':
+          description: Catalog certification created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogCertification'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags:
+        - Catalog
+      summary: Delete catalog certification
+      description: Removes a certification from the catalog. Requires Admin role.
+      operationId: deleteCatalogCertification
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Certification ID
+      responses:
+        '200':
+          description: Catalog certification deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/dashboard:
+    get:
+      tags:
+        - Dashboard
+      summary: Get dashboard statistics
+      description: Retrieves dashboard statistics. User view shows personal stats, Executive view shows organization-wide stats.
+      operationId: getDashboardStats
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: query
+          required: false
+          schema:
+            type: string
+          description: User ID for user dashboard (optional)
+        - name: role
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [Executive]
+          description: Set to 'Executive' for executive dashboard
+      responses:
+        '200':
+          description: Dashboard statistics
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/UserDashboardStats'
+                  - $ref: '#/components/schemas/ExecutiveDashboardStats'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/compliance:
+    get:
+      tags:
+        - Compliance
+      summary: Get compliance audit logs
+      description: Retrieves compliance audit logs and statistics. Requires Admin, Auditor, or Executive role.
+      operationId: getComplianceData
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Compliance data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplianceData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/notifications:
+    get:
+      tags:
+        - Notifications
+      summary: Get user notifications
+      description: Retrieves non-dismissed notifications for the authenticated user. Limited to 50 results.
+      operationId: getUserNotifications
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/notification-settings:
+    get:
+      tags:
+        - Notifications
+      summary: Get notification settings
+      description: Retrieves notification preferences for a user. Users can view their own, Admins can view any.
+      operationId: getNotificationSettings
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: query
+          required: false
+          schema:
+            type: string
+          description: User ID (optional, defaults to authenticated user)
+      responses:
+        '200':
+          description: Notification settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationSettings'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    patch:
+      tags:
+        - Notifications
+      summary: Update notification settings
+      description: Updates notification preferences. Users can update their own, Admins can update any.
+      operationId: updateNotificationSettings
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateNotificationSettingsRequest'
+      responses:
+        '200':
+          description: Settings updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationSettings'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - Notifications
+      summary: Perform notification action
+      description: Marks notifications as read or dismisses them. Users can only act on their own notifications.
+      operationId: performNotificationAction
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationActionRequest'
+      responses:
+        '200':
+          description: Action performed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/export:
+    get:
+      tags:
+        - Export
+      summary: Export data
+      description: Exports data in CSV format. Supports teams, certifications, and compliance exports. Requires Admin, Manager, Auditor, or Executive role.
+      operationId: exportData
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [teams, certifications, compliance]
+            default: teams
+          description: Export type
+      responses:
+        '200':
+          description: CSV export file
+          content:
+            text/csv:
+              schema:
+                type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      description: Checks the health status of the API, database connectivity, and environment configuration.
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        '503':
+          description: Service is unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Clerk JWT token
+
+  parameters:
+    UserId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: User ID
+
+    TeamId:
+      name: teamId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Team ID
+
+  responses:
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: 'Unauthorized'
+            code: 'UNAUTHORIZED'
+
+    Forbidden:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: 'Forbidden: Required one of [Admin] but user has [User]'
+            code: 'FORBIDDEN'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: 'Resource not found'
+            code: 'NOT_FOUND'
+
+    ValidationError:
+      description: Invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationErrorResponse'
+          example:
+            error: 'Validation failed'
+            code: 'VALIDATION_FAILED'
+            details:
+              - path: ['email']
+                message: 'Invalid email format'
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: 'Internal server error'
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: User ID (from Clerk)
+        name:
+          type: string
+          description: User's full name
+        email:
+          type: string
+          format: email
+          description: User's email address
+        role:
+          type: string
+          enum: [Admin, Manager, Executive, Auditor, User]
+          description: User role
+        avatarUrl:
+          type: string
+          format: uri
+          nullable: true
+          description: URL to user's avatar image
+        createdAt:
+          type: string
+          format: date-time
+          description: Account creation timestamp
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+
+    CreateUserRequest:
+      type: object
+      required:
+        - id
+        - name
+        - email
+      properties:
+        id:
+          type: string
+          description: User ID from Clerk
+        name:
+          type: string
+          description: User's full name
+        email:
+          type: string
+          format: email
+          description: User's email address
+        avatarUrl:
+          type: string
+          format: uri
+          description: URL to user's avatar image
+        role:
+          type: string
+          enum: [Admin, Manager, Executive, Auditor, User]
+          description: User role (only Admin can set)
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: User's full name
+        email:
+          type: string
+          format: email
+          description: User's email address
+        role:
+          type: string
+          enum: [Admin, Manager, Executive, Auditor, User]
+          description: User role
+        avatarUrl:
+          type: string
+          format: uri
+          nullable: true
+          description: URL to user's avatar image
+
+    Team:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Team ID
+        name:
+          type: string
+          description: Team name
+        description:
+          type: string
+          nullable: true
+          description: Team description
+        managerId:
+          type: string
+          nullable: true
+          description: Manager user ID
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    TeamMetrics:
+      type: object
+      properties:
+        teamId:
+          type: string
+          format: uuid
+        memberCount:
+          type: integer
+          description: Number of team members
+        requirementCount:
+          type: integer
+          description: Number of certification requirements
+        complianceRate:
+          type: number
+          format: float
+          description: Compliance rate percentage
+
+    CreateTeamRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          description: Team name
+        description:
+          type: string
+          maxLength: 1000
+          description: Team description
+        managerId:
+          type: string
+          description: Manager user ID
+
+    UpdateTeamRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 1000
+        managerId:
+          type: string
+
+    TeamRequirement:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        teamId:
+          type: string
+          format: uuid
+        certificationId:
+          type: string
+          description: Certification ID from catalog
+        targetCount:
+          type: integer
+          description: Target number of team members with this certification
+        certificationName:
+          type: string
+          nullable: true
+          description: Certification name (from catalog)
+
+    CreateTeamRequirementRequest:
+      type: object
+      required:
+        - teamId
+        - certificationId
+        - targetCount
+      properties:
+        teamId:
+          type: string
+          format: uuid
+        certificationId:
+          type: string
+        targetCount:
+          type: integer
+          minimum: 1
+
+    UserCertification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          description: User ID
+        certificationId:
+          type: string
+          description: Certification ID from catalog
+        certificationName:
+          type: string
+          nullable: true
+        vendorName:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [active, expiring, expiring-soon, expired, assigned]
+        issueDate:
+          type: string
+          format: date
+          nullable: true
+        expirationDate:
+          type: string
+          format: date
+          nullable: true
+        certificationNumber:
+          type: string
+          nullable: true
+        daysUntilExpiration:
+          type: integer
+          nullable: true
+        documentUrl:
+          type: string
+          format: uri
+          nullable: true
+        verifiedAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateUserCertificationRequest:
+      type: object
+      required:
+        - userId
+        - certificationId
+      properties:
+        userId:
+          type: string
+        certificationId:
+          type: string
+        certificationName:
+          type: string
+        vendorName:
+          type: string
+        status:
+          type: string
+          enum: [active, expiring, expiring-soon, expired, assigned]
+          default: active
+        issueDate:
+          type: string
+          format: date
+        expirationDate:
+          type: string
+          format: date
+        certificationNumber:
+          type: string
+
+    UpdateCertificationRequest:
+      type: object
+      required:
+        - action
+      properties:
+        action:
+          type: string
+          enum: [updateDetails, addProof]
+        id:
+          type: string
+          format: uuid
+        updates:
+          type: object
+          description: Update data (for updateDetails action)
+        proofUrl:
+          type: string
+          format: uri
+          description: Proof document URL (for addProof action)
+
+    CatalogCertification:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Certification ID
+        name:
+          type: string
+          description: Certification name
+        vendor:
+          type: string
+          description: Vendor name
+        level:
+          type: string
+          enum: [Beginner, Intermediate, Advanced, Expert]
+          nullable: true
+        price:
+          type: number
+          format: float
+          nullable: true
+        category:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+
+    CreateCatalogCertificationRequest:
+      type: object
+      required:
+        - id
+        - name
+        - vendorName
+      properties:
+        id:
+          type: string
+          maxLength: 255
+        name:
+          type: string
+          maxLength: 255
+        vendorId:
+          type: string
+          maxLength: 255
+        vendorName:
+          type: string
+          maxLength: 255
+        category:
+          type: string
+          maxLength: 255
+        difficulty:
+          type: string
+          enum: [Beginner, Intermediate, Advanced, Expert]
+        price:
+          type: number
+        description:
+          type: string
+          maxLength: 1000
+
+    UserDashboardStats:
+      type: object
+      properties:
+        activeCerts:
+          type: integer
+          description: Number of active certifications
+        expiringSoon:
+          type: integer
+          description: Number of certifications expiring soon
+        complianceRate:
+          type: number
+          format: float
+          description: Compliance rate percentage
+
+    ExecutiveDashboardStats:
+      type: object
+      properties:
+        totalUsers:
+          type: integer
+        totalCerts:
+          type: integer
+        totalTeams:
+          type: integer
+        complianceRate:
+          type: number
+          format: float
+
+    ComplianceData:
+      type: object
+      properties:
+        auditLogs:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              user:
+                type: string
+              action:
+                type: string
+              date:
+                type: string
+                format: date-time
+              status:
+                type: string
+        stats:
+          type: object
+          properties:
+            complianceRate:
+              type: number
+              format: float
+            totalAudits:
+              type: integer
+            issuesFound:
+              type: integer
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        message:
+          type: string
+        date:
+          type: string
+          format: date-time
+        type:
+          type: string
+          enum: [info, warning, alert]
+        read:
+          type: boolean
+
+    NotificationSettings:
+      type: object
+      properties:
+        userId:
+          type: string
+        preferences:
+          type: object
+          additionalProperties:
+            oneOf:
+              - type: boolean
+              - type: string
+
+    UpdateNotificationSettingsRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+        preferences:
+          type: object
+          additionalProperties:
+            oneOf:
+              - type: boolean
+              - type: string
+
+    NotificationActionRequest:
+      type: object
+      required:
+        - action
+      properties:
+        action:
+          type: string
+          enum: [markRead, markAllRead, dismiss]
+        notificationId:
+          type: string
+          format: uuid
+          description: Required for markRead and dismiss actions
+        userId:
+          type: string
+          description: User ID (optional, defaults to authenticated user)
+
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, unhealthy]
+        timestamp:
+          type: string
+          format: date-time
+        checks:
+          type: object
+          properties:
+            database:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [connected, disconnected, error, unknown]
+                healthy:
+                  type: boolean
+                error:
+                  type: string
+                  nullable: true
+            environment:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [configured, missing]
+                healthy:
+                  type: boolean
+                details:
+                  type: object
+        error:
+          type: string
+          nullable: true
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+        code:
+          type: string
+          description: Machine-readable error code
+
+    ValidationErrorResponse:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: object
+          properties:
+            details:
+              type: array
+              items:
+                type: object
+              description: Validation error details

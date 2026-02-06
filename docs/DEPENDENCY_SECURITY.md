@@ -1,0 +1,303 @@
+# Dependency Security Management
+
+This document outlines the dependency security process for the Training Certify platform.
+
+---
+
+## Automated Dependency Scanning
+
+### Dependabot Configuration
+
+Dependabot is configured via `.github/dependabot.yml` to automatically:
+
+- **Scan weekly** (Mondays at 9:00 AM)
+- **Create PRs** for security and minor/patch updates
+- **Group updates** to reduce PR noise
+- **Prioritize security** updates (always allowed)
+
+### Update Schedule
+
+- **Frequency:** Weekly
+- **Day:** Monday
+- **Time:** 9:00 AM UTC
+- **Scope:** npm ecosystem
+
+### Update Types
+
+#### ✅ Automatically Updated
+
+- **Security updates** (all severity levels)
+- **Minor version updates** (grouped)
+- **Patch version updates** (grouped)
+
+#### ⚠️ Requires Manual Review
+
+- **Major version updates** (not auto-updated)
+- **Breaking changes** (manual review required)
+
+---
+
+## Dependency Update Process
+
+### 1. Dependabot Creates PR
+
+When Dependabot finds updates:
+
+1. Creates a pull request with update details
+2. Labels PR with `dependencies` and `security` (if security update)
+3. Assigns reviewer (configured in dependabot.yml)
+4. CI pipeline runs automatically
+
+### 2. CI Pipeline Validation
+
+The CI pipeline automatically:
+
+- ✅ Runs tests (`npm test`)
+- ✅ Runs linting (`npm run lint`)
+- ✅ Runs type checking (`npm run type-check`)
+- ✅ Builds the project (`npm run build`)
+
+### 3. Review Process
+
+**For Security Updates:**
+
+- **Priority:** High - Review and merge ASAP
+- **Check:** Review changelog for breaking changes
+- **Test:** Verify application still works
+- **Merge:** If tests pass and no breaking changes
+
+**For Minor/Patch Updates:**
+
+- **Priority:** Medium - Review within 1 week
+- **Check:** Review changelog
+- **Test:** Run test suite
+- **Merge:** If tests pass
+
+**For Major Updates:**
+
+- **Priority:** Low - Manual review required
+- **Process:**
+  1. Review migration guide
+  2. Test in development branch
+  3. Update code if needed
+  4. Create manual PR
+
+---
+
+## Manual Dependency Updates
+
+### Checking for Updates
+
+```bash
+# Check outdated packages
+npm outdated
+
+# Check for security vulnerabilities
+npm audit
+
+# Fix automatically fixable issues
+npm audit fix
+
+# Review detailed vulnerability report
+npm audit --json
+```
+
+### Updating Dependencies
+
+```bash
+# Update a specific package
+npm install package-name@latest
+
+# Update all packages (use with caution)
+npm update
+
+# Update package-lock.json
+npm install
+```
+
+### Testing Updates
+
+1. **Create a branch:**
+
+   ```bash
+   git checkout -b update-dependencies
+   ```
+
+2. **Update dependencies:**
+
+   ```bash
+   npm install package-name@version
+   ```
+
+3. **Run tests:**
+
+   ```bash
+   npm test
+   npm run lint
+   npm run type-check
+   npm run build
+   ```
+
+4. **Commit and push:**
+   ```bash
+   git add package.json package-lock.json
+   git commit -m "chore: update package-name to version"
+   git push
+   ```
+
+---
+
+## Security Vulnerability Response
+
+### Critical Vulnerabilities (CVSS 9.0+)
+
+**Response Time:** Immediate (within 24 hours)
+
+1. **Assess Impact:**
+   - Review vulnerability details
+   - Check if vulnerable code is used
+   - Assess exploitability
+
+2. **Apply Fix:**
+   - Update to patched version immediately
+   - Or apply workaround if update not available
+
+3. **Test & Deploy:**
+   - Run full test suite
+   - Deploy to production ASAP
+
+### High Vulnerabilities (CVSS 7.0-8.9)
+
+**Response Time:** Within 1 week
+
+1. Review vulnerability
+2. Update to patched version
+3. Test thoroughly
+4. Deploy to production
+
+### Medium/Low Vulnerabilities (CVSS < 7.0)
+
+**Response Time:** Within 1 month
+
+1. Review during next scheduled update
+2. Include in next dependency update batch
+3. Test and deploy
+
+---
+
+## Dependency Overrides
+
+Some dependencies require version overrides (in `package.json`):
+
+```json
+{
+  "overrides": {
+    "tar": "^7.5.4",
+    "seroval": "^1.4.1",
+    "undici": "^6.23.0",
+    "path-to-regexp": "^6.3.0",
+    "esbuild": "^0.25.0"
+  }
+}
+```
+
+**Note:** These overrides are used to resolve dependency conflicts. Review carefully before updating.
+
+---
+
+## Best Practices
+
+### ✅ Do
+
+- Review Dependabot PRs promptly
+- Test updates before merging
+- Keep security updates prioritized
+- Review changelogs for breaking changes
+- Use `npm audit` before production deployments
+
+### ❌ Don't
+
+- Auto-merge major version updates
+- Ignore security update PRs
+- Update dependencies without testing
+- Remove overrides without testing
+- Skip CI checks
+
+---
+
+## Monitoring
+
+### Current Status
+
+- **Dependabot:** ✅ Active
+- **Security Alerts:** ✅ Enabled
+- **Automated PRs:** ✅ Configured
+- **CI Integration:** ✅ Automatic
+- **npm audit:** ✅ 0 vulnerabilities (as of February 6, 2026)
+
+### Regular Tasks
+
+**Weekly:**
+
+- Review Dependabot PRs
+- Merge security updates
+- Review minor/patch updates
+
+**Monthly:**
+
+- Review major version updates
+- Audit dependency tree (`npm ls`)
+- Review and update overrides if needed
+
+**Quarterly:**
+
+- Full dependency audit
+- Review and update major dependencies
+- Security vulnerability assessment
+
+---
+
+## Tools & Resources
+
+### Commands
+
+- `npm audit` - Check for vulnerabilities
+- `npm audit fix` - Auto-fix vulnerabilities
+- `npm outdated` - List outdated packages
+- `npm ls` - Show dependency tree
+
+### Resources
+
+- [npm Security Best Practices](https://docs.npmjs.com/security-best-practices)
+- [Dependabot Documentation](https://docs.github.com/en/code-security/dependabot)
+- [Snyk Vulnerability Database](https://security.snyk.io/)
+
+---
+
+## Incident Response
+
+If a critical vulnerability is discovered:
+
+1. **Immediate Actions:**
+   - Assess severity and impact
+   - Check if vulnerable code is in use
+   - Review available patches
+
+2. **Remediation:**
+   - Update to patched version
+   - Or apply workaround
+   - Test thoroughly
+
+3. **Deployment:**
+   - Deploy fix to production
+   - Monitor for issues
+   - Document incident
+
+4. **Post-Incident:**
+   - Review dependency update process
+   - Improve monitoring if needed
+   - Update documentation
+
+---
+
+**Last Updated:** February 6, 2026

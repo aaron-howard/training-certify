@@ -1,5 +1,6 @@
 import { certifications } from '../db/schema'
 import { validateCategory, validateDifficulty } from './enum-helpers'
+import { logError, logWarning, logger } from './logging.server'
 
 const BASE_URL = 'https://www.itexams.com'
 const ALL_EXAMS_URL = `${BASE_URL}/all-exams/`
@@ -104,10 +105,15 @@ function isRetiredExam(vendorId: string, code: string): boolean {
  */
 export async function fetchVendors(): Promise<Array<VendorInfo>> {
   if (!isServer) {
-    console.warn('[Ingestion] fetchVendors called on client. Skipping.')
+    logWarning('fetchVendors called on client. Skipping.', {
+      function: 'fetchVendors',
+    })
     return []
   }
-  console.log(`[Ingestion] Fetching vendors from ${ALL_EXAMS_URL}`)
+  logger.info(
+    { function: 'fetchVendors', url: ALL_EXAMS_URL },
+    'Fetching vendors',
+  )
   try {
     const response = await fetch(ALL_EXAMS_URL, {
       headers: {
@@ -133,10 +139,13 @@ export async function fetchVendors(): Promise<Array<VendorInfo>> {
       }
     })
 
-    console.log(`[Ingestion] Found ${vendors.length} vendors`)
+    logger.info(
+      { function: 'fetchVendors', count: vendors.length },
+      `Found ${vendors.length} vendors`,
+    )
     return vendors
   } catch (error) {
-    console.error('[Ingestion] Error fetching vendors:', error)
+    logError(error, { function: 'fetchVendors' }, 'Error fetching vendors')
     return []
   }
 }
@@ -146,11 +155,16 @@ export async function fetchVendors(): Promise<Array<VendorInfo>> {
  */
 export async function fetchExams(vendor: VendorInfo): Promise<Array<ExamInfo>> {
   if (!isServer) {
-    console.warn('[Ingestion] fetchExams called on client. Skipping.')
+    logWarning('fetchExams called on client. Skipping.', {
+      function: 'fetchExams',
+    })
     return []
   }
   const vendorUrl = `${BASE_URL}/vendor/${vendor.slug}`
-  console.log(`[Ingestion] Fetching exams for ${vendor.name} from ${vendorUrl}`)
+  logger.info(
+    { function: 'fetchExams', vendor: vendor.name, url: vendorUrl },
+    `Fetching exams for ${vendor.name}`,
+  )
   try {
     const response = await fetch(vendorUrl, {
       headers: {
@@ -172,7 +186,8 @@ export async function fetchExams(vendor: VendorInfo): Promise<Array<ExamInfo>> {
       const code = strongTag?.textContent.replace(':', '').trim() || ''
       // Get text content excluding the strong tag
       const name =
-        element.textContent.replace(strongTag?.textContent || '', '').trim() || ''
+        element.textContent.replace(strongTag?.textContent || '', '').trim() ||
+        ''
 
       if (code && name) {
         exams.push({
@@ -184,10 +199,17 @@ export async function fetchExams(vendor: VendorInfo): Promise<Array<ExamInfo>> {
       }
     })
 
-    console.log(`[Ingestion] Found ${exams.length} exams for ${vendor.name}`)
+    logger.info(
+      { function: 'fetchExams', vendor: vendor.name, count: exams.length },
+      `Found ${exams.length} exams for ${vendor.name}`,
+    )
     return exams
   } catch (error) {
-    console.error(`[Ingestion] Error fetching exams for ${vendor.name}:`, error)
+    logError(
+      error,
+      { function: 'fetchExams', vendor: vendor.name },
+      `Error fetching exams for ${vendor.name}`,
+    )
     return []
   }
 }
@@ -213,8 +235,13 @@ export async function syncCatalogFromITExams(limitVendors?: number) {
 
     for (const exam of exams) {
       if (isRetiredExam(exam.vendorId, exam.code)) {
-        console.log(
-          `[Ingestion] Skipping retired exam: ${exam.code} (${exam.name})`,
+        logger.info(
+          {
+            function: 'syncCatalogFromITExams',
+            examCode: exam.code,
+            examName: exam.name,
+          },
+          `Skipping retired exam: ${exam.code}`,
         )
         continue
       }
@@ -242,7 +269,11 @@ export async function syncCatalogFromITExams(limitVendors?: number) {
         })
         totalAdded++ // Counting upserts as additions for progress reporting
       } catch (err) {
-        console.error(`[Ingestion] Failed to save exam ${exam.code}:`, err)
+        logError(
+          err instanceof Error ? err : new Error(String(err)),
+          { function: 'syncCatalogFromITExams', examCode: exam.code },
+          `Failed to save exam ${exam.code}`,
+        )
       }
 
       // Respectful delay between exam pages for the same vendor if needed,
@@ -253,6 +284,9 @@ export async function syncCatalogFromITExams(limitVendors?: number) {
     await new Promise((resolve) => setTimeout(resolve, 1000))
   }
 
-  console.log(`[Ingestion] Sync complete. Total processed: ${totalAdded}`)
+  logger.info(
+    { function: 'syncCatalogFromITExams', totalProcessed: totalAdded },
+    `Sync complete. Total processed: ${totalAdded}`,
+  )
   return { totalProcessed: totalAdded }
 }

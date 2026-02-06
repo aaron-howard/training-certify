@@ -1,5 +1,6 @@
 import {
   boolean,
+  check,
   index,
   integer,
   pgEnum,
@@ -8,7 +9,9 @@ import {
   timestamp,
   unique,
   uuid,
+  varchar,
 } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm'
 
 // Enums for various statuses and types
 export const roleEnum = pgEnum('role', [
@@ -83,29 +86,37 @@ export const notificationTypeEnum = pgEnum('notification_type', [
 
 // Users table (Mirroring Clerk users or extending them)
 export const users = pgTable('users', {
-  id: text('id').primaryKey(), // Clerk ID
-  name: text('name').notNull(),
-  email: text('email').notNull().unique(),
+  id: varchar('id', { length: 255 }).primaryKey(), // Clerk ID
+  name: varchar('name', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }).notNull().unique(),
   role: roleEnum('role').notNull().default('User'),
-  avatarUrl: text('avatar_url'),
+  avatarUrl: varchar('avatar_url', { length: 2048 }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
 // Teams table
-export const teams = pgTable('teams', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  name: text('name').notNull(),
-  description: text('description'),
-  managerId: text('manager_id').references(() => users.id),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-})
+export const teams = pgTable(
+  'teams',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    name: varchar('name', { length: 255 }).notNull(),
+    description: text('description'), // Can be longer, keep as text
+    managerId: varchar('manager_id', { length: 255 }).references(
+      () => users.id,
+    ),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (t) => ({
+    managerIdIdx: index('teams_manager_id_idx').on(t.managerId),
+  }),
+)
 
 // Join table for Users and Teams
 export const userTeams = pgTable(
   'user_teams',
   {
-    userId: text('user_id')
+    userId: varchar('user_id', { length: 255 })
       .notNull()
       .references(() => users.id),
     teamId: uuid('team_id')
@@ -120,42 +131,53 @@ export const userTeams = pgTable(
 )
 
 // Certifications Catalog
-export const certifications = pgTable('certifications', {
-  id: text('id').primaryKey(),
-  name: text('name').notNull(),
-  vendorId: text('vendor_id').notNull(),
-  vendorName: text('vendor_name').notNull(),
-  vendorLogo: text('vendor_logo'),
-  category: certificationCategoryEnum('category'),
-  difficulty: certificationDifficultyEnum('difficulty'),
-  validityPeriod: text('validity_period'),
-  renewalCycle: integer('renewal_cycle'), // in months
-  price: text('price'),
-  description: text('description'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-})
+export const certifications = pgTable(
+  'certifications',
+  {
+    id: varchar('id', { length: 255 }).primaryKey(),
+    name: varchar('name', { length: 255 }).notNull(),
+    vendorId: varchar('vendor_id', { length: 255 }).notNull(),
+    vendorName: varchar('vendor_name', { length: 255 }).notNull(),
+    vendorLogo: varchar('vendor_logo', { length: 2048 }),
+    category: certificationCategoryEnum('category'),
+    difficulty: certificationDifficultyEnum('difficulty'),
+    validityPeriod: varchar('validity_period', { length: 255 }),
+    renewalCycle: integer('renewal_cycle'), // in months
+    price: varchar('price', { length: 50 }), // Price as string, reasonable limit
+    description: text('description'), // Can be longer, keep as text
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (t) => ({
+    renewalCycleCheck: check(
+      'renewal_cycle_positive',
+      sql`${t.renewalCycle} IS NULL OR ${t.renewalCycle} > 0`,
+    ),
+  }),
+)
 
 // User Certifications (The actual instances owned by users)
 export const userCertifications = pgTable(
   'user_certifications',
   {
     id: uuid('id').defaultRandom().primaryKey(),
-    userId: text('user_id')
+    userId: varchar('user_id', { length: 255 })
       .notNull()
       .references(() => users.id),
-    certificationId: text('certification_id')
+    certificationId: varchar('certification_id', { length: 255 })
       .notNull()
       .references(() => certifications.id),
-    certificationName: text('certification_name').notNull(),
-    vendorName: text('vendor_name').notNull(),
-    certificationNumber: text('certification_number'),
-    issueDate: text('issue_date'), // ISO string or date
-    expirationDate: text('expiration_date'), // ISO string or date
+    certificationName: varchar('certification_name', { length: 255 }).notNull(),
+    vendorName: varchar('vendor_name', { length: 255 }).notNull(),
+    certificationNumber: varchar('certification_number', { length: 255 }),
+    issueDate: varchar('issue_date', { length: 50 }), // ISO string or date
+    expirationDate: varchar('expiration_date', { length: 50 }), // ISO string or date
     status: certificationStatusEnum('status').notNull().default('active'),
     daysUntilExpiration: integer('days_until_expiration'),
-    documentUrl: text('document_url'),
+    documentUrl: varchar('document_url', { length: 2048 }),
     verifiedAt: timestamp('verified_at'),
-    assignedById: text('assigned_by_id').references(() => users.id),
+    assignedById: varchar('assigned_by_id', { length: 255 }).references(
+      () => users.id,
+    ),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
   },
@@ -163,6 +185,14 @@ export const userCertifications = pgTable(
     userIdIdx: index('user_certifications_user_id_idx').on(t.userId),
     certIdIdx: index('user_certifications_cert_id_idx').on(t.certificationId),
     statusIdx: index('user_certifications_status_idx').on(t.status),
+    expirationDateIdx: index('user_certifications_expiration_date_idx').on(
+      t.expirationDate,
+    ),
+    // Composite index for common query pattern: userId + status
+    userIdStatusIdx: index('user_certifications_user_id_status_idx').on(
+      t.userId,
+      t.status,
+    ),
   }),
 )
 
@@ -174,7 +204,7 @@ export const teamRequirements = pgTable(
     teamId: uuid('team_id')
       .notNull()
       .references(() => teams.id),
-    certificationId: text('certification_id')
+    certificationId: varchar('certification_id', { length: 255 })
       .notNull()
       .references(() => certifications.id),
     targetCount: integer('target_count').notNull().default(1),
@@ -184,6 +214,7 @@ export const teamRequirements = pgTable(
     unq: unique().on(t.teamId, t.certificationId),
     teamIdIdx: index('team_requirements_team_id_idx').on(t.teamId),
     certIdIdx: index('team_requirements_cert_id_idx').on(t.certificationId),
+    targetCountCheck: check('target_count_positive', sql`${t.targetCount} > 0`),
   }),
 )
 
@@ -192,23 +223,33 @@ export const notifications = pgTable(
   'notifications',
   {
     id: uuid('id').defaultRandom().primaryKey(),
-    userId: text('user_id')
+    userId: varchar('user_id', { length: 255 })
       .notNull()
       .references(() => users.id),
     type: notificationTypeEnum('type').notNull(),
     severity: notificationSeverityEnum('severity').notNull().default('info'),
-    title: text('title').notNull(),
-    description: text('description'),
+    title: varchar('title', { length: 255 }).notNull(),
+    description: text('description'), // Can be longer, keep as text
     timestamp: timestamp('timestamp').defaultNow().notNull(),
     isRead: boolean('is_read').default(false).notNull(),
     isDismissed: boolean('is_dismissed').default(false).notNull(),
-    certificationId: text('certification_id'),
+    certificationId: varchar('certification_id', { length: 255 }),
     userCertificationId: uuid('user_certification_id'),
   },
   (t) => ({
     userIdIdx: index('notifications_user_id_idx').on(t.userId),
     isDismissedIdx: index('notifications_is_dismissed_idx').on(t.isDismissed),
     timestampIdx: index('notifications_timestamp_idx').on(t.timestamp),
+    // Composite index for common query pattern: userId + isDismissed (for active notifications)
+    userIdIsDismissedIdx: index('notifications_user_id_is_dismissed_idx').on(
+      t.userId,
+      t.isDismissed,
+    ),
+    // Composite index for common query pattern: userId + isRead (for unread notifications)
+    userIdIsReadIdx: index('notifications_user_id_is_read_idx').on(
+      t.userId,
+      t.isRead,
+    ),
   }),
 )
 
@@ -220,8 +261,8 @@ export const userCertificationProofs = pgTable(
     userCertificationId: uuid('user_certification_id')
       .notNull()
       .references(() => userCertifications.id),
-    fileName: text('file_name').notNull(),
-    fileUrl: text('file_url').notNull(),
+    fileName: varchar('file_name', { length: 255 }).notNull(),
+    fileUrl: varchar('file_url', { length: 2048 }).notNull(),
     uploadedAt: timestamp('uploaded_at').defaultNow().notNull(),
   },
   (t) => ({
@@ -232,33 +273,44 @@ export const userCertificationProofs = pgTable(
 )
 
 // Audit Logs
-export const auditLogs = pgTable('audit_logs', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  userId: text('user_id')
-    .notNull()
-    .references(() => users.id),
-  action: text('action').notNull(),
-  resourceType: text('resource_type').notNull(),
-  resourceId: text('resource_id').notNull(),
-  details: text('details'),
-  timestamp: timestamp('timestamp').defaultNow().notNull(),
-})
+export const auditLogs = pgTable(
+  'audit_logs',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    userId: varchar('user_id', { length: 255 })
+      .notNull()
+      .references(() => users.id),
+    action: varchar('action', { length: 255 }).notNull(),
+    resourceType: varchar('resource_type', { length: 255 }).notNull(),
+    resourceId: varchar('resource_id', { length: 255 }).notNull(),
+    details: text('details'), // Can be longer, keep as text
+    timestamp: timestamp('timestamp').defaultNow().notNull(),
+  },
+  (t) => ({
+    userIdIdx: index('audit_logs_user_id_idx').on(t.userId),
+    timestampIdx: index('audit_logs_timestamp_idx').on(t.timestamp),
+    // Composite index for resource queries
+    resourceTypeIdIdx: index('audit_logs_resource_type_id_idx').on(
+      t.resourceType,
+      t.resourceId,
+    ),
+  }),
+)
 
 // Rate Limit Logs (for distributed rate limiting)
 export const rateLimitLogs = pgTable(
   'rate_limit_logs',
   {
     id: uuid('id').defaultRandom().primaryKey(),
-    identifier: text('identifier').notNull(), // User ID or IP address
+    identifier: varchar('identifier', { length: 255 }).notNull(), // User ID or IP address
     timestamp: timestamp('timestamp').defaultNow().notNull(),
   },
   (t) => ({
     identifierIdx: index('rate_limit_logs_identifier_idx').on(t.identifier),
     timestampIdx: index('rate_limit_logs_timestamp_idx').on(t.timestamp),
     // Composite index for efficient queries
-    identifierTimestampIdx: index('rate_limit_logs_identifier_timestamp_idx').on(
-      t.identifier,
-      t.timestamp,
-    ),
+    identifierTimestampIdx: index(
+      'rate_limit_logs_identifier_timestamp_idx',
+    ).on(t.identifier, t.timestamp),
   }),
 )

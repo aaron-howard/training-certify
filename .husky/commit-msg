@@ -1,0 +1,27 @@
+#!/usr/bin/env sh
+# Husky v9+ doesn't require the husky.sh file
+
+# Basic commit message validation
+commit_msg=$(cat "$1")
+
+# Check if commit message is empty
+if [ -z "$commit_msg" ]; then
+  echo "❌ Commit message cannot be empty"
+  exit 1
+fi
+
+# Check minimum length (excluding merge commits and revert commits)
+if ! echo "$commit_msg" | grep -qE "^Merge|^Revert|^fixup!|^squash!"; then
+  if [ ${#commit_msg} -lt 10 ]; then
+    echo "❌ Commit message is too short (minimum 10 characters)"
+    echo "   Current message: $commit_msg"
+    exit 1
+  fi
+fi
+
+# Warn about common issues (non-blocking)
+if echo "$commit_msg" | grep -qiE "wip|todo|fixme|hack"; then
+  echo "⚠️  Warning: Commit message contains WIP/TODO/FIXME/HACK"
+fi
+
+echo "✅ Commit message validation passed"

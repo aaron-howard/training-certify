@@ -4,6 +4,7 @@
  */
 
 import { z } from 'zod'
+import { logError, logger } from './logging.server'
 
 const envSchema = z.object({
   // Database
@@ -70,28 +71,40 @@ export function validateEnv(): Env {
 
   try {
     const validated = envSchema.parse(process.env)
-    console.log('✅ Environment variables validated successfully')
+    logger.info(
+      { service: 'env' },
+      'Environment variables validated successfully',
+    )
     return validated
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.error('❌ Environment variable validation failed:')
-      error.errors.forEach((err) => {
-        console.error(`  - ${err.path.join('.')}: ${err.message}`)
-      })
-      // Log available keys (safely) to help debug Vercel environment issues
-      console.error(
-        'Available env keys:',
-        Object.keys(process.env).filter(
-          (k) =>
-            !k.toLowerCase().includes('key') &&
-            !k.toLowerCase().includes('secret') &&
-            !k.toLowerCase().includes('password') &&
-            !k.toLowerCase().includes('token'),
-        ),
+      const availableKeys = Object.keys(process.env).filter(
+        (k) =>
+          !k.toLowerCase().includes('key') &&
+          !k.toLowerCase().includes('secret') &&
+          !k.toLowerCase().includes('password') &&
+          !k.toLowerCase().includes('token'),
       )
+
+      logError(
+        error,
+        {
+          service: 'env',
+          validationErrors: error.errors.map((err) => ({
+            path: err.path.join('.'),
+            message: err.message,
+          })),
+          availableKeys,
+        },
+        'Environment variable validation failed',
+      )
+    } else {
+      logError(error, { service: 'env' }, 'Environment validation error')
     }
-    console.error(
-      '\n💡 Please check your Vercel environment variables or .env file.',
+
+    logger.error(
+      { service: 'env' },
+      'Please check your Vercel environment variables or .env file',
     )
 
     // In production/serverless, we throw instead of exiting to allow for better error handling
@@ -103,15 +116,38 @@ export function validateEnv(): Env {
 }
 
 /**
- * Get validated environment variables
- * Use this instead of process.env for type safety
+ * Get validated environment variables with type safety.
+ *
+ * Returns environment variables that have been validated against the
+ * envSchema. This provides type safety and ensures all required environment
+ * variables are present and valid.
+ *
+ * @returns Validated environment variables object
+ * @throws {z.ZodError} If environment variables don't match the schema
+ *
+ * @example
+ * ```typescript
+ * const env = getEnv()
+ * const dbUrl = env.DATABASE_URL // Type-safe access
+ * ```
  */
 export function getEnv(): Env {
   return envSchema.parse(process.env)
 }
 
 /**
- * Check if running in production
+ * Check if the application is running in production mode.
+ *
+ * Determines the environment based on NODE_ENV environment variable.
+ *
+ * @returns true if NODE_ENV === 'production', false otherwise
+ *
+ * @example
+ * ```typescript
+ * if (isProduction()) {
+ *   // Production-only code
+ * }
+ * ```
  */
 export function isProduction(): boolean {
   return process.env.NODE_ENV === 'production'
@@ -136,6 +172,23 @@ export function isTest(): boolean {
  */
 let _env: Env | null = null
 
+// Type for window.__ENV__ (used in development)
+interface WindowEnv {
+  __ENV__?: {
+    CLERK_PUBLISHABLE_KEY?: string
+  }
+}
+
+// Type for import.meta.env (Vite environment variables)
+interface ImportMetaEnv {
+  [key: string]: string | undefined
+  VITE_CLERK_PUBLISHABLE_KEY?: string
+}
+
+declare global {
+  interface Window extends WindowEnv {}
+}
+
 export const ENV = new Proxy({} as Env & { CLERK_PUBLISHABLE_KEY: string }, {
   get(_target, prop) {
     // Client-side safety: Only allow VITE_ variables and provide basic fallback
@@ -144,13 +197,13 @@ export const ENV = new Proxy({} as Env & { CLERK_PUBLISHABLE_KEY: string }, {
         prop === 'CLERK_PUBLISHABLE_KEY' ||
         prop === 'VITE_CLERK_PUBLISHABLE_KEY'
       ) {
-        // @ts-ignore - Basic fallback for local development if window.__ENV__ is missing
         return (
-          (window as any).__ENV__?.CLERK_PUBLISHABLE_KEY ||
+          window.__ENV__?.CLERK_PUBLISHABLE_KEY ||
           import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
         )
       }
-      return (import.meta.env as any)[prop]
+      const envKey = String(prop)
+      return (import.meta.env as ImportMetaEnv)[envKey]
     }
 
     if (!_env) {

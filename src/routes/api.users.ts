@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { eq } from 'drizzle-orm'
+import { count, eq } from 'drizzle-orm'
 import { getDbOrThrow } from '../db/db.server'
 import {
   auditLogs,
@@ -10,30 +10,116 @@ import {
   userTeams,
   users,
 } from '../db/schema'
-import { getVerifiedAuth, requireRole } from '../lib/auth.server'
+import { getVerifiedAuth } from '../lib/auth.server'
 import { RateLimitPresets, requireRateLimit } from '../lib/rateLimit.server'
 import { getCSRFTokenFromRequest, requireCSRFToken } from '../lib/csrf.server'
 import * as Errors from '../lib/errors'
+import { NotFoundError, ValidationError } from '../lib/errors'
 import { UpdateUserSchema } from '../lib/validation'
-import type { Role } from '../hooks/usePermissions'
+import { logInfo } from '../lib/logging.server'
+import {
+  handleApiError,
+  setupMutationHandler,
+  setupReadHandler,
+} from '../lib/api-helpers.server'
+import { invalidateCache } from '../lib/cache.server'
+import {
+  createPaginatedResponse,
+  parsePaginationParams,
+} from '../lib/pagination.server'
 
 export const Route = createFileRoute('/api/users')({
   server: {
     handlers: {
-      GET: async () => {
+      /**
+       * GET /api/users
+       *
+       * Retrieves a list of all users in the system.
+       *
+       * **Authentication:** Required
+       * **Authorization:** Admin, Auditor, or Executive roles only
+       * **Rate Limiting:** None (read operation)
+       *
+       * @returns JSON response with array of user objects
+       * @throws {ForbiddenError} If user doesn't have required role
+       * @throws {UnauthorizedError} If user is not authenticated
+       *
+       * @example Response:
+       * ```json
+       * [
+       *   { "id": "user_123", "name": "John Doe", "email": "john@example.com", "role": "User" },
+       *   { "id": "user_456", "name": "Jane Smith", "email": "jane@example.com", "role": "Admin" }
+       * ]
+       * ```
+       */
+      GET: async ({ request }) => {
         try {
-          await requireRole(['Admin', 'Auditor', 'Executive'] as Array<Role>)
+          await setupReadHandler(request, {
+            allowedRoles: ['Admin', 'Auditor', 'Executive'],
+          })
           const db = await getDbOrThrow()
-          const allUsers = await db.select().from(users)
-          return json(allUsers)
+          const url = new URL(request.url)
+
+          // Parse pagination parameters
+          const { page, limit } = parsePaginationParams(url, 20, 100)
+          const offset = (page - 1) * limit
+
+          // Get total count and paginated data
+          const [totalResult] = await db.select({ count: count() }).from(users)
+          const total = totalResult.count
+
+          const data = await db.select().from(users).limit(limit).offset(offset)
+
+          const paginatedResponse = createPaginatedResponse(
+            data,
+            total,
+            page,
+            limit,
+          )
+
+          return json(paginatedResponse, {
+            headers: {
+              'Cache-Control': 'private, max-age=180', // 3 minutes browser cache (private - user data)
+            },
+          })
         } catch (error) {
-          if (error instanceof Errors.AppError) {
-            return json({ error: error.message, code: error.code }, { status: error.statusCode })
-          }
-          console.error('❌ [API Users GET] Unexpected Error:', error)
-          return json({ error: 'Internal server error' }, { status: 500 })
+          return handleApiError(error, 'GET /api/users')
         }
       },
+      /**
+       * POST /api/users
+       *
+       * Creates or ensures a user record exists in the database.
+       * This endpoint is typically called during user signup to sync Clerk user data
+       * with the application database.
+       *
+       * **Authentication:** Required (via Clerk)
+       * **Authorization:** User can create their own record, or Admin can create any record
+       * **Rate Limiting:** AUTH preset (5 requests per minute)
+       * **CSRF Protection:** Required
+       *
+       * @param request - HTTP request containing JSON body with user data:
+       *   - id: string (required) - User ID from Clerk
+       *   - name: string (required) - User's full name
+       *   - email: string (required) - User's email address
+       *   - avatarUrl?: string (optional) - URL to user's avatar image
+       *   - role?: string (optional) - User role (defaults to 'User', only Admin can set other roles)
+       *
+       * @returns JSON response with created/updated user object (status 201 for new, 200 for existing)
+       * @throws {ForbiddenError} If non-admin tries to create another user's record
+       * @throws {UnauthorizedError} If user is not authenticated
+       * @throws {ValidationError} If input data is invalid
+       *
+       * @example Request:
+       * ```json
+       * {
+       *   "id": "user_123",
+       *   "name": "John Doe",
+       *   "email": "john@example.com",
+       *   "avatarUrl": "https://example.com/avatar.jpg"
+       * }
+       * ```
+       */
       POST: async ({ request }) => {
         try {
           // 1. Authenticate the requester via Clerk
@@ -44,7 +130,11 @@ export const Route = createFileRoute('/api/users')({
           requireCSRFToken(getCSRFTokenFromRequest(request))
 
           const data = await request.json()
-          console.log(`🔍 [API Users POST] Requester ${authenticatedId} ensuring user:`, data.id)
+          logInfo(`Requester ${authenticatedId} ensuring user: ${data.id}`, {
+            route: 'POST /api/users',
+            requester: authenticatedId,
+            targetUserId: data.id,
+          })
 
           const db = await getDbOrThrow()
 
@@ -58,7 +148,9 @@ export const Route = createFileRoute('/api/users')({
               .limit(1)
 
             if (!requester.length || requester[0].role !== 'Admin') {
-              throw new Errors.ForbiddenError('You can only ensure your own user record unless you are an Admin')
+              throw new Errors.ForbiddenError(
+                'You can only ensure your own user record unless you are an Admin',
+              )
             }
           }
 
@@ -70,7 +162,8 @@ export const Route = createFileRoute('/api/users')({
             .where(eq(users.id, authenticatedId))
             .limit(1)
 
-          const isRequesterAdmin = requesterRecord.length > 0 && requesterRecord[0].role === 'Admin'
+          const isRequesterAdmin =
+            requesterRecord.length > 0 && requesterRecord[0].role === 'Admin'
 
           if (!isRequesterAdmin && data.role && data.role !== 'User') {
             data.role = 'User'
@@ -99,12 +192,25 @@ export const Route = createFileRoute('/api/users')({
               })
               .returning()
 
+            // Invalidate users cache
+            invalidateCache('users:')
+
             return json(result[0], { status: 201 })
           } catch (error) {
             const insertError = error as { code?: string; detail?: string }
             // Handle duplicate email (migration case)
-            if (insertError.code === '23505' && insertError.detail?.includes('email')) {
-              console.log('🔄 [API] Detected duplicate email with new ID. Starting migration...')
+            if (
+              insertError.code === '23505' &&
+              insertError.detail?.includes('email')
+            ) {
+              logInfo(
+                'Detected duplicate email with new ID. Starting migration',
+                {
+                  route: 'POST /api/users',
+                  email: data.email,
+                  newUserId: data.id,
+                },
+              )
 
               const existingUser = await db
                 .select()
@@ -133,56 +239,73 @@ export const Route = createFileRoute('/api/users')({
                 })
 
                 // Move all related data
-                await tx.update(userCertifications).set({ userId: data.id }).where(eq(userCertifications.userId, oldUserId))
-                await tx.update(notifications).set({ userId: data.id }).where(eq(notifications.userId, oldUserId))
-                await tx.update(auditLogs).set({ userId: data.id }).where(eq(auditLogs.userId, oldUserId))
-                await tx.update(userTeams).set({ userId: data.id }).where(eq(userTeams.userId, oldUserId))
-                await tx.update(teams).set({ managerId: data.id }).where(eq(teams.managerId, oldUserId))
+                await tx
+                  .update(userCertifications)
+                  .set({ userId: data.id })
+                  .where(eq(userCertifications.userId, oldUserId))
+                await tx
+                  .update(notifications)
+                  .set({ userId: data.id })
+                  .where(eq(notifications.userId, oldUserId))
+                await tx
+                  .update(auditLogs)
+                  .set({ userId: data.id })
+                  .where(eq(auditLogs.userId, oldUserId))
+                await tx
+                  .update(userTeams)
+                  .set({ userId: data.id })
+                  .where(eq(userTeams.userId, oldUserId))
+                await tx
+                  .update(teams)
+                  .set({ managerId: data.id })
+                  .where(eq(teams.managerId, oldUserId))
 
                 // Cleanup old user record
                 await tx.delete(users).where(eq(users.id, oldUserId))
               })
 
-              const newUser = await db.select().from(users).where(eq(users.id, data.id)).limit(1)
+              // Invalidate users cache after migration
+              invalidateCache('users:')
+
+              const newUser = await db
+                .select()
+                .from(users)
+                .where(eq(users.id, data.id))
+                .limit(1)
               return json(newUser[0], { status: 201 })
             }
             throw error
           }
         } catch (error) {
-          if (error instanceof Errors.AppError) {
-            return json({ error: error.message, code: error.code }, { status: error.statusCode })
-          }
-          const message = error instanceof Error ? error.message : String(error)
-          if (message === 'Unauthorized') {
-            return json({ error: 'Unauthorized' }, { status: 401 })
-          }
-          console.error('❌ [API Users POST] Failed to ensure user:', error)
-          // Don't expose error details to client in production
-          const isProduction = process.env.NODE_ENV === 'production'
-          return json(
-            { error: 'Internal server error', ...(isProduction ? {} : { details: message }) },
-            { status: 500 }
-          )
+          // POST /api/users uses getVerifiedAuth() instead of requireRole() for custom auth logic
+          // Still use handleApiError for consistent error responses
+          return handleApiError(error, 'POST /api/users')
         }
       },
       PATCH: async ({ request }) => {
         try {
-          await requireRole(['Admin'] as Array<Role>)
-          requireCSRFToken(getCSRFTokenFromRequest(request))
+          await setupMutationHandler(request, {
+            allowedRoles: ['Admin'],
+          })
 
           const rawData = await request.json()
           const validation = UpdateUserSchema.safeParse(rawData)
 
           if (!validation.success) {
-            throw new Errors.ValidationError('Invalid update data', validation.error.errors)
+            throw new ValidationError(
+              'Invalid update data',
+              validation.error.errors,
+            )
           }
 
           const data = validation.data
           const db = await getDbOrThrow()
 
-          const updates: Partial<typeof users.$inferInsert> & { updatedAt: Date } = {
+          const updates: Partial<typeof users.$inferInsert> & {
+            updatedAt: Date
+          } = {
             ...data,
-            updatedAt: new Date()
+            updatedAt: new Date(),
           }
           // Remove ID from updates
           delete (updates as { id?: string }).id
@@ -193,29 +316,25 @@ export const Route = createFileRoute('/api/users')({
             .where(eq(users.id, data.id))
             .returning()
 
-          if (result.length === 0) throw new Errors.NotFoundError('User not found')
+          if (result.length === 0) throw new NotFoundError('User not found')
+
+          // Invalidate users cache
+          invalidateCache('users:')
 
           return json(result[0])
         } catch (error) {
-          if (error instanceof Errors.AppError) {
-            return json({
-              error: error.message,
-              code: error.code,
-              details: error instanceof Errors.ValidationError ? error.errors : undefined
-            }, { status: error.statusCode })
-          }
-          console.error('❌ [API Users PATCH] Unexpected Error:', error)
-          return json({ error: 'Internal server error' }, { status: 500 })
+          return handleApiError(error, 'PATCH /api/users')
         }
       },
       DELETE: async ({ request }) => {
         try {
-          await requireRole(['Admin'] as Array<Role>)
-          requireCSRFToken(getCSRFTokenFromRequest(request))
+          await setupMutationHandler(request, {
+            allowedRoles: ['Admin'],
+          })
 
           const url = new URL(request.url)
           const id = url.searchParams.get('id')
-          if (!id) throw new Errors.ValidationError('Missing user ID')
+          if (!id) throw new ValidationError('Missing user ID')
 
           const db = await getDbOrThrow()
 
@@ -233,13 +352,12 @@ export const Route = createFileRoute('/api/users')({
             await tx.delete(users).where(eq(users.id, id))
           })
 
+          // Invalidate users cache
+          invalidateCache('users:')
+
           return json({ success: true })
         } catch (error) {
-          if (error instanceof Errors.AppError) {
-            return json({ error: error.message, code: error.code }, { status: error.statusCode })
-          }
-          console.error('❌ [API Users DELETE] Unexpected Error:', error)
-          return json({ error: 'Internal server error' }, { status: 500 })
+          return handleApiError(error, 'DELETE /api/users')
         }
       },
     },

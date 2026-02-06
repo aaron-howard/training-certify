@@ -169,10 +169,11 @@ function TeamManagementPage() {
       <div className="flex border-b border-slate-200 dark:border-slate-800">
         <button
           onClick={() => setActiveTab('teams')}
-          className={`px-6 py-3 text-sm font-semibold transition-colors relative ${activeTab === 'teams'
-            ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-            : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
-            }`}
+          className={`px-6 py-3 text-sm font-semibold transition-colors relative ${
+            activeTab === 'teams'
+              ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
+              : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+          }`}
         >
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4" /> Team Coverage
@@ -181,10 +182,11 @@ function TeamManagementPage() {
         {isAdmin && (
           <button
             onClick={() => setActiveTab('users')}
-            className={`px-6 py-3 text-sm font-semibold transition-colors relative ${activeTab === 'users'
-              ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-              : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
-              }`}
+            className={`px-6 py-3 text-sm font-semibold transition-colors relative ${
+              activeTab === 'users'
+                ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
+                : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+            }`}
           >
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4" /> User Management

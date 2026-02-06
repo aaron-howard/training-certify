@@ -24,16 +24,19 @@ import type { QueryClient } from '@tanstack/react-query'
 
 // Server function to sync user - handles CSRF automatically via TanStack Start
 const syncUser = createServerFn({ method: 'POST' })
-  .inputValidator((data: { id: string; name: string; email: string; avatarUrl?: string }) => data)
+  .inputValidator(
+    (data: { id: string; name: string; email: string; avatarUrl?: string }) =>
+      data,
+  )
   .handler(async ({ data }) => {
     const { getVerifiedAuth } = await import('../lib/auth.server')
     const { getDbOrThrow } = await import('../db/db.server')
     const { users } = await import('../db/schema')
     const { eq } = await import('drizzle-orm')
     const { ForbiddenError } = await import('../lib/errors')
-    
+
     const authenticatedId = await getVerifiedAuth()
-    
+
     // Security: User can only sync themselves unless they're an admin
     if (authenticatedId !== data.id) {
       const db = await getDbOrThrow()
@@ -42,23 +45,25 @@ const syncUser = createServerFn({ method: 'POST' })
         .from(users)
         .where(eq(users.id, authenticatedId))
         .limit(1)
-      
+
       if (!requester.length || requester[0].role !== 'Admin') {
-        throw new ForbiddenError('You can only sync your own user record unless you are an Admin')
+        throw new ForbiddenError(
+          'You can only sync your own user record unless you are an Admin',
+        )
       }
     }
-    
+
     const db = await getDbOrThrow()
     const existing = await db
       .select()
       .from(users)
       .where(eq(users.id, data.id))
       .limit(1)
-    
+
     if (existing.length > 0) {
       return existing[0]
     }
-    
+
     const result = await db
       .insert(users)
       .values({
@@ -69,7 +74,7 @@ const syncUser = createServerFn({ method: 'POST' })
         role: 'User',
       })
       .returning()
-    
+
     return result[0]
   })
 

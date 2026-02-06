@@ -70,6 +70,17 @@ export const factories = {
     role: 'User',
     ...overrides,
   }),
+
+  auditLog: (overrides = {}) => ({
+    id: 'audit_test123',
+    userId: 'user_test123',
+    action: 'Test action',
+    resourceType: 'user',
+    resourceId: 'user_test123',
+    details: null,
+    timestamp: new Date(),
+    ...overrides,
+  }),
 }
 
 export const mockClerkAuth = (userId: string | null = 'user_test123') => {

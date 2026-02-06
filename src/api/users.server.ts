@@ -2,10 +2,37 @@ import { createServerFn } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 import { users } from '../db/schema'
 import { getVerifiedAuth, requireRole } from '../lib/auth.server'
+import { logError, logInfo } from '../lib/logging.server'
 
 /**
  * Ensures a user exists in the local database.
- * Uses the verified userId from the Clerk session.
+ *
+ * Creates a user record if it doesn't exist, or returns the existing user.
+ * This is typically called during user signup to sync Clerk user data with
+ * the application database.
+ *
+ * **Security:** User can only ensure their own record (authenticated ID must match data.id)
+ * **CSRF Protection:** Automatically handled by TanStack Start for server functions
+ *
+ * @param data - User data object:
+ *   - id: string (required) - User ID from Clerk (must match authenticated user)
+ *   - name: string (required) - User's full name
+ *   - email: string (required) - User's email address
+ *   - avatarUrl?: string (optional) - URL to user's avatar image
+ *
+ * @returns Promise that resolves to the user object (existing or newly created)
+ * @throws {Error} If authenticated user ID doesn't match data.id
+ * @throws {Error} If database is unavailable
+ *
+ * @example
+ * ```typescript
+ * const user = await ensureUser({
+ *   id: 'user_123',
+ *   name: 'John Doe',
+ *   email: 'john@example.com',
+ *   avatarUrl: 'https://example.com/avatar.jpg'
+ * })
+ * ```
  */
 export const ensureUser = createServerFn({ method: 'POST' })
   .inputValidator(
@@ -50,14 +77,40 @@ export const ensureUser = createServerFn({ method: 'POST' })
 
       return result[0]
     } catch (error) {
-      console.error('❌ [Server] Failed to ensure user:', error)
+      logError(
+        error,
+        { function: 'ensureUser', userId: data.id },
+        'Failed to ensure user',
+      )
       throw error
     }
   })
 
 /**
- * Updates a user's role.
- * Only accessible by Admins.
+ * Updates a user's role in the system.
+ *
+ * Changes a user's role to one of the valid role values. This is an
+ * administrative operation that should be used carefully.
+ *
+ * **Authorization:** Admin role required
+ * **CSRF Protection:** Automatically handled by TanStack Start for server functions
+ *
+ * @param data - Role update data:
+ *   - userId: string (required) - ID of the user whose role should be updated
+ *   - role: 'Admin' | 'User' | 'Manager' | 'Executive' | 'Auditor' (required) - New role
+ *
+ * @returns Promise that resolves to the updated user object
+ * @throws {ForbiddenError} If caller is not an Admin
+ * @throws {Error} If user is not found
+ * @throws {Error} If database is unavailable
+ *
+ * @example
+ * ```typescript
+ * const updated = await updateUserRole({
+ *   userId: 'user_123',
+ *   role: 'Manager'
+ * })
+ * ```
  */
 export const updateUserRole = createServerFn({ method: 'POST' })
   .inputValidator(
@@ -87,14 +140,35 @@ export const updateUserRole = createServerFn({ method: 'POST' })
 
       return result[0]
     } catch (error) {
-      console.error('❌ [Server] Failed to update role:', error)
+      logError(
+        error,
+        { function: 'updateUserRole', userId: data.userId, newRole: data.role },
+        'Failed to update user role',
+      )
       throw error
     }
   })
 
 /**
- * Development utility to promote a user to Admin.
- * Hardened to only allow the authenticated user to promote themselves.
+ * Development utility to promote the authenticated user to Admin role.
+ *
+ * **Security:** Users can only promote themselves (authenticated ID must match userId).
+ * This is a development utility and should be removed or restricted in production.
+ *
+ * **CSRF Protection:** Automatically handled by TanStack Start for server functions
+ *
+ * @param data - User data:
+ *   - userId: string (required) - Must match the authenticated user's ID
+ *
+ * @returns Promise that resolves to the updated user object with Admin role
+ * @throws {Error} If authenticated user ID doesn't match data.userId
+ * @throws {Error} If database is unavailable
+ *
+ * @example
+ * ```typescript
+ * const admin = await makeMeAdmin({ userId: 'user_123' })
+ * // User is now an Admin
+ * ```
  */
 export const makeMeAdmin = createServerFn({ method: 'POST' })
   .inputValidator((data: { userId: string }) => data)
@@ -118,10 +192,17 @@ export const makeMeAdmin = createServerFn({ method: 'POST' })
         .where(eq(users.id, authenticatedId))
         .returning()
 
-      console.log(`🪄 [Server] User ${authenticatedId} promoted to Admin`)
+      logInfo(`User ${authenticatedId} promoted to Admin`, {
+        function: 'makeMeAdmin',
+        userId: authenticatedId,
+      })
       return result[0]
     } catch (error) {
-      console.error('❌ [Server] Failed to promote:', error)
+      logError(
+        error,
+        { function: 'makeMeAdmin', userId: authenticatedId },
+        'Failed to promote user to Admin',
+      )
       throw error
     }
   })

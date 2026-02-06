@@ -3,21 +3,15 @@ import { json } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 import { getDbOrThrow } from '../db/db.server'
 import { userTeams, users } from '../db/schema'
-import { requireRole } from '../lib/auth.server'
-import { AppError, ValidationError } from '../lib/errors'
+import { ValidationError } from '../lib/errors'
+import { handleApiError, setupReadHandler } from '../lib/api-helpers.server'
 
 export const Route = createFileRoute('/api/team-members')({
   server: {
     handlers: {
       GET: async ({ request }) => {
         try {
-          await requireRole([
-            'Admin',
-            'Manager',
-            'Auditor',
-            'Executive',
-            'User',
-          ])
+          await setupReadHandler(request)
 
           const url = new URL(request.url)
           const teamId = url.searchParams.get('teamId')
@@ -42,11 +36,7 @@ export const Route = createFileRoute('/api/team-members')({
 
           return json(members)
         } catch (error) {
-          if (error instanceof AppError) {
-            return json({ error: error.message, code: error.code }, { status: error.statusCode })
-          }
-          console.error('❌ [API Team Members GET] Unexpected Error:', error)
-          return json({ error: 'Internal server error' }, { status: 500 })
+          return handleApiError(error, 'GET /api/team-members')
         }
       },
     },

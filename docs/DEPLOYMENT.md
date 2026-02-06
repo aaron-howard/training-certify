@@ -46,24 +46,214 @@ npm run lint
 
 ## Environment Variables
 
-### Required
+### Required Variables
 
-| Variable                     | Description                               | Example                               |
-| ---------------------------- | ----------------------------------------- | ------------------------------------- |
-| `DATABASE_URL`               | PostgreSQL connection string              | `postgresql://user:pass@host:5432/db` |
-| `CLERK_SECRET_KEY`           | Clerk secret key (starts with `sk_`)      | `sk_live_...`                         |
-| `VITE_CLERK_PUBLISHABLE_KEY` | Clerk publishable key (starts with `pk_`) | `pk_live_...`                         |
-| `NODE_ENV`                   | Environment                               | `production`                          |
-| `PORT`                       | Server port                               | `3000`                                |
+These variables **must** be set for the application to run:
 
-### Optional (Recommended)
+| Variable                     | Description                  | Example                               | Validation                             |
+| ---------------------------- | ---------------------------- | ------------------------------------- | -------------------------------------- |
+| `DATABASE_URL`               | PostgreSQL connection string | `postgresql://user:pass@host:5432/db` | Must be valid PostgreSQL URL           |
+| `CLERK_SECRET_KEY`           | Clerk secret key             | `sk_live_...`                         | Must start with `sk_`                  |
+| `VITE_CLERK_PUBLISHABLE_KEY` | Clerk publishable key        | `pk_live_...`                         | Must start with `pk_`                  |
+| `NODE_ENV`                   | Environment                  | `production`                          | `development`, `production`, or `test` |
+| `PORT`                       | Server port                  | `3000`                                | String (defaults to `3000`)            |
 
-| Variable      | Description               | Default |
-| ------------- | ------------------------- | ------- |
-| `SENTRY_DSN`  | Sentry error tracking DSN | -       |
-| `REDIS_URL`   | Redis connection string   | -       |
-| `HTTPS_ONLY`  | Force HTTPS               | `false` |
-| `CSRF_SECRET` | CSRF protection secret    | -       |
+**Note:** The application validates all required environment variables at startup. If any are missing or invalid, the application will fail to start with a clear error message.
+
+### Optional Variables (Recommended for Production)
+
+| Variable      | Description                           | Default | When to Use                                      |
+| ------------- | ------------------------------------- | ------- | ------------------------------------------------ |
+| `SENTRY_DSN`  | Sentry error tracking DSN             | -       | Production error monitoring                      |
+| `REDIS_URL`   | Redis connection string               | -       | Multi-instance deployments (distributed caching) |
+| `HTTPS_ONLY`  | Force HTTPS redirects                 | `false` | Production (set to `true`)                       |
+| `CSRF_SECRET` | CSRF protection secret (min 32 chars) | -       | Production (required for CSRF protection)        |
+
+### Environment Variable Details
+
+#### DATABASE_URL
+
+PostgreSQL connection string. Supports multiple formats:
+
+- `postgresql://user:password@host:port/database`
+- `postgres://user:password@host:port/database`
+- Also accepts `POSTGRES_URL` or `POSTGRES_URL_NON_POOLING` as aliases
+
+**Security:** Never commit this value to version control. Use secure secret management.
+
+#### CLERK_SECRET_KEY
+
+Clerk authentication secret key. Get from [Clerk Dashboard](https://dashboard.clerk.com).
+
+- **Development:** Use `sk_test_...` keys
+- **Production:** Use `sk_live_...` keys
+
+**Security:** This is a secret key. Keep it secure and never expose it to the client.
+
+#### VITE_CLERK_PUBLISHABLE_KEY
+
+Clerk publishable key (safe to expose to client). Get from [Clerk Dashboard](https://dashboard.clerk.com).
+
+- **Development:** Use `pk_test_...` keys
+- **Production:** Use `pk_live_...` keys
+
+**Note:** This key is prefixed with `VITE_` so it's available to the client-side code.
+
+#### NODE_ENV
+
+Application environment. Affects:
+
+- Error message detail level
+- Security header enforcement
+- Logging verbosity
+- CSRF secret requirements
+
+**Values:**
+
+- `development` - Development mode (detailed errors, relaxed security)
+- `production` - Production mode (sanitized errors, strict security)
+- `test` - Test mode (test-specific behavior)
+
+#### PORT
+
+Server port number. Defaults to `3000` if not specified.
+
+**Note:** Some platforms (Vercel, Railway) ignore this and use their own port configuration.
+
+#### SENTRY_DSN
+
+Sentry error tracking DSN. Get from [Sentry Dashboard](https://sentry.io).
+
+**Format:** `https://<key>@<org>.ingest.sentry.io/<project-id>`
+
+**When to Use:** Production environments for error monitoring and alerting.
+
+#### REDIS_URL
+
+Redis connection string for distributed caching. Required for multi-instance deployments.
+
+**Format:** `redis://user:password@host:port` or `rediss://...` for SSL
+
+**When to Use:**
+
+- Multiple application instances
+- Need shared cache across instances
+- High availability requirements
+
+#### HTTPS_ONLY
+
+Force HTTPS redirects. Set to `true` in production.
+
+**Security:** Prevents HTTP access and ensures all traffic is encrypted.
+
+#### CSRF_SECRET
+
+CSRF protection secret. Must be at least 32 characters.
+
+**Generate:**
+
+```bash
+openssl rand -hex 32
+# or
+openssl rand -base64 32
+```
+
+**Security:** Required in production. Application will fail to start if missing in production mode.
+
+### Environment Variable Validation
+
+The application validates environment variables at startup using Zod schemas. Validation errors include:
+
+- Missing required variables
+- Invalid formats (e.g., invalid URLs)
+- Invalid values (e.g., wrong key prefixes)
+
+**Validation occurs in:** `src/lib/env.ts`
+
+### Setting Environment Variables
+
+#### Local Development
+
+Create `.env` file:
+
+```bash
+DATABASE_URL="postgresql://..."
+CLERK_SECRET_KEY="sk_test_..."
+VITE_CLERK_PUBLISHABLE_KEY="pk_test_..."
+NODE_ENV="development"
+```
+
+#### Production (Vercel)
+
+1. Go to Vercel Dashboard → Project → Settings → Environment Variables
+2. Add each variable
+3. Select environment (Production, Preview, Development)
+4. Redeploy
+
+#### Production (Railway)
+
+1. Go to Railway Dashboard → Project → Variables
+2. Add each variable
+3. Redeploy
+
+#### Production (Docker)
+
+Use `--env-file`:
+
+```bash
+docker run --env-file .env.production training-certify
+```
+
+Or pass individually:
+
+```bash
+docker run -e DATABASE_URL="..." -e CLERK_SECRET_KEY="..." training-certify
+```
+
+### Environment Variable Security
+
+**DO:**
+
+- ✅ Use secure secret management (Vercel, AWS Secrets Manager, etc.)
+- ✅ Rotate secrets regularly
+- ✅ Use different keys for development and production
+- ✅ Never commit secrets to version control
+- ✅ Use `.env.example` for documentation (without real values)
+
+**DON'T:**
+
+- ❌ Commit `.env` files to Git
+- ❌ Share secrets in chat or email
+- ❌ Use production keys in development
+- ❌ Hardcode secrets in code
+- ❌ Log secrets in application logs
+
+### Troubleshooting Environment Variables
+
+**Error:** `Environment variable validation failed`
+
+**Solution:**
+
+1. Check all required variables are set
+2. Verify variable formats (URLs, key prefixes)
+3. Check for typos or extra spaces
+4. Review validation errors in logs
+
+**Error:** `DATABASE_URL is required`
+
+**Solution:**
+
+- Set `DATABASE_URL` environment variable
+- Or set `POSTGRES_URL` as alternative
+- Verify connection string format
+
+**Error:** `CLERK_SECRET_KEY must start with sk_`
+
+**Solution:**
+
+- Verify key is from Clerk dashboard
+- Check for typos
+- Ensure using correct key type (secret vs publishable)
 
 ---
 
@@ -247,31 +437,254 @@ Set up alerts for:
 
 ---
 
-## Backup Strategy
+## Backup & Recovery Procedures
 
 ### Database Backups
 
-1. **Automated Daily Backups:**
+#### Automated Backups
+
+**Recommended:** Use managed database services with automated backups:
+
+- **Vercel Postgres:** Automatic daily backups (7-day retention)
+- **Railway Postgres:** Automatic backups (configurable retention)
+- **AWS RDS:** Automated backups with point-in-time recovery
+- **Google Cloud SQL:** Automated backups with configurable retention
+
+#### Manual Backup Script
+
+Create a backup script (`scripts/backup-db.sh`):
+
+```bash
+#!/bin/bash
+# Database backup script
+
+BACKUP_DIR="./backups"
+DATE=$(date +%Y%m%d_%H%M%S)
+BACKUP_FILE="$BACKUP_DIR/backup_$DATE.sql"
+
+# Create backup directory if it doesn't exist
+mkdir -p "$BACKUP_DIR"
+
+# Create backup
+pg_dump $DATABASE_URL > "$BACKUP_FILE"
+
+# Compress backup
+gzip "$BACKUP_FILE"
+
+# Remove backups older than 7 days
+find "$BACKUP_DIR" -name "backup_*.sql.gz" -mtime +7 -delete
+
+echo "Backup created: $BACKUP_FILE.gz"
+```
+
+**Schedule with cron:**
+
+```bash
+# Daily backup at 2 AM
+0 2 * * * /path/to/scripts/backup-db.sh
+```
+
+#### Backup Retention Policy
+
+| Backup Type | Frequency    | Retention | Location            |
+| ----------- | ------------ | --------- | ------------------- |
+| Daily       | Every day    | 7 days    | Local/cloud storage |
+| Weekly      | Sunday       | 4 weeks   | Cloud storage       |
+| Monthly     | 1st of month | 12 months | Long-term storage   |
+
+#### Backup Verification
+
+Regularly verify backups are restorable:
+
+```bash
+# Test restore to a test database
+psql $TEST_DATABASE_URL < backup_20260102.sql
+
+# Verify data integrity
+psql $TEST_DATABASE_URL -c "SELECT COUNT(*) FROM users;"
+```
+
+### Database Recovery
+
+#### Point-in-Time Recovery
+
+If using managed database with PITR:
+
+1. **Identify recovery point:**
+   - Check error logs for corruption time
+   - Identify last known good state
+
+2. **Restore from backup:**
+   - Use database provider's restore tool
+   - Select recovery point
+   - Restore to new database instance
+
+3. **Verify restoration:**
 
    ```bash
-   pg_dump $DATABASE_URL > backup_$(date +%Y%m%d).sql
+   # Connect to restored database
+   psql $RESTORED_DATABASE_URL
+
+   # Verify data
+   SELECT COUNT(*) FROM users;
+   SELECT COUNT(*) FROM certifications;
    ```
 
-2. **Retention Policy:**
-   - Daily backups: 7 days
-   - Weekly backups: 4 weeks
-   - Monthly backups: 12 months
+4. **Switch application:**
+   - Update `DATABASE_URL` to restored database
+   - Restart application
+   - Monitor for issues
 
-3. **Test Restoration:**
-   ```bash
-   psql $DATABASE_URL < backup_20260102.sql
-   ```
+#### Full Database Restore
+
+```bash
+# 1. Stop application
+pm2 stop training-certify
+
+# 2. Restore from backup
+psql $DATABASE_URL < backup_20260102.sql
+
+# 3. Verify restoration
+psql $DATABASE_URL -c "SELECT COUNT(*) FROM users;"
+
+# 4. Restart application
+pm2 start training-certify
+
+# 5. Verify application health
+curl http://localhost:3000/health
+```
+
+#### Partial Data Recovery
+
+If only specific tables need recovery:
+
+```bash
+# Restore specific table
+pg_restore -d $DATABASE_URL -t users backup_20260102.sql
+
+# Or restore from SQL dump
+psql $DATABASE_URL -c "\copy users FROM 'users_backup.csv' CSV HEADER;"
+```
 
 ### Application Backups
 
-- Source code: Git repository
-- Environment config: Secure vault
-- User uploads: S3 or similar
+#### Source Code
+
+- **Backup:** Git repository (already versioned)
+- **Recovery:** `git checkout <commit-hash>`
+- **Best Practice:** Regular commits, tagged releases
+
+#### Environment Configuration
+
+- **Backup:** Secure vault (Vercel, AWS Secrets Manager, etc.)
+- **Recovery:** Restore from vault
+- **Best Practice:** Document all environment variables
+
+#### User Uploads (If Applicable)
+
+If storing user-uploaded files:
+
+- **Backup:** S3, Google Cloud Storage, etc.
+- **Recovery:** Restore from cloud storage
+- **Best Practice:** Enable versioning on storage bucket
+
+### Disaster Recovery Plan
+
+#### Scenario 1: Database Corruption
+
+1. **Immediate Actions:**
+   - Stop application
+   - Isolate corrupted database
+   - Assess damage scope
+
+2. **Recovery Steps:**
+   - Restore from most recent backup
+   - Verify data integrity
+   - Restart application
+   - Monitor for issues
+
+3. **Post-Recovery:**
+   - Investigate root cause
+   - Improve backup frequency if needed
+   - Document incident
+
+#### Scenario 2: Complete System Failure
+
+1. **Immediate Actions:**
+   - Assess damage
+   - Notify team
+   - Activate disaster recovery plan
+
+2. **Recovery Steps:**
+   - Restore database from backup
+   - Redeploy application
+   - Restore environment variables
+   - Verify all services
+
+3. **Post-Recovery:**
+   - Full system verification
+   - Data integrity checks
+   - Post-mortem analysis
+
+#### Scenario 3: Data Loss
+
+1. **Immediate Actions:**
+   - Stop application to prevent further loss
+   - Identify data loss scope
+   - Check backup availability
+
+2. **Recovery Steps:**
+   - Restore from backup
+   - Identify missing data
+   - Restore missing data if possible
+   - Verify data integrity
+
+3. **Post-Recovery:**
+   - Notify affected users (if applicable)
+   - Improve data protection
+   - Document incident
+
+### Backup Testing
+
+**Regular Testing Schedule:**
+
+- **Monthly:** Test restore procedure
+- **Quarterly:** Full disaster recovery drill
+- **After major changes:** Verify backup process
+
+**Testing Checklist:**
+
+- [ ] Backup created successfully
+- [ ] Backup file is valid
+- [ ] Restore procedure works
+- [ ] Data integrity verified
+- [ ] Application works after restore
+- [ ] Recovery time documented
+
+### Backup Storage Locations
+
+**Recommended:**
+
+- **Primary:** Cloud storage (S3, Google Cloud Storage)
+- **Secondary:** Different region/cloud provider
+- **Local:** Keep recent backups locally for quick access
+
+**Security:**
+
+- Encrypt backups at rest
+- Use secure access controls
+- Regular access audits
+- Test restore permissions
+
+### Recovery Time Objectives (RTO) & Recovery Point Objectives (RPO)
+
+| Scenario            | RTO (Recovery Time) | RPO (Data Loss) |
+| ------------------- | ------------------- | --------------- |
+| Database corruption | 1 hour              | 24 hours        |
+| Complete failure    | 4 hours             | 24 hours        |
+| Data loss           | 2 hours             | 24 hours        |
+
+**Note:** These are targets. Actual times depend on backup frequency and system complexity.
 
 ---
 

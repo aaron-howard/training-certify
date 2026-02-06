@@ -12,6 +12,7 @@ import {
 import { AppError } from '../lib/errors'
 import { RateLimitPresets } from '../lib/rateLimit.server'
 import { setupReadHandler } from '../lib/api-helpers.server'
+import { logError } from '../lib/logging.server'
 
 export const Route = createFileRoute('/api/export')({
   server: {
@@ -33,35 +34,37 @@ export const Route = createFileRoute('/api/export')({
 
           if (type === 'teams') {
             const allTeams = await db.select().from(teams)
-            
+
             // Batch query: Get all team members for all teams at once
             const teamIds = allTeams.map((t) => t.id)
-            const allMembers = teamIds.length > 0
-              ? await db
-                  .select({
-                    teamId: userTeams.teamId,
-                    id: users.id,
-                    name: users.name,
-                    email: users.email,
-                    role: users.role,
-                  })
-                  .from(userTeams)
-                  .innerJoin(users, eq(userTeams.userId, users.id))
-                  .where(inArray(userTeams.teamId, teamIds))
-              : []
+            const allMembers =
+              teamIds.length > 0
+                ? await db
+                    .select({
+                      teamId: userTeams.teamId,
+                      id: users.id,
+                      name: users.name,
+                      email: users.email,
+                      role: users.role,
+                    })
+                    .from(userTeams)
+                    .innerJoin(users, eq(userTeams.userId, users.id))
+                    .where(inArray(userTeams.teamId, teamIds))
+                : []
 
             // Batch query: Get all requirements for all teams at once
-            const allRequirements = teamIds.length > 0
-              ? await db
-                  .select({
-                    teamId: teamRequirements.teamId,
-                    id: teamRequirements.id,
-                    certificationId: teamRequirements.certificationId,
-                    targetCount: teamRequirements.targetCount,
-                  })
-                  .from(teamRequirements)
-                  .where(inArray(teamRequirements.teamId, teamIds))
-              : []
+            const allRequirements =
+              teamIds.length > 0
+                ? await db
+                    .select({
+                      teamId: teamRequirements.teamId,
+                      id: teamRequirements.id,
+                      certificationId: teamRequirements.certificationId,
+                      targetCount: teamRequirements.targetCount,
+                    })
+                    .from(teamRequirements)
+                    .where(inArray(teamRequirements.teamId, teamIds))
+                : []
 
             // Group members and requirements by teamId
             const membersByTeam = new Map<string, typeof allMembers>()
@@ -87,7 +90,7 @@ export const Route = createFileRoute('/api/export')({
             const teamsWithDetails = allTeams.map((team) => {
               const members = membersByTeam.get(team.id) || []
               const requirements = requirementsByTeam.get(team.id) || []
-              
+
               return {
                 ...team,
                 memberCount: members.length,
@@ -155,9 +158,16 @@ export const Route = createFileRoute('/api/export')({
           })
         } catch (error) {
           if (error instanceof AppError) {
-            return json({ error: error.message, code: error.code }, { status: error.statusCode })
+            return json(
+              { error: error.message, code: error.code },
+              { status: error.statusCode },
+            )
           }
-          console.error('❌ [API Export GET] Unexpected Error:', error)
+          logError(
+            error,
+            { route: 'GET /api/export' },
+            'Unexpected error in GET /api/export',
+          )
           return json({ error: 'Internal server error' }, { status: 500 })
         }
       },

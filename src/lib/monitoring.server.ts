@@ -2,40 +2,49 @@ import {
   captureError as sentryCaptureError,
   captureMessage as sentryCaptureMessage,
 } from './sentry.server'
+import { logger } from './logging.server'
 
 /**
  * Initialize monitoring services
  * Call this at application startup
  */
 export function initMonitoring() {
-  console.log('🔧 Initializing monitoring services...')
+  logger.info({ service: 'monitoring' }, 'Initializing monitoring services')
 
   // Check for Sentry DSN
   if (process.env.SENTRY_DSN) {
-    console.log('✅ Sentry error tracking enabled')
+    logger.info({ service: 'sentry' }, 'Sentry error tracking enabled')
     // Note: Sentry is initialized in src/entry-server.tsx on server startup
     // This function is for metrics collection only
   } else {
-    console.log('⚠️  Sentry DSN not configured - error tracking disabled')
+    logger.warn(
+      { service: 'sentry' },
+      'Sentry DSN not configured - error tracking disabled',
+    )
   }
 
   // Initialize metrics collection
   initMetrics()
 
-  console.log('✅ Monitoring initialized')
+  logger.info({ service: 'monitoring' }, 'Monitoring initialized')
 }
 
 /**
  * Capture an error with context
  */
 export function captureError(error: Error, context?: Record<string, any>) {
-  // Log to console
-  console.error('❌ Error captured:', {
-    message: error.message,
-    stack: error.stack,
-    context,
-    timestamp: new Date().toISOString(),
-  })
+  // Log using structured logger
+  logger.error(
+    {
+      error: {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+      },
+      ...context,
+    },
+    'Error captured',
+  )
 
   // Send to Sentry
   sentryCaptureError(error, context)
@@ -49,8 +58,15 @@ export function captureMessage(
   level: 'info' | 'warning' | 'error' = 'info',
   context?: Record<string, any>,
 ) {
-  const emoji = level === 'error' ? '❌' : level === 'warning' ? '⚠️' : 'ℹ️'
-  console.log(`${emoji} ${message}`, context || '')
+  // Log using structured logger
+  const logContext = context || {}
+  if (level === 'error') {
+    logger.error(logContext, message)
+  } else if (level === 'warning') {
+    logger.warn(logContext, message)
+  } else {
+    logger.info(logContext, message)
+  }
 
   // Send to Sentry
   sentryCaptureMessage(message, level)

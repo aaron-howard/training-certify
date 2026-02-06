@@ -3,10 +3,13 @@ import { json } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 import { getDbOrThrow } from '../db/db.server'
 import { certifications, teamRequirements, teams } from '../db/schema'
-import { requireRole } from '../lib/auth.server'
-import { getCSRFTokenFromRequest, requireCSRFToken } from '../lib/csrf.server'
-import { AppError, ForbiddenError, ValidationError } from '../lib/errors'
+import { ForbiddenError, ValidationError } from '../lib/errors'
 import { TeamRequirementSchema } from '../lib/validation'
+import {
+  handleApiError,
+  setupMutationHandler,
+  setupReadHandler,
+} from '../lib/api-helpers.server'
 import type { AuthSession } from '../lib/auth.server'
 
 async function checkTeamManagementOrThrow(
@@ -33,13 +36,7 @@ export const Route = createFileRoute('/api/team-requirements')({
     handlers: {
       GET: async ({ request }) => {
         try {
-          await requireRole([
-            'Admin',
-            'Manager',
-            'Auditor',
-            'Executive',
-            'User',
-          ])
+          await setupReadHandler(request)
 
           const url = new URL(request.url)
           const teamId = url.searchParams.get('teamId')
@@ -64,23 +61,23 @@ export const Route = createFileRoute('/api/team-requirements')({
 
           return json(requirements)
         } catch (error) {
-          if (error instanceof AppError) {
-            return json({ error: error.message, code: error.code }, { status: error.statusCode })
-          }
-          console.error('❌ [API Team Requirements GET] Unexpected Error:', error)
-          return json({ error: 'Internal server error' }, { status: 500 })
+          return handleApiError(error, 'GET /api/team-requirements')
         }
       },
       POST: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin', 'Manager'])
-          requireCSRFToken(getCSRFTokenFromRequest(request))
+          const session = await setupMutationHandler(request, {
+            allowedRoles: ['Admin', 'Manager'],
+          })
 
           const rawData = await request.json()
           const validation = TeamRequirementSchema.safeParse(rawData)
 
           if (!validation.success) {
-            throw new ValidationError('Invalid team requirement data', validation.error.errors)
+            throw new ValidationError(
+              'Invalid team requirement data',
+              validation.error.errors,
+            )
           }
 
           const data = validation.data
@@ -106,17 +103,14 @@ export const Route = createFileRoute('/api/team-requirements')({
 
           return json(result[0], { status: 201 })
         } catch (error) {
-          if (error instanceof AppError) {
-            return json({ error: error.message, code: error.code }, { status: error.statusCode })
-          }
-          console.error('❌ [API Team Requirements POST] Unexpected Error:', error)
-          return json({ error: 'Internal server error' }, { status: 500 })
+          return handleApiError(error, 'POST /api/team-requirements')
         }
       },
       DELETE: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin', 'Manager'])
-          requireCSRFToken(getCSRFTokenFromRequest(request))
+          const session = await setupMutationHandler(request, {
+            allowedRoles: ['Admin', 'Manager'],
+          })
 
           const url = new URL(request.url)
           const id = url.searchParams.get('id')
@@ -139,11 +133,7 @@ export const Route = createFileRoute('/api/team-requirements')({
           await db.delete(teamRequirements).where(eq(teamRequirements.id, id))
           return json({ success: true })
         } catch (error) {
-          if (error instanceof AppError) {
-            return json({ error: error.message, code: error.code }, { status: error.statusCode })
-          }
-          console.error('❌ [API Team Requirements DELETE] Unexpected Error:', error)
-          return json({ error: 'Internal server error' }, { status: 500 })
+          return handleApiError(error, 'DELETE /api/team-requirements')
         }
       },
     },

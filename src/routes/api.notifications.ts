@@ -3,22 +3,14 @@ import { json } from '@tanstack/react-start'
 import { and, desc, eq } from 'drizzle-orm'
 import { getDbOrThrow } from '../db/db.server'
 import { notifications } from '../db/schema'
-import { requireRole } from '../lib/auth.server'
-import { AppError } from '../lib/errors'
+import { handleApiError, setupReadHandler } from '../lib/api-helpers.server'
 
 export const Route = createFileRoute('/api/notifications')({
   server: {
     handlers: {
-      GET: async () => {
+      GET: async ({ request }) => {
         try {
-          // Security: Authenticate and get current user ID
-          const session = await requireRole([
-            'Admin',
-            'Manager',
-            'Auditor',
-            'Executive',
-            'User',
-          ])
+          const session = await setupReadHandler(request)
 
           const db = await getDbOrThrow()
 
@@ -46,11 +38,7 @@ export const Route = createFileRoute('/api/notifications')({
             })),
           )
         } catch (error) {
-          if (error instanceof AppError) {
-            return json({ error: error.message, code: error.code }, { status: error.statusCode })
-          }
-          console.error('❌ [API Notifications GET] Unexpected Error:', error)
-          return json({ error: 'Internal server error' }, { status: 500 })
+          return handleApiError(error, 'GET /api/notifications')
         }
       },
     },

@@ -11,7 +11,24 @@ import { validateCategory, validateDifficulty } from '../lib/enum-helpers'
 import { UpdateCatalogCertificationSchema } from '../lib/validation'
 import { ValidationError } from '../lib/errors'
 import { getAuthenticatedUser, requireRole } from '../lib/auth.server'
+import { logError, logInfo } from '../lib/logging.server'
 
+/**
+ * Server function to retrieve the certification catalog.
+ *
+ * Fetches all certifications from the catalog and returns them in a simplified
+ * format suitable for display in the UI.
+ *
+ * @returns Promise that resolves to an object containing:
+ *   - certifications: Array of catalog entries with id, name, vendor, and level
+ * @throws {Error} If database is unavailable
+ *
+ * @example
+ * ```typescript
+ * const catalog = await getCatalog()
+ * console.log(`Found ${catalog.certifications.length} certifications`)
+ * ```
+ */
 export const getCatalog = createServerFn({ method: 'GET' }).handler(
   async () => {
     const { getDb, instanceId } = await import('../db/db.server')
@@ -30,12 +47,29 @@ export const getCatalog = createServerFn({ method: 'GET' }).handler(
         })),
       }
     } catch (error) {
-      console.error('Failed to fetch catalog:', error)
+      logError(error, { function: 'getCatalog' }, 'Failed to fetch catalog')
       return { certifications: [] }
     }
   },
 )
 
+/**
+ * Server function to retrieve compliance audit data.
+ *
+ * Fetches recent audit logs and calculates compliance statistics.
+ * Returns the last 10 audit log entries along with compliance metrics.
+ *
+ * @returns Promise that resolves to an object containing:
+ *   - auditLogs: Array of audit log entries (last 10)
+ *   - stats: Object with complianceRate, totalAudits, and issuesFound
+ * @throws {Error} If database is unavailable
+ *
+ * @example
+ * ```typescript
+ * const compliance = await getComplianceData()
+ * console.log(`Compliance rate: ${compliance.stats.complianceRate}%`)
+ * ```
+ */
 export const getComplianceData = createServerFn({ method: 'GET' }).handler(
   async () => {
     const { getDb } = await import('../db/db.server')
@@ -60,7 +94,11 @@ export const getComplianceData = createServerFn({ method: 'GET' }).handler(
         stats: { complianceRate: 88, totalAudits: logs.length, issuesFound: 1 },
       }
     } catch (error) {
-      console.error('Failed to fetch compliance data:', error)
+      logError(
+        error,
+        { function: 'getComplianceData' },
+        'Failed to fetch compliance data',
+      )
       return {
         auditLogs: [],
         stats: { complianceRate: 0, totalAudits: 0, issuesFound: 0 },
@@ -69,6 +107,21 @@ export const getComplianceData = createServerFn({ method: 'GET' }).handler(
   },
 )
 
+/**
+ * Server function to retrieve user notifications.
+ *
+ * Fetches notifications for the authenticated user. This function should
+ * filter by userId in a production environment.
+ *
+ * @returns Promise that resolves to an array of notification objects
+ * @throws {Error} If database is unavailable
+ *
+ * @example
+ * ```typescript
+ * const notifications = await getNotifications()
+ * console.log(`You have ${notifications.length} notifications`)
+ * ```
+ */
 export const getNotifications = createServerFn({ method: 'GET' }).handler(
   async () => {
     const { getDb } = await import('../db/db.server')
@@ -91,12 +144,36 @@ export const getNotifications = createServerFn({ method: 'GET' }).handler(
         read: n.isRead,
       }))
     } catch (error) {
-      console.error('❌ [Server] Failed:', error)
+      logError(
+        error,
+        { function: 'getNotifications' },
+        'Failed to fetch notifications',
+      )
       return []
     }
   },
 )
 
+/**
+ * Server function to retrieve dashboard statistics.
+ *
+ * Calculates and returns key metrics for the dashboard, including:
+ * - Active certifications count
+ * - Expiring soon certifications count
+ * - Compliance rate
+ *
+ * @returns Promise that resolves to an object containing:
+ *   - activeCerts: number - Count of active/expiring certifications
+ *   - expiringSoon: number - Count of certifications expiring soon
+ *   - complianceRate: number - Compliance rate percentage (0-100)
+ * @throws {Error} If database is unavailable
+ *
+ * @example
+ * ```typescript
+ * const stats = await getDashboardStats()
+ * console.log(`Active certs: ${stats.activeCerts}, Compliance: ${stats.complianceRate}%`)
+ * ```
+ */
 export const getDashboardStats = createServerFn({ method: 'GET' }).handler(
   async () => {
     const { getDb } = await import('../db/db.server')
@@ -122,12 +199,54 @@ export const getDashboardStats = createServerFn({ method: 'GET' }).handler(
         complianceRate: 88, // Mocked for now
       }
     } catch (error) {
-      console.error('❌ [Server] Failed to fetch dashboard stats:', error)
+      logError(
+        error,
+        { function: 'getDashboardStats' },
+        'Failed to fetch dashboard stats',
+      )
       return { activeCerts: 0, expiringSoon: 0, complianceRate: 0 }
     }
   },
 )
 
+/**
+ * Server function to create a new certification in the catalog.
+ *
+ * Adds a new certification entry to the catalog. Only accessible by Admins.
+ * Validates category and difficulty using enum helpers before insertion.
+ *
+ * **Authorization:** Admin role required
+ * **CSRF Protection:** Automatically handled by TanStack Start for server functions
+ *
+ * @param data - Input data:
+ *   - cert: Record<string, unknown> (required) - Certification data object with:
+ *     - id: string (required) - Certification ID
+ *     - name: string (required) - Certification name
+ *     - vendorId: string (optional) - Vendor ID
+ *     - vendorName: string (required) - Vendor name
+ *     - category?: string (optional) - Category (validated against enum)
+ *     - difficulty?: string (optional) - Difficulty level (validated against enum)
+ *     - description?: string (optional) - Certification description
+ *   - adminId: string (required) - Admin user ID (for audit purposes)
+ *
+ * @returns Promise that resolves to the created certification object
+ * @throws {ForbiddenError} If caller is not an Admin
+ * @throws {Error} If database is unavailable
+ *
+ * @example
+ * ```typescript
+ * const cert = await createCatalogCertification({
+ *   cert: {
+ *     id: 'ms-az-104',
+ *     name: 'Azure Administrator',
+ *     vendorName: 'Microsoft',
+ *     category: 'Cloud',
+ *     difficulty: 'Intermediate'
+ *   },
+ *   adminId: 'admin_123'
+ * })
+ * ```
+ */
 export const createCatalogCertification = createServerFn({ method: 'POST' })
   .inputValidator(
     (data: { cert: Record<string, unknown>; adminId: string }) => data,
@@ -163,7 +282,11 @@ export const createCatalogCertification = createServerFn({ method: 'POST' })
         .returning()
       return result[0]
     } catch (error) {
-      console.error('❌ [Server] Failed to create catalog cert:', error)
+      logError(
+        error,
+        { function: 'createCatalogCertification' },
+        'Failed to create catalog certification',
+      )
       throw error
     }
   })
@@ -183,18 +306,27 @@ export const updateCatalogCertification = createServerFn({ method: 'POST' })
       await requireRole(['Admin'])
 
       // Validate updates with Zod schema
-      const validation = UpdateCatalogCertificationSchema.safeParse(data.updates)
+      const validation = UpdateCatalogCertificationSchema.safeParse(
+        data.updates,
+      )
       if (!validation.success) {
-        throw new ValidationError('Invalid catalog update data', validation.error.errors)
+        throw new ValidationError(
+          'Invalid catalog update data',
+          validation.error.errors,
+        )
       }
 
       // Validate category and difficulty if provided
       const validatedUpdates: Record<string, unknown> = { ...validation.data }
       if (validatedUpdates.category) {
-        validatedUpdates.category = validateCategory(String(validatedUpdates.category))
+        validatedUpdates.category = validateCategory(
+          String(validatedUpdates.category),
+        )
       }
       if (validatedUpdates.difficulty) {
-        validatedUpdates.difficulty = validateDifficulty(String(validatedUpdates.difficulty))
+        validatedUpdates.difficulty = validateDifficulty(
+          String(validatedUpdates.difficulty),
+        )
       }
 
       const result = await db
@@ -209,7 +341,11 @@ export const updateCatalogCertification = createServerFn({ method: 'POST' })
 
       return result[0]
     } catch (error) {
-      console.error('❌ [Server] Failed to update catalog cert:', error)
+      logError(
+        error,
+        { function: 'updateCatalogCertification' },
+        'Failed to update catalog certification',
+      )
       throw error
     }
   })
@@ -228,7 +364,11 @@ export const deleteCatalogCertification = createServerFn({ method: 'POST' })
       await db.delete(certifications).where(eq(certifications.id, data.id))
       return { success: true }
     } catch (error) {
-      console.error('❌ [Server] Failed to delete catalog cert:', error)
+      logError(
+        error,
+        { function: 'deleteCatalogCertification', certificationId: data.id },
+        'Failed to delete catalog certification',
+      )
       throw error
     }
   })
@@ -280,7 +420,10 @@ export const seedCatalog = createServerFn({ method: 'POST' }).handler(
         },
       ]
 
-      console.log('🌱 [Server] Seeding catalog...')
+      logInfo('Seeding catalog', {
+        function: 'seedCatalog',
+        count: certsToSeed.length,
+      })
       for (const cert of certsToSeed) {
         await db.insert(certifications).values(cert).onConflictDoUpdate({
           target: certifications.id,
@@ -290,7 +433,7 @@ export const seedCatalog = createServerFn({ method: 'POST' }).handler(
 
       return { success: true, count: certsToSeed.length }
     } catch (error) {
-      console.error('❌ [Server] Seeding failed:', error)
+      logError(error, { function: 'seedCatalog' }, 'Seeding catalog failed')
       throw error
     }
   },
@@ -307,7 +450,10 @@ export const syncCatalog = createServerFn({ method: 'POST' })
       // Use centralized auth helper
       await requireRole(['Admin'])
 
-      console.log('🔄 [Server] Triggering ITExams Sync...')
+      logInfo('Triggering ITExams Sync', {
+        function: 'syncCatalog',
+        limit: data.limit,
+      })
       const result = await syncCatalogFromITExams(data.limit)
 
       // Log the action using authenticated user
@@ -322,7 +468,7 @@ export const syncCatalog = createServerFn({ method: 'POST' })
 
       return { success: true, count: result.totalProcessed }
     } catch (error) {
-      console.error('❌ [Server] Sync failed:', error)
+      logError(error, { function: 'syncCatalog' }, 'Catalog sync failed')
       throw error
     }
   })
@@ -337,13 +483,13 @@ export const clearCatalog = createServerFn({ method: 'POST' })
       // Use centralized auth helper
       await requireRole(['Admin'])
 
-      console.log('⚠️ [Server] Clearing catalog...')
+      logInfo('Clearing catalog', { function: 'clearCatalog' })
       await db.delete(userCertifications)
       await db.delete(certifications)
 
       return { success: true }
     } catch (error) {
-      console.error('❌ [Server] Clearing failed:', error)
+      logError(error, { function: 'clearCatalog' }, 'Clearing catalog failed')
       throw error
     }
   })

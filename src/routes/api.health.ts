@@ -2,6 +2,8 @@ import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { getDb } from '../db/db.server'
 import { requireRateLimit } from '../lib/rateLimit.server'
+import { handleApiError } from '../lib/api-helpers.server'
+import { logError } from '../lib/logging.server'
 
 export const Route = createFileRoute('/api/health' as any)({
   ssr: true,
@@ -11,9 +13,10 @@ export const Route = createFileRoute('/api/health' as any)({
         try {
           // Apply rate limiting (health checks can be abused for DoS)
           // Use IP address or a generic identifier since health checks may not be authenticated
-          const clientId = request.headers.get('x-forwarded-for')?.split(',')[0] || 
-                          request.headers.get('x-real-ip') || 
-                          'unknown'
+          const clientId =
+            request.headers.get('x-forwarded-for')?.split(',')[0] ||
+            request.headers.get('x-real-ip') ||
+            'unknown'
           await requireRateLimit(`health:${clientId}`, {
             windowMs: 60000, // 1 minute
             maxRequests: 10, // 10 requests per minute per IP
@@ -34,7 +37,11 @@ export const Route = createFileRoute('/api/health' as any)({
             } catch (error) {
               dbStatus = 'error'
               dbError = error instanceof Error ? error.message : String(error)
-              console.error('❌ [Health Check] Database query failed:', error)
+              logError(
+                error,
+                { route: 'GET /api/health', check: 'database' },
+                'Database query failed in health check',
+              )
             }
           } else {
             dbStatus = 'disconnected'
@@ -50,7 +57,8 @@ export const Route = createFileRoute('/api/health' as any)({
 
           const allEnvSet = Object.values(envStatus).every(Boolean)
 
-          const statusCode = isHealthy && dbStatus === 'connected' && allEnvSet ? 200 : 503
+          const statusCode =
+            isHealthy && dbStatus === 'connected' && allEnvSet ? 200 : 503
           const isFullyHealthy = statusCode === 200
 
           return json(
@@ -70,18 +78,11 @@ export const Route = createFileRoute('/api/health' as any)({
                 },
               },
             },
-            { status: statusCode }
+            { status: statusCode },
           )
         } catch (error) {
-          console.error('❌ [Health Check] Unexpected error:', error)
-          return json(
-            {
-              status: 'unhealthy',
-              timestamp: new Date().toISOString(),
-              error: error instanceof Error ? error.message : String(error),
-            },
-            { status: 503 }
-          )
+          // Health check has special error format, but use handleApiError for consistency
+          return handleApiError(error, 'GET /api/health')
         }
       },
     },

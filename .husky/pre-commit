@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+# Husky v9+ doesn't require the husky.sh file
+
+# Run Prettier formatting check (non-destructive, just check)
+echo "🔍 Checking code formatting..."
+npm run format:check || {
+  echo "❌ Code formatting check failed. Run 'npm run format' to fix."
+  exit 1
+}
+
+# Run ESLint
+echo "🔍 Running ESLint..."
+npm run lint || {
+  echo "❌ ESLint check failed. Fix the errors above."
+  exit 1
+}
+
+# Run TypeScript type check
+echo "🔍 Running TypeScript type check..."
+npm run type-check || {
+  echo "❌ TypeScript type check failed. Fix the errors above."
+  exit 1
+}
+
+echo "✅ All pre-commit checks passed!"

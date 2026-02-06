@@ -64,8 +64,11 @@ function CatalogPage() {
   const [difficultyFilter, setDifficultyFilter] = useState('All')
   const [categoryFilter, setCategoryFilter] = useState('All')
   const [showAddModal, setShowAddModal] = useState(false)
-  const [selectedCert, setSelectedCert] = useState<CatalogCertification | null>(null)
-  const [assigningCert, setAssigningCert] = useState<CatalogCertification | null>(null)
+  const [selectedCert, setSelectedCert] = useState<CatalogCertification | null>(
+    null,
+  )
+  const [assigningCert, setAssigningCert] =
+    useState<CatalogCertification | null>(null)
   const [newCert, setNewCert] = useState({
     id: '',
     name: '',
@@ -112,7 +115,9 @@ function CatalogPage() {
   const vendors = useMemo<Array<string>>(() => {
     if (!catalog?.certifications) return ['All']
     const uniqueVendors = Array.from(
-      new Set(catalog.certifications.map((c: CatalogCertification) => c.vendor)),
+      new Set(
+        catalog.certifications.map((c: CatalogCertification) => c.vendor),
+      ),
     ).filter((v): v is string => !!v)
     return ['All', ...uniqueVendors.sort()]
   }, [catalog?.certifications])
@@ -121,7 +126,9 @@ function CatalogPage() {
   const categories = useMemo<Array<string>>(() => {
     if (!catalog?.certifications) return ['All']
     const uniqueCategories = Array.from(
-      new Set(catalog.certifications.map((c: CatalogCertification) => c.category)),
+      new Set(
+        catalog.certifications.map((c: CatalogCertification) => c.category),
+      ),
     ).filter((c): c is string => !!c)
     return ['All', ...uniqueCategories.sort()]
   }, [catalog?.certifications])

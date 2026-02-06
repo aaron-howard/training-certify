@@ -4,11 +4,12 @@
  */
 
 import { json } from '@tanstack/react-start'
+import { logError } from './logging.server'
 import { AppError, ValidationError } from './errors'
 import { requireRole } from './auth.server'
 import { RateLimitPresets, requireRateLimit } from './rateLimit.server'
 import { getCSRFTokenFromRequest, requireCSRFToken } from './csrf.server'
-import type { AuthSession } from './auth.server';
+import type { AuthSession } from './auth.server'
 // Request is a global type in modern environments
 
 /**
@@ -22,33 +23,33 @@ function sanitizeErrorMessage(message: string, isProduction: boolean): string {
 
   // Remove file paths
   let sanitized = message.replace(/\/[^\s]+/g, '[path]')
-  
+
   // Remove stack trace indicators
   sanitized = sanitized.replace(/at\s+.*/g, '')
-  
+
   // Remove sensitive patterns (database connection strings, etc.)
   sanitized = sanitized.replace(/postgresql:\/\/[^\s]+/g, '[database]')
   sanitized = sanitized.replace(/mongodb:\/\/[^\s]+/g, '[database]')
-  
+
   // Remove common sensitive info
   sanitized = sanitized.replace(/password[=:]\S+/gi, 'password=[redacted]')
   sanitized = sanitized.replace(/secret[=:]\S+/gi, 'secret=[redacted]')
   sanitized = sanitized.replace(/key[=:]\S+/gi, 'key=[redacted]')
-  
+
   return sanitized.trim() || 'An error occurred'
 }
 
 /**
  * Standard error handler for API routes.
  * Returns appropriate JSON response based on error type.
- * 
+ *
  * @param error - The error that occurred (can be AppError or unknown)
  * @param context - Context string for logging (e.g., 'API Users GET')
  * @returns JSON response with appropriate status code
  */
 export function handleApiError(error: unknown, context: string): Response {
   const isProduction = process.env.NODE_ENV === 'production'
-  
+
   if (error instanceof AppError) {
     const sanitizedMessage = sanitizeErrorMessage(error.message, isProduction)
     return json(
@@ -57,13 +58,13 @@ export function handleApiError(error: unknown, context: string): Response {
         code: error.code,
         ...(error instanceof ValidationError && { details: error.errors }),
       },
-      { status: error.statusCode }
+      { status: error.statusCode },
     )
   }
 
-  // Log full error details server-side
-  console.error(`❌ [${context}] Unexpected Error:`, error)
-  
+  // Log full error details server-side using structured logging
+  logError(error, { context }, `Unexpected error in ${context}`)
+
   // Return generic message to client in production
   return json({ error: 'Internal server error' }, { status: 500 })
 }
@@ -71,14 +72,14 @@ export function handleApiError(error: unknown, context: string): Response {
 /**
  * Wrapper for API handlers with standard error handling.
  * Catches all errors and converts them to appropriate HTTP responses.
- * 
+ *
  * @param handler - Async function that returns the handler result
  * @param context - Context string for error logging
  * @returns Promise that resolves to a Response
  */
 export function withErrorHandling<T extends Response>(
   handler: () => Promise<T>,
-  _context: string
+  _context: string,
 ): Promise<Response> {
   return handler().catch((error) => handleApiError(error, _context))
 }
@@ -89,14 +90,14 @@ export function withErrorHandling<T extends Response>(
  */
 export interface ApiHandlerOptions {
   allowedRoles?: Array<string>
-  rateLimit?: typeof RateLimitPresets[keyof typeof RateLimitPresets]
+  rateLimit?: (typeof RateLimitPresets)[keyof typeof RateLimitPresets]
   requireCSRF?: boolean
 }
 
 /**
  * Setup authentication, rate limiting, and CSRF protection for an API handler.
  * This is a convenience function that combines common middleware operations.
- * 
+ *
  * @param request - The incoming request object
  * @param options - Configuration options:
  *   - allowedRoles: Array of roles allowed to access (default: all roles)
@@ -109,7 +110,7 @@ export interface ApiHandlerOptions {
  */
 export async function setupApiHandler(
   request: Request,
-  options: ApiHandlerOptions = {}
+  options: ApiHandlerOptions = {},
 ): Promise<AuthSession> {
   const {
     allowedRoles = ['Admin', 'Manager', 'Auditor', 'Executive', 'User'],
@@ -136,7 +137,7 @@ export async function setupApiHandler(
 /**
  * Helper for mutation handlers (POST, PATCH, DELETE).
  * Includes CSRF protection and mutation rate limiting by default.
- * 
+ *
  * @param request - The incoming request object
  * @param options - Configuration options (CSRF defaults to true, rateLimit defaults to MUTATION)
  * @returns Authenticated session object
@@ -146,7 +147,9 @@ export async function setupApiHandler(
  */
 export async function setupMutationHandler(
   request: Request,
-  options: Omit<ApiHandlerOptions, 'requireCSRF'> & { requireCSRF?: boolean } = {}
+  options: Omit<ApiHandlerOptions, 'requireCSRF'> & {
+    requireCSRF?: boolean
+  } = {},
 ): Promise<AuthSession> {
   return setupApiHandler(request, {
     ...options,
@@ -158,7 +161,7 @@ export async function setupMutationHandler(
 /**
  * Helper for read handlers (GET).
  * Includes read rate limiting by default (more lenient than mutations).
- * 
+ *
  * @param request - The incoming request object
  * @param options - Configuration options (rateLimit defaults to READ)
  * @returns Authenticated session object
@@ -168,10 +171,10 @@ export async function setupMutationHandler(
  */
 export async function setupReadHandler(
   request: Request,
-  options: ApiHandlerOptions = {}
+  options: ApiHandlerOptions = {},
 ): Promise<AuthSession> {
   return setupApiHandler(request, {
     ...options,
-    rateLimit: (options as any).rateLimit || RateLimitPresets.READ,
+    rateLimit: options.rateLimit || RateLimitPresets.READ,
   })
 }

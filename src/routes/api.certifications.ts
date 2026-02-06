@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
-import { desc, eq } from 'drizzle-orm'
+import { count, desc, eq } from 'drizzle-orm'
 import { getDbOrThrow } from '../db/db.server'
 import {
   auditLogs,
@@ -10,14 +10,21 @@ import {
   userCertifications,
   userTeams,
 } from '../db/schema'
-import { requireRole } from '../lib/auth.server'
-import { RateLimitPresets, requireRateLimit } from '../lib/rateLimit.server'
-import { getCSRFTokenFromRequest, requireCSRFToken } from '../lib/csrf.server'
-import { AppError, ForbiddenError, NotFoundError, ValidationError } from '../lib/errors'
+import { ForbiddenError, NotFoundError, ValidationError } from '../lib/errors'
+import {
+  handleApiError,
+  setupMutationHandler,
+  setupReadHandler,
+} from '../lib/api-helpers.server'
 import {
   CertificationPatchSchema,
-  CreateUserCertificationSchema
+  CreateUserCertificationSchema,
 } from '../lib/validation'
+import { invalidateCache } from '../lib/cache.server'
+import {
+  createPaginatedResponse,
+  parsePaginationParams,
+} from '../lib/pagination.server'
 import type { AuthSession } from '../lib/auth.server'
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
 import type * as schema from '../db/schema'
@@ -69,13 +76,7 @@ export const Route = createFileRoute('/api/certifications')({
     handlers: {
       GET: async ({ request }) => {
         try {
-          const session = await requireRole([
-            'Admin',
-            'Manager',
-            'Auditor',
-            'Executive',
-            'User',
-          ])
+          const session = await setupReadHandler(request)
           const url = new URL(request.url)
           const userIdParam = url.searchParams.get('userId')
           const certId = url.searchParams.get('id')
@@ -90,11 +91,14 @@ export const Route = createFileRoute('/api/certifications')({
               .where(eq(userCertifications.id, certId))
               .limit(1)
 
-            if (certResult.length === 0) throw new NotFoundError('Certification not found')
+            if (certResult.length === 0)
+              throw new NotFoundError('Certification not found')
 
             const cert = certResult[0]
             if (!(await checkAuthority(db, session, cert.userId))) {
-              throw new ForbiddenError('You do not have permission to view this certification')
+              throw new ForbiddenError(
+                'You do not have permission to view this certification',
+              )
             }
 
             const proofs = await db
@@ -109,7 +113,9 @@ export const Route = createFileRoute('/api/certifications')({
           // If requesting by user
           if (userIdParam) {
             if (!(await checkAuthority(db, session, userIdParam))) {
-              throw new ForbiddenError('You do not have permission to view this user\'s certifications')
+              throw new ForbiddenError(
+                "You do not have permission to view this user's certifications",
+              )
             }
 
             const result = await db
@@ -126,30 +132,52 @@ export const Route = createFileRoute('/api/certifications')({
             session.role !== 'Auditor' &&
             session.role !== 'Executive'
           ) {
-            throw new ForbiddenError('Full certification list is only available to Admin, Auditor, or Executive roles')
+            throw new ForbiddenError(
+              'Full certification list is only available to Admin, Auditor, or Executive roles',
+            )
           }
 
-          const result = await db.select().from(userCertifications)
-          return json(result)
+          // Parse pagination parameters
+          const { page, limit } = parsePaginationParams(url, 50, 200) // Default 50, max 200
+          const offset = (page - 1) * limit
+
+          // Get total count and paginated data
+          const [totalResult] = await db
+            .select({ count: count() })
+            .from(userCertifications)
+          const total = totalResult.count
+
+          const result = await db
+            .select()
+            .from(userCertifications)
+            .limit(limit)
+            .offset(offset)
+
+          const paginatedResponse = createPaginatedResponse(
+            result,
+            total,
+            page,
+            limit,
+          )
+          return json(paginatedResponse)
         } catch (error) {
-          if (error instanceof AppError) {
-            return json({ error: error.message, code: error.code }, { status: error.statusCode })
-          }
-          console.error('❌ [API Certifications GET] Unexpected Error:', error)
-          return json({ error: 'Internal server error' }, { status: 500 })
+          return handleApiError(error, 'GET /api/certifications')
         }
       },
       POST: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin', 'Manager', 'User'])
-          await requireRateLimit(session.userId, RateLimitPresets.MUTATION)
-          requireCSRFToken(getCSRFTokenFromRequest(request))
+          const session = await setupMutationHandler(request, {
+            allowedRoles: ['Admin', 'Manager', 'User'],
+          })
 
           const rawData = await request.json()
           const validation = CreateUserCertificationSchema.safeParse(rawData)
 
           if (!validation.success) {
-            throw new ValidationError('Invalid certification data', validation.error.errors)
+            throw new ValidationError(
+              'Invalid certification data',
+              validation.error.errors,
+            )
           }
 
           const data = validation.data
@@ -157,7 +185,9 @@ export const Route = createFileRoute('/api/certifications')({
 
           // Authority check
           if (!(await checkAuthority(db, session, data.userId))) {
-            throw new ForbiddenError('You do not have permission to add certifications for this user')
+            throw new ForbiddenError(
+              'You do not have permission to add certifications for this user',
+            )
           }
 
           const certExists = await db
@@ -208,32 +238,28 @@ export const Route = createFileRoute('/api/certifications')({
                 : `Added ${result.certificationName}`,
           })
 
+          // Invalidate dashboard cache for affected user and executive view
+          invalidateCache('dashboard:')
+
           return json(result, { status: 201 })
         } catch (error) {
-          if (error instanceof ValidationError) {
-            return json(
-              { error: error.message, code: error.code, details: error.errors },
-              { status: error.statusCode },
-            )
-          }
-          if (error instanceof AppError) {
-            return json({ error: error.message, code: error.code }, { status: error.statusCode })
-          }
-          console.error('❌ [API Certifications POST] Unexpected Error:', error)
-          return json({ error: 'Internal server error' }, { status: 500 })
+          return handleApiError(error, 'POST /api/certifications')
         }
       },
       PATCH: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin', 'Manager', 'User'])
-          await requireRateLimit(session.userId, RateLimitPresets.MUTATION)
-          requireCSRFToken(getCSRFTokenFromRequest(request))
+          const session = await setupMutationHandler(request, {
+            allowedRoles: ['Admin', 'Manager', 'User'],
+          })
 
           const rawData = await request.json()
           const validation = CertificationPatchSchema.safeParse(rawData)
 
           if (!validation.success) {
-            throw new ValidationError('Invalid update data', validation.error.errors)
+            throw new ValidationError(
+              'Invalid update data',
+              validation.error.errors,
+            )
           }
 
           const data = validation.data
@@ -245,12 +271,15 @@ export const Route = createFileRoute('/api/certifications')({
             .where(eq(userCertifications.id, data.id))
             .limit(1)
 
-          if (certResult.length === 0) throw new NotFoundError('Certification not found')
+          if (certResult.length === 0)
+            throw new NotFoundError('Certification not found')
           const existingCert = certResult[0]
 
           // Authority check
           if (!(await checkAuthority(db, session, existingCert.userId))) {
-            throw new ForbiddenError('You do not have permission to modify this certification')
+            throw new ForbiddenError(
+              'You do not have permission to modify this certification',
+            )
           }
 
           if (data.action === 'addProof') {
@@ -260,11 +289,15 @@ export const Route = createFileRoute('/api/certifications')({
               .values({
                 userCertificationId: data.id,
                 fileName: proof.fileName,
-                fileUrl: proof.fileUrl || `https://storage.training-certify.com/proofs/${proof.fileName}`, // Fixed hardcoded example URL
+                fileUrl:
+                  proof.fileUrl ||
+                  `https://storage.training-certify.com/proofs/${proof.fileName}`, // Fixed hardcoded example URL
               })
               .returning()
 
-            const updates: Partial<typeof userCertifications.$inferSelect> = { updatedAt: new Date() }
+            const updates: Partial<typeof userCertifications.$inferSelect> = {
+              updatedAt: new Date(),
+            }
             if (existingCert.status === 'assigned') {
               updates.status = 'active'
             }
@@ -273,6 +306,9 @@ export const Route = createFileRoute('/api/certifications')({
               .update(userCertifications)
               .set(updates)
               .where(eq(userCertifications.id, data.id))
+
+            // Invalidate dashboard cache for affected user and executive view
+            invalidateCache('dashboard:')
 
             return json({ success: true, proof: newProof[0] })
           }
@@ -290,26 +326,19 @@ export const Route = createFileRoute('/api/certifications')({
             .where(eq(userCertifications.id, data.id))
             .returning()
 
+          // Invalidate dashboard cache for affected user and executive view
+          invalidateCache('dashboard:')
+
           return json({ success: true, certification: result[0] })
         } catch (error) {
-          if (error instanceof ValidationError) {
-            return json(
-              { error: error.message, code: error.code, details: error.errors },
-              { status: error.statusCode },
-            )
-          }
-          if (error instanceof AppError) {
-            return json({ error: error.message, code: error.code }, { status: error.statusCode })
-          }
-          console.error('❌ [API Certifications PATCH] Unexpected Error:', error)
-          return json({ error: 'Internal server error' }, { status: 500 })
+          return handleApiError(error, 'PATCH /api/certifications')
         }
       },
       DELETE: async ({ request }) => {
         try {
-          const session = await requireRole(['Admin', 'Manager', 'User'])
-          await requireRateLimit(session.userId, RateLimitPresets.MUTATION)
-          requireCSRFToken(getCSRFTokenFromRequest(request))
+          const session = await setupMutationHandler(request, {
+            allowedRoles: ['Admin', 'Manager', 'User'],
+          })
 
           const url = new URL(request.url)
           const id = url.searchParams.get('id')
@@ -323,24 +352,27 @@ export const Route = createFileRoute('/api/certifications')({
             .where(eq(userCertifications.id, id))
             .limit(1)
 
-          if (certResult.length === 0) throw new NotFoundError('Certification not found')
+          if (certResult.length === 0)
+            throw new NotFoundError('Certification not found')
           const existingCert = certResult[0]
 
           // Authority check
           if (!(await checkAuthority(db, session, existingCert.userId))) {
-            throw new ForbiddenError('You do not have permission to delete this certification')
+            throw new ForbiddenError(
+              'You do not have permission to delete this certification',
+            )
           }
 
           await db
             .delete(userCertifications)
             .where(eq(userCertifications.id, id))
+
+          // Invalidate dashboard cache for affected user and executive view
+          invalidateCache('dashboard:')
+
           return json({ success: true })
         } catch (error) {
-          if (error instanceof AppError) {
-            return json({ error: error.message, code: error.code }, { status: error.statusCode })
-          }
-          console.error('❌ [API Certifications DELETE] Unexpected Error:', error)
-          return json({ error: 'Internal server error' }, { status: 500 })
+          return handleApiError(error, 'DELETE /api/certifications')
         }
       },
     },

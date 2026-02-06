@@ -131,10 +131,30 @@ export const CacheTTL = {
 }
 
 /**
- * Get a value from cache or compute it if not found
- * @param key Cache key
- * @param ttl Time to live in milliseconds
- * @param compute Function to compute the value if not cached
+ * Get a value from cache or compute it if not found.
+ *
+ * This function implements a cache-aside pattern. It first checks the cache
+ * for the given key. If found, returns the cached value. If not found,
+ * calls the compute function to generate the value, stores it in cache,
+ * and returns it.
+ *
+ * @template T - The type of the cached value
+ * @param key - Cache key string (should be unique and descriptive)
+ * @param ttl - Time to live in milliseconds (how long the value should be cached)
+ * @param compute - Async function that computes the value if not in cache
+ * @returns Promise that resolves to the cached or computed value
+ *
+ * @example
+ * ```typescript
+ * const stats = await getOrCompute(
+ *   `team-stats:${teamId}`,
+ *   CacheTTL.MEDIUM,
+ *   async () => {
+ *     // Expensive computation
+ *     return await calculateTeamStats(teamId)
+ *   }
+ * )
+ * ```
  */
 export async function getOrCompute<T>(
   key: string,
@@ -156,7 +176,21 @@ export async function getOrCompute<T>(
 }
 
 /**
- * Invalidate cache keys matching pattern
+ * Invalidate cache keys matching a pattern.
+ *
+ * Removes all cache entries whose keys match the provided pattern.
+ * Useful for cache invalidation when related data changes.
+ *
+ * @param pattern - Pattern string to match against cache keys (supports wildcards)
+ *
+ * @example
+ * ```typescript
+ * // Invalidate all team-related cache entries
+ * invalidateCache('team:*')
+ *
+ * // Invalidate cache for a specific team
+ * invalidateCache(`team:${teamId}:*`)
+ * ```
  */
 export function invalidateCache(pattern: string): void {
   cache.invalidate(pattern)

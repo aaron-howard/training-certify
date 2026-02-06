@@ -120,12 +120,13 @@ export function UserManagement() {
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
                     <span
-                      className={`px-2 py-0.5 rounded-full text-xs font-medium ${user.role === 'Admin'
+                      className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                        user.role === 'Admin'
                           ? 'bg-purple-50 text-purple-700 dark:bg-purple-900/20'
                           : user.role === 'Manager'
                             ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20'
                             : 'bg-slate-100 text-slate-700 dark:bg-slate-800'
-                        }`}
+                      }`}
                     >
                       {user.role}
                     </span>

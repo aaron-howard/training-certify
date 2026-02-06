@@ -1,5 +1,6 @@
 // src/db/index.server.ts
 import { ENV, envReady } from '../lib/env'
+import { logError, logWarning, logger } from '../lib/logging.server'
 import * as schema from './schema'
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
 import type { Pool } from 'pg'
@@ -12,7 +13,8 @@ const globalForDb = globalThis as unknown as {
 }
 
 const isServer =
-  typeof window === 'undefined' || !!(import.meta as { env?: { SSR?: boolean } }).env?.SSR
+  typeof window === 'undefined' ||
+  !!(import.meta as { env?: { SSR?: boolean } }).env?.SSR
 const instanceId = Math.random().toString(36).substring(7)
 
 /**
@@ -20,10 +22,10 @@ const instanceId = Math.random().toString(36).substring(7)
  */
 function isTransientError(error: unknown): boolean {
   if (!(error instanceof Error)) return false
-  
+
   const errorCode = (error as { code?: string }).code
   const errorMessage = error.message.toLowerCase()
-  
+
   // Transient error codes from pg library
   const transientCodes = [
     'ECONNREFUSED',
@@ -33,12 +35,12 @@ function isTransientError(error: unknown): boolean {
     'ECONNRESET',
     'EPIPE',
   ]
-  
+
   // Check error code
   if (errorCode && transientCodes.includes(errorCode)) {
     return true
   }
-  
+
   // Check error message for transient patterns
   const transientPatterns = [
     'connection',
@@ -48,8 +50,8 @@ function isTransientError(error: unknown): boolean {
     'unavailable',
     'refused',
   ]
-  
-  return transientPatterns.some(pattern => errorMessage.includes(pattern))
+
+  return transientPatterns.some((pattern) => errorMessage.includes(pattern))
 }
 
 /**
@@ -57,21 +59,21 @@ function isTransientError(error: unknown): boolean {
  */
 function isPermanentError(error: unknown): boolean {
   if (!(error instanceof Error)) return false
-  
+
   const errorCode = (error as { code?: string }).code
   const errorMessage = error.message.toLowerCase()
-  
+
   // Permanent error codes
   const permanentCodes = [
     '28P01', // Invalid password
     '3D000', // Database does not exist
     '28000', // Invalid authorization specification
   ]
-  
+
   if (errorCode && permanentCodes.includes(errorCode)) {
     return true
   }
-  
+
   // Check for authentication/authorization errors
   const permanentPatterns = [
     'password',
@@ -80,15 +82,15 @@ function isPermanentError(error: unknown): boolean {
     'permission denied',
     'access denied',
   ]
-  
-  return permanentPatterns.some(pattern => errorMessage.includes(pattern))
+
+  return permanentPatterns.some((pattern) => errorMessage.includes(pattern))
 }
 
 /**
  * Sleep for specified milliseconds
  */
 function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms))
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 /**
@@ -98,62 +100,87 @@ async function retryWithBackoff<T>(
   fn: () => Promise<T>,
   maxRetries: number = 3,
   baseDelayMs: number = 1000,
-  operation: string = 'operation'
+  operation: string = 'operation',
 ): Promise<T> {
   let lastError: unknown
-  
+
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       return await fn()
     } catch (error) {
       lastError = error
-      
+
       // Don't retry permanent errors
       if (isPermanentError(error)) {
-        console.error(
-          `❌ [DB Retry] Instance ${instanceId} - Permanent error detected, not retrying:`,
-          error instanceof Error ? error.message : String(error)
+        logError(
+          error instanceof Error ? error : new Error(String(error)),
+          { instanceId, operation, attempt: attempt + 1 },
+          'Permanent error detected, not retrying',
         )
         throw error
       }
-      
+
       // Don't retry if not a transient error
       if (!isTransientError(error)) {
         throw error
       }
-      
+
       // Don't retry on last attempt
       if (attempt === maxRetries) {
         break
       }
-      
+
       // Calculate exponential backoff delay
       const delayMs = baseDelayMs * Math.pow(2, attempt)
-      console.warn(
-        `⚠️ [DB Retry] Instance ${instanceId} - ${operation} failed (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${delayMs}ms:`,
-        error instanceof Error ? error.message : String(error)
+      logWarning(
+        `${operation} failed (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${delayMs}ms`,
+        {
+          instanceId,
+          operation,
+          attempt: attempt + 1,
+          maxRetries: maxRetries + 1,
+          delayMs,
+          error: error instanceof Error ? error.message : String(error),
+        },
       )
-      
+
       await sleep(delayMs)
     }
   }
-  
+
   // All retries exhausted
-  console.error(
-    `❌ [DB Retry] Instance ${instanceId} - ${operation} failed after ${maxRetries + 1} attempts`
+  logError(
+    lastError instanceof Error ? lastError : new Error(String(lastError)),
+    { instanceId, operation, attempts: maxRetries + 1 },
+    `${operation} failed after ${maxRetries + 1} attempts`,
   )
   throw lastError
 }
 
+// Type for import.meta.env SSR flag (local to this file)
+interface LocalImportMetaEnv {
+  SSR?: boolean | string
+}
+
 if (isServer) {
   if (process.env.NODE_ENV === 'development') {
-    console.log(
-      `🔌 [DB Module] Server-side instance ${instanceId} loaded. Window: ${typeof window}, SSR: ${(import.meta as any).env?.SSR}`,
+    logger.info(
+      {
+        instanceId,
+        environment: typeof window,
+        ssr: (import.meta as { env?: LocalImportMetaEnv }).env?.SSR,
+      },
+      'Server-side database instance loaded',
     )
   }
 } else {
-  console.warn(
-    `⚠️ [DB Module] Client-side instance ${instanceId} loaded? Window: ${typeof window}, SSR: ${(import.meta as any).env?.SSR}`,
+  logger.warn(
+    {
+      instanceId,
+      environment: typeof window,
+      ssr: (import.meta as { env?: LocalImportMetaEnv }).env?.SSR,
+    },
+    'Client-side database instance loaded (unexpected)',
   )
 }
 
@@ -167,8 +194,8 @@ async function initializeDb() {
     const url = ENV.DATABASE_URL || process.env.DATABASE_URL
 
     if (!url) {
-      const errorMessage = `❌ [DB Init] Instance ${instanceId} - DATABASE_URL is required but not found.`
-      console.error(errorMessage)
+      const errorMessage = `DATABASE_URL is required but not found`
+      logError(new Error(errorMessage), { instanceId }, errorMessage)
       if (process.env.NODE_ENV === 'production') {
         throw new Error('DATABASE_URL environment variable is required')
       }
@@ -180,7 +207,7 @@ async function initializeDb() {
 
     const isProduction = process.env.NODE_ENV === 'production'
     const defaultPoolSize = isProduction ? 10 : 2
-    
+
     const pool = new Pool({
       connectionString: url,
       max: parseInt(process.env.DB_POOL_SIZE || String(defaultPoolSize), 10),
@@ -197,32 +224,53 @@ async function initializeDb() {
       },
       3, // max retries
       1000, // base delay 1 second
-      'Database connection test'
+      'Database connection test',
     )
-    
-    console.log(
-      `✅ [DB Init] Instance ${instanceId} - Successfully connected to PostgreSQL (Pool Size: ${pool.totalCount})`,
+
+    logger.info(
+      {
+        instanceId,
+        poolSize: pool.totalCount,
+      },
+      'Successfully connected to PostgreSQL',
     )
 
     globalForDb.pool = pool
     globalForDb.db = drizzle(pool, { schema })
     return globalForDb.db
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    console.error(
-      `❌ [DB Init] Instance ${instanceId} - Critical failure:`,
-      message,
+    logError(
+      error instanceof Error ? error : new Error(String(error)),
+      { instanceId },
+      'Critical database initialization failure',
     )
     return null
   }
 }
 
 /**
- * Async helper to obtain the DB instance.
- * Returns null if database is unavailable (caller should handle this).
- * 
- * @returns Database instance or null if unavailable
- * @throws Never throws - returns null on failure
+ * Async helper to obtain the database instance.
+ *
+ * Returns the initialized Drizzle ORM database instance. If the database
+ * hasn't been initialized yet, triggers initialization. Returns null if
+ * the database is unavailable (e.g., missing DATABASE_URL, connection failure).
+ *
+ * This function never throws - it returns null on failure, allowing callers
+ * to handle the error gracefully. For API handlers, prefer `getDbOrThrow()`
+ * which throws a descriptive error.
+ *
+ * @returns Promise that resolves to the database instance, or null if unavailable
+ * @throws Never throws - always returns null on failure
+ *
+ * @example
+ * ```typescript
+ * const db = await getDb()
+ * if (!db) {
+ *   // Handle database unavailable
+ *   return json({ error: 'Database unavailable' }, { status: 503 })
+ * }
+ * const users = await db.select().from(users)
+ * ```
  */
 export const getDb = async (): Promise<NodePgDatabase<
   typeof schema
@@ -243,17 +291,34 @@ export const getDb = async (): Promise<NodePgDatabase<
   return null
 }
 
-/** 
- * Helper to obtain the DB instance or throw a descriptive error.
- * Use this in API handlers to avoid repetitive null checks.
- * 
- * @returns Database instance (never null)
- * @throws {Error} If database is unavailable
+/**
+ * Helper to obtain the database instance or throw a descriptive error.
+ *
+ * This is the preferred function for API handlers as it eliminates the need
+ * for null checks. If the database is unavailable, throws an error with a
+ * descriptive message that can be caught and returned as a 503 response.
+ *
+ * @returns Promise that resolves to the database instance (never null)
+ * @throws {Error} If database is unavailable with message: "Database not available. Please check environment variables and connection string."
+ *
+ * @example
+ * ```typescript
+ * try {
+ *   const db = await getDbOrThrow()
+ *   const users = await db.select().from(users)
+ * } catch (error) {
+ *   return json({ error: 'Database unavailable' }, { status: 503 })
+ * }
+ * ```
  */
-export const getDbOrThrow = async (): Promise<NodePgDatabase<typeof schema>> => {
+export const getDbOrThrow = async (): Promise<
+  NodePgDatabase<typeof schema>
+> => {
   const database = await getDb()
   if (!database) {
-    throw new Error('Database not available. Please check environment variables and connection string.')
+    throw new Error(
+      'Database not available. Please check environment variables and connection string.',
+    )
   }
   return database
 }
@@ -264,20 +329,20 @@ export { instanceId }
 /**
  * Close database connections gracefully.
  * Used during application shutdown to clean up resources.
- * 
+ *
  * @throws Never throws - logs errors instead
  */
 export async function closeDb(): Promise<void> {
   if (globalForDb.pool) {
     try {
-      console.log('💾 Closing database connection pool...')
+      logger.info({ instanceId }, 'Closing database connection pool')
       await globalForDb.pool.end()
       globalForDb.db = undefined
       globalForDb.pool = undefined
       globalForDb.initPromise = undefined
-      console.log('✅ Database connections closed')
+      logger.info({ instanceId }, 'Database connections closed')
     } catch (error) {
-      console.error('❌ Error closing database:', error)
+      logError(error, { instanceId }, 'Error closing database')
     }
   }
 }

@@ -1,6 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
 import { count, eq, sql } from 'drizzle-orm'
 import { teams, userCertifications, userTeams } from '../db/schema'
+import { logError, logInfo, logWarning } from '../lib/logging.server'
 
 export const getTeamData = createServerFn({ method: 'GET' }).handler(
   async () => {
@@ -8,7 +9,7 @@ export const getTeamData = createServerFn({ method: 'GET' }).handler(
     const db = await getDb()
     try {
       if (!db) {
-        console.log('⚠️ [Server] getTeamData: DB is null')
+        logWarning('getTeamData: DB is null', { function: 'getTeamData' })
         return { teams: [], metrics: [] }
       }
       const teamsResult = await db
@@ -47,8 +48,13 @@ export const getTeamData = createServerFn({ method: 'GET' }).handler(
         { label: 'Critical Gaps', value: 0, change: 0, trend: 'up' },
       ]
 
-      console.log(
-        `✅ [Server] getTeamData returning ${teamsResult.length} teams. Real Total Certs: ${totalCertsCount[0].value}`,
+      logInfo(
+        `getTeamData returning ${teamsResult.length} teams. Real Total Certs: ${totalCertsCount[0].value}`,
+        {
+          function: 'getTeamData',
+          teamCount: teamsResult.length,
+          totalCerts: totalCertsCount[0].value,
+        },
       )
       return {
         teams: teamsResult.map((t) => ({
@@ -58,7 +64,7 @@ export const getTeamData = createServerFn({ method: 'GET' }).handler(
         metrics,
       }
     } catch (error) {
-      console.error('❌ [Server] Failed to fetch team data:', error)
+      logError(error, { function: 'getTeamData' }, 'Failed to fetch team data')
       return { teams: [], metrics: [] }
     }
   },

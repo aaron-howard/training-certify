@@ -1,7 +1,12 @@
 import 'dotenv/config'
 import { Pool } from 'pg'
 import { drizzle } from 'drizzle-orm/node-postgres'
-import { validateCategory, validateDifficulty, validateRole } from '../lib/enum-helpers'
+import {
+  validateCategory,
+  validateDifficulty,
+  validateRole,
+} from '../lib/enum-helpers'
+import { logError, logger } from '../lib/logging.server'
 import * as schema from './schema'
 
 if (!process.env.DATABASE_URL) {
@@ -14,7 +19,7 @@ const pool = new Pool({
 const db = drizzle(pool, { schema })
 
 async function main() {
-  console.log('Seeding database...')
+  logger.info({}, 'Seeding database...')
 
   // 1. Seed Users
   const user1 = {
@@ -141,10 +146,14 @@ async function main() {
     },
   ])
 
-  console.log('Seeding completed successfully!')
+  logger.info({}, 'Seeding completed successfully!')
 }
 
 main().catch((err) => {
-  console.error('Seeding failed:', err)
+  logError(
+    err instanceof Error ? err : new Error(String(err)),
+    {},
+    'Seeding failed',
+  )
   process.exit(1)
 })

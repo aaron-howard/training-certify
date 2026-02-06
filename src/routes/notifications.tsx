@@ -54,10 +54,12 @@ function NotificationsPage() {
   const [showSettings, setShowSettings] = useState(false)
   const [preferences, setPreferences] = useState<Record<string, boolean>>({})
 
-  const { data: notifications = [], isLoading } = useQuery<Array<Notification>>({
-    queryKey: ['notifications'],
-    queryFn: fetchNotifications,
-  })
+  const { data: notifications = [], isLoading } = useQuery<Array<Notification>>(
+    {
+      queryKey: ['notifications'],
+      queryFn: fetchNotifications,
+    },
+  )
 
   const { data: settings } = useQuery<NotificationSettings>({
     queryKey: ['notificationSettings'],

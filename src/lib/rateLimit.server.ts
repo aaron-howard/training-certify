@@ -4,6 +4,10 @@
  * Tracks requests per identifier (user ID or IP) within a time window.
  */
 
+import { logger } from './logging.server'
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
+import type * as schema from '../db/schema'
+
 interface RateLimitConfig {
   windowMs: number
   maxRequests: number
@@ -94,8 +98,8 @@ class DatabaseRateLimiter {
       .where(
         and(
           eq(rateLimitLogs.identifier, identifier),
-          gte(rateLimitLogs.timestamp, windowStart)
-        )
+          gte(rateLimitLogs.timestamp, windowStart),
+        ),
       )
 
     if (recentRequests.length >= config.maxRequests) {
@@ -114,7 +118,10 @@ class DatabaseRateLimiter {
   /**
    * Get remaining requests for an identifier
    */
-  async getRemaining(identifier: string, config: RateLimitConfig): Promise<number> {
+  async getRemaining(
+    identifier: string,
+    config: RateLimitConfig,
+  ): Promise<number> {
     const { getDbOrThrow } = await import('../db/db.server')
     const db = await getDbOrThrow()
     const { rateLimitLogs } = await import('../db/schema')
@@ -129,8 +136,8 @@ class DatabaseRateLimiter {
       .where(
         and(
           eq(rateLimitLogs.identifier, identifier),
-          gte(rateLimitLogs.timestamp, windowStart)
-        )
+          gte(rateLimitLogs.timestamp, windowStart),
+        ),
       )
 
     return Math.max(0, config.maxRequests - recentRequests.length)
@@ -145,13 +152,18 @@ class DatabaseRateLimiter {
     const { rateLimitLogs } = await import('../db/schema')
     const { eq } = await import('drizzle-orm')
 
-    await db.delete(rateLimitLogs).where(eq(rateLimitLogs.identifier, identifier))
+    await db
+      .delete(rateLimitLogs)
+      .where(eq(rateLimitLogs.identifier, identifier))
   }
 
   /**
    * Clean up old rate limit entries
    */
-  private async cleanup(db: any, before: Date): Promise<void> {
+  private async cleanup(
+    db: NodePgDatabase<typeof schema>,
+    before: Date,
+  ): Promise<void> {
     const { rateLimitLogs } = await import('../db/schema')
     const { lt } = await import('drizzle-orm')
 
@@ -159,7 +171,10 @@ class DatabaseRateLimiter {
       await db.delete(rateLimitLogs).where(lt(rateLimitLogs.timestamp, before))
     } catch (error) {
       // Log but don't throw - cleanup failures shouldn't break rate limiting
-      console.warn('⚠️ [Rate Limit] Failed to cleanup old entries:', error)
+      logger.warn(
+        { service: 'rateLimit', operation: 'cleanup', error: String(error) },
+        'Failed to cleanup old rate limit entries',
+      )
     }
   }
 }
@@ -171,7 +186,9 @@ class RateLimiter {
 
   constructor() {
     this.inMemory = new InMemoryRateLimiter()
-    this.useDatabase = process.env.NODE_ENV === 'production' && process.env.USE_DB_RATE_LIMIT !== 'false'
+    this.useDatabase =
+      process.env.NODE_ENV === 'production' &&
+      process.env.USE_DB_RATE_LIMIT !== 'false'
 
     if (this.useDatabase) {
       this.database = new DatabaseRateLimiter()
@@ -187,7 +204,10 @@ class RateLimiter {
         return await this.database.check(identifier, config)
       } catch (error) {
         // Fallback to in-memory if database fails
-        console.warn('⚠️ [Rate Limit] Database check failed, falling back to in-memory:', error)
+        logger.warn(
+          { service: 'rateLimit', operation: 'check', error: String(error) },
+          'Database check failed, falling back to in-memory',
+        )
         return this.inMemory.check(identifier, config)
       }
     }
@@ -197,12 +217,22 @@ class RateLimiter {
   /**
    * Get remaining requests for an identifier
    */
-  async getRemaining(identifier: string, config: RateLimitConfig): Promise<number> {
+  async getRemaining(
+    identifier: string,
+    config: RateLimitConfig,
+  ): Promise<number> {
     if (this.useDatabase && this.database) {
       try {
         return await this.database.getRemaining(identifier, config)
       } catch (error) {
-        console.warn('⚠️ [Rate Limit] Database getRemaining failed, falling back to in-memory:', error)
+        logger.warn(
+          {
+            service: 'rateLimit',
+            operation: 'getRemaining',
+            error: String(error),
+          },
+          'Database getRemaining failed, falling back to in-memory',
+        )
         return this.inMemory.getRemaining(identifier, config)
       }
     }
@@ -217,7 +247,10 @@ class RateLimiter {
       try {
         await this.database.reset(identifier)
       } catch (error) {
-        console.warn('⚠️ [Rate Limit] Database reset failed, falling back to in-memory:', error)
+        logger.warn(
+          { service: 'rateLimit', operation: 'reset', error: String(error) },
+          'Database reset failed, falling back to in-memory',
+        )
       }
     }
     this.inMemory.reset(identifier)
@@ -236,12 +269,29 @@ export const rateLimiter = new RateLimiter()
 
 /**
  * Rate limit guard for use in API handlers.
+ *
  * Checks if the request should be allowed based on rate limit configuration.
- * Uses database-backed rate limiting in production, in-memory in development.
- * 
- * @param identifier - Unique identifier (user ID, IP address, etc.)
- * @param config - Rate limit configuration with windowMs and maxRequests
- * @throws {Error} If rate limit is exceeded, includes remaining count and reset time
+ * Uses database-backed rate limiting in production (for horizontal scaling),
+ * falls back to in-memory rate limiting in development.
+ *
+ * Throws an error if the rate limit is exceeded, which should be caught
+ * and converted to a 429 Too Many Requests response.
+ *
+ * @param identifier - Unique identifier for rate limiting (user ID, IP address, API key, etc.)
+ * @param config - Rate limit configuration object with:
+ *   - windowMs: Time window in milliseconds (e.g., 60000 for 1 minute)
+ *   - maxRequests: Maximum number of requests allowed in the window
+ * @throws {Error} If rate limit is exceeded. Error message includes remaining count and reset time
+ *
+ * @example
+ * ```typescript
+ * try {
+ *   await requireRateLimit(userId, RateLimitPresets.MUTATION)
+ *   // Proceed with mutation
+ * } catch (error) {
+ *   return json({ error: error.message }, { status: 429 })
+ * }
+ * ```
  */
 export async function requireRateLimit(
   identifier: string,

@@ -5,7 +5,7 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { factories } from '../../test/factories'
-import { createMockDb, mockAuthForRole, setupAuthAndDataMock } from './helpers'
+import { createMockDb, mockAuthForRole, setupTestMocks } from './helpers'
 
 // Mock dependencies
 vi.mock('@clerk/tanstack-react-start/server', () => ({
@@ -16,7 +16,23 @@ vi.mock('@clerk/tanstack-react-start/server', () => ({
     },
   },
 }))
-vi.mock('../../db/db.server')
+vi.mock('../../db/db.server', async () => {
+  const actual = await vi.importActual('../../db/db.server')
+  return {
+    ...actual,
+    getDb: vi.fn(),
+    getDbOrThrow: vi.fn(),
+  }
+})
+vi.mock('../../lib/auth.server', async () => {
+  const actual = await vi.importActual('../../lib/auth.server')
+  return {
+    ...actual,
+    getAuthenticatedUser: vi.fn(),
+    requireRole: vi.fn(),
+    getVerifiedAuth: vi.fn(),
+  }
+})
 vi.mock('../../lib/rateLimit.server', () => ({
   requireRateLimit: vi.fn(),
   RateLimitPresets: {
@@ -36,7 +52,6 @@ describe('/api/users Integration Tests', () => {
     it('should return users for Admin role', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
       const admin = await mockAuthForRole('Admin', auth)
-      const { getDb } = await import('../../db/db.server')
 
       const mockUsers = [
         factories.admin({ id: admin.id }),
@@ -44,8 +59,7 @@ describe('/api/users Integration Tests', () => {
         factories.user({ id: 'user3' }),
       ]
 
-      const mockDb = setupAuthAndDataMock(admin, mockUsers)
-      vi.mocked(getDb).mockResolvedValue(mockDb)
+      await setupTestMocks(admin, mockUsers)
 
       // Import and call the route handler
       const { Route } = await import('../../routes/api.users')
@@ -66,11 +80,9 @@ describe('/api/users Integration Tests', () => {
     it('should return users for Auditor role', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
       const auditor = await mockAuthForRole('Auditor', auth)
-      const { getDb } = await import('../../db/db.server')
 
       const mockUsers = [factories.user({ role: 'Auditor', id: auditor.id })]
-      const mockDb = setupAuthAndDataMock(auditor, mockUsers)
-      vi.mocked(getDb).mockResolvedValue(mockDb)
+      await setupTestMocks(auditor, mockUsers)
 
       const { Route } = await import('../../routes/api.users')
       const handler = (Route.options.server?.handlers as any)?.GET
@@ -87,10 +99,17 @@ describe('/api/users Integration Tests', () => {
     it('should return 403 for regular User role', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
       const user = await mockAuthForRole('User', auth)
-      const { getDb } = await import('../../db/db.server')
+      const { requireRole } = await import('../../lib/auth.server')
+      const { ForbiddenError } = await import('../../lib/errors')
 
-      const mockDb = setupAuthAndDataMock(user, user)
-      vi.mocked(getDb).mockResolvedValue(mockDb)
+      await setupTestMocks(user, user)
+
+      // Mock requireRole to throw ForbiddenError for User role
+      vi.mocked(requireRole).mockRejectedValue(
+        new ForbiddenError(
+          'Required one of [Admin, Auditor, Executive] but user has [User]',
+        ),
+      )
 
       const { Route } = await import('../../routes/api.users')
       const handler = (Route.options.server?.handlers as any)?.GET
@@ -103,18 +122,22 @@ describe('/api/users Integration Tests', () => {
 
       expect(response.status).toBe(403)
       const data = await response.json()
-      expect(data.error).toContain('Forbidden')
+      expect(data.code).toBe('FORBIDDEN')
     })
   })
 
   describe('POST /api/users', () => {
     it('should fail creation without authentication (signup unprotected)', async () => {
-      const { auth } = await import('@clerk/tanstack-react-start/server')
-      const { getDb } = await import('../../db/db.server')
+      const { getDbOrThrow } = await import('../../db/db.server')
+      const { getVerifiedAuth } = await import('../../lib/auth.server')
+      const { UnauthorizedError } = await import('../../lib/errors')
 
-      vi.mocked(auth).mockResolvedValue({ userId: null } as any)
+      // Mock getVerifiedAuth to throw UnauthorizedError
+      vi.mocked(getVerifiedAuth).mockRejectedValue(
+        new UnauthorizedError('Unauthorized'),
+      )
       // Must also mock getDb even if it shouldn't be reached
-      vi.mocked(getDb).mockResolvedValue(createMockDb())
+      vi.mocked(getDbOrThrow).mockResolvedValue(createMockDb())
 
       const { Route } = await import('../../routes/api.users')
       const handler = (Route.options.server?.handlers as any)?.POST
@@ -139,11 +162,9 @@ describe('/api/users Integration Tests', () => {
     it('should update user role for Admin', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
       const admin = await mockAuthForRole('Admin', auth)
-      const { getDb } = await import('../../db/db.server')
 
       const targetUser = factories.user({ id: 'user_target' })
-      const mockDb = setupAuthAndDataMock(admin, targetUser)
-      vi.mocked(getDb).mockResolvedValue(mockDb)
+      await setupTestMocks(admin, targetUser)
 
       const { Route } = await import('../../routes/api.users')
       const handler = (Route.options.server?.handlers as any)?.PATCH
@@ -162,10 +183,15 @@ describe('/api/users Integration Tests', () => {
     it('should return 403 for non-Admin', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
       const user = await mockAuthForRole('User', auth)
-      const { getDb } = await import('../../db/db.server')
+      const { requireRole } = await import('../../lib/auth.server')
+      const { ForbiddenError } = await import('../../lib/errors')
 
-      const mockDb = setupAuthAndDataMock(user, user)
-      vi.mocked(getDb).mockResolvedValue(mockDb)
+      await setupTestMocks(user, user)
+
+      // Mock requireRole to throw ForbiddenError
+      vi.mocked(requireRole).mockRejectedValue(
+        new ForbiddenError('Required one of [Admin] but user has [User]'),
+      )
 
       const { Route } = await import('../../routes/api.users')
       const handler = (Route.options.server?.handlers as any)?.PATCH
@@ -186,10 +212,8 @@ describe('/api/users Integration Tests', () => {
     it('should delete user for Admin', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
       const admin = await mockAuthForRole('Admin', auth)
-      const { getDb } = await import('../../db/db.server')
 
-      const mockDb = setupAuthAndDataMock(admin, {})
-      vi.mocked(getDb).mockResolvedValue(mockDb)
+      await setupTestMocks(admin, {})
 
       const { Route } = await import('../../routes/api.users')
       const handler = (Route.options.server?.handlers as any)?.DELETE
@@ -209,9 +233,11 @@ describe('/api/users Integration Tests', () => {
     it('should handle database unavailable', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
       await mockAuthForRole('Admin', auth)
-      const { getDb } = await import('../../db/db.server')
+      const { getDbOrThrow } = await import('../../db/db.server')
 
-      vi.mocked(getDb).mockResolvedValue(null)
+      vi.mocked(getDbOrThrow).mockRejectedValue(
+        new Error('Database unavailable'),
+      )
 
       const { Route } = await import('../../routes/api.users')
       const handler = (Route.options.server?.handlers as any)?.GET

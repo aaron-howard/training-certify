@@ -96,7 +96,10 @@ const uploadProof = async ({ id, proof }: UploadProofRequest) => {
   return res.json()
 }
 
-const updateCertification = async ({ id, updates }: CertificationUpdateRequest) => {
+const updateCertification = async ({
+  id,
+  updates,
+}: CertificationUpdateRequest) => {
   const res = await fetch('/api/certifications', {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
