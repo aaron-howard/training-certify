@@ -9,55 +9,56 @@ import path from 'path'
 import type { Plugin } from 'vite'
 
 // Plugin to stub server-only files for client builds ONLY
-const stubServerFiles = (): Plugin => ({
-  name: 'stub-server-files',
-  enforce: 'pre' as const,
-  resolveId(id, importer) {
-    // Only stub logging.server imports
-    // Handle both static and dynamic imports
-    if (
-      (id === './logging.server' ||
-        id === '../lib/logging.server' ||
-        id.endsWith('/logging.server') ||
-        id.includes('logging.server')) &&
-      !id.includes('.nitro') &&
-      !id.includes('logging.client-stub')
-    ) {
-      // Check if this is a server build (SSR/Nitro)
-      // Only allow real imports in clearly server contexts
-      // For client builds, stub the import to prevent bundling errors
-      const isServerBuild =
-        importer?.includes('services/ssr') ||
-        importer?.includes('.nitro') ||
-        importer?.includes('entry-server.tsx') ||
-        importer?.includes('start.ts') ||
-        importer?.includes('.server.ts') ||
-        importer?.includes('.server.tsx') ||
-        importer?.includes('api/') ||
-        importer?.includes('routes/api.') ||
-        process.env.NITRO_PRESET === 'vercel'
+const stubServerFiles = (): Plugin => {
+  let isSSRBuild = false
 
-      // Stub for client builds (when NOT a server build)
-      // This prevents logging.server.ts from being bundled into client code
-      if (!isServerBuild) {
-        const stubPath = path.resolve(
-          process.cwd(),
-          'src/lib/logging.client-stub.ts',
-        )
-        return stubPath
+  return {
+    name: 'stub-server-files',
+    enforce: 'pre' as const,
+    // Detect SSR build phase
+    configResolved(config) {
+      // Check if this is an SSR build
+      isSSRBuild = config.build.ssr !== undefined && config.build.ssr !== false
+    },
+    resolveId(id, importer) {
+      // Match any import of logging.server
+      const isLoggingServerImport =
+        (id === './logging.server' ||
+          id === '../lib/logging.server' ||
+          id === 'logging.server' ||
+          id.endsWith('/logging.server') ||
+          id.includes('/logging.server') ||
+          id.includes('logging.server')) &&
+        !id.includes('.nitro') &&
+        !id.includes('logging.client-stub')
+
+      if (isLoggingServerImport) {
+        // Check if this is a server build (SSR/Nitro)
+        const isServerBuild =
+          isSSRBuild ||
+          importer?.includes('services/ssr') ||
+          importer?.includes('.nitro') ||
+          importer?.includes('entry-server.tsx') ||
+          importer?.includes('start.ts') ||
+          importer?.includes('.server.ts') ||
+          importer?.includes('.server.tsx') ||
+          importer?.includes('api/') ||
+          importer?.includes('routes/api.') ||
+          process.env.NITRO_PRESET === 'vercel'
+
+        // Stub for client builds (when NOT a server build)
+        if (!isServerBuild) {
+          const stubPath = path.resolve(
+            process.cwd(),
+            'src/lib/logging.client-stub.ts',
+          )
+          return stubPath
+        }
       }
-    }
-    return null
-  },
-  // Also handle load hook for dynamic imports
-  load(id) {
-    // If this is the stub file being loaded, return its contents
-    if (id.includes('logging.client-stub')) {
-      return null // Let Vite handle it normally
-    }
-    return null
-  },
-})
+      return null
+    },
+  }
+}
 
 const config = defineConfig({
   envPrefix: ['VITE_', 'NEXT_PUBLIC_'],

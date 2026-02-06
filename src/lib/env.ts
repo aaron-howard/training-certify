@@ -71,59 +71,13 @@ export function validateEnv(): Env {
 
   try {
     const validated = envSchema.parse(process.env)
-    // Logging is optional - import dynamically to avoid client bundle inclusion
-    if (typeof window === 'undefined') {
-      import('./logging.server')
-        .then(({ logger }) => {
-          logger.info(
-            { service: 'env' },
-            'Environment variables validated successfully',
-          )
-        })
-        .catch(() => {
-          // Logging unavailable, continue without it
-        })
-    }
+    // Logging removed from env.ts to prevent client bundle inclusion
+    // Logging is handled in entry-server.tsx where it's safe
     return validated
   } catch (error) {
-    // Logging is optional - import dynamically to avoid client bundle inclusion
-    if (typeof window === 'undefined') {
-      import('./logging.server')
-        .then(({ logError, logger }) => {
-          if (error instanceof z.ZodError) {
-            const availableKeys = Object.keys(process.env).filter(
-              (k) =>
-                !k.toLowerCase().includes('key') &&
-                !k.toLowerCase().includes('secret') &&
-                !k.toLowerCase().includes('password') &&
-                !k.toLowerCase().includes('token'),
-            )
-
-            logError(
-              error,
-              {
-                service: 'env',
-                validationErrors: error.errors.map((err) => ({
-                  path: err.path.join('.'),
-                  message: err.message,
-                })),
-                availableKeys,
-              },
-              'Environment variable validation failed',
-            )
-          } else {
-            logError(error, { service: 'env' }, 'Environment validation error')
-          }
-
-          logger.error(
-            { service: 'env' },
-            'Please check your Vercel environment variables or .env file',
-          )
-        })
-        .catch(() => {
-          // Logging unavailable, continue without it
-        })
-    }
+    // Logging removed from env.ts to prevent client bundle inclusion
+    // Logging is handled in entry-server.tsx where it's safe
+    // In production, errors will be logged by Sentry or other monitoring
 
     // In production/serverless, we throw instead of exiting to allow for better error handling
     if (process.env.NODE_ENV === 'production') {
