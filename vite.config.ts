@@ -14,12 +14,14 @@ const stubServerFiles = (): Plugin => ({
   enforce: 'pre' as const,
   resolveId(id, importer) {
     // Only stub logging.server imports
+    // Handle both static and dynamic imports
     if (
       (id === './logging.server' ||
         id === '../lib/logging.server' ||
         id.endsWith('/logging.server') ||
         id.includes('logging.server')) &&
-      !id.includes('.nitro')
+      !id.includes('.nitro') &&
+      !id.includes('logging.client-stub')
     ) {
       // Check if this is a server build (SSR/Nitro)
       // Only allow real imports in clearly server contexts
@@ -38,8 +40,20 @@ const stubServerFiles = (): Plugin => ({
       // Stub for client builds (when NOT a server build)
       // This prevents logging.server.ts from being bundled into client code
       if (!isServerBuild) {
-        return path.resolve(process.cwd(), 'src/lib/logging.client-stub.ts')
+        const stubPath = path.resolve(
+          process.cwd(),
+          'src/lib/logging.client-stub.ts',
+        )
+        return stubPath
       }
+    }
+    return null
+  },
+  // Also handle load hook for dynamic imports
+  load(id) {
+    // If this is the stub file being loaded, return its contents
+    if (id.includes('logging.client-stub')) {
+      return null // Let Vite handle it normally
     }
     return null
   },
