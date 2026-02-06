@@ -4,7 +4,7 @@
  */
 
 import { z } from 'zod'
-import { logError, logger } from './logging.server'
+// Note: Logging imports are done dynamically in validateEnv() to prevent client bundle inclusion
 
 const envSchema = z.object({
   // Database
@@ -71,41 +71,59 @@ export function validateEnv(): Env {
 
   try {
     const validated = envSchema.parse(process.env)
-    logger.info(
-      { service: 'env' },
-      'Environment variables validated successfully',
-    )
+    // Logging is optional - import dynamically to avoid client bundle inclusion
+    if (typeof window === 'undefined') {
+      import('./logging.server')
+        .then(({ logger }) => {
+          logger.info(
+            { service: 'env' },
+            'Environment variables validated successfully',
+          )
+        })
+        .catch(() => {
+          // Logging unavailable, continue without it
+        })
+    }
     return validated
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      const availableKeys = Object.keys(process.env).filter(
-        (k) =>
-          !k.toLowerCase().includes('key') &&
-          !k.toLowerCase().includes('secret') &&
-          !k.toLowerCase().includes('password') &&
-          !k.toLowerCase().includes('token'),
-      )
+    // Logging is optional - import dynamically to avoid client bundle inclusion
+    if (typeof window === 'undefined') {
+      import('./logging.server')
+        .then(({ logError, logger }) => {
+          if (error instanceof z.ZodError) {
+            const availableKeys = Object.keys(process.env).filter(
+              (k) =>
+                !k.toLowerCase().includes('key') &&
+                !k.toLowerCase().includes('secret') &&
+                !k.toLowerCase().includes('password') &&
+                !k.toLowerCase().includes('token'),
+            )
 
-      logError(
-        error,
-        {
-          service: 'env',
-          validationErrors: error.errors.map((err) => ({
-            path: err.path.join('.'),
-            message: err.message,
-          })),
-          availableKeys,
-        },
-        'Environment variable validation failed',
-      )
-    } else {
-      logError(error, { service: 'env' }, 'Environment validation error')
+            logError(
+              error,
+              {
+                service: 'env',
+                validationErrors: error.errors.map((err) => ({
+                  path: err.path.join('.'),
+                  message: err.message,
+                })),
+                availableKeys,
+              },
+              'Environment variable validation failed',
+            )
+          } else {
+            logError(error, { service: 'env' }, 'Environment validation error')
+          }
+
+          logger.error(
+            { service: 'env' },
+            'Please check your Vercel environment variables or .env file',
+          )
+        })
+        .catch(() => {
+          // Logging unavailable, continue without it
+        })
     }
-
-    logger.error(
-      { service: 'env' },
-      'Please check your Vercel environment variables or .env file',
-    )
 
     // In production/serverless, we throw instead of exiting to allow for better error handling
     if (process.env.NODE_ENV === 'production') {
@@ -207,7 +225,12 @@ export const ENV = new Proxy({} as Env & { CLERK_PUBLISHABLE_KEY: string }, {
     }
 
     if (!_env) {
-      _env = envSchema.parse(process.env)
+      // Only parse on server-side
+      if (typeof window === 'undefined') {
+        _env = envSchema.parse(process.env)
+      } else {
+        _env = {} as Env
+      }
     }
     // Provide CLERK_PUBLISHABLE_KEY as an alias for VITE_CLERK_PUBLISHABLE_KEY
     if (prop === 'CLERK_PUBLISHABLE_KEY') {

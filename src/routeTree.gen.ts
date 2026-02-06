@@ -20,6 +20,7 @@ import { Route as DbHealthRouteImport } from './routes/db-health'
 import { Route as ComplianceAuditRouteImport } from './routes/compliance-audit'
 import { Route as CertificationManagementRouteImport } from './routes/certification-management'
 import { Route as CatalogRouteImport } from './routes/catalog'
+import { Route as ApiDocsRouteImport } from './routes/api-docs'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserProfileSplatRouteImport } from './routes/user-profile.$'
 import { Route as ApiUsersRouteImport } from './routes/api.users'
@@ -28,11 +29,13 @@ import { Route as ApiTeamRequirementsRouteImport } from './routes/api.team-requi
 import { Route as ApiTeamMembersRouteImport } from './routes/api.team-members'
 import { Route as ApiNotificationsRouteImport } from './routes/api.notifications'
 import { Route as ApiNotificationSettingsRouteImport } from './routes/api.notification-settings'
+import { Route as ApiHealthRouteImport } from './routes/api.health'
 import { Route as ApiExportRouteImport } from './routes/api.export'
 import { Route as ApiDashboardRouteImport } from './routes/api.dashboard'
 import { Route as ApiComplianceRouteImport } from './routes/api.compliance'
 import { Route as ApiCertificationsRouteImport } from './routes/api.certifications'
 import { Route as ApiCatalogRouteImport } from './routes/api.catalog'
+import { Route as DocsApiOpenapiRouteImport } from './routes/docs.api.openapi'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
@@ -96,6 +99,11 @@ const CatalogRoute = CatalogRouteImport.update({
   path: '/catalog',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiDocsRoute = ApiDocsRouteImport.update({
+  id: '/api-docs',
+  path: '/api-docs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -136,6 +144,11 @@ const ApiNotificationSettingsRoute = ApiNotificationSettingsRouteImport.update({
   path: '/api/notification-settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiHealthRoute = ApiHealthRouteImport.update({
+  id: '/api/health',
+  path: '/api/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiExportRoute = ApiExportRouteImport.update({
   id: '/api/export',
   path: '/api/export',
@@ -159,6 +172,11 @@ const ApiCertificationsRoute = ApiCertificationsRouteImport.update({
 const ApiCatalogRoute = ApiCatalogRouteImport.update({
   id: '/api/catalog',
   path: '/api/catalog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsApiOpenapiRoute = DocsApiOpenapiRouteImport.update({
+  id: '/docs/api/openapi',
+  path: '/docs/api/openapi',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
@@ -199,6 +217,7 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api-docs': typeof ApiDocsRoute
   '/catalog': typeof CatalogRoute
   '/certification-management': typeof CertificationManagementRoute
   '/compliance-audit': typeof ComplianceAuditRoute
@@ -215,6 +234,7 @@ export interface FileRoutesByFullPath {
   '/api/compliance': typeof ApiComplianceRoute
   '/api/dashboard': typeof ApiDashboardRoute
   '/api/export': typeof ApiExportRoute
+  '/api/health': typeof ApiHealthRoute
   '/api/notification-settings': typeof ApiNotificationSettingsRoute
   '/api/notifications': typeof ApiNotificationsRoute
   '/api/team-members': typeof ApiTeamMembersRoute
@@ -225,6 +245,7 @@ export interface FileRoutesByFullPath {
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/docs/api/openapi': typeof DocsApiOpenapiRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
@@ -232,6 +253,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api-docs': typeof ApiDocsRoute
   '/catalog': typeof CatalogRoute
   '/certification-management': typeof CertificationManagementRoute
   '/compliance-audit': typeof ComplianceAuditRoute
@@ -248,6 +270,7 @@ export interface FileRoutesByTo {
   '/api/compliance': typeof ApiComplianceRoute
   '/api/dashboard': typeof ApiDashboardRoute
   '/api/export': typeof ApiExportRoute
+  '/api/health': typeof ApiHealthRoute
   '/api/notification-settings': typeof ApiNotificationSettingsRoute
   '/api/notifications': typeof ApiNotificationsRoute
   '/api/team-members': typeof ApiTeamMembersRoute
@@ -258,6 +281,7 @@ export interface FileRoutesByTo {
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/docs/api/openapi': typeof DocsApiOpenapiRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
@@ -266,6 +290,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api-docs': typeof ApiDocsRoute
   '/catalog': typeof CatalogRoute
   '/certification-management': typeof CertificationManagementRoute
   '/compliance-audit': typeof ComplianceAuditRoute
@@ -282,6 +307,7 @@ export interface FileRoutesById {
   '/api/compliance': typeof ApiComplianceRoute
   '/api/dashboard': typeof ApiDashboardRoute
   '/api/export': typeof ApiExportRoute
+  '/api/health': typeof ApiHealthRoute
   '/api/notification-settings': typeof ApiNotificationSettingsRoute
   '/api/notifications': typeof ApiNotificationsRoute
   '/api/team-members': typeof ApiTeamMembersRoute
@@ -292,6 +318,7 @@ export interface FileRoutesById {
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/docs/api/openapi': typeof DocsApiOpenapiRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
@@ -301,6 +328,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/api-docs'
     | '/catalog'
     | '/certification-management'
     | '/compliance-audit'
@@ -317,6 +345,7 @@ export interface FileRouteTypes {
     | '/api/compliance'
     | '/api/dashboard'
     | '/api/export'
+    | '/api/health'
     | '/api/notification-settings'
     | '/api/notifications'
     | '/api/team-members'
@@ -327,6 +356,7 @@ export interface FileRouteTypes {
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/docs/api/openapi'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
@@ -334,6 +364,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/api-docs'
     | '/catalog'
     | '/certification-management'
     | '/compliance-audit'
@@ -350,6 +381,7 @@ export interface FileRouteTypes {
     | '/api/compliance'
     | '/api/dashboard'
     | '/api/export'
+    | '/api/health'
     | '/api/notification-settings'
     | '/api/notifications'
     | '/api/team-members'
@@ -360,6 +392,7 @@ export interface FileRouteTypes {
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/docs/api/openapi'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
@@ -367,6 +400,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/api-docs'
     | '/catalog'
     | '/certification-management'
     | '/compliance-audit'
@@ -383,6 +417,7 @@ export interface FileRouteTypes {
     | '/api/compliance'
     | '/api/dashboard'
     | '/api/export'
+    | '/api/health'
     | '/api/notification-settings'
     | '/api/notifications'
     | '/api/team-members'
@@ -393,6 +428,7 @@ export interface FileRouteTypes {
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/docs/api/openapi'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
@@ -401,6 +437,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiDocsRoute: typeof ApiDocsRoute
   CatalogRoute: typeof CatalogRoute
   CertificationManagementRoute: typeof CertificationManagementRoute
   ComplianceAuditRoute: typeof ComplianceAuditRoute
@@ -417,6 +454,7 @@ export interface RootRouteChildren {
   ApiComplianceRoute: typeof ApiComplianceRoute
   ApiDashboardRoute: typeof ApiDashboardRoute
   ApiExportRoute: typeof ApiExportRoute
+  ApiHealthRoute: typeof ApiHealthRoute
   ApiNotificationSettingsRoute: typeof ApiNotificationSettingsRoute
   ApiNotificationsRoute: typeof ApiNotificationsRoute
   ApiTeamMembersRoute: typeof ApiTeamMembersRoute
@@ -427,6 +465,7 @@ export interface RootRouteChildren {
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
   DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute
+  DocsApiOpenapiRoute: typeof DocsApiOpenapiRoute
   DemoStartSsrDataOnlyRoute: typeof DemoStartSsrDataOnlyRoute
   DemoStartSsrFullSsrRoute: typeof DemoStartSsrFullSsrRoute
   DemoStartSsrSpaModeRoute: typeof DemoStartSsrSpaModeRoute
@@ -512,6 +551,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CatalogRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api-docs': {
+      id: '/api-docs'
+      path: '/api-docs'
+      fullPath: '/api-docs'
+      preLoaderRoute: typeof ApiDocsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -568,6 +614,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiNotificationSettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/health': {
+      id: '/api/health'
+      path: '/api/health'
+      fullPath: '/api/health'
+      preLoaderRoute: typeof ApiHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/export': {
       id: '/api/export'
       path: '/api/export'
@@ -601,6 +654,13 @@ declare module '@tanstack/react-router' {
       path: '/api/catalog'
       fullPath: '/api/catalog'
       preLoaderRoute: typeof ApiCatalogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/api/openapi': {
+      id: '/docs/api/openapi'
+      path: '/docs/api/openapi'
+      fullPath: '/docs/api/openapi'
+      preLoaderRoute: typeof DocsApiOpenapiRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/start/server-funcs': {
@@ -657,6 +717,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiDocsRoute: ApiDocsRoute,
   CatalogRoute: CatalogRoute,
   CertificationManagementRoute: CertificationManagementRoute,
   ComplianceAuditRoute: ComplianceAuditRoute,
@@ -673,6 +734,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiComplianceRoute: ApiComplianceRoute,
   ApiDashboardRoute: ApiDashboardRoute,
   ApiExportRoute: ApiExportRoute,
+  ApiHealthRoute: ApiHealthRoute,
   ApiNotificationSettingsRoute: ApiNotificationSettingsRoute,
   ApiNotificationsRoute: ApiNotificationsRoute,
   ApiTeamMembersRoute: ApiTeamMembersRoute,
@@ -683,6 +745,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,
   DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,
+  DocsApiOpenapiRoute: DocsApiOpenapiRoute,
   DemoStartSsrDataOnlyRoute: DemoStartSsrDataOnlyRoute,
   DemoStartSsrFullSsrRoute: DemoStartSsrFullSsrRoute,
   DemoStartSsrSpaModeRoute: DemoStartSsrSpaModeRoute,
