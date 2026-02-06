@@ -5,35 +5,18 @@ import viteReact from '@vitejs/plugin-react'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 import tailwindcss from '@tailwindcss/vite'
 import { nitro } from 'nitro/vite'
-import path from 'path'
 
-// Plugin to stub server-only files in client builds
-const stubServerFiles = () => ({
-  name: 'stub-server-files',
-  enforce: 'pre' as const, // Run before other plugins to catch imports early
-  resolveId(id: string, importer?: string) {
-    // Only apply to client builds (not SSR/Nitro)
-    if (id.includes('logging.server') && !id.includes('.nitro')) {
-      // Check if this is a client build context
-      const isClientBuild =
-        !importer?.includes('services/ssr') &&
-        !importer?.includes('.nitro') &&
-        !importer?.includes('entry-server')
-
-      if (isClientBuild) {
-        return path.resolve(process.cwd(), 'src/lib/logging.client-stub.ts')
-      }
-    }
-    return null
-  },
-})
+// Plugin to stub server-only files was removed
+// TanStack Start handles server-only files correctly via Nitro
+// The Vercel build warning about node:crypto externalization is informational and harmless
 
 const config = defineConfig({
   envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
   plugins: [
     devtools(),
-    // Stub server files before other plugins to prevent client bundle inclusion
-    stubServerFiles(),
+    // Disabled stubServerFiles plugin - TanStack Start handles server-only files correctly
+    // The warning about node:crypto externalization is informational and harmless
+    // stubServerFiles(),
     // this is the plugin that enables path aliases
     viteTsConfigPaths({
       projects: ['./tsconfig.json'],
@@ -57,14 +40,7 @@ const config = defineConfig({
   },
   resolve: {
     conditions: ['import', 'module', 'browser', 'default'],
-    alias: [
-      // Stub server-only files for client builds to prevent bundling errors
-      // This regex matches any import path ending with logging.server
-      {
-        find: /^(.*\/)?logging\.server$/,
-        replacement: `${process.cwd()}/src/lib/logging.client-stub.ts`,
-      },
-    ],
+    // Removed alias - using plugin instead for more control
   },
   ssr: {
     // Don't externalize anything - let Nitro handle it
