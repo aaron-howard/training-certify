@@ -23,6 +23,7 @@ interface CatalogEntry {
   name: string
   vendorId: string
   vendorName: string
+  vendorLogo?: string | null
   category: string
   difficulty: string
   validityPeriod?: string | null
@@ -127,6 +128,7 @@ async function main() {
           name: entry.name,
           vendorId: entry.vendorId,
           vendorName: entry.vendorName,
+          vendorLogo: entry.vendorLogo || null,
           category,
           difficulty,
           validityPeriod: entry.validityPeriod || null,
