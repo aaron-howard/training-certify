@@ -30,9 +30,14 @@ interface CatalogResponse {
 
 // API fetch functions (using traditional fetch instead of broken createServerFn)
 const fetchCatalog = async (): Promise<CatalogResponse> => {
-  const res = await fetch('/api/catalog')
+  const res = await fetch('/api/catalog?limit=200')
   if (!res.ok) throw new Error('Failed to fetch catalog')
-  return res.json()
+  const result = await res.json()
+  // API returns paginated { data: [...], pagination: {...} }
+  // Normalize to the shape this component expects
+  return {
+    certifications: Array.isArray(result) ? result : (result.data ?? []),
+  }
 }
 
 const fetchEnsureUser = async (data: {
@@ -73,7 +78,7 @@ function CatalogPage() {
     id: '',
     name: '',
     vendorName: '',
-    difficulty: 'Intermediate',
+    difficulty: 'Associate',
     price: '',
     category: 'Cloud',
     description: '',
@@ -180,9 +185,9 @@ function CatalogPage() {
       if (sortBy === 'vendor') return vendorA.localeCompare(vendorB)
       if (sortBy === 'level') {
         const ranks: Record<string, number> = {
-          Beginner: 1,
-          Intermediate: 2,
-          Advanced: 3,
+          Foundational: 1,
+          Associate: 2,
+          Professional: 3,
           Expert: 4,
         }
         return (ranks[a.level ?? ''] || 0) - (ranks[b.level ?? ''] || 0)
@@ -241,7 +246,7 @@ function CatalogPage() {
         id: '',
         name: '',
         vendorName: '',
-        difficulty: 'Intermediate',
+        difficulty: 'Associate',
         price: '',
         category: 'Cloud',
         description: '',
@@ -314,14 +319,14 @@ function CatalogPage() {
               <option value="All" className="dark:bg-slate-900">
                 All Levels
               </option>
-              <option value="Beginner" className="dark:bg-slate-900">
-                Beginner
+              <option value="Foundational" className="dark:bg-slate-900">
+                Foundational
               </option>
-              <option value="Intermediate" className="dark:bg-slate-900">
-                Intermediate
+              <option value="Associate" className="dark:bg-slate-900">
+                Associate
               </option>
-              <option value="Advanced" className="dark:bg-slate-900">
-                Advanced
+              <option value="Professional" className="dark:bg-slate-900">
+                Professional
               </option>
               <option value="Expert" className="dark:bg-slate-900">
                 Expert
@@ -506,9 +511,9 @@ function CatalogPage() {
                   }
                   className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
                 >
-                  <option value="Beginner">Beginner</option>
-                  <option value="Intermediate">Intermediate</option>
-                  <option value="Advanced">Advanced</option>
+                  <option value="Foundational">Foundational</option>
+                  <option value="Associate">Associate</option>
+                  <option value="Professional">Professional</option>
                   <option value="Expert">Expert</option>
                 </select>
               </div>
@@ -523,11 +528,31 @@ function CatalogPage() {
                   }
                   className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
                 >
+                  <option value="AI & Machine Learning">
+                    AI & Machine Learning
+                  </option>
+                  <option value="Business Applications">
+                    Business Applications
+                  </option>
                   <option value="Cloud">Cloud</option>
-                  <option value="Security">Security</option>
+                  <option value="Collaboration">Collaboration</option>
+                  <option value="Data & Analytics">Data & Analytics</option>
+                  <option value="Database">Database</option>
+                  <option value="DevOps">DevOps</option>
+                  <option value="Governance & Compliance">
+                    Governance & Compliance
+                  </option>
+                  <option value="Infrastructure">Infrastructure</option>
+                  <option value="IT Service Management">
+                    IT Service Management
+                  </option>
                   <option value="Networking">Networking</option>
-                  <option value="Data">Data</option>
+                  <option value="Operating Systems">Operating Systems</option>
                   <option value="Project Management">Project Management</option>
+                  <option value="Security">Security</option>
+                  <option value="Software Development">
+                    Software Development
+                  </option>
                 </select>
               </div>
               <div>
