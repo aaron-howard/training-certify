@@ -20,7 +20,10 @@ const stubServerFiles = (): Plugin => {
       // Check if this is an SSR build
       isSSRBuild = config.build.ssr !== undefined && config.build.ssr !== false
     },
-    resolveId(id, importer) {
+    resolveId(id) {
+      // Only stub during client builds (not SSR/Nitro)
+      if (isSSRBuild) return null
+
       // Match any import of logging.server
       const isLoggingServerImport =
         (id === './logging.server' ||
@@ -33,27 +36,7 @@ const stubServerFiles = (): Plugin => {
         !id.includes('logging.client-stub')
 
       if (isLoggingServerImport) {
-        // Check if this is a server build (SSR/Nitro)
-        const isServerBuild =
-          isSSRBuild ||
-          importer?.includes('services/ssr') ||
-          importer?.includes('.nitro') ||
-          importer?.includes('entry-server.tsx') ||
-          importer?.includes('start.ts') ||
-          importer?.includes('.server.ts') ||
-          importer?.includes('.server.tsx') ||
-          importer?.includes('api/') ||
-          importer?.includes('routes/api.') ||
-          process.env.NITRO_PRESET === 'vercel'
-
-        // Stub for client builds (when NOT a server build)
-        if (!isServerBuild) {
-          const stubPath = path.resolve(
-            process.cwd(),
-            'src/lib/logging.client-stub.ts',
-          )
-          return stubPath
-        }
+        return path.resolve(process.cwd(), 'src/lib/logging.client-stub.ts')
       }
       return null
     },
