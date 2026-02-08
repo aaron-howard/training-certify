@@ -70,12 +70,11 @@ const config = defineConfig({
     // Exclude server-only files from client optimization
     exclude: ['src/lib/logging.server.ts', 'src/lib/**/*.server.ts'],
   },
-  resolve: {
-    conditions: ['import', 'module', 'browser', 'default'],
-  },
   ssr: {
-    // Don't externalize anything - let Nitro handle it
-    noExternal: true,
+    // Let Nitro handle dependency bundling during its own build phase.
+    // Vite externalizes node_modules for SSR by default, which avoids
+    // circular dependency TDZ errors (e.g. BaseRoute) that occur when
+    // everything is inlined into a single SSR bundle.
   },
   build: {
     rollupOptions: {
