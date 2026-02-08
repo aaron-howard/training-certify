@@ -98,10 +98,14 @@ const config = defineConfig({
             return undefined
           }
 
-          // Split React and React DOM into separate chunk
+          // Split React, React DOM, and scheduler into separate chunk
+          // scheduler must be co-located with react-dom to avoid TDZ errors
+          // where react-dom references scheduler before it's initialized
           if (
             id.includes('node_modules/react/') ||
-            id.includes('node_modules/react-dom/')
+            id.includes('node_modules/react-dom/') ||
+            id.includes('node_modules/scheduler/') ||
+            id.includes('node_modules/use-sync-external-store/')
           ) {
             return 'react-vendor'
           }
