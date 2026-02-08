@@ -181,48 +181,7 @@ export const ENV = new Proxy({} as Env & { CLERK_PUBLISHABLE_KEY: string }, {
     if (!_env) {
       // Only parse on server-side
       if (typeof window === 'undefined') {
-        // #region agent log
-        console.error(
-          '[DEBUG:H1] ENV proxy: parsing process.env, prop=' + String(prop),
-        )
-        console.error(
-          '[DEBUG:H1] ENV proxy: DATABASE_URL set?',
-          !!process.env.DATABASE_URL,
-          'POSTGRES_URL set?',
-          !!process.env.POSTGRES_URL,
-        )
-        console.error(
-          '[DEBUG:H1] ENV proxy: CLERK_SECRET_KEY set?',
-          !!process.env.CLERK_SECRET_KEY,
-        )
-        console.error(
-          '[DEBUG:H1] ENV proxy: VITE_CLERK_PUBLISHABLE_KEY set?',
-          !!process.env.VITE_CLERK_PUBLISHABLE_KEY,
-          'CLERK_PUBLISHABLE_KEY set?',
-          !!process.env.CLERK_PUBLISHABLE_KEY,
-        )
-        console.error('[DEBUG:H1] ENV proxy: NODE_ENV=', process.env.NODE_ENV)
-        // #endregion
-        try {
-          _env = envSchema.parse(process.env)
-          // #region agent log
-          console.error('[DEBUG:H1] ENV proxy: envSchema.parse() succeeded')
-          // #endregion
-        } catch (e) {
-          // #region agent log
-          console.error(
-            '[DEBUG:H1] ENV proxy: envSchema.parse() FAILED',
-            e instanceof Error ? e.message : String(e),
-          )
-          if (e && typeof e === 'object' && 'issues' in e) {
-            console.error(
-              '[DEBUG:H1] ENV proxy: Zod issues:',
-              JSON.stringify((e as any).issues),
-            )
-          }
-          // #endregion
-          throw e
-        }
+        _env = envSchema.parse(process.env)
       } else {
         _env = {} as Env
       }

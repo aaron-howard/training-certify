@@ -9,12 +9,6 @@
 import { randomBytes } from 'node:crypto'
 import pino from 'pino'
 
-// #region agent log
-console.error(
-  '[DEBUG:H3] logging.server.ts: module loaded (crypto + pino imported)',
-)
-// #endregion
-
 // Request ID storage (using AsyncLocalStorage for request context)
 const requestIdStorage = new Map<string, string>()
 
@@ -54,16 +48,6 @@ export function setRequestId(requestId: string): void {
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const isTest = process.env.NODE_ENV === 'test'
 
-// #region agent log
-console.error(
-  '[DEBUG:H3] logging.server.ts: creating pino logger, isDevelopment=',
-  isDevelopment,
-  'isTest=',
-  isTest,
-  'NODE_ENV=',
-  process.env.NODE_ENV,
-)
-// #endregion
 const pinoLogger = pino({
   level: process.env.LOG_LEVEL || (isDevelopment ? 'debug' : 'info'),
   transport:
