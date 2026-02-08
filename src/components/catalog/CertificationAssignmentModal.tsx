@@ -19,7 +19,9 @@ export function CertificationAssignmentModal({
     queryFn: async () => {
       const res = await fetch('/api/users')
       if (!res.ok) throw new Error('Failed to fetch users')
-      return res.json()
+      const result = await res.json()
+      // GET /api/users returns paginated { data, pagination } — unwrap
+      return Array.isArray(result) ? result : (result.data ?? [])
     },
   })
 

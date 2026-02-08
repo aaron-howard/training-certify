@@ -95,7 +95,7 @@ export const Route = createFileRoute('/api/users')({
        *
        * **Authentication:** Required (via Clerk)
        * **Authorization:** User can create their own record, or Admin can create any record
-       * **Rate Limiting:** AUTH preset (5 requests per minute)
+       * **Rate Limiting:** MUTATION preset (30 requests per minute)
        * **CSRF Protection:** Required
        *
        * @param request - HTTP request containing JSON body with user data:
@@ -126,7 +126,11 @@ export const Route = createFileRoute('/api/users')({
           const authenticatedId = await getVerifiedAuth()
 
           // 2. Rate Limit based on the authenticated user
-          await requireRateLimit(authenticatedId, RateLimitPresets.AUTH)
+          // Use MUTATION preset (30/min) instead of AUTH (5/min) because
+          // POST /api/users is an idempotent "ensure user exists" operation
+          // called by multiple pages on load, not a login attempt
+          await requireRateLimit(authenticatedId, RateLimitPresets.MUTATION)
+
           requireCSRFToken(getCSRFTokenFromRequest(request))
 
           const data = await request.json()

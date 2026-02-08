@@ -125,8 +125,8 @@ export const Route = createFileRoute('/api/catalog')({
                 vendorName: data.vendorName,
                 category: validateCategory(data.category || 'Cloud') ?? 'Cloud',
                 difficulty:
-                  validateDifficulty(data.difficulty || 'Intermediate') ??
-                  'Intermediate',
+                  validateDifficulty(data.difficulty || 'Associate') ??
+                  'Associate',
                 price: data.price ? String(data.price) : null, // Schema uses text for price unfortunately, or does it? checking schema...
                 description: data.description || null,
               })

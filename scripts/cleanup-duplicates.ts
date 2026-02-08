@@ -57,7 +57,7 @@ async function main() {
         if (c.description && c.description.length > 20) score += 10
         if (c.price) score += 5
         if (c.category && c.category !== 'Cloud') score += 3 // Prefer non-default categories
-        if (c.difficulty && c.difficulty !== 'Intermediate') score += 2
+        if (c.difficulty && c.difficulty !== 'Associate') score += 2
         if (c.vendorLogo) score += 1
         // Prefer names that contain the ID (often official names)
         if (c.name.toLowerCase().includes(c.id.toLowerCase())) score += 5

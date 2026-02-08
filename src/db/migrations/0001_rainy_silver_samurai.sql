@@ -1,0 +1,3 @@
+-- This migration was previously applied to the database but the SQL file was missing.
+-- Placeholder created to satisfy Drizzle's migration file resolver.
+-- No-op: the schema changes from this migration are already in the database.

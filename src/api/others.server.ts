@@ -387,7 +387,7 @@ export const seedCatalog = createServerFn({ method: 'POST' }).handler(
           vendorId: 'msft',
           vendorName: 'Microsoft',
           category: validateCategory('Cloud') || 'Cloud',
-          difficulty: validateDifficulty('Intermediate') || 'Intermediate',
+          difficulty: validateDifficulty('Associate') || 'Associate',
           description: 'Exam AZ-104: Microsoft Azure Administrator',
         },
         {
@@ -405,8 +405,10 @@ export const seedCatalog = createServerFn({ method: 'POST' }).handler(
           name: 'Certified System Administrator',
           vendorId: 'snow',
           vendorName: 'ServiceNow',
-          category: validateCategory('IT') || 'Cloud', // ITSM not in enum, using IT
-          difficulty: validateDifficulty('Beginner') || 'Beginner',
+          category:
+            validateCategory('IT Service Management') ||
+            'IT Service Management',
+          difficulty: validateDifficulty('Foundational') || 'Foundational',
           description: 'ServiceNow Certified System Administrator',
         },
         {
@@ -414,8 +416,10 @@ export const seedCatalog = createServerFn({ method: 'POST' }).handler(
           name: 'Certified Application Developer',
           vendorId: 'snow',
           vendorName: 'ServiceNow',
-          category: validateCategory('IT') || 'Cloud', // Development not in enum, using IT
-          difficulty: validateDifficulty('Intermediate') || 'Intermediate',
+          category:
+            validateCategory('IT Service Management') ||
+            'IT Service Management',
+          difficulty: validateDifficulty('Associate') || 'Associate',
           description: 'ServiceNow Certified Application Developer',
         },
       ]

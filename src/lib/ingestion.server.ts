@@ -257,8 +257,8 @@ export async function syncCatalogFromITExams(limitVendors?: number) {
         vendorId: exam.vendorId,
         vendorName: exam.vendorName,
         description: `Official Exam ${exam.code}: ${exam.name}`,
-        category: validateCategory('IT') || 'Cloud', // IT Certification not in enum, using IT
-        difficulty: validateDifficulty('Intermediate') || 'Intermediate', // Default difficulty
+        category: validateCategory('IT Service Management') || 'Cloud',
+        difficulty: validateDifficulty('Associate') || 'Associate',
       }
 
       try {

@@ -446,7 +446,9 @@ function MemberManagementModal({
     queryFn: async () => {
       const res = await fetch('/api/users')
       if (!res.ok) return []
-      return res.json()
+      const result = await res.json()
+      // GET /api/users returns paginated { data, pagination } — unwrap
+      return Array.isArray(result) ? result : (result.data ?? [])
     },
   })
 

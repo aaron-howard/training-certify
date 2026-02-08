@@ -6,52 +6,31 @@
 
 import { logger } from './logging.server'
 
-// Category enum values
+// Category enum values (normalized domain areas)
 const VALID_CATEGORIES = [
-  'AI',
-  'AppDynamics',
+  'AI & Machine Learning',
   'Business Applications',
-  'Channel/Partner',
   'Cloud',
   'Collaboration',
-  'Cybersecurity',
-  'Data',
-  'Data Center',
-  'Design',
-  'DevNet',
+  'Data & Analytics',
+  'Database',
   'DevOps',
-  'Dynamics 365',
-  'Enterprise',
-  'Field Technician',
-  'IT',
-  'Meraki',
-  'Modern Workplace',
+  'Governance & Compliance',
+  'Infrastructure',
+  'IT Service Management',
   'Networking',
-  'Power Platform',
+  'Operating Systems',
   'Project Management',
   'Security',
-  'Service Provider',
-  'Support Technician',
+  'Software Development',
 ] as const
 
-// Difficulty enum values
+// Difficulty enum values (normalized skill levels)
 const VALID_DIFFICULTIES = [
-  'Advanced',
+  'Foundational',
   'Associate',
-  'Beginner',
-  'Cybersecurity',
-  'Expert',
-  'Financial App',
-  'Information Technology',
-  'Intermediate',
-  'IT Finance',
-  'Networking',
   'Professional',
-  'Project Management',
-  'ServiceNow',
-  'ServiceNow*',
-  'Software and Quality',
-  'Virtualization',
+  'Expert',
 ] as const
 
 // Role enum values
@@ -68,20 +47,99 @@ export type CertificationDifficulty = (typeof VALID_DIFFICULTIES)[number]
 export type UserRole = (typeof VALID_ROLES)[number]
 
 /**
+ * Maps legacy/non-standard category values to the normalized categories.
+ * Used during migration and CSV ingestion.
+ */
+const CATEGORY_ALIASES: Partial<Record<string, CertificationCategory>> = {
+  // Direct matches (case-insensitive handled separately)
+  ai: 'AI & Machine Learning',
+  'artificial intelligence': 'AI & Machine Learning',
+  'machine learning': 'AI & Machine Learning',
+  ml: 'AI & Machine Learning',
+  appdynamics: 'DevOps',
+  'business applications': 'Business Applications',
+  'channel/partner': 'Business Applications',
+  cloud: 'Cloud',
+  collaboration: 'Collaboration',
+  'modern workplace': 'Collaboration',
+  cybersecurity: 'Security',
+  data: 'Data & Analytics',
+  'data & analytics': 'Data & Analytics',
+  analytics: 'Data & Analytics',
+  database: 'Database',
+  'data center': 'Infrastructure',
+  design: 'Software Development',
+  devnet: 'DevOps',
+  devops: 'DevOps',
+  'dynamics 365': 'Business Applications',
+  enterprise: 'Infrastructure',
+  'field technician': 'Infrastructure',
+  it: 'IT Service Management',
+  'it service management': 'IT Service Management',
+  itsm: 'IT Service Management',
+  meraki: 'Networking',
+  networking: 'Networking',
+  'operating systems': 'Operating Systems',
+  'power platform': 'Business Applications',
+  'project management': 'Project Management',
+  security: 'Security',
+  'service provider': 'Networking',
+  'support technician': 'IT Service Management',
+  'software development': 'Software Development',
+  development: 'Software Development',
+  programming: 'Software Development',
+  'governance & compliance': 'Governance & Compliance',
+  governance: 'Governance & Compliance',
+  compliance: 'Governance & Compliance',
+  audit: 'Governance & Compliance',
+  infrastructure: 'Infrastructure',
+  virtualization: 'Infrastructure',
+  'information technology': 'IT Service Management',
+}
+
+/**
+ * Maps legacy/non-standard difficulty values to normalized levels.
+ * Used during migration and CSV ingestion.
+ */
+const DIFFICULTY_ALIASES: Partial<Record<string, CertificationDifficulty>> = {
+  foundational: 'Foundational',
+  fundamental: 'Foundational',
+  fundamentals: 'Foundational',
+  beginner: 'Foundational',
+  entry: 'Foundational',
+  associate: 'Associate',
+  intermediate: 'Associate',
+  professional: 'Professional',
+  advanced: 'Professional',
+  specialist: 'Professional',
+  expert: 'Expert',
+  // Legacy junk values that were categories, not difficulties
+  cybersecurity: 'Professional',
+  'financial app': 'Professional',
+  'information technology': 'Associate',
+  'it finance': 'Professional',
+  networking: 'Associate',
+  'project management': 'Professional',
+  servicenow: 'Associate',
+  'servicenow*': 'Associate',
+  'software and quality': 'Associate',
+  virtualization: 'Professional',
+}
+
+/**
  * Validates and returns a valid certification category enum value.
  *
- * Checks if the provided value matches one of the valid certification categories.
- * If the value is invalid or null/undefined, returns undefined. If the value doesn't
- * match any known category, logs a warning and defaults to 'Cloud'.
+ * Checks if the provided value matches one of the valid certification categories
+ * or a known alias. Returns 'Cloud' as fallback for unknown values.
  *
  * @param value - String value to validate (from CSV, API input, etc.)
  * @returns Valid CertificationCategory enum value, or undefined if value is null/undefined
- * @returns 'Cloud' as fallback if value doesn't match any valid category (with warning)
  *
  * @example
  * ```typescript
- * const category = validateCategory('Cybersecurity') // Returns 'Cybersecurity'
- * const invalid = validateCategory('Unknown') // Returns 'Cloud' with warning
+ * validateCategory('Security')       // Returns 'Security'
+ * validateCategory('Cybersecurity')  // Returns 'Security' (alias)
+ * validateCategory('Unknown')        // Returns 'Cloud' with warning
  * ```
  */
 export function validateCategory(
@@ -89,10 +147,17 @@ export function validateCategory(
 ): CertificationCategory | undefined {
   if (!value) return undefined
   const trimmed = value.trim()
+
+  // Direct match
   if (VALID_CATEGORIES.includes(trimmed as CertificationCategory)) {
     return trimmed as CertificationCategory
   }
-  // Fallback to Cloud for unknown categories
+
+  // Alias match (case-insensitive)
+  const alias = CATEGORY_ALIASES[trimmed.toLowerCase()]
+  if (alias) return alias
+
+  // Fallback
   logger.warn(
     { category: value },
     `Unknown category "${value}", defaulting to "Cloud"`,
@@ -103,18 +168,17 @@ export function validateCategory(
 /**
  * Validates and returns a valid certification difficulty enum value.
  *
- * Checks if the provided value matches one of the valid difficulty levels.
- * If the value is invalid or null/undefined, returns undefined. If the value doesn't
- * match any known difficulty, logs a warning and defaults to 'Intermediate'.
+ * Checks if the provided value matches one of the valid difficulty levels
+ * or a known alias. Returns 'Associate' as fallback for unknown values.
  *
  * @param value - String value to validate (from CSV, API input, etc.)
  * @returns Valid CertificationDifficulty enum value, or undefined if value is null/undefined
- * @returns 'Intermediate' as fallback if value doesn't match any valid difficulty (with warning)
  *
  * @example
  * ```typescript
- * const difficulty = validateDifficulty('Advanced') // Returns 'Advanced'
- * const invalid = validateDifficulty('Hard') // Returns 'Intermediate' with warning
+ * validateDifficulty('Expert')       // Returns 'Expert'
+ * validateDifficulty('Beginner')     // Returns 'Foundational' (alias)
+ * validateDifficulty('Unknown')      // Returns 'Associate' with warning
  * ```
  */
 export function validateDifficulty(
@@ -122,32 +186,29 @@ export function validateDifficulty(
 ): CertificationDifficulty | undefined {
   if (!value) return undefined
   const trimmed = value.trim()
+
+  // Direct match
   if (VALID_DIFFICULTIES.includes(trimmed as CertificationDifficulty)) {
     return trimmed as CertificationDifficulty
   }
-  // Fallback to Intermediate for unknown difficulties
+
+  // Alias match (case-insensitive)
+  const alias = DIFFICULTY_ALIASES[trimmed.toLowerCase()]
+  if (alias) return alias
+
+  // Fallback
   logger.warn(
     { difficulty: value },
-    `Unknown difficulty "${value}", defaulting to "Intermediate"`,
+    `Unknown difficulty "${value}", defaulting to "Associate"`,
   )
-  return 'Intermediate'
+  return 'Associate'
 }
 
 /**
  * Validates and returns a valid user role enum value.
  *
- * Checks if the provided value matches one of the valid user roles.
- * Returns undefined if the value is null, undefined, or doesn't match any valid role.
- * Logs a warning for invalid values.
- *
  * @param value - String value to validate (from CSV, API input, etc.)
  * @returns Valid UserRole enum value, or undefined if value is invalid/null/undefined
- *
- * @example
- * ```typescript
- * const role = validateRole('Admin') // Returns 'Admin'
- * const invalid = validateRole('SuperAdmin') // Returns undefined with warning
- * ```
  */
 export function validateRole(
   value: string | null | undefined,

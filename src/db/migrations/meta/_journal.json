@@ -29,6 +29,13 @@
       "when": 1770338051276,
       "tag": "0003_fair_rockslide",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1770518400000,
+      "tag": "0004_normalize_enums",
+      "breakpoints": true
     }
   ]
 }

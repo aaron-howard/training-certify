@@ -55,7 +55,7 @@ async function main() {
       vendorId: 'aws',
       vendorName: 'Amazon Web Services',
       category: validateCategory('Cloud') || 'Cloud',
-      difficulty: validateDifficulty('Intermediate') || 'Intermediate',
+      difficulty: validateDifficulty('Associate') || 'Associate',
     },
     {
       id: 'cert-azure-admin',
@@ -63,7 +63,7 @@ async function main() {
       vendorId: 'microsoft',
       vendorName: 'Microsoft',
       category: validateCategory('Cloud') || 'Cloud',
-      difficulty: validateDifficulty('Intermediate') || 'Intermediate',
+      difficulty: validateDifficulty('Associate') || 'Associate',
     },
     {
       id: 'cert-cissp',
