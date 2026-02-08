@@ -144,6 +144,26 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const queryClient = router.options.context.queryClient
 
+  // #region agent log
+  if (typeof window === 'undefined') {
+    console.error(
+      '[DEBUG:H1] RootDocument SSR: about to access ENV.CLERK_PUBLISHABLE_KEY',
+    )
+    try {
+      const pk = ENV.CLERK_PUBLISHABLE_KEY
+      console.error(
+        '[DEBUG:H1] RootDocument SSR: CLERK_PUBLISHABLE_KEY=',
+        pk ? pk.substring(0, 10) + '...' : 'EMPTY/UNDEFINED',
+      )
+    } catch (e) {
+      console.error(
+        '[DEBUG:H1] RootDocument SSR: ENV access THREW:',
+        e instanceof Error ? e.message : e,
+      )
+    }
+  }
+  // #endregion
+
   return (
     <html lang="en">
       <head>
