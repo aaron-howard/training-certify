@@ -12,6 +12,7 @@ export default [
       'app.config.ts',
       'drizzle.config.ts',
       '.output',
+      'scripts/normalize-catalog-categories.js',
     ],
   },
 ]

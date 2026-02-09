@@ -36,14 +36,15 @@ export function TeamRequirementsModal({
   const { data: certList = [] } = useQuery({
     queryKey: ['allCertifications'],
     queryFn: async () => {
-      const res = await fetch('/api/catalog')
+      const res = await fetch('/api/catalog?limit=200')
       let certs = []
       if (!res.ok) {
         const res2 = await fetch('/api/certifications')
         certs = await res2.json()
       } else {
         const data = await res.json()
-        certs = data.certifications || []
+        // API returns paginated { data: [...], pagination: {...} }
+        certs = Array.isArray(data) ? data : (data.data ?? [])
       }
 
       return certs.sort((a: any, b: any) => {

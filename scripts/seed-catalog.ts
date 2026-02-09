@@ -5,7 +5,8 @@
  * Replaces the previous vendor-specific CSV seed scripts.
  *
  * Usage:
- *   npx tsx scripts/seed-catalog.ts                  # Seed all certifications
+ *   npx tsx scripts/seed-catalog.ts                  # Seed from data/certification-catalog.json
+ *   npx tsx scripts/seed-catalog.ts --file=data/expanded_certification _catalog.json
  *   npx tsx scripts/seed-catalog.ts --limit=10       # Seed first 10 only
  *   npx tsx scripts/seed-catalog.ts --vendor=aws     # Seed only AWS certifications
  *   npx tsx scripts/seed-catalog.ts --dry-run        # Preview without inserting
@@ -32,26 +33,30 @@ interface CatalogEntry {
   description?: string | null
 }
 
+const DEFAULT_CATALOG = path.join('data', 'certification-catalog.json')
+
 async function main() {
-  const catalogPath = path.resolve(
-    process.cwd(),
-    'data',
-    'certification-catalog.json',
-  )
-
-  if (!fs.existsSync(catalogPath)) {
-    console.error(`❌ Catalog file not found at ${catalogPath}`)
-    console.error('   Expected: data/certification-catalog.json')
-    process.exit(1)
-  }
-
   // Parse CLI arguments
   const args = process.argv.slice(2)
+  const fileArg = args.find((arg) => arg.startsWith('--file='))
   const limitArg = args.find((arg) => arg.startsWith('--limit='))
   const vendorArg = args.find((arg) => arg.startsWith('--vendor='))
   const dryRun = args.includes('--dry-run')
   const limit = limitArg ? parseInt(limitArg.split('=')[1]) : Infinity
   const vendorFilter = vendorArg ? vendorArg.split('=')[1].toLowerCase() : null
+
+  const catalogPath = path.resolve(
+    process.cwd(),
+    fileArg ? fileArg.split('=').slice(1).join('=').trim() : DEFAULT_CATALOG,
+  )
+
+  if (!fs.existsSync(catalogPath)) {
+    console.error(`❌ Catalog file not found at ${catalogPath}`)
+    console.error(
+      '   Use --file=path/to/catalog.json or place data in data/certification-catalog.json',
+    )
+    process.exit(1)
+  }
 
   console.log('📂 Reading certification catalog...')
   const content = fs.readFileSync(catalogPath, 'utf-8')

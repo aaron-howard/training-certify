@@ -57,9 +57,13 @@ export function CertificationManagement({
   const { data: catalogData } = useQuery({
     queryKey: ['catalog'],
     queryFn: async () => {
-      const res = await fetch('/api/catalog')
+      const res = await fetch('/api/catalog?limit=200')
       if (!res.ok) return { certifications: [] }
-      return res.json()
+      const result = await res.json()
+      // API returns paginated { data: [...], pagination: {...} }
+      return {
+        certifications: Array.isArray(result) ? result : (result.data ?? []),
+      }
     },
   })
 
