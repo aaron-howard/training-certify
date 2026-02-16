@@ -47,66 +47,77 @@ async function main() {
     })
     .onConflictDoNothing()
 
-  // 4. Seed Certifications Catalog
-  const certs = [
+  // 4. Seed Vendors and Certifications Catalog
+  const vendorCerts = [
     {
-      id: 'cert-aws-saa',
-      name: 'AWS Certified Solutions Architect - Associate',
       vendorId: 'aws',
       vendorName: 'Amazon Web Services',
+      id: 'cert-aws-saa',
+      name: 'AWS Certified Solutions Architect - Associate',
       category: validateCategory('Cloud') || 'Cloud',
       difficulty: validateDifficulty('Associate') || 'Associate',
     },
     {
-      id: 'cert-azure-admin',
-      name: 'Microsoft Certified: Azure Administrator Associate',
       vendorId: 'microsoft',
       vendorName: 'Microsoft',
+      id: 'cert-azure-admin',
+      name: 'Microsoft Certified: Azure Administrator Associate',
       category: validateCategory('Cloud') || 'Cloud',
       difficulty: validateDifficulty('Associate') || 'Associate',
     },
     {
-      id: 'cert-cissp',
-      name: 'Certified Information Systems Security Professional (CISSP)',
       vendorId: 'isc2',
       vendorName: '(ISC)²',
+      id: 'cert-cissp',
+      name: 'Certified Information Systems Security Professional (CISSP)',
       category: validateCategory('Security') || 'Security',
       difficulty: validateDifficulty('Expert') || 'Expert',
     },
   ]
-  for (const cert of certs) {
-    await db.insert(schema.certifications).values(cert).onConflictDoNothing()
+  for (const v of vendorCerts) {
+    await db
+      .insert(schema.vendors)
+      .values({ id: v.vendorId, name: v.vendorName, logo: null })
+      .onConflictDoUpdate({
+        target: schema.vendors.id,
+        set: { name: v.vendorName },
+      })
+    await db
+      .insert(schema.certifications)
+      .values({
+        id: v.id,
+        name: v.name,
+        vendorId: v.vendorId,
+        category: v.category,
+        difficulty: v.difficulty,
+      })
+      .onConflictDoNothing()
   }
 
   // 5. Seed User Certifications
-  await db.insert(schema.userCertifications).values([
+  const userCertValues: Array<typeof schema.userCertifications.$inferInsert> = [
     {
       userId: user1.id,
       certificationId: 'cert-aws-saa',
-      certificationName: 'AWS Certified Solutions Architect - Associate',
-      vendorName: 'Amazon Web Services',
       certificationNumber: 'AWS-SAA-2024-789456',
       issueDate: '2024-03-15',
       expirationDate: '2027-03-15',
       status: 'active',
-      daysUntilExpiration: 900,
       documentUrl: '/uploads/aws-saa-certificate.pdf',
       verifiedAt: new Date('2024-03-15T14:30:00Z'),
     },
     {
       userId: user1.id,
       certificationId: 'cert-azure-admin',
-      certificationName: 'Microsoft Certified: Azure Administrator Associate',
-      vendorName: 'Microsoft',
       certificationNumber: 'AZ104-2024-112233',
       issueDate: '2024-01-10',
       expirationDate: '2026-01-10',
       status: 'expiring-soon',
-      daysUntilExpiration: 45,
       documentUrl: '/uploads/azure-admin-certificate.pdf',
       verifiedAt: new Date('2024-01-10T09:15:00Z'),
     },
-  ])
+  ]
+  await db.insert(schema.userCertifications).values(userCertValues)
 
   // 6. Seed Notifications
   await db.insert(schema.notifications).values([

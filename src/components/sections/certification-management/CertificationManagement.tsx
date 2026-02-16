@@ -14,10 +14,13 @@ import {
   XCircle,
 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
-import type { CertificationStatus, UserCertification } from '../../../types'
+import type {
+  CertificationStatus,
+  UserCertificationWithDetails,
+} from '../../../types'
 
 export interface CertificationManagementProps {
-  userCertifications: Array<UserCertification>
+  userCertifications: Array<UserCertificationWithDetails>
   onCreate?: (data: any) => void
   onEdit?: (id: string, data: any) => void
   onDelete?: (id: string) => void
@@ -41,7 +44,8 @@ export function CertificationManagement({
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [showAddModal, setShowAddModal] = useState(false)
   const [viewingCertId, setViewingCertId] = useState<string | null>(null)
-  const [editingCert, setEditingCert] = useState<UserCertification | null>(null)
+  const [editingCert, setEditingCert] =
+    useState<UserCertificationWithDetails | null>(null)
 
   // Form state for new certification
   const [formData, setFormData] = useState({
@@ -406,11 +410,7 @@ export function CertificationManagement({
                   (c: any) => c.id === formData.certificationId,
                 )
                 if (selected) {
-                  onCreate?.({
-                    ...formData,
-                    certificationName: selected.name,
-                    vendorName: selected.vendor,
-                  })
+                  onCreate?.(formData)
                   setShowAddModal(false)
                   setFormData({
                     certificationId: '',
@@ -542,7 +542,7 @@ function CertificationRow({
   onView,
   onUploadProof,
 }: {
-  certification: UserCertification
+  certification: UserCertificationWithDetails
   onEdit?: (id: string, data: any) => void
   onDelete?: (id: string) => void
   onView?: (id: string) => void
@@ -820,7 +820,7 @@ function EditCertificationModal({
 }: {
   isOpen: boolean
   onClose: () => void
-  cert: UserCertification
+  cert: UserCertificationWithDetails
   onSave: (data: any) => void
 }) {
   const [formData, setFormData] = useState({
@@ -952,7 +952,7 @@ function CertificationCard({
   onEdit,
   onView,
 }: {
-  certification: UserCertification
+  certification: UserCertificationWithDetails
   onEdit?: (id: string, data: any) => void
   onView?: (id: string) => void
 }) {

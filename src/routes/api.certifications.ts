@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { count, desc, eq } from 'drizzle-orm'
+import { differenceInDays } from 'date-fns'
 import { getDbOrThrow } from '../db/db.server'
 import {
   auditLogs,
@@ -9,6 +10,7 @@ import {
   userCertificationProofs,
   userCertifications,
   userTeams,
+  vendors,
 } from '../db/schema'
 import { ForbiddenError, NotFoundError, ValidationError } from '../lib/errors'
 import {
@@ -71,6 +73,18 @@ async function checkAuthority(
   return false
 }
 
+function computeDaysUntilExpiration(
+  expirationDate: Date | string | null,
+): number | null {
+  if (!expirationDate) return null
+  const exp =
+    typeof expirationDate === 'string'
+      ? new Date(expirationDate)
+      : expirationDate
+  if (isNaN(exp.getTime())) return null
+  return differenceInDays(exp, new Date())
+}
+
 export const Route = createFileRoute('/api/certifications')({
   server: {
     handlers: {
@@ -86,16 +100,36 @@ export const Route = createFileRoute('/api/certifications')({
           // If requesting a specific certification
           if (certId) {
             const certResult = await db
-              .select()
+              .select({
+                id: userCertifications.id,
+                userId: userCertifications.userId,
+                certificationId: userCertifications.certificationId,
+                certificationNumber: userCertifications.certificationNumber,
+                issueDate: userCertifications.issueDate,
+                expirationDate: userCertifications.expirationDate,
+                status: userCertifications.status,
+                documentUrl: userCertifications.documentUrl,
+                verifiedAt: userCertifications.verifiedAt,
+                assignedById: userCertifications.assignedById,
+                createdAt: userCertifications.createdAt,
+                updatedAt: userCertifications.updatedAt,
+                certificationName: certifications.name,
+                vendorName: vendors.name,
+              })
               .from(userCertifications)
+              .innerJoin(
+                certifications,
+                eq(userCertifications.certificationId, certifications.id),
+              )
+              .innerJoin(vendors, eq(certifications.vendorId, vendors.id))
               .where(eq(userCertifications.id, certId))
               .limit(1)
 
             if (certResult.length === 0)
               throw new NotFoundError('Certification not found')
 
-            const cert = certResult[0]
-            if (!(await checkAuthority(db, session, cert.userId))) {
+            const row = certResult[0]
+            if (!(await checkAuthority(db, session, row.userId))) {
               throw new ForbiddenError(
                 'You do not have permission to view this certification',
               )
@@ -107,6 +141,12 @@ export const Route = createFileRoute('/api/certifications')({
               .where(eq(userCertificationProofs.userCertificationId, certId))
               .orderBy(desc(userCertificationProofs.uploadedAt))
 
+            const cert = {
+              ...row,
+              daysUntilExpiration: computeDaysUntilExpiration(
+                row.expirationDate,
+              ),
+            }
             return json({ ...cert, proofs })
           }
 
@@ -118,11 +158,35 @@ export const Route = createFileRoute('/api/certifications')({
               )
             }
 
-            const result = await db
-              .select()
+            const rows = await db
+              .select({
+                id: userCertifications.id,
+                userId: userCertifications.userId,
+                certificationId: userCertifications.certificationId,
+                certificationNumber: userCertifications.certificationNumber,
+                issueDate: userCertifications.issueDate,
+                expirationDate: userCertifications.expirationDate,
+                status: userCertifications.status,
+                documentUrl: userCertifications.documentUrl,
+                verifiedAt: userCertifications.verifiedAt,
+                assignedById: userCertifications.assignedById,
+                createdAt: userCertifications.createdAt,
+                updatedAt: userCertifications.updatedAt,
+                certificationName: certifications.name,
+                vendorName: vendors.name,
+              })
               .from(userCertifications)
+              .innerJoin(
+                certifications,
+                eq(userCertifications.certificationId, certifications.id),
+              )
+              .innerJoin(vendors, eq(certifications.vendorId, vendors.id))
               .where(eq(userCertifications.userId, userIdParam))
 
+            const result = rows.map((r) => ({
+              ...r,
+              daysUntilExpiration: computeDaysUntilExpiration(r.expirationDate),
+            }))
             return json(result)
           }
 
@@ -147,12 +211,36 @@ export const Route = createFileRoute('/api/certifications')({
             .from(userCertifications)
           const total = totalResult.count
 
-          const result = await db
-            .select()
+          const rows = await db
+            .select({
+              id: userCertifications.id,
+              userId: userCertifications.userId,
+              certificationId: userCertifications.certificationId,
+              certificationNumber: userCertifications.certificationNumber,
+              issueDate: userCertifications.issueDate,
+              expirationDate: userCertifications.expirationDate,
+              status: userCertifications.status,
+              documentUrl: userCertifications.documentUrl,
+              verifiedAt: userCertifications.verifiedAt,
+              assignedById: userCertifications.assignedById,
+              createdAt: userCertifications.createdAt,
+              updatedAt: userCertifications.updatedAt,
+              certificationName: certifications.name,
+              vendorName: vendors.name,
+            })
             .from(userCertifications)
+            .innerJoin(
+              certifications,
+              eq(userCertifications.certificationId, certifications.id),
+            )
+            .innerJoin(vendors, eq(certifications.vendorId, vendors.id))
             .limit(limit)
             .offset(offset)
 
+          const result = rows.map((r) => ({
+            ...r,
+            daysUntilExpiration: computeDaysUntilExpiration(r.expirationDate),
+          }))
           const paginatedResponse = createPaginatedResponse(
             result,
             total,
@@ -190,39 +278,44 @@ export const Route = createFileRoute('/api/certifications')({
             )
           }
 
-          const certExists = await db
+          const certCatalogRows = await db
             .select({
               id: certifications.id,
               name: certifications.name,
-              vendorName: certifications.vendorName,
+              vendorName: vendors.name,
             })
             .from(certifications)
+            .innerJoin(vendors, eq(certifications.vendorId, vendors.id))
             .where(eq(certifications.id, data.certificationId))
             .limit(1)
 
-          if (certExists.length === 0) {
+          if (certCatalogRows.length === 0) {
             throw new NotFoundError('Certification not found in catalog')
           }
 
-          const certCatalog = certExists[0]
+          const certCatalog = certCatalogRows[0]
 
+          const insertValues: typeof userCertifications.$inferInsert = {
+            userId: data.userId,
+            certificationId: data.certificationId,
+            status: data.status,
+            issueDate: data.issueDate
+              ? new Date(data.issueDate).toISOString().split('T')[0]
+              : undefined,
+            expirationDate: data.expirationDate
+              ? new Date(data.expirationDate).toISOString().split('T')[0]
+              : undefined,
+            certificationNumber: data.certificationNumber,
+            assignedById:
+              session.userId !== data.userId ? session.userId : null,
+          }
           const insertResult = await db
             .insert(userCertifications)
-            .values({
-              userId: data.userId,
-              certificationId: data.certificationId,
-              certificationName: data.certificationName || certCatalog.name,
-              vendorName: data.vendorName || certCatalog.vendorName,
-              status: data.status,
-              issueDate: data.issueDate,
-              expirationDate: data.expirationDate,
-              certificationNumber: data.certificationNumber,
-              assignedById:
-                session.userId !== data.userId ? session.userId : null,
-            })
+            .values(insertValues)
             .returning()
 
           const result = insertResult[0]
+          const certificationName = certCatalog.name
 
           await db.insert(auditLogs).values({
             userId: session.userId,
@@ -234,14 +327,22 @@ export const Route = createFileRoute('/api/certifications')({
             resourceId: result.id,
             details:
               data.status === 'assigned'
-                ? `Assigned ${result.certificationName} to ${data.userId}`
-                : `Added ${result.certificationName}`,
+                ? `Assigned ${certificationName} to ${data.userId}`
+                : `Added ${certificationName}`,
           })
 
           // Invalidate dashboard cache for affected user and executive view
           invalidateCache('dashboard:')
 
-          return json(result, { status: 201 })
+          const response = {
+            ...result,
+            certificationName: certCatalog.name,
+            vendorName: certCatalog.vendorName,
+            daysUntilExpiration: computeDaysUntilExpiration(
+              result.expirationDate,
+            ),
+          }
+          return json(response, { status: 201 })
         } catch (error) {
           return handleApiError(error, 'POST /api/certifications')
         }
@@ -315,14 +416,25 @@ export const Route = createFileRoute('/api/certifications')({
 
           // Since it's a discriminated union and we checked 'addProof', it must be 'updateDetails'
           const { updates } = data
-          const updateData = {
-            ...updates,
+          const updateData: Record<string, unknown> = {
+            status: updates.status,
+            certificationNumber: updates.certificationNumber,
             updatedAt: new Date(),
+          }
+          if (updates.issueDate !== undefined) {
+            updateData.issueDate = updates.issueDate
+              ? new Date(updates.issueDate)
+              : null
+          }
+          if (updates.expirationDate !== undefined) {
+            updateData.expirationDate = updates.expirationDate
+              ? new Date(updates.expirationDate)
+              : null
           }
 
           const result = await db
             .update(userCertifications)
-            .set(updateData)
+            .set(updateData as Partial<typeof userCertifications.$inferInsert>)
             .where(eq(userCertifications.id, data.id))
             .returning()
 

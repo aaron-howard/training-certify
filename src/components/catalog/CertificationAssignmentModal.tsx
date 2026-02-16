@@ -33,8 +33,6 @@ export function CertificationAssignmentModal({
         body: JSON.stringify({
           userId,
           certificationId: cert.id,
-          certificationName: cert.name,
-          vendorName: cert.vendor,
           status: 'assigned',
           assignedById: managerId,
         }),

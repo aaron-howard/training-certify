@@ -1,4 +1,4 @@
-import { certifications } from '../db/schema'
+import { certifications, vendors as vendorsTable } from '../db/schema'
 import { validateCategory, validateDifficulty } from './enum-helpers'
 import { logError, logWarning, logger } from './logging.server'
 
@@ -251,22 +251,41 @@ export async function syncCatalogFromITExams(limitVendors?: number) {
         '-',
       )
 
-      const certData = {
-        id: certId,
-        name: exam.name,
-        vendorId: exam.vendorId,
-        vendorName: exam.vendorName,
-        description: `Official Exam ${exam.code}: ${exam.name}`,
-        category: validateCategory('IT Service Management') || 'Cloud',
-        difficulty: validateDifficulty('Associate') || 'Associate',
-      }
-
       try {
-        // Upsert logic
-        await db.insert(certifications).values(certData).onConflictDoUpdate({
-          target: certifications.id,
-          set: certData,
-        })
+        await db
+          .insert(vendorsTable)
+          .values({
+            id: exam.vendorId,
+            name: exam.vendorName,
+            logo: null,
+          })
+          .onConflictDoUpdate({
+            target: vendorsTable.id,
+            set: { name: exam.vendorName },
+          })
+
+        const certData = {
+          id: certId,
+          name: exam.name,
+          vendorId: exam.vendorId,
+          description: `Official Exam ${exam.code}: ${exam.name}`,
+          category: validateCategory('IT Service Management') || 'Cloud',
+          difficulty: validateDifficulty('Associate') || 'Associate',
+        }
+
+        await db
+          .insert(certifications)
+          .values(certData)
+          .onConflictDoUpdate({
+            target: certifications.id,
+            set: {
+              name: certData.name,
+              vendorId: certData.vendorId,
+              description: certData.description,
+              category: certData.category,
+              difficulty: certData.difficulty,
+            },
+          })
         totalAdded++ // Counting upserts as additions for progress reporting
       } catch (err) {
         logError(

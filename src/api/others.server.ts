@@ -5,6 +5,7 @@ import {
   certifications,
   notifications,
   userCertifications,
+  vendors,
 } from '../db/schema'
 import { syncCatalogFromITExams } from '../lib/ingestion.server'
 import { validateCategory, validateDifficulty } from '../lib/enum-helpers'
@@ -37,13 +38,21 @@ export const getCatalog = createServerFn({ method: 'GET' }).handler(
       throw new Error(`Database not available (Server Instance: ${instanceId})`)
 
     try {
-      const result = await db.select().from(certifications)
+      const result = await db
+        .select({
+          id: certifications.id,
+          name: certifications.name,
+          vendorName: vendors.name,
+          level: certifications.difficulty,
+        })
+        .from(certifications)
+        .innerJoin(vendors, eq(certifications.vendorId, vendors.id))
       return {
         certifications: result.map((c) => ({
           id: c.id,
           name: c.name,
           vendor: c.vendorName,
-          level: c.difficulty,
+          level: c.level,
         })),
       }
     } catch (error) {
@@ -260,11 +269,21 @@ export const createCatalogCertification = createServerFn({ method: 'POST' })
       // Use centralized auth helper
       await requireRole(['Admin'])
 
+      const vendorId = String(data.cert.vendorId)
+      const vendorName = String(data.cert.vendorName ?? data.cert.vendorId)
+
+      await db
+        .insert(vendors)
+        .values({ id: vendorId, name: vendorName, logo: null })
+        .onConflictDoUpdate({
+          target: vendors.id,
+          set: { name: vendorName },
+        })
+
       const certData = {
         id: String(data.cert.id),
         name: String(data.cert.name),
-        vendorId: String(data.cert.vendorId),
-        vendorName: String(data.cert.vendorName),
+        vendorId,
         category: data.cert.category
           ? validateCategory(String(data.cert.category))
           : undefined,
@@ -316,8 +335,9 @@ export const updateCatalogCertification = createServerFn({ method: 'POST' })
         )
       }
 
-      // Validate category and difficulty if provided
-      const validatedUpdates: Record<string, unknown> = { ...validation.data }
+      // Validate category and difficulty if provided; strip vendor name/logo (belong to vendors table)
+      const { vendorName, vendorLogo, ...rest } = validation.data
+      const validatedUpdates: Record<string, unknown> = { ...rest }
       if (validatedUpdates.category) {
         validatedUpdates.category = validateCategory(
           String(validatedUpdates.category),
@@ -327,6 +347,22 @@ export const updateCatalogCertification = createServerFn({ method: 'POST' })
         validatedUpdates.difficulty = validateDifficulty(
           String(validatedUpdates.difficulty),
         )
+      }
+      if (validation.data.vendorId) {
+        await db
+          .insert(vendors)
+          .values({
+            id: validation.data.vendorId,
+            name: vendorName ?? validation.data.vendorId,
+            logo: vendorLogo ?? null,
+          })
+          .onConflictDoUpdate({
+            target: vendors.id,
+            set: {
+              name: vendorName ?? validation.data.vendorId,
+              logo: vendorLogo ?? null,
+            },
+          })
       }
 
       const result = await db
@@ -429,10 +465,27 @@ export const seedCatalog = createServerFn({ method: 'POST' }).handler(
         count: certsToSeed.length,
       })
       for (const cert of certsToSeed) {
-        await db.insert(certifications).values(cert).onConflictDoUpdate({
-          target: certifications.id,
-          set: cert,
-        })
+        const { vendorName, ...certRow } = cert
+        await db
+          .insert(vendors)
+          .values({ id: cert.vendorId, name: vendorName, logo: null })
+          .onConflictDoUpdate({
+            target: vendors.id,
+            set: { name: vendorName },
+          })
+        await db
+          .insert(certifications)
+          .values(certRow)
+          .onConflictDoUpdate({
+            target: certifications.id,
+            set: {
+              name: certRow.name,
+              vendorId: certRow.vendorId,
+              category: certRow.category,
+              difficulty: certRow.difficulty,
+              description: certRow.description,
+            },
+          })
       }
 
       return { success: true, count: certsToSeed.length }
@@ -490,6 +543,7 @@ export const clearCatalog = createServerFn({ method: 'POST' })
       logInfo('Clearing catalog', { function: 'clearCatalog' })
       await db.delete(userCertifications)
       await db.delete(certifications)
+      await db.delete(vendors)
 
       return { success: true }
     } catch (error) {

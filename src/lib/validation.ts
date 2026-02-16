@@ -121,14 +121,6 @@ export const CreateUserCertificationSchema = z.object({
     .string()
     .min(1, 'Certification ID is required')
     .max(255, 'Certification ID too long'),
-  certificationName: z
-    .string()
-    .max(255, 'Certification name must be 255 characters or less')
-    .optional(),
-  vendorName: z
-    .string()
-    .max(255, 'Vendor name must be 255 characters or less')
-    .optional(),
   status: CertificationStatusSchema.optional().default('active'),
   issueDate: dateString,
   expirationDate: dateString,
@@ -153,7 +145,6 @@ export const UpdateUserCertificationDetailsSchema = z.object({
 // Extended schema for create operations with all fields
 export const CreateCertificationInputSchema =
   CreateUserCertificationSchema.extend({
-    daysUntilExpiration: z.number().int().optional(),
     documentUrl: z
       .string()
       .url()
@@ -173,14 +164,6 @@ export const UpdateCertificationInputSchema = z.object({
       .min(1)
       .max(255, 'Certification ID too long')
       .optional(),
-    certificationName: z
-      .string()
-      .max(255, 'Certification name must be 255 characters or less')
-      .optional(),
-    vendorName: z
-      .string()
-      .max(255, 'Vendor name must be 255 characters or less')
-      .optional(),
     certificationNumber: z
       .string()
       .max(255, 'Certification number must be 255 characters or less')
@@ -189,7 +172,6 @@ export const UpdateCertificationInputSchema = z.object({
     issueDate: dateString,
     expirationDate: dateString,
     status: CertificationStatusSchema.optional(),
-    daysUntilExpiration: z.number().int().optional(),
     documentUrl: z
       .string()
       .url()
@@ -263,11 +245,19 @@ export const CatalogCertificationSchema = z.object({
     .string()
     .min(1, 'Name is required')
     .max(255, 'Name must be 255 characters or less'),
-  vendorId: z.string().max(255, 'Vendor ID too long').optional(),
+  vendorId: z
+    .string()
+    .min(1, 'Vendor ID is required')
+    .max(255, 'Vendor ID too long'),
   vendorName: z
     .string()
-    .min(1, 'Vendor name is required')
-    .max(255, 'Vendor name must be 255 characters or less'),
+    .max(255, 'Vendor name must be 255 characters or less')
+    .optional(),
+  vendorLogo: z
+    .string()
+    .max(2048, 'Vendor logo URL too long')
+    .optional()
+    .nullable(),
   category: z
     .string()
     .max(255, 'Category must be 255 characters or less')
@@ -293,9 +283,13 @@ export const UpdateCatalogCertificationSchema = z.object({
   vendorId: z.string().max(255, 'Vendor ID too long').optional(),
   vendorName: z
     .string()
-    .min(1, 'Vendor name is required')
     .max(255, 'Vendor name must be 255 characters or less')
     .optional(),
+  vendorLogo: z
+    .string()
+    .max(2048, 'Vendor logo URL too long')
+    .optional()
+    .nullable(),
   category: z
     .string()
     .max(255, 'Category must be 255 characters or less')

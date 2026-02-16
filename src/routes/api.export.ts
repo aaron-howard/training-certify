@@ -3,11 +3,13 @@ import { json } from '@tanstack/react-start'
 import { eq, inArray, sql } from 'drizzle-orm'
 import { getDbOrThrow } from '../db/db.server'
 import {
+  certifications,
   teamRequirements,
   teams,
   userCertifications,
   userTeams,
   users,
+  vendors,
 } from '../db/schema'
 import { AppError } from '../lib/errors'
 import { RateLimitPresets } from '../lib/rateLimit.server'
@@ -109,12 +111,17 @@ export const Route = createFileRoute('/api/export')({
               .select({
                 id: userCertifications.id,
                 userId: userCertifications.userId,
-                certificationName: userCertifications.certificationName,
-                vendorName: userCertifications.vendorName,
+                certificationName: certifications.name,
+                vendorName: vendors.name,
                 status: userCertifications.status,
                 expirationDate: userCertifications.expirationDate,
               })
               .from(userCertifications)
+              .innerJoin(
+                certifications,
+                eq(userCertifications.certificationId, certifications.id),
+              )
+              .innerJoin(vendors, eq(certifications.vendorId, vendors.id))
 
             data = {
               reportType: 'Certification Status Report',

@@ -1,7 +1,22 @@
 import 'dotenv/config'
-import { inArray } from 'drizzle-orm'
+import { eq, inArray } from 'drizzle-orm'
 import { getDb } from '../src/db/db.server'
-import { certifications } from '../src/db/schema'
+import { certifications, vendors } from '../src/db/schema'
+
+type CertWithVendor = {
+  id: string
+  name: string
+  vendorId: string
+  vendorName: string
+  vendorLogo: string | null
+  category: string | null
+  difficulty: string | null
+  description: string | null
+  price: string | null
+  validityPeriod: string | null
+  renewalCycle: number | null
+  createdAt: Date
+}
 
 async function main() {
   console.log('🔍 Starting Catalog Deduplication...')
@@ -11,7 +26,27 @@ async function main() {
     process.exit(1)
   }
 
-  const allCerts = await db.select().from(certifications)
+  const allCerts = (await db
+    .select({
+      id: certifications.id,
+      name: certifications.name,
+      vendorId: certifications.vendorId,
+      vendorName: vendors.name,
+      vendorLogo: vendors.logo,
+      category: certifications.category,
+      difficulty: certifications.difficulty,
+      description: certifications.description,
+      price: certifications.price,
+      validityPeriod: certifications.validityPeriod,
+      renewalCycle: certifications.renewalCycle,
+      createdAt: certifications.createdAt,
+    })
+    .from(certifications)
+    .innerJoin(
+      vendors,
+      eq(certifications.vendorId, vendors.id),
+    )) as Array<CertWithVendor>
+
   console.log(`📊 Found ${allCerts.length} total certifications.`)
 
   const dryRun = process.argv.includes('--dry-run')
@@ -27,8 +62,8 @@ async function main() {
       .replace(/[^a-z0-9]/g, '')
       .trim()
 
-  const groupsById = new Map<string, typeof allCerts>()
-  const groupsByNameVendor = new Map<string, typeof allCerts>()
+  const groupsById = new Map<string, Array<CertWithVendor>>()
+  const groupsByNameVendor = new Map<string, Array<CertWithVendor>>()
 
   for (const cert of allCerts) {
     // Group by normalized ID
@@ -47,12 +82,16 @@ async function main() {
   const idsToDelete = new Set<string>()
   const duplicateInfos: Array<string> = []
 
-  const processGroup = (group: typeof allCerts, type: string, key: string) => {
+  const processGroup = (
+    group: Array<CertWithVendor>,
+    type: string,
+    key: string,
+  ) => {
     if (group.length <= 1) return
 
     // Sort by "completeness" (number of non-null fields)
     const sorted = [...group].sort((a, b) => {
-      const getScore = (c: (typeof allCerts)[0]) => {
+      const getScore = (c: CertWithVendor) => {
         let score = 0
         if (c.description && c.description.length > 20) score += 10
         if (c.price) score += 5

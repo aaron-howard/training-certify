@@ -19,21 +19,45 @@ async function verifyNotifications() {
   const now = new Date()
   const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
 
-  // 1. Check for expiring user certifications
+  // 1. Check for expiring user certifications (join to get cert and vendor names)
   console.log('--- Checking for expiring certifications ---')
   const certsToAlert = await db
-    .select()
+    .select({
+      id: schema.userCertifications.id,
+      userId: schema.userCertifications.userId,
+      status: schema.userCertifications.status,
+      expirationDate: schema.userCertifications.expirationDate,
+      certificationName: schema.certifications.name,
+      vendorName: schema.vendors.name,
+    })
     .from(schema.userCertifications)
+    .innerJoin(
+      schema.certifications,
+      eq(schema.userCertifications.certificationId, schema.certifications.id),
+    )
+    .innerJoin(
+      schema.vendors,
+      eq(schema.certifications.vendorId, schema.vendors.id),
+    )
     .where(
       and(
         sql`${schema.userCertifications.status} IN ('active', 'expiring-soon')`,
-        sql`${schema.userCertifications.expirationDate} < ${thirtyDaysFromNow.toISOString()}`,
+        sql`${schema.userCertifications.expirationDate} < ${thirtyDaysFromNow}`,
       ),
     )
 
   console.log(`Found ${certsToAlert.length} certifications requiring alerts.`)
 
   for (const cert of certsToAlert) {
+    const certificationName = cert.certificationName
+    const vendorName = cert.vendorName
+    const expDate =
+      cert.expirationDate != null
+        ? typeof cert.expirationDate === 'string'
+          ? cert.expirationDate.split('T')[0]
+          : (cert.expirationDate as unknown as Date).toISOString().split('T')[0]
+        : ''
+
     // Create notification if not exists
     const existingNotif = await db
       .select()
@@ -42,7 +66,7 @@ async function verifyNotifications() {
         and(
           eq(schema.notifications.userId, cert.userId),
           eq(schema.notifications.type, 'expiration-alert'),
-          sql`${schema.notifications.title} LIKE ${'%' + cert.certificationName + '%'}`,
+          sql`${schema.notifications.title} LIKE ${'%' + certificationName + '%'}`,
         ),
       )
       .limit(1)
@@ -52,14 +76,14 @@ async function verifyNotifications() {
         userId: cert.userId,
         type: 'expiration-alert',
         severity: 'critical',
-        title: `ACTION REQUIRED: ${cert.certificationName} Expiring`,
-        description: `Your ${cert.certificationName} (${cert.vendorName}) is set to expire on ${cert.expirationDate}. Please upload renewal proof soon.`,
+        title: `ACTION REQUIRED: ${certificationName} Expiring`,
+        description: `Your ${certificationName} (${vendorName}) is set to expire on ${expDate}. Please upload renewal proof soon.`,
         timestamp: new Date(),
       })
       console.log(`✅ Created expiration-alert for user ${cert.userId}`)
     } else {
       console.log(
-        `⏭️ Notification already exists for ${cert.userId} / ${cert.certificationName}`,
+        `⏭️ Notification already exists for ${cert.userId} / ${certificationName}`,
       )
     }
 

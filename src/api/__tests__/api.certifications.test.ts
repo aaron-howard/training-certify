@@ -153,7 +153,10 @@ describe('/api/certifications Integration Tests', () => {
 
       expect(response.status).toBe(200)
       const data = await response.json()
-      expect(Array.isArray(data)).toBe(true)
+      // Global list returns paginated shape { data, pagination }
+      expect(data).toHaveProperty('data')
+      expect(data).toHaveProperty('pagination')
+      expect(Array.isArray(data.data)).toBe(true)
     })
 
     it('should return 404 for non-existent certification', async () => {

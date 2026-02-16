@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import { Pool } from 'pg'
 import { drizzle } from 'drizzle-orm/node-postgres'
-import { desc } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 import * as schema from '../src/db/schema'
 
 async function main() {
@@ -31,7 +31,17 @@ async function main() {
   console.table(auditLogsResult)
 
   console.log('\n--- CATALOG (CERTIFICATIONS) ---')
-  const catalog = await db.select().from(schema.certifications)
+  const catalog = await db
+    .select({
+      id: schema.certifications.id,
+      name: schema.certifications.name,
+      vendorName: schema.vendors.name,
+    })
+    .from(schema.certifications)
+    .innerJoin(
+      schema.vendors,
+      eq(schema.certifications.vendorId, schema.vendors.id),
+    )
   console.table(
     catalog.map((c) => ({ id: c.id, name: c.name, vendor: c.vendorName })),
   )

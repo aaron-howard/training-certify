@@ -1,13 +1,13 @@
 import { createServerFn } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
-import { userCertifications } from '../db/schema'
+import { differenceInDays } from 'date-fns'
+import { certifications, userCertifications, vendors } from '../db/schema'
 import {
   CreateCertificationInputSchema,
   UpdateCertificationInputSchema,
 } from '../lib/validation'
 import { DatabaseError } from '../lib/errors'
 import { logError, logInfo } from '../lib/logging.server'
-import type { UserCertification } from '../types'
 
 /**
  * Server function to retrieve all user certifications.
@@ -19,7 +19,7 @@ import type { UserCertification } from '../types'
  * **Note:** This function does not filter by user - it returns all certifications.
  * Consider adding user filtering if this is a security concern.
  *
- * @returns Promise that resolves to an array of UserCertification objects
+ * @returns Promise that resolves to an array of UserCertificationWithDetails objects
  * @throws {DatabaseError} If the database query fails
  *
  * @example
@@ -34,12 +34,46 @@ export const getUserCertifications = createServerFn({ method: 'GET' }).handler(
     const db = await getDbOrThrow()
 
     try {
-      const result = await db.select().from(userCertifications)
-      const mapped = result.map((cert) => ({
-        ...cert,
-        verifiedAt: cert.verifiedAt?.toISOString() || '',
-        status: cert.status as UserCertification['status'],
-      })) as Array<UserCertification>
+      const rows = await db
+        .select({
+          id: userCertifications.id,
+          userId: userCertifications.userId,
+          certificationId: userCertifications.certificationId,
+          certificationNumber: userCertifications.certificationNumber,
+          issueDate: userCertifications.issueDate,
+          expirationDate: userCertifications.expirationDate,
+          status: userCertifications.status,
+          documentUrl: userCertifications.documentUrl,
+          verifiedAt: userCertifications.verifiedAt,
+          assignedById: userCertifications.assignedById,
+          createdAt: userCertifications.createdAt,
+          updatedAt: userCertifications.updatedAt,
+          certificationName: certifications.name,
+          vendorName: vendors.name,
+        })
+        .from(userCertifications)
+        .innerJoin(
+          certifications,
+          eq(userCertifications.certificationId, certifications.id),
+        )
+        .innerJoin(vendors, eq(certifications.vendorId, vendors.id))
+
+      const mapped = rows.map((r) => {
+        const exp = r.expirationDate
+        const daysUntilExpiration =
+          exp != null
+            ? differenceInDays(
+                typeof exp === 'string' ? new Date(exp) : exp,
+                new Date(),
+              )
+            : null
+        return {
+          ...r,
+          verifiedAt: r.verifiedAt?.toISOString() ?? null,
+          status: r.status,
+          daysUntilExpiration,
+        }
+      })
       logInfo(`Returning ${mapped.length} user certifications`, {
         function: 'getUserCertifications',
         count: mapped.length,
@@ -70,17 +104,14 @@ export const getUserCertifications = createServerFn({ method: 'GET' }).handler(
  * @param data - Certification data validated against CreateCertificationInputSchema:
  *   - userId: string (required) - ID of the user who has the certification
  *   - certificationId: string (required) - ID of the certification from catalog
- *   - certificationName?: string (optional) - Name of the certification
- *   - vendorName?: string (optional) - Name of the vendor
  *   - status?: CertificationStatus (optional) - Status, defaults to 'active'
  *   - issueDate?: string (optional) - ISO date string
  *   - expirationDate?: string (optional) - ISO date string
  *   - certificationNumber?: string (optional) - Certification number/license
- *   - daysUntilExpiration?: number (optional) - Days until expiration
  *   - documentUrl?: string (optional) - URL to proof document
  *   - verifiedAt?: string | Date (optional) - When certification was verified
  *
- * @returns Promise that resolves to the created UserCertification object
+ * @returns Promise that resolves to the created UserCertificationWithDetails object
  * @throws {ValidationError} If input data doesn't match schema
  * @throws {DatabaseError} If database insertion fails
  *
@@ -108,31 +139,58 @@ export const createCertification = createServerFn({ method: 'POST' })
         ? typeof data.verifiedAt === 'string'
           ? new Date(data.verifiedAt)
           : data.verifiedAt
-        : new Date()
+        : undefined
 
+      const insertValues: typeof userCertifications.$inferInsert = {
+        userId: data.userId || 'user-001',
+        certificationId: data.certificationId || 'manual',
+        certificationNumber: data.certificationNumber,
+        issueDate: data.issueDate
+          ? new Date(data.issueDate).toISOString().split('T')[0]
+          : undefined,
+        expirationDate: data.expirationDate
+          ? new Date(data.expirationDate).toISOString().split('T')[0]
+          : undefined,
+        status: data.status,
+        documentUrl: data.documentUrl ?? null,
+        verifiedAt: verifiedAtValue,
+      }
       const result = await db
         .insert(userCertifications)
-        .values({
-          userId: data.userId || 'user-001',
-          certificationId: data.certificationId || 'manual',
-          certificationName: data.certificationName || 'Unknown Certification',
-          vendorName: data.vendorName || 'Unknown Vendor',
-          certificationNumber: data.certificationNumber,
-          issueDate: data.issueDate,
-          expirationDate: data.expirationDate,
-          status: data.status,
-          daysUntilExpiration: data.daysUntilExpiration,
-          documentUrl: data.documentUrl || '',
-          verifiedAt: verifiedAtValue,
-        })
+        .values(insertValues)
         .returning()
 
       const newCert = result[0]
+      const [joined] = await db
+        .select({
+          certificationName: certifications.name,
+          vendorName: vendors.name,
+        })
+        .from(userCertifications)
+        .innerJoin(
+          certifications,
+          eq(userCertifications.certificationId, certifications.id),
+        )
+        .innerJoin(vendors, eq(certifications.vendorId, vendors.id))
+        .where(eq(userCertifications.id, newCert.id))
+
+      const exp = newCert.expirationDate
+      const daysUntilExpiration =
+        exp != null
+          ? differenceInDays(
+              typeof exp === 'string' ? new Date(exp) : exp,
+              new Date(),
+            )
+          : null
+
       return {
         ...newCert,
-        verifiedAt: newCert.verifiedAt?.toISOString() || '',
-        status: newCert.status as UserCertification['status'],
-      } as UserCertification
+        certificationName: joined.certificationName,
+        vendorName: joined.vendorName,
+        daysUntilExpiration,
+        verifiedAt: newCert.verifiedAt?.toISOString() ?? null,
+        status: newCert.status,
+      }
     } catch (error) {
       logError(
         error,
@@ -162,17 +220,14 @@ export const createCertification = createServerFn({ method: 'POST' })
  *   - updates: object (required) - Partial certification data to update:
  *     - userId?: string (optional) - User ID
  *     - certificationId?: string (optional) - Certification ID
- *     - certificationName?: string (optional) - Certification name
- *     - vendorName?: string (optional) - Vendor name
  *     - status?: CertificationStatus (optional) - Status
  *     - issueDate?: string (optional) - ISO date string
  *     - expirationDate?: string (optional) - ISO date string
  *     - certificationNumber?: string (optional) - Certification number
- *     - daysUntilExpiration?: number (optional) - Days until expiration
  *     - documentUrl?: string (optional) - URL to proof document
  *     - verifiedAt?: string | Date (optional) - Verification timestamp
  *
- * @returns Promise that resolves to the updated UserCertification object
+ * @returns Promise that resolves to the updated UserCertificationWithDetails object
  * @throws {ValidationError} If input data doesn't match schema
  * @throws {DatabaseError} If database update fails
  *
@@ -197,26 +252,65 @@ export const updateCertification = createServerFn({ method: 'POST' })
 
     try {
       const { id, updates } = data
-      const { verifiedAt, ...rest } = updates
-      const updateData: Record<string, unknown> = { ...rest }
-      if (verifiedAt) {
+      const {
+        verifiedAt,
+        certificationName,
+        vendorName,
+        daysUntilExpiration,
+        ...rest
+      } = updates as Record<string, unknown>
+      const updateData: Record<string, unknown> = {
+        ...rest,
+        updatedAt: new Date(),
+      }
+      if (verifiedAt !== undefined) {
         updateData.verifiedAt =
           typeof verifiedAt === 'string' ? new Date(verifiedAt) : verifiedAt
       }
-      if ('updatedAt' in updateData) {
-        delete updateData.updatedAt
+      if (updates.issueDate !== undefined) {
+        updateData.issueDate = updates.issueDate
+          ? new Date(updates.issueDate)
+          : null
+      }
+      if (updates.expirationDate !== undefined) {
+        updateData.expirationDate = updates.expirationDate
+          ? new Date(updates.expirationDate)
+          : null
       }
       const result = await db
         .update(userCertifications)
-        .set({ ...updateData, updatedAt: new Date() })
+        .set(updateData as Partial<typeof userCertifications.$inferInsert>)
         .where(eq(userCertifications.id, id))
         .returning()
       const updatedCert = result[0]
+      const [joined] = await db
+        .select({
+          certificationName: certifications.name,
+          vendorName: vendors.name,
+        })
+        .from(userCertifications)
+        .innerJoin(
+          certifications,
+          eq(userCertifications.certificationId, certifications.id),
+        )
+        .innerJoin(vendors, eq(certifications.vendorId, vendors.id))
+        .where(eq(userCertifications.id, id))
+      const exp = updatedCert.expirationDate
+      const days =
+        exp != null
+          ? differenceInDays(
+              typeof exp === 'string' ? new Date(exp) : exp,
+              new Date(),
+            )
+          : null
       return {
         ...updatedCert,
-        verifiedAt: updatedCert.verifiedAt?.toISOString() || '',
-        status: updatedCert.status as UserCertification['status'],
-      } as UserCertification
+        certificationName: joined.certificationName,
+        vendorName: joined.vendorName,
+        daysUntilExpiration: days,
+        verifiedAt: updatedCert.verifiedAt?.toISOString() ?? null,
+        status: updatedCert.status,
+      }
     } catch (error) {
       logError(
         error,

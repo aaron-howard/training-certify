@@ -1,4 +1,4 @@
-CREATE TABLE "rate_limit_logs" (
+CREATE TABLE IF NOT EXISTS "rate_limit_logs" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"identifier" varchar(255) NOT NULL,
 	"timestamp" timestamp DEFAULT now() NOT NULL
@@ -6,11 +6,11 @@ CREATE TABLE "rate_limit_logs" (
 --> statement-breakpoint
 ALTER TABLE "certifications" ALTER COLUMN "category" SET DATA TYPE text;--> statement-breakpoint
 DROP TYPE "public"."certification_category";--> statement-breakpoint
-CREATE TYPE "public"."certification_category" AS ENUM('AI', 'AppDynamics', 'Business Applications', 'Channel/Partner', 'Cloud', 'Collaboration', 'Cybersecurity', 'Data', 'Data Center', 'Design', 'DevNet', 'DevOps', 'Dynamics 365', 'Enterprise', 'Field Technician', 'IT', 'Meraki', 'Modern Workplace', 'Networking', 'Power Platform', 'Project Management', 'Security', 'Service Provider', 'Support Technician');--> statement-breakpoint
+CREATE TYPE "public"."certification_category" AS ENUM('AI', 'AI & Machine Learning', 'AppDynamics', 'Business Applications', 'Channel/Partner', 'Cloud', 'Collaboration', 'Cybersecurity', 'Data', 'Data & Analytics', 'Data Center', 'Database', 'Design', 'DevNet', 'DevOps', 'Dynamics 365', 'Enterprise', 'Field Technician', 'Governance & Compliance', 'Infrastructure', 'IT', 'IT Service Management', 'Meraki', 'Modern Workplace', 'Networking', 'Operating Systems', 'Power Platform', 'Project Management', 'Security', 'Service Provider', 'Software Development', 'Support Technician');--> statement-breakpoint
 ALTER TABLE "certifications" ALTER COLUMN "category" SET DATA TYPE "public"."certification_category" USING "category"::"public"."certification_category";--> statement-breakpoint
 ALTER TABLE "certifications" ALTER COLUMN "difficulty" SET DATA TYPE text;--> statement-breakpoint
 DROP TYPE "public"."certification_difficulty";--> statement-breakpoint
-CREATE TYPE "public"."certification_difficulty" AS ENUM('Advanced', 'Associate', 'Beginner', 'Cybersecurity', 'Expert', 'Financial App', 'Information Technology', 'Intermediate', 'IT Finance', 'Networking', 'Professional', 'Project Management', 'ServiceNow', 'ServiceNow*', 'Software and Quality', 'Virtualization');--> statement-breakpoint
+CREATE TYPE "public"."certification_difficulty" AS ENUM('Advanced', 'Associate', 'Beginner', 'Cybersecurity', 'Expert', 'Financial App', 'Foundational', 'Information Technology', 'Intermediate', 'IT Finance', 'Networking', 'Professional', 'Project Management', 'ServiceNow', 'ServiceNow*', 'Software and Quality', 'Virtualization');--> statement-breakpoint
 ALTER TABLE "certifications" ALTER COLUMN "difficulty" SET DATA TYPE "public"."certification_difficulty" USING "difficulty"::"public"."certification_difficulty";--> statement-breakpoint
 ALTER TABLE "audit_logs" ALTER COLUMN "user_id" SET DATA TYPE varchar(255);--> statement-breakpoint
 ALTER TABLE "audit_logs" ALTER COLUMN "action" SET DATA TYPE varchar(255);--> statement-breakpoint
@@ -52,8 +52,10 @@ ALTER TABLE "users" ALTER COLUMN "email" SET DATA TYPE varchar(255);--> statemen
 ALTER TABLE "users" ALTER COLUMN "role" SET DEFAULT 'User'::"public"."role";--> statement-breakpoint
 ALTER TABLE "users" ALTER COLUMN "role" SET DATA TYPE "public"."role" USING "role"::"public"."role";--> statement-breakpoint
 ALTER TABLE "users" ALTER COLUMN "avatar_url" SET DATA TYPE varchar(2048);--> statement-breakpoint
-CREATE INDEX "rate_limit_logs_identifier_idx" ON "rate_limit_logs" USING btree ("identifier");--> statement-breakpoint
-CREATE INDEX "rate_limit_logs_timestamp_idx" ON "rate_limit_logs" USING btree ("timestamp");--> statement-breakpoint
-CREATE INDEX "rate_limit_logs_identifier_timestamp_idx" ON "rate_limit_logs" USING btree ("identifier","timestamp");--> statement-breakpoint
-ALTER TABLE "certifications" ADD CONSTRAINT "renewal_cycle_positive" CHECK ("certifications"."renewal_cycle" IS NULL OR "certifications"."renewal_cycle" > 0);--> statement-breakpoint
-ALTER TABLE "team_requirements" ADD CONSTRAINT "target_count_positive" CHECK ("team_requirements"."target_count" > 0);
+CREATE INDEX IF NOT EXISTS "rate_limit_logs_identifier_idx" ON "rate_limit_logs" USING btree ("identifier");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "rate_limit_logs_timestamp_idx" ON "rate_limit_logs" USING btree ("timestamp");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "rate_limit_logs_identifier_timestamp_idx" ON "rate_limit_logs" USING btree ("identifier","timestamp");--> statement-breakpoint
+UPDATE "certifications" SET "renewal_cycle" = NULL WHERE "renewal_cycle" IS NOT NULL AND "renewal_cycle" <= 0;--> statement-breakpoint
+DO $$ BEGIN ALTER TABLE "certifications" ADD CONSTRAINT "renewal_cycle_positive" CHECK ("certifications"."renewal_cycle" IS NULL OR "certifications"."renewal_cycle" > 0); EXCEPTION WHEN duplicate_object THEN NULL; END $$;--> statement-breakpoint
+UPDATE "team_requirements" SET "target_count" = 1 WHERE "target_count" IS NOT NULL AND "target_count" <= 0;--> statement-breakpoint
+DO $$ BEGIN ALTER TABLE "team_requirements" ADD CONSTRAINT "target_count_positive" CHECK ("team_requirements"."target_count" > 0); EXCEPTION WHEN duplicate_object THEN NULL; END $$;

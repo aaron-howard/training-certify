@@ -38,8 +38,10 @@ export interface Certification {
   id: string
   name: string
   vendorId: string
-  vendorName: string
-  vendorLogo: string
+  /** From join with vendors when returned by API */
+  vendorName?: string
+  /** From join with vendors when returned by API */
+  vendorLogo?: string | null
   category: 'Cloud' | 'Security' | 'Networking' | 'Data' | 'Project Management'
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert'
   validityPeriod: string
@@ -65,22 +67,28 @@ export interface Certification {
 }
 
 /**
- * UserCertification - A user's acquired certification
- * Tracks expiration, status, and verification
+ * UserCertification - Base shape for a user's acquired certification (DB row).
+ * Names and daysUntilExpiration are resolved via joins in API responses.
  */
 export interface UserCertification {
   id: string
   userId: string
   certificationId: string
+  certificationNumber: string | null
+  issueDate: string | null
+  expirationDate: string | null
+  status: 'active' | 'expiring' | 'expiring-soon' | 'expired' | 'assigned'
+  documentUrl: string | null
+  verifiedAt: string | null
+}
+
+/**
+ * UserCertificationWithDetails - API response shape with joined certification and vendor names.
+ */
+export interface UserCertificationWithDetails extends UserCertification {
   certificationName: string
   vendorName: string
-  certificationNumber: string
-  issueDate: string
-  expirationDate: string | null
-  status: 'active' | 'expiring' | 'expiring-soon' | 'expired'
-  daysUntilExpiration: number | null
-  documentUrl: string
-  verifiedAt: string
+  daysUntilExpiration?: number | null
 }
 
 /**
@@ -102,8 +110,9 @@ export interface Team {
 export interface Vendor {
   id: string
   name: string
-  logo: string
-  certificationCount: number
+  logo: string | null
+  createdAt?: string
+  certificationCount?: number
 }
 
 /**
@@ -321,6 +330,7 @@ export type CertificationStatus =
   | 'expiring'
   | 'expiring-soon'
   | 'expired'
+  | 'assigned'
 export type NotificationType =
   | 'expiration-alert'
   | 'renewal-reminder'

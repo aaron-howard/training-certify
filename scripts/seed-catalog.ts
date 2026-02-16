@@ -21,7 +21,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import dotenv from 'dotenv'
 import { getDb } from '../src/db/db.server'
-import { certifications } from '../src/db/schema'
+import { certifications, vendors } from '../src/db/schema'
 import { validateCategory, validateDifficulty } from '../src/lib/enum-helpers'
 
 // Load env before main runs (default .env = DEV; use --env-file=.env.db_production for Neon PROD)
@@ -147,14 +147,24 @@ async function main() {
         continue
       }
 
+      await db
+        .insert(vendors)
+        .values({
+          id: entry.vendorId,
+          name: entry.vendorName,
+          logo: entry.vendorLogo ?? null,
+        })
+        .onConflictDoUpdate({
+          target: vendors.id,
+          set: { name: entry.vendorName, logo: entry.vendorLogo ?? null },
+        })
+
       const result = await db
         .insert(certifications)
         .values({
           id: entry.id,
           name: entry.name,
           vendorId: entry.vendorId,
-          vendorName: entry.vendorName,
-          vendorLogo: entry.vendorLogo || null,
           category,
           difficulty,
           validityPeriod: entry.validityPeriod || null,

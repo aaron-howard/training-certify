@@ -1,6 +1,7 @@
 import {
   boolean,
   check,
+  date,
   index,
   integer,
   pgEnum,
@@ -109,15 +110,23 @@ export const userTeams = pgTable(
   }),
 )
 
+// Vendors (certification issuing bodies)
+export const vendors = pgTable('vendors', {
+  id: varchar('id', { length: 255 }).primaryKey(),
+  name: varchar('name', { length: 255 }).notNull(),
+  logo: varchar('logo', { length: 2048 }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
+
 // Certifications Catalog
 export const certifications = pgTable(
   'certifications',
   {
     id: varchar('id', { length: 255 }).primaryKey(),
     name: varchar('name', { length: 255 }).notNull(),
-    vendorId: varchar('vendor_id', { length: 255 }).notNull(),
-    vendorName: varchar('vendor_name', { length: 255 }).notNull(),
-    vendorLogo: varchar('vendor_logo', { length: 2048 }),
+    vendorId: varchar('vendor_id', { length: 255 })
+      .notNull()
+      .references(() => vendors.id),
     category: certificationCategoryEnum('category'),
     difficulty: certificationDifficultyEnum('difficulty'),
     validityPeriod: varchar('validity_period', { length: 255 }),
@@ -127,6 +136,7 @@ export const certifications = pgTable(
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (t) => ({
+    vendorIdIdx: index('certifications_vendor_id_idx').on(t.vendorId),
     renewalCycleCheck: check(
       'renewal_cycle_positive',
       sql`${t.renewalCycle} IS NULL OR ${t.renewalCycle} > 0`,
@@ -145,13 +155,10 @@ export const userCertifications = pgTable(
     certificationId: varchar('certification_id', { length: 255 })
       .notNull()
       .references(() => certifications.id),
-    certificationName: varchar('certification_name', { length: 255 }).notNull(),
-    vendorName: varchar('vendor_name', { length: 255 }).notNull(),
     certificationNumber: varchar('certification_number', { length: 255 }),
-    issueDate: varchar('issue_date', { length: 50 }), // ISO string or date
-    expirationDate: varchar('expiration_date', { length: 50 }), // ISO string or date
+    issueDate: date('issue_date'),
+    expirationDate: date('expiration_date'),
     status: certificationStatusEnum('status').notNull().default('active'),
-    daysUntilExpiration: integer('days_until_expiration'),
     documentUrl: varchar('document_url', { length: 2048 }),
     verifiedAt: timestamp('verified_at'),
     assignedById: varchar('assigned_by_id', { length: 255 }).references(
@@ -212,8 +219,12 @@ export const notifications = pgTable(
     timestamp: timestamp('timestamp').defaultNow().notNull(),
     isRead: boolean('is_read').default(false).notNull(),
     isDismissed: boolean('is_dismissed').default(false).notNull(),
-    certificationId: varchar('certification_id', { length: 255 }),
-    userCertificationId: uuid('user_certification_id'),
+    certificationId: varchar('certification_id', { length: 255 }).references(
+      () => certifications.id,
+    ),
+    userCertificationId: uuid('user_certification_id').references(
+      () => userCertifications.id,
+    ),
   },
   (t) => ({
     userIdIdx: index('notifications_user_id_idx').on(t.userId),

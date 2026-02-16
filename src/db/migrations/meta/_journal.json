@@ -36,6 +36,13 @@
       "when": 1770518400000,
       "tag": "0004_normalize_enums",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1770600000000,
+      "tag": "0005_schema_normalization",
+      "breakpoints": true
     }
   ]
 }

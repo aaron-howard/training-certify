@@ -3,10 +3,12 @@ import { json } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 import { getDbOrThrow } from '../db/db.server'
 import {
+  certifications,
   teamRequirements,
   teams,
   userCertifications,
   users,
+  vendors,
 } from '../db/schema'
 import { ForbiddenError } from '../lib/errors'
 import { handleApiError, setupReadHandler } from '../lib/api-helpers.server'
@@ -40,7 +42,20 @@ export const Route = createFileRoute('/api/dashboard')({
                 const allUsers = await db.select().from(users)
                 const totalUsers = allUsers.length
 
-                const allUserCerts = await db.select().from(userCertifications)
+                const allUserCerts = await db
+                  .select({
+                    id: userCertifications.id,
+                    userId: userCertifications.userId,
+                    certificationId: userCertifications.certificationId,
+                    status: userCertifications.status,
+                    vendorName: vendors.name,
+                  })
+                  .from(userCertifications)
+                  .innerJoin(
+                    certifications,
+                    eq(userCertifications.certificationId, certifications.id),
+                  )
+                  .innerJoin(vendors, eq(certifications.vendorId, vendors.id))
                 const totalCerts = allUserCerts.length
 
                 const activeCertsExec = allUserCerts.filter(

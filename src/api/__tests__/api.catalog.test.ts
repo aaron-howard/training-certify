@@ -78,8 +78,8 @@ describe('/api/catalog Integration Tests', () => {
 
       expect(response.status).toBe(200)
       const data = await response.json()
-      expect(data).toHaveProperty('certifications')
-      expect(Array.isArray(data.certifications)).toBe(true)
+      expect(data).toHaveProperty('data')
+      expect(Array.isArray(data.data)).toBe(true)
     })
 
     it('should return 401 for unauthenticated requests', async () => {
@@ -108,12 +108,16 @@ describe('/api/catalog Integration Tests', () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
       const admin = await mockAuthForRole('Admin', auth)
 
-      const newCert = factories.certification({
+      // Catalog POST returns the inserted certification row (id, name, vendorId, ...)
+      const insertedRow = {
+        id: 'cert-new-123',
         name: 'New Certification',
-        vendorName: 'Microsoft',
-      })
-
-      await setupTestMocks(admin, newCert)
+        vendorId: 'microsoft',
+        category: 'Cloud',
+        difficulty: 'Intermediate',
+        createdAt: new Date(),
+      }
+      await setupTestMocks(admin, insertedRow)
 
       const { Route } = await import('../../routes/api.catalog')
       const handler = (Route.options.server?.handlers as any)?.POST
@@ -123,9 +127,10 @@ describe('/api/catalog Integration Tests', () => {
       const request = new Request('http://localhost/api/catalog', {
         method: 'POST',
         body: JSON.stringify({
-          id: newCert.id || 'cert-new-123',
-          name: 'New Certification',
-          vendorName: newCert.vendorName || 'Microsoft',
+          id: insertedRow.id,
+          name: insertedRow.name,
+          vendorId: insertedRow.vendorId,
+          vendorName: 'Microsoft',
           category: 'Cloud',
           difficulty: 'Intermediate',
         }),
@@ -135,9 +140,10 @@ describe('/api/catalog Integration Tests', () => {
       expect(response.status).toBe(201)
 
       const data = await response.json()
-      // Verify the response contains certification data
+      // Verify the response contains certification data (insert returns row with id, name, vendorId, etc.)
       expect(data).toHaveProperty('id')
       expect(data).toHaveProperty('name')
+      expect(data).toHaveProperty('vendorId')
     })
 
     it('should return 403 for non-Admin', async () => {
@@ -160,7 +166,9 @@ describe('/api/catalog Integration Tests', () => {
       const request = new Request('http://localhost/api/catalog', {
         method: 'POST',
         body: JSON.stringify({
+          id: 'test-cert-1',
           name: 'Test Certification',
+          vendorId: 'test-vendor',
           vendorName: 'Test Vendor',
         }),
       })

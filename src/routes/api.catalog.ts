@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { count, eq } from 'drizzle-orm'
 import { getDbOrThrow } from '../db/db.server'
-import { certifications } from '../db/schema'
+import { certifications, vendors } from '../db/schema'
 import { RateLimitPresets } from '../lib/rateLimit.server'
 import { ValidationError } from '../lib/errors'
 import { CatalogCertificationSchema } from '../lib/validation'
@@ -39,8 +39,17 @@ export const Route = createFileRoute('/api/catalog')({
           const total = totalResult.count
 
           const result = await db
-            .select()
+            .select({
+              id: certifications.id,
+              name: certifications.name,
+              vendorName: vendors.name,
+              level: certifications.difficulty,
+              price: certifications.price,
+              category: certifications.category,
+              description: certifications.description,
+            })
             .from(certifications)
+            .innerJoin(vendors, eq(certifications.vendorId, vendors.id))
             .limit(limit)
             .offset(offset)
 
@@ -48,7 +57,7 @@ export const Route = createFileRoute('/api/catalog')({
             id: c.id,
             name: c.name,
             vendor: c.vendorName,
-            level: c.difficulty,
+            level: c.level,
             price: c.price,
             category: c.category,
             description: c.description,
@@ -112,22 +121,34 @@ export const Route = createFileRoute('/api/catalog')({
 
           const data = validation.data
           const db = await getDbOrThrow()
+          const vendorId = data.vendorId
+          const vendorName = data.vendorName ?? data.vendorId
+          const vendorLogo = data.vendorLogo ?? null
 
           try {
+            await db
+              .insert(vendors)
+              .values({
+                id: vendorId,
+                name: vendorName,
+                logo: vendorLogo,
+              })
+              .onConflictDoUpdate({
+                target: vendors.id,
+                set: { name: vendorName, logo: vendorLogo },
+              })
+
             const result = await db
               .insert(certifications)
               .values({
                 id: data.id,
                 name: data.name,
-                vendorId:
-                  data.vendorId ||
-                  data.vendorName.toLowerCase().replace(/\s/g, '-'),
-                vendorName: data.vendorName,
+                vendorId,
                 category: validateCategory(data.category || 'Cloud') ?? 'Cloud',
                 difficulty:
                   validateDifficulty(data.difficulty || 'Associate') ??
                   'Associate',
-                price: data.price ? String(data.price) : null, // Schema uses text for price unfortunately, or does it? checking schema...
+                price: data.price != null ? String(data.price) : null,
                 description: data.description || null,
               })
               .returning()
