@@ -1,0 +1,1817 @@
+[
+  {
+    "name": "(ISC)²"
+  },
+  {
+    "name": "1Password Business"
+  },
+  {
+    "name": "42Crunch"
+  },
+  {
+    "name": "8x8"
+  },
+  {
+    "name": "A10 Networks"
+  },
+  {
+    "name": "Abnormal Security"
+  },
+  {
+    "name": "Absorb LMS"
+  },
+  {
+    "name": "Acceldata"
+  },
+  {
+    "name": "Acoustic Campaign"
+  },
+  {
+    "name": "Acronis"
+  },
+  {
+    "name": "ActiveCampaign"
+  },
+  {
+    "name": "Ada"
+  },
+  {
+    "name": "Adobe"
+  },
+  {
+    "name": "ADP Workforce Now"
+  },
+  {
+    "name": "ADTRAN"
+  },
+  {
+    "name": "Aha!"
+  },
+  {
+    "name": "Airbyte"
+  },
+  {
+    "name": "Airtable"
+  },
+  {
+    "name": "Akamai"
+  },
+  {
+    "name": "Akamai API Security"
+  },
+  {
+    "name": "Alation"
+  },
+  {
+    "name": "Alibaba Cloud"
+  },
+  {
+    "name": "Allied Telesis"
+  },
+  {
+    "name": "Alteryx"
+  },
+  {
+    "name": "Amazon Web Services"
+  },
+  {
+    "name": "Amplitude"
+  },
+  {
+    "name": "Amundsen"
+  },
+  {
+    "name": "Anchore"
+  },
+  {
+    "name": "Anomalo"
+  },
+  {
+    "name": "Ansible"
+  },
+  {
+    "name": "Apache Airflow"
+  },
+  {
+    "name": "Apache NiFi"
+  },
+  {
+    "name": "Apigee"
+  },
+  {
+    "name": "Apollo.io"
+  },
+  {
+    "name": "Appcues"
+  },
+  {
+    "name": "AppDynamics"
+  },
+  {
+    "name": "Apple"
+  },
+  {
+    "name": "Aqua Security"
+  },
+  {
+    "name": "Aqua Security (Trivy)"
+  },
+  {
+    "name": "Archer"
+  },
+  {
+    "name": "Arctic Wolf"
+  },
+  {
+    "name": "Area 1 Security"
+  },
+  {
+    "name": "Argo CD"
+  },
+  {
+    "name": "Argo Project"
+  },
+  {
+    "name": "Argo Workflows"
+  },
+  {
+    "name": "Arista Networks"
+  },
+  {
+    "name": "Aruba / HPE"
+  },
+  {
+    "name": "Aruba Networks"
+  },
+  {
+    "name": "Asana"
+  },
+  {
+    "name": "Ashby"
+  },
+  {
+    "name": "Astronomer"
+  },
+  {
+    "name": "Ataccama"
+  },
+  {
+    "name": "Ataccama MDM"
+  },
+  {
+    "name": "Atera"
+  },
+  {
+    "name": "Atlan"
+  },
+  {
+    "name": "Atlassian"
+  },
+  {
+    "name": "Atlassian Bamboo"
+  },
+  {
+    "name": "Auth0"
+  },
+  {
+    "name": "Autodesk"
+  },
+  {
+    "name": "Automation Anywhere"
+  },
+  {
+    "name": "Avanan"
+  },
+  {
+    "name": "Axelos"
+  },
+  {
+    "name": "Microsoft"
+  },
+  {
+    "name": "Backblaze B2"
+  },
+  {
+    "name": "Backstage (Spotify)"
+  },
+  {
+    "name": "BambooHR"
+  },
+  {
+    "name": "BambooHR (Advanced Track)"
+  },
+  {
+    "name": "Barracuda"
+  },
+  {
+    "name": "Barracuda CloudGen Firewall"
+  },
+  {
+    "name": "Barracuda Email Security"
+  },
+  {
+    "name": "Barracuda Networks"
+  },
+  {
+    "name": "BeyondTrust"
+  },
+  {
+    "name": "BigCommerce"
+  },
+  {
+    "name": "Bigeye"
+  },
+  {
+    "name": "BigID"
+  },
+  {
+    "name": "BigPanda"
+  },
+  {
+    "name": "Bill.com"
+  },
+  {
+    "name": "Bitdefender"
+  },
+  {
+    "name": "Bitdefender GravityZone"
+  },
+  {
+    "name": "Bitrise"
+  },
+  {
+    "name": "Bloomreach Engagement"
+  },
+  {
+    "name": "Blue Prism"
+  },
+  {
+    "name": "BMC Helix"
+  },
+  {
+    "name": "BMC Software"
+  },
+  {
+    "name": "Boomi"
+  },
+  {
+    "name": "Bottlerocket OS"
+  },
+  {
+    "name": "Box"
+  },
+  {
+    "name": "Braze"
+  },
+  {
+    "name": "Braze (Advanced Track)"
+  },
+  {
+    "name": "Broadcom"
+  },
+  {
+    "name": "Buddy CI/CD"
+  },
+  {
+    "name": "Buildkite"
+  },
+  {
+    "name": "Calendly"
+  },
+  {
+    "name": "Calico"
+  },
+  {
+    "name": "Calix"
+  },
+  {
+    "name": "Cambium Networks"
+  },
+  {
+    "name": "Cequence Security"
+  },
+  {
+    "name": "Chargebee"
+  },
+  {
+    "name": "Check Point"
+  },
+  {
+    "name": "Check Point Harmony Connect"
+  },
+  {
+    "name": "Chef"
+  },
+  {
+    "name": "Cherwell"
+  },
+  {
+    "name": "Chorus.ai"
+  },
+  {
+    "name": "Chronosphere"
+  },
+  {
+    "name": "Ciena"
+  },
+  {
+    "name": "Cilium"
+  },
+  {
+    "name": "CircleCI"
+  },
+  {
+    "name": "Cisco"
+  },
+  {
+    "name": "Cisco Firepower"
+  },
+  {
+    "name": "Citrix"
+  },
+  {
+    "name": "Clari"
+  },
+  {
+    "name": "CleverTap"
+  },
+  {
+    "name": "ClickUp"
+  },
+  {
+    "name": "Cloud Native Computing Foundation"
+  },
+  {
+    "name": "Apptio"
+  },
+  {
+    "name": "CloudBees"
+  },
+  {
+    "name": "Cloudera"
+  },
+  {
+    "name": "Cloudflare"
+  },
+  {
+    "name": "Cloudflare API Shield"
+  },
+  {
+    "name": "Cloudflare Zero Trust"
+  },
+  {
+    "name": "CloudHealth"
+  },
+  {
+    "name": "Cluster API"
+  },
+  {
+    "name": "CNCF"
+  },
+  {
+    "name": "Codefresh"
+  },
+  {
+    "name": "Cofense"
+  },
+  {
+    "name": "Cohesity"
+  },
+  {
+    "name": "Collibra"
+  },
+  {
+    "name": "commercetools"
+  },
+  {
+    "name": "Commvault"
+  },
+  {
+    "name": "CompTIA"
+  },
+  {
+    "name": "ConnectWise"
+  },
+  {
+    "name": "Consul"
+  },
+  {
+    "name": "Contour"
+  },
+  {
+    "name": "Control-M"
+  },
+  {
+    "name": "Coralogix"
+  },
+  {
+    "name": "Cornerstone OnDemand"
+  },
+  {
+    "name": "Couchbase"
+  },
+  {
+    "name": "Coupa"
+  },
+  {
+    "name": "Crossplane"
+  },
+  {
+    "name": "CrowdStrike"
+  },
+  {
+    "name": "CrowdStrike Falcon"
+  },
+  {
+    "name": "CrowdStrike Falcon Fusion"
+  },
+  {
+    "name": "Customer.io"
+  },
+  {
+    "name": "CyberArk"
+  },
+  {
+    "name": "Cylance"
+  },
+  {
+    "name": "Dagger"
+  },
+  {
+    "name": "Dagster"
+  },
+  {
+    "name": "Dapr"
+  },
+  {
+    "name": "Darktrace"
+  },
+  {
+    "name": "Data Theorem"
+  },
+  {
+    "name": "Databand"
+  },
+  {
+    "name": "Databricks"
+  },
+  {
+    "name": "Databricks ML"
+  },
+  {
+    "name": "Databricks MLflow"
+  },
+  {
+    "name": "Datadog"
+  },
+  {
+    "name": "Datadog Infrastructure"
+  },
+  {
+    "name": "DataHub"
+  },
+  {
+    "name": "Dataiku"
+  },
+  {
+    "name": "DataRobot"
+  },
+  {
+    "name": "DataStax"
+  },
+  {
+    "name": "dbt Labs"
+  },
+  {
+    "name": "Dell EMC PowerProtect"
+  },
+  {
+    "name": "Dell Networking"
+  },
+  {
+    "name": "Dell Technologies"
+  },
+  {
+    "name": "DevSpace"
+  },
+  {
+    "name": "DigitalOcean"
+  },
+  {
+    "name": "Docebo"
+  },
+  {
+    "name": "Docker"
+  },
+  {
+    "name": "DocuSign"
+  },
+  {
+    "name": "Domino Data Lab"
+  },
+  {
+    "name": "Domo"
+  },
+  {
+    "name": "Drata"
+  },
+  {
+    "name": "Drone CI"
+  },
+  {
+    "name": "Dropbox Business"
+  },
+  {
+    "name": "Druva"
+  },
+  {
+    "name": "Duo Security"
+  },
+  {
+    "name": "Dynatrace"
+  },
+  {
+    "name": "EC-Council"
+  },
+  {
+    "name": "Eightfold AI"
+  },
+  {
+    "name": "Elastic"
+  },
+  {
+    "name": "Elastic Observability"
+  },
+  {
+    "name": "Elastic Path"
+  },
+  {
+    "name": "Eloqua (Oracle)"
+  },
+  {
+    "name": "Emarsys"
+  },
+  {
+    "name": "Envoy Proxy"
+  },
+  {
+    "name": "ESET Protect"
+  },
+  {
+    "name": "etcd"
+  },
+  {
+    "name": "Exabeam"
+  },
+  {
+    "name": "Expensify"
+  },
+  {
+    "name": "Extreme Networks"
+  },
+  {
+    "name": "F5"
+  },
+  {
+    "name": "F5 Networks"
+  },
+  {
+    "name": "Falco"
+  },
+  {
+    "name": "Fastly"
+  },
+  {
+    "name": "Figma"
+  },
+  {
+    "name": "Five9"
+  },
+  {
+    "name": "Fivetran"
+  },
+  {
+    "name": "Flatcar Linux"
+  },
+  {
+    "name": "Flexera"
+  },
+  {
+    "name": "FluxCD"
+  },
+  {
+    "name": "Forcepoint"
+  },
+  {
+    "name": "Forethought"
+  },
+  {
+    "name": "Fortinet"
+  },
+  {
+    "name": "Fortinet FortiGate"
+  },
+  {
+    "name": "Fortinet Secure SD-WAN"
+  },
+  {
+    "name": "FreshBooks"
+  },
+  {
+    "name": "Freshsales"
+  },
+  {
+    "name": "Freshservice"
+  },
+  {
+    "name": "Freshworks"
+  },
+  {
+    "name": "FullStory"
+  },
+  {
+    "name": "Gainsight"
+  },
+  {
+    "name": "Garden.io"
+  },
+  {
+    "name": "Gem"
+  },
+  {
+    "name": "Genesys Cloud CX"
+  },
+  {
+    "name": "GIAC / SANS"
+  },
+  {
+    "name": "GitHub"
+  },
+  {
+    "name": "GitLab"
+  },
+  {
+    "name": "Gong"
+  },
+  {
+    "name": "GoodData"
+  },
+  {
+    "name": "Google"
+  },
+  {
+    "name": "Google Cloud"
+  },
+  {
+    "name": "Google Cloud Billing"
+  },
+  {
+    "name": "Google Cloud Build"
+  },
+  {
+    "name": "Google Cloud Composer"
+  },
+  {
+    "name": "Google Vertex AI"
+  },
+  {
+    "name": "Google Workspace"
+  },
+  {
+    "name": "Grafana Cloud"
+  },
+  {
+    "name": "Grafana Labs"
+  },
+  {
+    "name": "Grafana Labs (k6)"
+  },
+  {
+    "name": "Great Expectations"
+  },
+  {
+    "name": "Greenhouse"
+  },
+  {
+    "name": "Greenhouse (Advanced Track)"
+  },
+  {
+    "name": "Gusto"
+  },
+  {
+    "name": "H2O.ai"
+  },
+  {
+    "name": "Harbor"
+  },
+  {
+    "name": "Harness"
+  },
+  {
+    "name": "Harness Cloud Cost"
+  },
+  {
+    "name": "Harness STO"
+  },
+  {
+    "name": "HashiCorp"
+  },
+  {
+    "name": "HashiCorp Terraform Cloud"
+  },
+  {
+    "name": "HDI"
+  },
+  {
+    "name": "Heap Analytics"
+  },
+  {
+    "name": "Hevo Data"
+  },
+  {
+    "name": "Honeycomb.io"
+  },
+  {
+    "name": "Hortonworks (Legacy)"
+  },
+  {
+    "name": "Hotjar"
+  },
+  {
+    "name": "HPE"
+  },
+  {
+    "name": "HPE Networking"
+  },
+  {
+    "name": "Huawei Enterprise Networking"
+  },
+  {
+    "name": "HubSpot"
+  },
+  {
+    "name": "HubSpot Marketing Hub"
+  },
+  {
+    "name": "HubSpot Sales Hub"
+  },
+  {
+    "name": "Hugging Face Enterprise"
+  },
+  {
+    "name": "Hyperproof"
+  },
+  {
+    "name": "IBM"
+  },
+  {
+    "name": "IBM Cognos"
+  },
+  {
+    "name": "IBM Data & AI"
+  },
+  {
+    "name": "IBM InfoSphere MDM"
+  },
+  {
+    "name": "IBM QRadar"
+  },
+  {
+    "name": "IBM Watson Knowledge Catalog"
+  },
+  {
+    "name": "iCIMS"
+  },
+  {
+    "name": "Imperva"
+  },
+  {
+    "name": "Imperva API Security"
+  },
+  {
+    "name": "Infoblox"
+  },
+  {
+    "name": "Informatica"
+  },
+  {
+    "name": "Informatica Cloud"
+  },
+  {
+    "name": "Informatica Data Governance"
+  },
+  {
+    "name": "Informatica Data Quality"
+  },
+  {
+    "name": "Informatica MDM"
+  },
+  {
+    "name": "Insider"
+  },
+  {
+    "name": "Intercom"
+  },
+  {
+    "name": "Intercom Fin AI"
+  },
+  {
+    "name": "IRONSCALES"
+  },
+  {
+    "name": "ISACA"
+  },
+  {
+    "name": "Istio"
+  },
+  {
+    "name": "Iterable"
+  },
+  {
+    "name": "Iterable (Advanced Track)"
+  },
+  {
+    "name": "Ivanti"
+  },
+  {
+    "name": "Ivanti Neurons"
+  },
+  {
+    "name": "JAMF"
+  },
+  {
+    "name": "JazzHR"
+  },
+  {
+    "name": "Jenkins"
+  },
+  {
+    "name": "JFrog"
+  },
+  {
+    "name": "JFrog Artifactory"
+  },
+  {
+    "name": "Jitterbit"
+  },
+  {
+    "name": "JumpCloud"
+  },
+  {
+    "name": "Juniper Mist"
+  },
+  {
+    "name": "Juniper Mist AI"
+  },
+  {
+    "name": "Juniper Networks"
+  },
+  {
+    "name": "Juniper SRX"
+  },
+  {
+    "name": "k0s"
+  },
+  {
+    "name": "K3s"
+  },
+  {
+    "name": "Kandji"
+  },
+  {
+    "name": "Karmada"
+  },
+  {
+    "name": "Karpenter"
+  },
+  {
+    "name": "Kaseya"
+  },
+  {
+    "name": "Kaspersky"
+  },
+  {
+    "name": "KEDA"
+  },
+  {
+    "name": "Keeper Security"
+  },
+  {
+    "name": "Kentik"
+  },
+  {
+    "name": "Keptn"
+  },
+  {
+    "name": "Klaviyo"
+  },
+  {
+    "name": "Klipfolio"
+  },
+  {
+    "name": "Knative"
+  },
+  {
+    "name": "KNIME"
+  },
+  {
+    "name": "Kong"
+  },
+  {
+    "name": "KubeArmor"
+  },
+  {
+    "name": "Kubecost"
+  },
+  {
+    "name": "KubeEdge"
+  },
+  {
+    "name": "Kubeflow"
+  },
+  {
+    "name": "KubeVela"
+  },
+  {
+    "name": "KubeVirt"
+  },
+  {
+    "name": "Kyverno"
+  },
+  {
+    "name": "Labelbox"
+  },
+  {
+    "name": "Lacework"
+  },
+  {
+    "name": "LastPass"
+  },
+  {
+    "name": "LearnUpon"
+  },
+  {
+    "name": "Lenovo"
+  },
+  {
+    "name": "Lens"
+  },
+  {
+    "name": "Lever"
+  },
+  {
+    "name": "Lever (Advanced Track)"
+  },
+  {
+    "name": "ServiceNow"
+  },
+  {
+    "name": "Linkerd"
+  },
+  {
+    "name": "Linode"
+  },
+  {
+    "name": "Linux Foundation"
+  },
+  {
+    "name": "Linux Professional Institute"
+  },
+  {
+    "name": "LitmusChaos"
+  },
+  {
+    "name": "LivePerson"
+  },
+  {
+    "name": "LogicGate"
+  },
+  {
+    "name": "LogicMonitor"
+  },
+  {
+    "name": "LogRhythm"
+  },
+  {
+    "name": "Logz.io"
+  },
+  {
+    "name": "Longhorn"
+  },
+  {
+    "name": "Looker"
+  },
+  {
+    "name": "Lucid (Lucidchart/Lucidspark)"
+  },
+  {
+    "name": "Luigi"
+  },
+  {
+    "name": "Mailchimp"
+  },
+  {
+    "name": "Malwarebytes Nebula"
+  },
+  {
+    "name": "ManageEngine"
+  },
+  {
+    "name": "ManageEngine OpManager"
+  },
+  {
+    "name": "ManageEngine ServiceDesk Plus"
+  },
+  {
+    "name": "Marketo"
+  },
+  {
+    "name": "Matillion"
+  },
+  {
+    "name": "McAfee"
+  },
+  {
+    "name": "Meltano"
+  },
+  {
+    "name": "MetalLB"
+  },
+  {
+    "name": "MetricStream"
+  },
+  {
+    "name": "Micro Focus"
+  },
+  {
+    "name": "MicroK8s"
+  },
+  {
+    "name": "Microsoft 365"
+  },
+  {
+    "name": "Microsoft Defender for Endpoint"
+  },
+  {
+    "name": "Microsoft Defender for Office 365"
+  },
+  {
+    "name": "Microsoft Dynamics 365"
+  },
+  {
+    "name": "Microsoft Intune"
+  },
+  {
+    "name": "Microsoft Sentinel"
+  },
+  {
+    "name": "MicroStrategy"
+  },
+  {
+    "name": "MikroTik"
+  },
+  {
+    "name": "Mimecast"
+  },
+  {
+    "name": "Mirantis Kubernetes Engine"
+  },
+  {
+    "name": "Miro"
+  },
+  {
+    "name": "Mixpanel"
+  },
+  {
+    "name": "MLflow"
+  },
+  {
+    "name": "Mode Analytics"
+  },
+  {
+    "name": "MoEngage"
+  },
+  {
+    "name": "Monday.com"
+  },
+  {
+    "name": "Monte Carlo"
+  },
+  {
+    "name": "Moodle Workplace"
+  },
+  {
+    "name": "Moogsoft"
+  },
+  {
+    "name": "mParticle"
+  },
+  {
+    "name": "MuleSoft"
+  },
+  {
+    "name": "Nagios XI"
+  },
+  {
+    "name": "NATS.io"
+  },
+  {
+    "name": "Neo4j"
+  },
+  {
+    "name": "NetApp Cloud"
+  },
+  {
+    "name": "NetBrain"
+  },
+  {
+    "name": "Netgear Business"
+  },
+  {
+    "name": "NETSCOUT"
+  },
+  {
+    "name": "NetSuite"
+  },
+  {
+    "name": "New Relic"
+  },
+  {
+    "name": "NICE CXone"
+  },
+  {
+    "name": "NinjaOne"
+  },
+  {
+    "name": "Nokia Networks"
+  },
+  {
+    "name": "Nomad"
+  },
+  {
+    "name": "Noname Security"
+  },
+  {
+    "name": "Notion"
+  },
+  {
+    "name": "Nutanix"
+  },
+  {
+    "name": "Offensive Security"
+  },
+  {
+    "name": "Okta"
+  },
+  {
+    "name": "OneLogin"
+  },
+  {
+    "name": "OneTrust"
+  },
+  {
+    "name": "Open Policy Agent"
+  },
+  {
+    "name": "OpenEBS"
+  },
+  {
+    "name": "OpenFaaS"
+  },
+  {
+    "name": "OpenKruise"
+  },
+  {
+    "name": "OpenTelemetry"
+  },
+  {
+    "name": "OpenText"
+  },
+  {
+    "name": "OpenYurt"
+  },
+  {
+    "name": "Oracle"
+  },
+  {
+    "name": "Oracle Analytics"
+  },
+  {
+    "name": "Oracle BI (OBIEE)"
+  },
+  {
+    "name": "Oracle Cloud"
+  },
+  {
+    "name": "Oracle Customer Data Management"
+  },
+  {
+    "name": "Oracle Fusion Cloud Apps"
+  },
+  {
+    "name": "Orca Security"
+  },
+  {
+    "name": "Outreach"
+  },
+  {
+    "name": "OvalEdge"
+  },
+  {
+    "name": "PagerDuty"
+  },
+  {
+    "name": "Palo Alto Cortex XSOAR"
+  },
+  {
+    "name": "Palo Alto Networks"
+  },
+  {
+    "name": "Palo Alto Prisma Access"
+  },
+  {
+    "name": "Paychex"
+  },
+  {
+    "name": "PayPal / Braintree"
+  },
+  {
+    "name": "Pendo"
+  },
+  {
+    "name": "Hitachi Vantara"
+  },
+  {
+    "name": "Ping Identity"
+  },
+  {
+    "name": "Pipedrive"
+  },
+  {
+    "name": "Portainer"
+  },
+  {
+    "name": "Postman"
+  },
+  {
+    "name": "Prefect"
+  },
+  {
+    "name": "Prisma Cloud (Palo Alto Networks)"
+  },
+  {
+    "name": "Productboard"
+  },
+  {
+    "name": "Profisee"
+  },
+  {
+    "name": "Project Management Institute"
+  },
+  {
+    "name": "Prometheus"
+  },
+  {
+    "name": "Proofpoint"
+  },
+  {
+    "name": "PRTG Network Monitor"
+  },
+  {
+    "name": "Pulumi"
+  },
+  {
+    "name": "Puppet"
+  },
+  {
+    "name": "Qlik"
+  },
+  {
+    "name": "Qualtrics"
+  },
+  {
+    "name": "Qualys"
+  },
+  {
+    "name": "QuickBooks Online"
+  },
+  {
+    "name": "Radware"
+  },
+  {
+    "name": "Rancher"
+  },
+  {
+    "name": "Rapid7"
+  },
+  {
+    "name": "Rapid7 InsightCloudSec"
+  },
+  {
+    "name": "Rapid7 InsightIDR"
+  },
+  {
+    "name": "RapidMiner"
+  },
+  {
+    "name": "Ray"
+  },
+  {
+    "name": "Reblaze"
+  },
+  {
+    "name": "Recurly"
+  },
+  {
+    "name": "Red Hat"
+  },
+  {
+    "name": "Red Hat OpenShift"
+  },
+  {
+    "name": "Redis"
+  },
+  {
+    "name": "Reltio"
+  },
+  {
+    "name": "RingCentral"
+  },
+  {
+    "name": "Rippling"
+  },
+  {
+    "name": "Riverbed"
+  },
+  {
+    "name": "Roadmunk"
+  },
+  {
+    "name": "Rollbar"
+  },
+  {
+    "name": "Rook"
+  },
+  {
+    "name": "Rubrik"
+  },
+  {
+    "name": "Sage Intacct"
+  },
+  {
+    "name": "SailPoint"
+  },
+  {
+    "name": "Salesforce"
+  },
+  {
+    "name": "Salesforce Commerce Cloud"
+  },
+  {
+    "name": "Salesforce Marketing Cloud"
+  },
+  {
+    "name": "Salesforce Pardot / Account Engagement"
+  },
+  {
+    "name": "Salesforce Sales Cloud"
+  },
+  {
+    "name": "Salesloft"
+  },
+  {
+    "name": "Salt Security"
+  },
+  {
+    "name": "SaltStack"
+  },
+  {
+    "name": "SAP"
+  },
+  {
+    "name": "SAP Analytics Cloud"
+  },
+  {
+    "name": "SAP BW/BI"
+  },
+  {
+    "name": "SAP Concur"
+  },
+  {
+    "name": "SAP Litmos"
+  },
+  {
+    "name": "SAP Master Data Governance"
+  },
+  {
+    "name": "SAP SuccessFactors"
+  },
+  {
+    "name": "SAS"
+  },
+  {
+    "name": "SAS Viya"
+  },
+  {
+    "name": "ScienceLogic"
+  },
+  {
+    "name": "Scrum.org"
+  },
+  {
+    "name": "Securiti.ai"
+  },
+  {
+    "name": "SeekOut"
+  },
+  {
+    "name": "Twilio"
+  },
+  {
+    "name": "Semaphore CI"
+  },
+  {
+    "name": "Semarchy xDM"
+  },
+  {
+    "name": "SendGrid"
+  },
+  {
+    "name": "SentinelOne"
+  },
+  {
+    "name": "Sentry"
+  },
+  {
+    "name": "Service Desk Institute"
+  },
+  {
+    "name": "ServiceNow ITSM"
+  },
+  {
+    "name": "Shopify"
+  },
+  {
+    "name": "Sigma Computing"
+  },
+  {
+    "name": "Signal Sciences"
+  },
+  {
+    "name": "SingleStore"
+  },
+  {
+    "name": "Sisense"
+  },
+  {
+    "name": "Skaffold"
+  },
+  {
+    "name": "Skillsoft Percipio"
+  },
+  {
+    "name": "Slack"
+  },
+  {
+    "name": "Smartsheet"
+  },
+  {
+    "name": "Snowflake"
+  },
+  {
+    "name": "Snowplow Analytics"
+  },
+  {
+    "name": "Snyk"
+  },
+  {
+    "name": "Soda"
+  },
+  {
+    "name": "SolarWinds"
+  },
+  {
+    "name": "SolarWinds NPM"
+  },
+  {
+    "name": "SolarWinds Service Desk"
+  },
+  {
+    "name": "Solidatus"
+  },
+  {
+    "name": "Sonatype"
+  },
+  {
+    "name": "Sonatype Nexus"
+  },
+  {
+    "name": "SonicWall"
+  },
+  {
+    "name": "Sophos"
+  },
+  {
+    "name": "Sophos Firewall"
+  },
+  {
+    "name": "Sophos Intercept X"
+  },
+  {
+    "name": "Spiceworks"
+  },
+  {
+    "name": "Spinnaker"
+  },
+  {
+    "name": "Splunk"
+  },
+  {
+    "name": "Splunk Enterprise"
+  },
+  {
+    "name": "Splunk SOAR"
+  },
+  {
+    "name": "Spot by NetApp"
+  },
+  {
+    "name": "Square"
+  },
+  {
+    "name": "Squarespace Commerce"
+  },
+  {
+    "name": "Stibo Systems"
+  },
+  {
+    "name": "Stitch"
+  },
+  {
+    "name": "StreamSets"
+  },
+  {
+    "name": "Stripe"
+  },
+  {
+    "name": "Sumo Logic"
+  },
+  {
+    "name": "Sumo Logic Cloud SIEM"
+  },
+  {
+    "name": "SuperEdge"
+  },
+  {
+    "name": "Supermicro Networking"
+  },
+  {
+    "name": "Momentive"
+  },
+  {
+    "name": "SUSE"
+  },
+  {
+    "name": "SysAid"
+  },
+  {
+    "name": "Sysdig"
+  },
+  {
+    "name": "Sysdig Secure"
+  },
+  {
+    "name": "Tableau"
+  },
+  {
+    "name": "Talend"
+  },
+  {
+    "name": "Talend Cloud"
+  },
+  {
+    "name": "Talend Data Catalog"
+  },
+  {
+    "name": "Talend Data Quality"
+  },
+  {
+    "name": "TalentLMS"
+  },
+  {
+    "name": "Talkdesk"
+  },
+  {
+    "name": "Talos Linux"
+  },
+  {
+    "name": "Tamr"
+  },
+  {
+    "name": "Tealium"
+  },
+  {
+    "name": "TeamCity (JetBrains)"
+  },
+  {
+    "name": "Tekton"
+  },
+  {
+    "name": "Tenable"
+  },
+  {
+    "name": "Tenable.io"
+  },
+  {
+    "name": "Tencent Cloud"
+  },
+  {
+    "name": "Terraform (HashiCorp)"
+  },
+  {
+    "name": "Tessian"
+  },
+  {
+    "name": "The Open Group"
+  },
+  {
+    "name": "ThoughtSpot"
+  },
+  {
+    "name": "ThousandEyes"
+  },
+  {
+    "name": "TIBCO Spotfire"
+  },
+  {
+    "name": "Tilt"
+  },
+  {
+    "name": "TimescaleDB"
+  },
+  {
+    "name": "TOPdesk"
+  },
+  {
+    "name": "Totango"
+  },
+  {
+    "name": "TP-Link Omada"
+  },
+  {
+    "name": "Traceable AI"
+  },
+  {
+    "name": "Travis CI"
+  },
+  {
+    "name": "Tray.io"
+  },
+  {
+    "name": "Trend Micro"
+  },
+  {
+    "name": "Trend Micro Apex One"
+  },
+  {
+    "name": "TrustArc"
+  },
+  {
+    "name": "Tyk"
+  },
+  {
+    "name": "Typeform"
+  },
+  {
+    "name": "Ubiquiti"
+  },
+  {
+    "name": "Udemy Business"
+  },
+  {
+    "name": "UiPath"
+  },
+  {
+    "name": "UKG Pro"
+  },
+  {
+    "name": "Ultimate.ai"
+  },
+  {
+    "name": "UserTesting"
+  },
+  {
+    "name": "UserZoom"
+  },
+  {
+    "name": "Vanta"
+  },
+  {
+    "name": "Varonis"
+  },
+  {
+    "name": "Veeam"
+  },
+  {
+    "name": "Versa Networks"
+  },
+  {
+    "name": "VMware"
+  },
+  {
+    "name": "VMware Aria Cost"
+  },
+  {
+    "name": "VMware by Broadcom"
+  },
+  {
+    "name": "VMware Carbon Black"
+  },
+  {
+    "name": "VMware Tanzu"
+  },
+  {
+    "name": "Volcano"
+  },
+  {
+    "name": "VTEX"
+  },
+  {
+    "name": "Wallarm"
+  },
+  {
+    "name": "Wasabi"
+  },
+  {
+    "name": "WatchGuard"
+  },
+  {
+    "name": "Weights & Biases"
+  },
+  {
+    "name": "Wix eCommerce"
+  },
+  {
+    "name": "Wiz"
+  },
+  {
+    "name": "WooCommerce"
+  },
+  {
+    "name": "Workable"
+  },
+  {
+    "name": "Workato"
+  },
+  {
+    "name": "Workday"
+  },
+  {
+    "name": "Workday Financials"
+  },
+  {
+    "name": "Workday HCM"
+  },
+  {
+    "name": "WSO2"
+  },
+  {
+    "name": "Xero"
+  },
+  {
+    "name": "YugabyteDB"
+  },
+  {
+    "name": "Zabbix"
+  },
+  {
+    "name": "Zapier"
+  },
+  {
+    "name": "Zendesk"
+  },
+  {
+    "name": "Zendesk AI"
+  },
+  {
+    "name": "Zoho Analytics"
+  },
+  {
+    "name": "Zoho CRM"
+  },
+  {
+    "name": "Zoom"
+  },
+  {
+    "name": "ZoomInfo"
+  },
+  {
+    "name": "Zscaler"
+  },
+  {
+    "name": "Zuora"
+  },
+  {
+    "name": "Zyxel Networks"
+  }
+]

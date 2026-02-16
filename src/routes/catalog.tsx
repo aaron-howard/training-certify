@@ -31,7 +31,16 @@ interface CatalogResponse {
 // API fetch functions (using traditional fetch instead of broken createServerFn)
 const fetchCatalog = async (): Promise<CatalogResponse> => {
   const res = await fetch('/api/catalog?limit=200')
-  if (!res.ok) throw new Error('Failed to fetch catalog')
+  if (!res.ok) {
+    let message = 'Catalog is temporarily unavailable.'
+    try {
+      const body = await res.json()
+      if (body?.error && typeof body.error === 'string') message = body.error
+    } catch {
+      // ignore
+    }
+    throw new Error(message)
+  }
   const result = await res.json()
   // API returns paginated { data: [...], pagination: {...} }
   // Normalize to the shape this component expects
@@ -51,7 +60,16 @@ const fetchEnsureUser = async (data: {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   })
-  if (!res.ok) throw new Error('Failed to sync user')
+  if (!res.ok) {
+    let message = 'Could not sync user with the server.'
+    try {
+      const body = await res.json()
+      if (body?.error && typeof body.error === 'string') message = body.error
+    } catch {
+      // ignore
+    }
+    throw new Error(message)
+  }
   return res.json()
 }
 
@@ -84,7 +102,7 @@ function CatalogPage() {
     description: '',
   })
 
-  // Sync/Get User Role
+  // Sync/Get User Role (no retry on 5xx to avoid console/network spam)
   const { data: dbUser } = useQuery({
     queryKey: ['dbUser', user?.id],
     queryFn: async () => {
@@ -97,20 +115,22 @@ function CatalogPage() {
       })
     },
     enabled: !!user,
+    retry: false,
+    refetchOnWindowFocus: false,
   })
 
   const {
     data: catalog,
     isLoading,
     error,
+    refetch: refetchCatalog,
+    isRefetching,
   } = useQuery<CatalogResponse>({
     queryKey: ['catalog'],
     queryFn: fetchCatalog,
+    retry: false,
+    refetchOnWindowFocus: false,
   })
-
-  if (error) {
-    console.error('DEBUG: useQuery Error:', error)
-  }
 
   // Get permissions based on role
   const isAdmin = dbUser?.role === 'Admin'
@@ -266,12 +286,37 @@ function CatalogPage() {
   }
 
   if (isLoading) return <div className="p-8">Loading catalog...</div>
-  if (!catalog)
+
+  if (error) {
     return (
-      <div className="p-8 text-slate-600">
+      <div className="p-8 max-w-md">
+        <div className="rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/40 p-6">
+          <h2 className="text-lg font-semibold text-amber-900 dark:text-amber-100">
+            Catalog unavailable
+          </h2>
+          <p className="mt-2 text-sm text-amber-800 dark:text-amber-200">
+            {error.message}
+          </p>
+          <button
+            type="button"
+            onClick={() => refetchCatalog()}
+            disabled={isRefetching}
+            className="mt-4 px-4 py-2 rounded-lg bg-amber-600 text-white text-sm font-medium hover:bg-amber-700 disabled:opacity-50"
+          >
+            {isRefetching ? 'Retrying…' : 'Try again'}
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!catalog) {
+    return (
+      <div className="p-8 text-slate-600 dark:text-slate-400">
         Catalog unavailable at the moment.
       </div>
     )
+  }
 
   return (
     <div className="space-y-8">

@@ -1,0 +1,4 @@
+# One vendor name per line. Vendors listed here will be removed from the database
+# (along with their certifications) when you run:
+#   npx tsx scripts/remove-vendors-from-cleanup-list.ts
+# Use --dry-run first to preview. Add vendor names below this comment.
