@@ -46,7 +46,8 @@ Error: @clerk/tanstack-react-start: Clerk: no secret key provided
 
 - In **Vercel** → **Deployments** → select a deployment → **Functions** (or **Logs**).  
   The function log for the failing request should show the actual exception (e.g. "Clerk: no secret key" or a DB error).
-- The API only returns a generic `"Internal server error"` (see `handleApiError` in `src/lib/api-helpers.server.ts`); the full message is server-side only.
+- For 500s we log the error with `console.error` so a line like `[POST /api/users] 500: <message>` and the stack trace appear in the **Runtime Logs** for that request. Look for that line if the only thing you see is the pg SSL warning.
+- The API only returns a generic `"Internal server error"` to the client; the full message is server-side only.
 
 **Quick checks:**
 

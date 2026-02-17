@@ -62,8 +62,10 @@ export function handleApiError(error: unknown, context: string): Response {
     )
   }
 
-  // Log full error details server-side using structured logging
+  // Log full error details server-side (Pino + console so Vercel runtime logs show it)
   logError(error, { context }, `Unexpected error in ${context}`)
+  const err = error instanceof Error ? error : new Error(String(error))
+  console.error(`[${context}] 500:`, err.message, err.stack)
 
   // Return generic message to client in production
   return json({ error: 'Internal server error' }, { status: 500 })

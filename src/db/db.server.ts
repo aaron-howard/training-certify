@@ -191,7 +191,12 @@ async function initializeDb() {
     await envReady
 
     // Get DATABASE_URL from validated environment
-    const url = ENV.DATABASE_URL || process.env.DATABASE_URL
+    const url =
+      ENV.DATABASE_URL ||
+      process.env.DATABASE_URL ||
+      process.env.POSTGRES_URL ||
+      process.env.POSTGRES_PRISMA_URL || // for prisma
+      process.env.POSTGRES_URL_NON_POOLING // for drizzle
 
     if (!url) {
       const errorMessage = `DATABASE_URL is required but not found`
@@ -210,6 +215,7 @@ async function initializeDb() {
 
     const pool = new Pool({
       connectionString: url,
+      ssl: { rejectUnauthorized: true },
       max: parseInt(process.env.DB_POOL_SIZE || String(defaultPoolSize), 10),
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 5000,
