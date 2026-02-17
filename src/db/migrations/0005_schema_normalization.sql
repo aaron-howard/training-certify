@@ -1,6 +1,6 @@
 -- Migration: Schema normalization (vendors table, date columns, drop denormalized fields, notification FKs)
 --> statement-breakpoint
-CREATE TABLE "vendors" (
+CREATE TABLE IF NOT EXISTS "vendors" (
 	"id" varchar(255) PRIMARY KEY NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"logo" varchar(2048),
@@ -20,9 +20,9 @@ ALTER TABLE "certifications" ADD CONSTRAINT "certifications_vendor_id_vendors_id
 --> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "certifications_vendor_id_idx" ON "certifications" USING btree ("vendor_id");
 --> statement-breakpoint
-ALTER TABLE "user_certifications" ALTER COLUMN "issue_date" TYPE date USING (CASE WHEN "issue_date" IS NULL OR trim("issue_date") = '' THEN NULL ELSE ("issue_date"::date) END);
+ALTER TABLE "user_certifications" ALTER COLUMN "issue_date" TYPE date USING ("issue_date"::date);
 --> statement-breakpoint
-ALTER TABLE "user_certifications" ALTER COLUMN "expiration_date" TYPE date USING (CASE WHEN "expiration_date" IS NULL OR trim("expiration_date") = '' THEN NULL ELSE ("expiration_date"::date) END);
+ALTER TABLE "user_certifications" ALTER COLUMN "expiration_date" TYPE date USING ("expiration_date"::date);
 --> statement-breakpoint
 ALTER TABLE "user_certifications" DROP COLUMN IF EXISTS "days_until_expiration";
 --> statement-breakpoint

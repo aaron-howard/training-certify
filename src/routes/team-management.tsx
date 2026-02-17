@@ -103,7 +103,7 @@ function TeamManagementPage() {
   // Mutations
   const createTeamMutation = useMutation({
     mutationFn: async (data: { name: string; description: string }) => {
-      const res = await fetch('/api/teams', {
+      const res = await fetchWithCsrf('/api/teams', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -121,7 +121,9 @@ function TeamManagementPage() {
 
   const deleteTeamMutation = useMutation({
     mutationFn: async (teamId: string) => {
-      const res = await fetch(`/api/teams?id=${teamId}`, { method: 'DELETE' })
+      const res = await fetchWithCsrf(`/api/teams?id=${teamId}`, {
+        method: 'DELETE',
+      })
       if (!res.ok) throw new Error('Failed to delete team')
       return res.json()
     },
@@ -482,7 +484,7 @@ function MemberManagementModal({
       if (!createRes.ok) throw new Error('Failed to create user')
       const newUser = await createRes.json()
 
-      const addRes = await fetch('/api/teams', {
+      const addRes = await fetchWithCsrf('/api/teams', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'add', teamId, userId: newUser.id }),
@@ -504,7 +506,7 @@ function MemberManagementModal({
 
   const addMemberMutation = useMutation({
     mutationFn: async (userId: string) => {
-      const res = await fetch('/api/teams', {
+      const res = await fetchWithCsrf('/api/teams', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'add', teamId, userId }),
@@ -521,7 +523,7 @@ function MemberManagementModal({
 
   const removeMemberMutation = useMutation({
     mutationFn: async (userId: string) => {
-      const res = await fetch('/api/teams', {
+      const res = await fetchWithCsrf('/api/teams', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'remove', teamId, userId }),
