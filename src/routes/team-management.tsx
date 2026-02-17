@@ -51,10 +51,15 @@ interface TeamData {
   teams?: Array<Team>
 }
 
-const fetchTeams = async () => {
-  const res = await fetch('/api/teams')
+const fetchTeams = async (): Promise<TeamData> => {
+  const res = await fetch('/api/teams?limit=100')
   if (!res.ok) throw new Error('Failed to fetch teams')
-  return res.json()
+  const result = await res.json()
+  // API returns paginated { data, pagination, metrics }; normalize to { teams, metrics }
+  return {
+    teams: Array.isArray(result.data) ? result.data : (result.teams ?? []),
+    metrics: result.metrics ?? [],
+  }
 }
 
 export const Route = createFileRoute('/team-management')({
