@@ -16,6 +16,8 @@ import {
 import { usePermissions } from '../hooks/usePermissions'
 import { UserManagement } from '../components/admin/UserManagement'
 import { TeamRequirementsModal } from '../components/admin/TeamRequirementsModal'
+import { ensureUser } from '../api/users.server'
+import { fetchWithCsrf } from '../lib/csrf.client'
 
 interface TeamMetric {
   label: string
@@ -71,22 +73,19 @@ function TeamManagementPage() {
   const [newTeamDesc, setNewTeamDesc] = useState('')
   const [activeTab, setActiveTab] = useState<'teams' | 'users'>('teams')
 
-  // Get user role for permissions
+  // Get user role for permissions (ensureUser handles CSRF via TanStack Start)
   const { data: dbUser } = useQuery({
     queryKey: ['dbUser', user?.id],
     queryFn: async () => {
       if (!user) return null
-      const res = await fetch('/api/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      return ensureUser({
+        data: {
           id: user.id,
           name: user.fullName || 'User',
           email: user.emailAddresses[0]?.emailAddress || '',
           avatarUrl: user.imageUrl,
-        }),
+        },
       })
-      return res.json()
     },
     enabled: !!user,
   })
@@ -470,7 +469,7 @@ function MemberManagementModal({
       role: string
     }) => {
       const newUserId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-      const createRes = await fetch('/api/users', {
+      const createRes = await fetchWithCsrf('/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -538,7 +537,7 @@ function MemberManagementModal({
 
   const updateUserRoleMutation = useMutation({
     mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
-      const res = await fetch('/api/users', {
+      const res = await fetchWithCsrf('/api/users', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: userId, role }),

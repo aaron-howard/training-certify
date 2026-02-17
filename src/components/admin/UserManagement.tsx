@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Check, Edit2, Search, Trash2, X } from 'lucide-react'
+import { fetchWithCsrf } from '../../lib/csrf.client'
 
 export function UserManagement() {
   const queryClient = useQueryClient()
@@ -21,7 +22,7 @@ export function UserManagement() {
 
   const updateMutation = useMutation({
     mutationFn: async (userData: any) => {
-      const res = await fetch('/api/users', {
+      const res = await fetchWithCsrf('/api/users', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
@@ -38,7 +39,9 @@ export function UserManagement() {
 
   const deleteMutation = useMutation({
     mutationFn: async (userId: string) => {
-      const res = await fetch(`/api/users?id=${userId}`, { method: 'DELETE' })
+      const res = await fetchWithCsrf(`/api/users?id=${userId}`, {
+        method: 'DELETE',
+      })
       if (!res.ok) throw new Error('Failed to delete user')
       return res.json()
     },

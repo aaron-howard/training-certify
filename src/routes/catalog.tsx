@@ -12,6 +12,8 @@ import { useUser } from '@clerk/tanstack-react-start'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { CertificationAssignmentModal } from '../components/catalog/CertificationAssignmentModal'
+import { ensureUser } from '../api/users.server'
+import { fetchWithCsrf } from '../lib/csrf.client'
 
 interface CatalogCertification {
   id: string
@@ -33,13 +35,17 @@ const fetchCatalog = async (): Promise<CatalogResponse> => {
   const res = await fetch('/api/catalog?limit=200')
   if (!res.ok) {
     let message = 'Catalog is temporarily unavailable.'
+    let requestId: string | undefined
     try {
       const body = await res.json()
       if (body?.error && typeof body.error === 'string') message = body.error
+      if (body?.requestId) requestId = body.requestId
     } catch {
       // ignore
     }
-    throw new Error(message)
+    const err = new Error(message) as Error & { requestId?: string }
+    if (requestId) err.requestId = requestId
+    throw err
   }
   const result = await res.json()
   // API returns paginated { data: [...], pagination: {...} }
@@ -49,29 +55,13 @@ const fetchCatalog = async (): Promise<CatalogResponse> => {
   }
 }
 
+// Use server function so CSRF is handled by TanStack Start (no token needed)
 const fetchEnsureUser = async (data: {
   id: string
   name: string
   email: string
   avatarUrl?: string
-}) => {
-  const res = await fetch('/api/users', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  })
-  if (!res.ok) {
-    let message = 'Could not sync user with the server.'
-    try {
-      const body = await res.json()
-      if (body?.error && typeof body.error === 'string') message = body.error
-    } catch {
-      // ignore
-    }
-    throw new Error(message)
-  }
-  return res.json()
-}
+}) => ensureUser({ data })
 
 export const Route = createFileRoute('/catalog')({
   component: CatalogPage,
@@ -229,9 +219,10 @@ function CatalogPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (vars: { id: string }) => {
-      const res = await fetch(`/api/catalog?action=delete&id=${vars.id}`, {
-        method: 'DELETE',
-      })
+      const res = await fetchWithCsrf(
+        `/api/catalog?action=delete&id=${vars.id}`,
+        { method: 'DELETE' },
+      )
       if (!res.ok) throw new Error('Failed to delete')
       return res.json()
     },
@@ -248,7 +239,7 @@ function CatalogPage() {
       category: string
       description: string
     }) => {
-      const res = await fetch('/api/catalog', {
+      const res = await fetchWithCsrf('/api/catalog', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(certData),
@@ -288,6 +279,7 @@ function CatalogPage() {
   if (isLoading) return <div className="p-8">Loading catalog...</div>
 
   if (error) {
+    const requestId = (error as Error & { requestId?: string }).requestId
     return (
       <div className="p-8 max-w-md">
         <div className="rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/40 p-6">
@@ -297,6 +289,12 @@ function CatalogPage() {
           <p className="mt-2 text-sm text-amber-800 dark:text-amber-200">
             {error.message}
           </p>
+          {requestId && (
+            <p className="mt-2 text-xs text-amber-700 dark:text-amber-300 font-mono">
+              Request ID: {requestId} — search for this in Vercel Runtime Logs
+              to see the server error.
+            </p>
+          )}
           <button
             type="button"
             onClick={() => refetchCatalog()}
@@ -750,10 +748,10 @@ function CatalogPage() {
           </div>
         </div>
       )}
-      {assigningCert && (
+      {assigningCert && dbUser?.id && (
         <CertificationAssignmentModal
           cert={assigningCert}
-          managerId={dbUser?.id}
+          managerId={dbUser.id}
           onClose={() => setAssigningCert(null)}
         />
       )}

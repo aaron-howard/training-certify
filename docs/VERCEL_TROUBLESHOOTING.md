@@ -54,6 +54,11 @@ Error: @clerk/tanstack-react-start: Clerk: no secret key provided
 1. Env vars in Vercel for **Production**: `CLERK_SECRET_KEY`, `VITE_CLERK_PUBLISHABLE_KEY`, `DATABASE_URL` (or `POSTGRES_URL`).
 2. From Vercel function logs, confirm whether the failure is Clerk (no secret key) or DB (connection/query error).
 
+**GET /api/catalog 500 — "Failed query" / relation "vendors" or "certifications" does not exist:**
+
+- The catalog route queries `certifications` and `vendors`. If Neon (or your Postgres) has no tables or an old schema, the query fails.
+- **Fix:** Run Drizzle migrations against the production DB. From your repo: `pnpm drizzle-kit push` or `pnpm run db:migrate` (or your project’s migrate command) with `DATABASE_URL` set to the Neon connection string. Ensure the same migrations have been applied that define `vendors`, `certifications`, and related tables.
+
 ---
 
 ## 3. Browser: "Failed to load resource: 500" and "Failed to fetch catalog"

@@ -3,6 +3,7 @@
  * Extracts duplicate patterns for error handling, authentication, and validation
  */
 
+import { randomBytes } from 'node:crypto'
 import { json } from '@tanstack/react-start'
 import { logError } from './logging.server'
 import { AppError, ValidationError } from './errors'
@@ -62,13 +63,22 @@ export function handleApiError(error: unknown, context: string): Response {
     )
   }
 
-  // Log full error details server-side (Pino + console so Vercel runtime logs show it)
-  logError(error, { context }, `Unexpected error in ${context}`)
+  const requestId = randomBytes(4).toString('hex')
+  logError(error, { context, requestId }, `Unexpected error in ${context}`)
   const err = error instanceof Error ? error : new Error(String(error))
-  console.error(`[${context}] 500:`, err.message, err.stack)
+  console.error(
+    `[${context}] 500 requestId=${requestId}:`,
+    err.message,
+    err.stack,
+  )
+  if (err.cause)
+    console.error(`[${context}] 500 cause requestId=${requestId}:`, err.cause)
 
-  // Return generic message to client in production
-  return json({ error: 'Internal server error' }, { status: 500 })
+  // Return generic message to client; include requestId so you can search Vercel logs for it
+  return json(
+    { error: 'Internal server error', requestId },
+    { status: 500, headers: { 'X-Request-Id': requestId } },
+  )
 }
 
 /**

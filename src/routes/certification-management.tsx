@@ -2,6 +2,8 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useUser } from '@clerk/tanstack-react-start'
 import { CertificationManagement } from '../components/sections/certification-management/CertificationManagement'
+import { ensureUser } from '../api/users.server'
+import { fetchWithCsrf } from '../lib/csrf.client'
 
 type CertificationStatus =
   | 'active'
@@ -53,23 +55,16 @@ const fetchUserCertifications = async (userId: string) => {
   return res.json()
 }
 
+// Use server function so CSRF is handled by TanStack Start
 const fetchEnsureUser = async (data: {
   id: string
   name: string
   email: string
   avatarUrl?: string
-}) => {
-  const res = await fetch('/api/users', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  })
-  if (!res.ok) throw new Error('Failed to sync user')
-  return res.json()
-}
+}) => ensureUser({ data })
 
 const createCertification = async (data: CertificationCreateRequest) => {
-  const res = await fetch('/api/certifications', {
+  const res = await fetchWithCsrf('/api/certifications', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -79,7 +74,7 @@ const createCertification = async (data: CertificationCreateRequest) => {
 }
 
 const deleteCertification = async (id: string) => {
-  const res = await fetch(`/api/certifications?id=${id}`, {
+  const res = await fetchWithCsrf(`/api/certifications?id=${id}`, {
     method: 'DELETE',
   })
   if (!res.ok) throw new Error('Failed to delete certification')
@@ -87,7 +82,7 @@ const deleteCertification = async (id: string) => {
 }
 
 const uploadProof = async ({ id, proof }: UploadProofRequest) => {
-  const res = await fetch('/api/certifications', {
+  const res = await fetchWithCsrf('/api/certifications', {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action: 'addProof', id, proof }),
@@ -100,7 +95,7 @@ const updateCertification = async ({
   id,
   updates,
 }: CertificationUpdateRequest) => {
-  const res = await fetch('/api/certifications', {
+  const res = await fetchWithCsrf('/api/certifications', {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action: 'updateDetails', id, updates }),

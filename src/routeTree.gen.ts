@@ -32,6 +32,7 @@ import { Route as ApiNotificationSettingsRouteImport } from './routes/api.notifi
 import { Route as ApiHealthRouteImport } from './routes/api.health'
 import { Route as ApiExportRouteImport } from './routes/api.export'
 import { Route as ApiDashboardRouteImport } from './routes/api.dashboard'
+import { Route as ApiCsrfRouteImport } from './routes/api.csrf'
 import { Route as ApiComplianceRouteImport } from './routes/api.compliance'
 import { Route as ApiCertificationsRouteImport } from './routes/api.certifications'
 import { Route as ApiCatalogRouteImport } from './routes/api.catalog'
@@ -159,6 +160,11 @@ const ApiDashboardRoute = ApiDashboardRouteImport.update({
   path: '/api/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCsrfRoute = ApiCsrfRouteImport.update({
+  id: '/api/csrf',
+  path: '/api/csrf',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiComplianceRoute = ApiComplianceRouteImport.update({
   id: '/api/compliance',
   path: '/api/compliance',
@@ -232,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/api/catalog': typeof ApiCatalogRoute
   '/api/certifications': typeof ApiCertificationsRoute
   '/api/compliance': typeof ApiComplianceRoute
+  '/api/csrf': typeof ApiCsrfRoute
   '/api/dashboard': typeof ApiDashboardRoute
   '/api/export': typeof ApiExportRoute
   '/api/health': typeof ApiHealthRoute
@@ -249,7 +256,7 @@ export interface FileRoutesByFullPath {
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
-  '/demo/start/ssr': typeof DemoStartSsrIndexRoute
+  '/demo/start/ssr/': typeof DemoStartSsrIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -268,6 +275,7 @@ export interface FileRoutesByTo {
   '/api/catalog': typeof ApiCatalogRoute
   '/api/certifications': typeof ApiCertificationsRoute
   '/api/compliance': typeof ApiComplianceRoute
+  '/api/csrf': typeof ApiCsrfRoute
   '/api/dashboard': typeof ApiDashboardRoute
   '/api/export': typeof ApiExportRoute
   '/api/health': typeof ApiHealthRoute
@@ -305,6 +313,7 @@ export interface FileRoutesById {
   '/api/catalog': typeof ApiCatalogRoute
   '/api/certifications': typeof ApiCertificationsRoute
   '/api/compliance': typeof ApiComplianceRoute
+  '/api/csrf': typeof ApiCsrfRoute
   '/api/dashboard': typeof ApiDashboardRoute
   '/api/export': typeof ApiExportRoute
   '/api/health': typeof ApiHealthRoute
@@ -343,6 +352,7 @@ export interface FileRouteTypes {
     | '/api/catalog'
     | '/api/certifications'
     | '/api/compliance'
+    | '/api/csrf'
     | '/api/dashboard'
     | '/api/export'
     | '/api/health'
@@ -360,7 +370,7 @@ export interface FileRouteTypes {
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
-    | '/demo/start/ssr'
+    | '/demo/start/ssr/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -379,6 +389,7 @@ export interface FileRouteTypes {
     | '/api/catalog'
     | '/api/certifications'
     | '/api/compliance'
+    | '/api/csrf'
     | '/api/dashboard'
     | '/api/export'
     | '/api/health'
@@ -415,6 +426,7 @@ export interface FileRouteTypes {
     | '/api/catalog'
     | '/api/certifications'
     | '/api/compliance'
+    | '/api/csrf'
     | '/api/dashboard'
     | '/api/export'
     | '/api/health'
@@ -452,6 +464,7 @@ export interface RootRouteChildren {
   ApiCatalogRoute: typeof ApiCatalogRoute
   ApiCertificationsRoute: typeof ApiCertificationsRoute
   ApiComplianceRoute: typeof ApiComplianceRoute
+  ApiCsrfRoute: typeof ApiCsrfRoute
   ApiDashboardRoute: typeof ApiDashboardRoute
   ApiExportRoute: typeof ApiExportRoute
   ApiHealthRoute: typeof ApiHealthRoute
@@ -635,6 +648,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/csrf': {
+      id: '/api/csrf'
+      path: '/api/csrf'
+      fullPath: '/api/csrf'
+      preLoaderRoute: typeof ApiCsrfRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/compliance': {
       id: '/api/compliance'
       path: '/api/compliance'
@@ -687,7 +707,7 @@ declare module '@tanstack/react-router' {
     '/demo/start/ssr/': {
       id: '/demo/start/ssr/'
       path: '/demo/start/ssr'
-      fullPath: '/demo/start/ssr'
+      fullPath: '/demo/start/ssr/'
       preLoaderRoute: typeof DemoStartSsrIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -732,6 +752,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCatalogRoute: ApiCatalogRoute,
   ApiCertificationsRoute: ApiCertificationsRoute,
   ApiComplianceRoute: ApiComplianceRoute,
+  ApiCsrfRoute: ApiCsrfRoute,
   ApiDashboardRoute: ApiDashboardRoute,
   ApiExportRoute: ApiExportRoute,
   ApiHealthRoute: ApiHealthRoute,
