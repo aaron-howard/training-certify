@@ -63,16 +63,19 @@ export function handleApiError(error: unknown, context: string): Response {
     )
   }
 
-  const requestId = randomBytes(4).toString('hex')
+  const requestId = randomBytes(6).toString('hex')
   logError(error, { context, requestId }, `Unexpected error in ${context}`)
   const err = error instanceof Error ? error : new Error(String(error))
+  // Single line with distinctive prefix so you can copy from browser and search in Vercel Logs
   console.error(
-    `[${context}] 500 requestId=${requestId}:`,
-    err.message,
-    err.stack,
+    `TRAINING_CERTIFY_500 requestId=${requestId} context=${context} message=${err.message}`,
   )
+  console.error(`TRAINING_CERTIFY_500 requestId=${requestId} stack:`, err.stack)
   if (err.cause)
-    console.error(`[${context}] 500 cause requestId=${requestId}:`, err.cause)
+    console.error(
+      `TRAINING_CERTIFY_500 requestId=${requestId} cause:`,
+      err.cause,
+    )
 
   // Return generic message to client; include requestId so you can search Vercel logs for it
   return json(

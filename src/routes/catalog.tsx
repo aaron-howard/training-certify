@@ -290,10 +290,24 @@ function CatalogPage() {
             {error.message}
           </p>
           {requestId && (
-            <p className="mt-2 text-xs text-amber-700 dark:text-amber-300 font-mono">
-              Request ID: {requestId} — search for this in Vercel Runtime Logs
-              to see the server error.
-            </p>
+            <div className="mt-4 p-3 rounded-lg bg-amber-100/80 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-100 space-y-2">
+              <p className="font-semibold">Debug: find this error in Vercel</p>
+              <p className="font-mono break-all">
+                Request ID: <strong>{requestId}</strong>
+              </p>
+              <p>
+                In Vercel → your project → <strong>Logs</strong> (Runtime Logs),
+                use the search box and paste exactly:
+              </p>
+              <p className="font-mono bg-amber-200/60 dark:bg-amber-800/40 px-2 py-1 rounded break-all select-all">
+                requestId={requestId}
+              </p>
+              <p>
+                Or search for:{' '}
+                <span className="font-mono">TRAINING_CERTIFY_500</span> and
+                match the Request ID above.
+              </p>
+            </div>
           )}
           <button
             type="button"
