@@ -551,9 +551,14 @@ function CatalogPage() {
                       )
                       if (!res.ok) {
                         const text = await res.text()
-                        alert(
-                          `Export failed (${res.status}): ${text.slice(0, 200) || res.statusText}`,
-                        )
+                        let msg = text.slice(0, 300) || res.statusText
+                        try {
+                          const body = JSON.parse(text) as { message?: string }
+                          if (body.message) msg = body.message
+                        } catch {
+                          /* use msg as-is */
+                        }
+                        alert(`Export failed (${res.status}): ${msg}`)
                         return
                       }
                       const blob = await res.blob()

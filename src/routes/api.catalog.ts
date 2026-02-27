@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto'
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { count, eq } from 'drizzle-orm'
@@ -199,6 +200,21 @@ export const Route = createFileRoute('/api/catalog')({
               },
             })
           } catch (error) {
+            // For CSV export, return the real error so the client can show it (Admin-only endpoint)
+            const url = new URL(request.url)
+            if (url.searchParams.get('format') === 'csv') {
+              const requestId = randomBytes(6).toString('hex')
+              const err =
+                error instanceof Error ? error : new Error(String(error))
+              return json(
+                {
+                  error: 'Export failed',
+                  message: err.message,
+                  requestId,
+                },
+                { status: 500, headers: { 'X-Request-Id': requestId } },
+              )
+            }
             return handleApiError(error, 'GET /api/catalog')
           }
         }),
