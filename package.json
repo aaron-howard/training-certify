@@ -18,7 +18,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:drop": "drizzle-kit drop"
+    "db:drop": "drizzle-kit drop",
+    "db:seed-vendors": "npx tsx scripts/run-seed-vendors-keep-list.ts"
   },
   "dependencies": {
     "@clerk/tanstack-react-start": "^0.27.12",
