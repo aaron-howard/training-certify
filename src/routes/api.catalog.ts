@@ -43,21 +43,64 @@ export const Route = createFileRoute('/api/catalog')({
               .from(certifications)
             const total = totalResult.count
 
-            const result = await db
-              .select({
-                id: certifications.id,
-                name: certifications.name,
-                vendorName: vendors.name,
-                level: certifications.difficulty,
-                price: certifications.price,
-                category: certifications.category,
-                description: certifications.description,
-                officialSiteUrl: certifications.officialSiteUrl,
-              })
-              .from(certifications)
-              .innerJoin(vendors, eq(certifications.vendorId, vendors.id))
-              .limit(limit)
-              .offset(offset)
+            const selectWithOfficialUrl = {
+              id: certifications.id,
+              name: certifications.name,
+              vendorName: vendors.name,
+              level: certifications.difficulty,
+              price: certifications.price,
+              category: certifications.category,
+              description: certifications.description,
+              officialSiteUrl: certifications.officialSiteUrl,
+            }
+            const selectWithoutOfficialUrl = {
+              id: certifications.id,
+              name: certifications.name,
+              vendorName: vendors.name,
+              level: certifications.difficulty,
+              price: certifications.price,
+              category: certifications.category,
+              description: certifications.description,
+            }
+
+            type CatalogRow = {
+              id: string
+              name: string
+              vendorName: string
+              level: string | null
+              price: string | null
+              category: string | null
+              description: string | null
+              officialSiteUrl?: string | null
+            }
+            let result: Array<CatalogRow>
+            try {
+              result = await db
+                .select(selectWithOfficialUrl)
+                .from(certifications)
+                .innerJoin(vendors, eq(certifications.vendorId, vendors.id))
+                .limit(limit)
+                .offset(offset)
+            } catch (selectError) {
+              const err = selectError as { code?: string; message?: string }
+              if (
+                err.code === '42703' &&
+                err.message?.includes('official_site_url')
+              ) {
+                const fallback = await db
+                  .select(selectWithoutOfficialUrl)
+                  .from(certifications)
+                  .innerJoin(vendors, eq(certifications.vendorId, vendors.id))
+                  .limit(limit)
+                  .offset(offset)
+                result = fallback.map((row) => ({
+                  ...row,
+                  officialSiteUrl: null,
+                }))
+              } else {
+                throw selectError
+              }
+            }
 
             const mappedData = result.map((c) => ({
               id: c.id,
