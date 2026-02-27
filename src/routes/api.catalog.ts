@@ -70,10 +70,10 @@ export const Route = createFileRoute('/api/catalog')({
             const offset = (page - 1) * limit
 
             // Get total count and paginated data
-            const [totalResult] = await db
+            const countRows = await db
               .select({ count: count() })
               .from(certifications)
-            const total = totalResult.count
+            const total = countRows[0]?.count ?? 0
 
             const selectWithOfficialUrl = {
               id: certifications.id,
@@ -115,10 +115,12 @@ export const Route = createFileRoute('/api/catalog')({
                 .offset(offset)
             } catch (selectError) {
               const err = selectError as { code?: string; message?: string }
-              if (
-                err.code === '42703' &&
-                err.message?.includes('official_site_url')
-              ) {
+              const msg = (err.message ?? '').toLowerCase()
+              const missingColumn =
+                err.code === '42703' ||
+                msg.includes('official_site_url') ||
+                (msg.includes('does not exist') && msg.includes('column'))
+              if (missingColumn) {
                 const fallback = await db
                   .select(selectWithoutOfficialUrl)
                   .from(certifications)

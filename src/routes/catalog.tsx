@@ -543,9 +543,32 @@ function CatalogPage() {
             {isAdmin && (
               <>
                 <button
-                  onClick={() =>
-                    window.open('/api/catalog?format=csv&limit=10000', '_blank')
-                  }
+                  onClick={async () => {
+                    try {
+                      const res = await fetch(
+                        '/api/catalog?format=csv&limit=10000',
+                        { credentials: 'include' },
+                      )
+                      if (!res.ok) {
+                        const text = await res.text()
+                        alert(
+                          `Export failed (${res.status}): ${text.slice(0, 200) || res.statusText}`,
+                        )
+                        return
+                      }
+                      const blob = await res.blob()
+                      const url = URL.createObjectURL(blob)
+                      const a = document.createElement('a')
+                      a.href = url
+                      a.download = `catalog-${new Date().toISOString().split('T')[0]}.csv`
+                      a.click()
+                      URL.revokeObjectURL(url)
+                    } catch (e) {
+                      alert(
+                        `Export failed: ${e instanceof Error ? e.message : String(e)}`,
+                      )
+                    }
+                  }}
                   className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm font-medium border border-slate-200 dark:border-slate-700"
                 >
                   <Download className="w-4 h-4" /> Export CSV
