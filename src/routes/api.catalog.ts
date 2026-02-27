@@ -56,6 +56,7 @@ export const Route = createFileRoute('/api/catalog')({
               await setupMutationHandler(request, {
                 allowedRoles: ['Admin'],
                 rateLimit: RateLimitPresets.ADMIN,
+                requireCSRF: false, // GET request; browser does not send CSRF token for GET
               })
             } else {
               await setupReadHandler(request)
