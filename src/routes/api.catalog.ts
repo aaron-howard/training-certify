@@ -120,17 +120,23 @@ export const Route = createFileRoute('/api/catalog')({
                 err.code === '42703' ||
                 msg.includes('official_site_url') ||
                 (msg.includes('does not exist') && msg.includes('column'))
-              if (missingColumn) {
-                const fallback = await db
-                  .select(selectWithoutOfficialUrl)
-                  .from(certifications)
-                  .innerJoin(vendors, eq(certifications.vendorId, vendors.id))
-                  .limit(limit)
-                  .offset(offset)
-                result = fallback.map((row) => ({
-                  ...row,
-                  officialSiteUrl: null,
-                }))
+              // For CSV export, try fallback on any select error (production may wrap errors)
+              const tryFallback = formatCsv || missingColumn
+              if (tryFallback) {
+                try {
+                  const fallback = await db
+                    .select(selectWithoutOfficialUrl)
+                    .from(certifications)
+                    .innerJoin(vendors, eq(certifications.vendorId, vendors.id))
+                    .limit(limit)
+                    .offset(offset)
+                  result = fallback.map((row) => ({
+                    ...row,
+                    officialSiteUrl: null,
+                  }))
+                } catch (fallbackError) {
+                  throw selectError
+                }
               } else {
                 throw selectError
               }
