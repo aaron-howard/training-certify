@@ -1,10 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
 import {
+  Download,
   Edit,
   ExternalLink,
   Plus,
   Search,
   Trash2,
+  Upload,
   UserPlus,
   X,
 } from 'lucide-react'
@@ -78,6 +80,8 @@ function CatalogPage() {
   const [difficultyFilter, setDifficultyFilter] = useState('All')
   const [categoryFilter, setCategoryFilter] = useState('All')
   const [showAddModal, setShowAddModal] = useState(false)
+  const [showImportModal, setShowImportModal] = useState(false)
+  const [importFile, setImportFile] = useState<File | null>(null)
   const [selectedCert, setSelectedCert] = useState<CatalogCertification | null>(
     null,
   )
@@ -357,6 +361,39 @@ function CatalogPage() {
     },
   })
 
+  const importMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData()
+      formData.append('file', file)
+      const res = await fetchWithCsrf('/api/catalog?action=import', {
+        method: 'POST',
+        body: formData,
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || 'Import failed')
+      }
+      return res.json() as Promise<{
+        success: boolean
+        updated: number
+        skipped: number
+        errors?: Array<{ row: number; message: string }>
+      }>
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['catalog'] })
+      setShowImportModal(false)
+      const msg = `Import complete. Updated: ${data.updated}, Skipped: ${data.skipped}${
+        data.errors?.length ? `. ${data.errors.length} row(s) had errors.` : ''
+      }`
+      alert(msg)
+    },
+    onError: (err: unknown) => {
+      const message = err instanceof Error ? err.message : 'Unknown'
+      alert(`Import failed: ${message}`)
+    },
+  })
+
   if (isLoading) return <div className="p-8">Loading catalog...</div>
 
   if (error) {
@@ -506,8 +543,22 @@ function CatalogPage() {
             {isAdmin && (
               <>
                 <button
+                  onClick={() =>
+                    window.open('/api/catalog?format=csv&limit=10000', '_blank')
+                  }
+                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm font-medium border border-slate-200 dark:border-slate-700"
+                >
+                  <Download className="w-4 h-4" /> Export CSV
+                </button>
+                <button
+                  onClick={() => setShowImportModal(true)}
+                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm font-medium border border-slate-200 dark:border-slate-700"
+                >
+                  <Upload className="w-4 h-4" /> Import CSV
+                </button>
+                <button
                   onClick={() => setShowAddModal(true)}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center justify-center gap-2 text-sm font-medium"
                 >
                   <Plus className="w-4 h-4" /> Add New
                 </button>
@@ -752,6 +803,70 @@ function CatalogPage() {
                   {addCertMutation.isPending
                     ? 'Adding...'
                     : 'Add Certification'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showImportModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-xl p-6 w-full max-w-md shadow-xl">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">
+                Import CSV
+              </h2>
+              <button
+                onClick={() => {
+                  setShowImportModal(false)
+                  setImportFile(null)
+                }}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+              Upload a CSV with columns: id, name, vendor, level, category,
+              price, description, officialSiteUrl. Rows with an existing id will
+              be updated.
+            </p>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                if (importFile) importMutation.mutate(importFile)
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  CSV file
+                </label>
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={(e) => setImportFile(e.target.files?.[0] ?? null)}
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 dark:file:bg-blue-900/30 dark:file:text-blue-300"
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowImportModal(false)
+                    setImportFile(null)
+                  }}
+                  className="flex-1 px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-950 text-sm font-medium transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={!importFile || importMutation.isPending}
+                  className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 text-sm font-medium transition-colors"
+                >
+                  {importMutation.isPending ? 'Importing...' : 'Upload'}
                 </button>
               </div>
             </form>

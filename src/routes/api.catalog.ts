@@ -21,6 +21,26 @@ import {
   createPaginatedResponse,
   parsePaginationParams,
 } from '../lib/pagination.server'
+import { parseCsv, rowToObject } from '../lib/csv-parse'
+
+const CSV_MAX_BODY_BYTES = 2 * 1024 * 1024 // 2 MB
+const CSV_MAX_ROWS = 1000
+
+const LEVEL_TO_SCHEMA: Record<
+  string,
+  'Beginner' | 'Intermediate' | 'Advanced' | 'Expert'
+> = {
+  foundational: 'Beginner',
+  associate: 'Intermediate',
+  professional: 'Advanced',
+  expert: 'Expert',
+}
+
+function mapLevelToSchema(
+  level: string,
+): 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert' | undefined {
+  return LEVEL_TO_SCHEMA[level.trim().toLowerCase()]
+}
 
 export const Route = createFileRoute('/api/catalog')({
   server: {
@@ -28,13 +48,25 @@ export const Route = createFileRoute('/api/catalog')({
       GET: async ({ request }) =>
         withApiMetrics('GET', '/api/catalog', async () => {
           try {
-            await setupReadHandler(request)
+            const url = new URL(request.url)
+            const formatCsv = url.searchParams.get('format') === 'csv'
+
+            if (formatCsv) {
+              await setupMutationHandler(request, {
+                allowedRoles: ['Admin'],
+                rateLimit: RateLimitPresets.ADMIN,
+              })
+            } else {
+              await setupReadHandler(request)
+            }
 
             const db = await getDbOrThrow()
-            const url = new URL(request.url)
 
-            // Parse pagination parameters
-            const { page, limit } = parsePaginationParams(url, 50, 200) // Default 50, max 200 for catalog
+            // For CSV export: full catalog, cap 10_000. For JSON: paginated.
+            const csvLimit = 10_000
+            const { page, limit } = formatCsv
+              ? { page: 1, limit: csvLimit }
+              : parsePaginationParams(url, 50, 200)
             const offset = (page - 1) * limit
 
             // Get total count and paginated data
@@ -113,6 +145,39 @@ export const Route = createFileRoute('/api/catalog')({
               officialSiteUrl: c.officialSiteUrl ?? undefined,
             }))
 
+            if (formatCsv) {
+              const escapeCsv = (
+                v: string | number | null | undefined,
+              ): string => {
+                const s = v === null || v === undefined ? '' : String(v)
+                if (/[",\r\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`
+                return s
+              }
+              const header =
+                'id,name,vendor,level,category,price,description,officialSiteUrl'
+              const rows = mappedData.map((r) =>
+                [
+                  escapeCsv(r.id),
+                  escapeCsv(r.name),
+                  escapeCsv(r.vendor),
+                  escapeCsv(r.level),
+                  escapeCsv(r.category),
+                  escapeCsv(r.price),
+                  escapeCsv(r.description),
+                  escapeCsv(r.officialSiteUrl),
+                ].join(','),
+              )
+              const csv = [header, ...rows].join('\r\n')
+              const filename = `catalog-${new Date().toISOString().split('T')[0]}.csv`
+              return new Response(csv, {
+                status: 200,
+                headers: {
+                  'Content-Type': 'text/csv; charset=utf-8',
+                  'Content-Disposition': `attachment; filename="${filename}"`,
+                },
+              })
+            }
+
             const paginatedResponse = createPaginatedResponse(
               mappedData,
               total,
@@ -160,6 +225,177 @@ export const Route = createFileRoute('/api/catalog')({
               allowedRoles: ['Admin'],
               rateLimit: RateLimitPresets.ADMIN,
             })
+
+            const url = new URL(request.url)
+            if (url.searchParams.get('action') === 'import') {
+              const contentType = request.headers.get('content-type') ?? ''
+              let csvText: string
+              if (contentType.includes('multipart/form-data')) {
+                const formData = await request.formData()
+                const file = formData.get('file') as File | null
+                if (!file || file.size === 0) {
+                  return json(
+                    { error: 'No file uploaded or file is empty' },
+                    { status: 400 },
+                  )
+                }
+                if (file.size > CSV_MAX_BODY_BYTES) {
+                  return json(
+                    {
+                      error: `File too large. Max ${CSV_MAX_BODY_BYTES / 1024 / 1024} MB`,
+                    },
+                    { status: 400 },
+                  )
+                }
+                csvText = await file.text()
+              } else {
+                const raw = await request.text()
+                if (raw.length > CSV_MAX_BODY_BYTES) {
+                  return json(
+                    {
+                      error: `Body too large. Max ${CSV_MAX_BODY_BYTES / 1024 / 1024} MB`,
+                    },
+                    { status: 400 },
+                  )
+                }
+                csvText = raw
+              }
+              const { header, rows } = parseCsv(csvText)
+              if (
+                header.length === 0 ||
+                !header.map((h) => h.toLowerCase()).includes('id')
+              ) {
+                return json(
+                  {
+                    error: 'CSV must have a header row with an "id" column',
+                  },
+                  { status: 400 },
+                )
+              }
+              if (rows.length > CSV_MAX_ROWS) {
+                return json(
+                  {
+                    error: `Too many rows. Max ${CSV_MAX_ROWS} per import`,
+                  },
+                  { status: 400 },
+                )
+              }
+              const db = await getDbOrThrow()
+              let updated = 0
+              let skipped = 0
+              const errors: Array<{ row: number; message: string }> = []
+              for (let r = 0; r < rows.length; r++) {
+                const rowIndex = r + 2
+                const obj = rowToObject(header, rows[r])
+                const id = obj.id?.trim()
+                if (!id) {
+                  skipped++
+                  continue
+                }
+                const updates: Record<string, unknown> = {}
+                if (obj.name !== undefined && obj.name !== '')
+                  updates.name = obj.name
+                if (obj.vendor !== undefined && obj.vendor !== '') {
+                  updates.vendorId =
+                    obj.vendor
+                      .toLowerCase()
+                      .replace(/\s+/g, '-')
+                      .replace(/[^a-z0-9-]/g, '') || undefined
+                  updates.vendorName = obj.vendor
+                }
+                if (obj.level !== undefined && obj.level !== '') {
+                  const schemaLevel = mapLevelToSchema(obj.level)
+                  if (schemaLevel) updates.difficulty = schemaLevel
+                }
+                if (obj.category !== undefined && obj.category !== '')
+                  updates.category = obj.category
+                if (obj.price !== undefined)
+                  updates.price = obj.price === '' ? null : obj.price
+                if (obj.description !== undefined)
+                  updates.description =
+                    obj.description === '' ? null : obj.description
+                if (obj.officialsiteurl !== undefined)
+                  updates.officialSiteUrl =
+                    obj.officialsiteurl === '' ? null : obj.officialsiteurl
+                if (Object.keys(updates).length === 0) {
+                  skipped++
+                  continue
+                }
+                const validation =
+                  UpdateCatalogCertificationSchema.safeParse(updates)
+                if (!validation.success) {
+                  errors.push({
+                    row: rowIndex,
+                    message: validation.error.errors
+                      .map((e) => e.message)
+                      .join('; '),
+                  })
+                  skipped++
+                  continue
+                }
+                const data = validation.data
+                const setPayload: Record<string, unknown> = {}
+                if (data.name !== undefined) setPayload.name = data.name
+                if (data.category !== undefined)
+                  setPayload.category =
+                    validateCategory(data.category) ?? undefined
+                if (data.difficulty !== undefined)
+                  setPayload.difficulty =
+                    validateDifficulty(data.difficulty) ?? undefined
+                if (data.price !== undefined)
+                  setPayload.price =
+                    data.price != null ? String(data.price) : null
+                if (data.description !== undefined)
+                  setPayload.description = data.description ?? null
+                if (data.officialSiteUrl !== undefined)
+                  setPayload.officialSiteUrl = data.officialSiteUrl ?? null
+                if (data.vendorId !== undefined && data.vendorId) {
+                  await db
+                    .insert(vendors)
+                    .values({
+                      id: data.vendorId,
+                      name: data.vendorName ?? data.vendorId,
+                      logo: data.vendorLogo ?? null,
+                    })
+                    .onConflictDoUpdate({
+                      target: vendors.id,
+                      set: {
+                        name: data.vendorName ?? data.vendorId,
+                        logo: data.vendorLogo ?? null,
+                      },
+                    })
+                  setPayload.vendorId = data.vendorId
+                }
+                try {
+                  const result = await db
+                    .update(certifications)
+                    .set(setPayload)
+                    .where(eq(certifications.id, id))
+                    .returning()
+                  if (result.length > 0) updated++
+                  else {
+                    errors.push({
+                      row: rowIndex,
+                      message: 'Certification not found',
+                    })
+                    skipped++
+                  }
+                } catch (err) {
+                  errors.push({
+                    row: rowIndex,
+                    message: err instanceof Error ? err.message : String(err),
+                  })
+                  skipped++
+                }
+              }
+              invalidateCache('catalog:')
+              return json({
+                success: true,
+                updated,
+                skipped,
+                errors: errors.length > 0 ? errors : undefined,
+              })
+            }
 
             const rawData = await request.json()
             const validation = CatalogCertificationSchema.safeParse(rawData)

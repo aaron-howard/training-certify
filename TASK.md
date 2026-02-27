@@ -1095,8 +1095,8 @@ logger.info({ userId, action: 'user_created' }, 'User created successfully')
 
 **Acceptance Criteria:**
 
-- [ ] Admin can export catalog to CSV
-- [ ] Admin can bulk-update (e.g. Official Site URLs) via CSV import or dedicated UI
+- [x] Admin can export catalog to CSV
+- [x] Admin can bulk-update (e.g. Official Site URLs) via CSV import or dedicated UI
 
 **Estimated Time:** 4 hours
 
@@ -1154,7 +1154,7 @@ logger.info({ userId, action: 'user_created' }, 'User created successfully')
 
 - [x] Task 9.1: Official Site URL ✅
 - [x] Task 9.2: Catalog Edit (Admin) ✅
-- [ ] Task 9.3 (Optional): Bulk catalog management
+- [x] Task 9.3 (Optional): Bulk catalog management ✅
 
 ---
 

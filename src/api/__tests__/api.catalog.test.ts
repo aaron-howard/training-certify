@@ -101,6 +101,68 @@ describe('/api/catalog Integration Tests', () => {
 
       expect(response.status).toBe(401)
     })
+
+    it('GET ?format=csv should return 200 and CSV body for Admin', async () => {
+      const { auth } = await import('@clerk/tanstack-react-start/server')
+      const admin = await mockAuthForRole('Admin', auth)
+
+      const catalogRows = [
+        {
+          id: 'cert1',
+          name: 'Azure Fundamentals',
+          vendorName: 'Microsoft',
+          level: 'Beginner',
+          price: null,
+          category: 'Cloud',
+          description: null,
+          officialSiteUrl: 'https://example.com/azure',
+        },
+      ]
+      await setupTestMocks(admin, catalogRows, {
+        dbSequence: [[{ count: 1 }], catalogRows],
+      })
+
+      const { Route } = await import('../../routes/api.catalog')
+      const handler = (Route.options.server?.handlers as any)?.GET
+      if (!handler) throw new Error('GET handler not found')
+
+      const response = await handler({
+        request: new Request('http://localhost/api/catalog?format=csv'),
+      } as any)
+
+      expect(response.status).toBe(200)
+      expect(response.headers.get('content-type')).toContain('text/csv')
+      const text = await response.text()
+      expect(text).toContain(
+        'id,name,vendor,level,category,price,description,officialSiteUrl',
+      )
+      expect(text).toContain('cert1')
+      expect(text).toContain('Azure Fundamentals')
+      expect(text).toContain('https://example.com/azure')
+    })
+
+    it('GET ?format=csv should return 403 for non-Admin', async () => {
+      const { auth } = await import('@clerk/tanstack-react-start/server')
+      const user = await mockAuthForRole('User', auth)
+      const { requireRole } = await import('../../lib/auth.server')
+      const { ForbiddenError } = await import('../../lib/errors')
+
+      await setupTestMocks(user, [])
+
+      vi.mocked(requireRole).mockRejectedValue(
+        new ForbiddenError('Required one of [Admin] but user has [User]'),
+      )
+
+      const { Route } = await import('../../routes/api.catalog')
+      const handler = (Route.options.server?.handlers as any)?.GET
+      if (!handler) throw new Error('GET handler not found')
+
+      const response = await handler({
+        request: new Request('http://localhost/api/catalog?format=csv'),
+      } as any)
+
+      expect(response.status).toBe(403)
+    })
   })
 
   describe('POST /api/catalog', () => {
@@ -198,6 +260,104 @@ describe('/api/catalog Integration Tests', () => {
 
       const response = await handler({ request } as any)
       expect(response.status).toBe(400)
+    })
+
+    it('POST ?action=import with valid CSV returns updated/skipped', async () => {
+      const { auth } = await import('@clerk/tanstack-react-start/server')
+      const admin = await mockAuthForRole('Admin', auth)
+
+      const updatedRow = {
+        id: 'cert1',
+        name: 'Updated Name',
+        vendorId: 'microsoft',
+        category: 'Cloud',
+        difficulty: 'Intermediate',
+      }
+      await setupTestMocks(admin, [updatedRow])
+
+      const csv = `id,name,vendor,level,category,officialSiteUrl
+cert1,Updated Name,Microsoft,Professional,Cloud,https://example.com/cert`
+
+      const request = new Request(
+        'http://localhost/api/catalog?action=import',
+        {
+          method: 'POST',
+          body: csv,
+          headers: { 'Content-Type': 'text/csv; charset=utf-8' },
+        },
+      )
+
+      const { Route } = await import('../../routes/api.catalog')
+      const handler = (Route.options.server?.handlers as any)?.POST
+      if (!handler) throw new Error('POST handler not found')
+
+      const response = await handler({ request } as any)
+      expect(response.status).toBe(200)
+      const data = await response.json()
+      expect(data.success).toBe(true)
+      expect(data.updated).toBe(1)
+      expect(data.skipped).toBe(0)
+    })
+
+    it('POST ?action=import skips rows with missing id', async () => {
+      const { auth } = await import('@clerk/tanstack-react-start/server')
+      const admin = await mockAuthForRole('Admin', auth)
+
+      // Mock must return a row for update().returning() so cert1 is "updated"
+      const updatedRow = { id: 'cert1', name: 'Has Id', vendorId: 'vendor' }
+      await setupTestMocks(admin, [updatedRow])
+
+      const csv = `id,name,vendor
+,No Id Row,Vendor
+cert1,Has Id,Vendor`
+
+      const request = new Request(
+        'http://localhost/api/catalog?action=import',
+        {
+          method: 'POST',
+          body: csv,
+          headers: { 'Content-Type': 'text/csv; charset=utf-8' },
+        },
+      )
+
+      const { Route } = await import('../../routes/api.catalog')
+      const handler = (Route.options.server?.handlers as any)?.POST
+      if (!handler) throw new Error('POST handler not found')
+
+      const response = await handler({ request } as any)
+      expect(response.status).toBe(200)
+      const data = await response.json()
+      expect(data.success).toBe(true)
+      expect(data.updated).toBe(1)
+      expect(data.skipped).toBe(1)
+    })
+
+    it('POST ?action=import returns 400 when CSV has no id column', async () => {
+      const { auth } = await import('@clerk/tanstack-react-start/server')
+      const admin = await mockAuthForRole('Admin', auth)
+
+      await setupTestMocks(admin, [])
+
+      const csv = `name,vendor
+Cert A,Vendor A`
+
+      const request = new Request(
+        'http://localhost/api/catalog?action=import',
+        {
+          method: 'POST',
+          body: csv,
+          headers: { 'Content-Type': 'text/csv; charset=utf-8' },
+        },
+      )
+
+      const { Route } = await import('../../routes/api.catalog')
+      const handler = (Route.options.server?.handlers as any)?.POST
+      if (!handler) throw new Error('POST handler not found')
+
+      const response = await handler({ request } as any)
+      expect(response.status).toBe(400)
+      const data = await response.json()
+      expect(data.error).toContain('id')
     })
   })
 
