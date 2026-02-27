@@ -5,7 +5,10 @@ import { getDbOrThrow } from '../db/db.server'
 import { certifications, vendors } from '../db/schema'
 import { RateLimitPresets } from '../lib/rateLimit.server'
 import { ValidationError } from '../lib/errors'
-import { CatalogCertificationSchema } from '../lib/validation'
+import {
+  CatalogCertificationSchema,
+  UpdateCatalogCertificationSchema,
+} from '../lib/validation'
 import { validateCategory, validateDifficulty } from '../lib/enum-helpers'
 import {
   handleApiError,
@@ -49,6 +52,7 @@ export const Route = createFileRoute('/api/catalog')({
                 price: certifications.price,
                 category: certifications.category,
                 description: certifications.description,
+                officialSiteUrl: certifications.officialSiteUrl,
               })
               .from(certifications)
               .innerJoin(vendors, eq(certifications.vendorId, vendors.id))
@@ -63,6 +67,7 @@ export const Route = createFileRoute('/api/catalog')({
               price: c.price,
               category: c.category,
               description: c.description,
+              officialSiteUrl: c.officialSiteUrl ?? undefined,
             }))
 
             const paginatedResponse = createPaginatedResponse(
@@ -155,6 +160,7 @@ export const Route = createFileRoute('/api/catalog')({
                     'Associate',
                   price: data.price != null ? String(data.price) : null,
                   description: data.description || null,
+                  officialSiteUrl: data.officialSiteUrl ?? null,
                 })
                 .returning()
 
@@ -173,6 +179,91 @@ export const Route = createFileRoute('/api/catalog')({
             }
           } catch (error) {
             return handleApiError(error, 'POST /api/catalog')
+          }
+        }),
+      PATCH: async ({ request }) =>
+        withApiMetrics('PATCH', '/api/catalog', async () => {
+          try {
+            await setupMutationHandler(request, {
+              allowedRoles: ['Admin'],
+              rateLimit: RateLimitPresets.ADMIN,
+            })
+
+            const rawData = await request.json()
+            const validation =
+              UpdateCatalogCertificationSchema.safeParse(rawData)
+
+            if (!validation.success) {
+              throw new ValidationError(
+                'Invalid certification update data',
+                validation.error.errors,
+              )
+            }
+
+            const data = validation.data
+            const id =
+              (rawData as { id?: string }).id ??
+              new URL(request.url).searchParams.get('id')
+            if (!id || typeof id !== 'string') {
+              throw new ValidationError('Missing id (in body or query)')
+            }
+
+            const db = await getDbOrThrow()
+
+            const updates: Record<string, unknown> = {}
+            if (data.name !== undefined) updates.name = data.name
+            if (data.category !== undefined)
+              updates.category = validateCategory(data.category) ?? undefined
+            if (data.difficulty !== undefined)
+              updates.difficulty =
+                validateDifficulty(data.difficulty) ?? undefined
+            if (data.price !== undefined)
+              updates.price = data.price != null ? String(data.price) : null
+            if (data.description !== undefined)
+              updates.description = data.description ?? null
+            if (data.validityPeriod !== undefined)
+              updates.validityPeriod = data.validityPeriod
+            if (data.renewalCycle !== undefined)
+              updates.renewalCycle = data.renewalCycle
+            if (data.officialSiteUrl !== undefined)
+              updates.officialSiteUrl = data.officialSiteUrl ?? null
+
+            if (data.vendorId !== undefined && data.vendorId) {
+              await db
+                .insert(vendors)
+                .values({
+                  id: data.vendorId,
+                  name: data.vendorName ?? data.vendorId,
+                  logo: data.vendorLogo ?? null,
+                })
+                .onConflictDoUpdate({
+                  target: vendors.id,
+                  set: {
+                    name: data.vendorName ?? data.vendorId,
+                    logo: data.vendorLogo ?? null,
+                  },
+                })
+              updates.vendorId = data.vendorId
+            }
+
+            if (Object.keys(updates).length === 0) {
+              throw new ValidationError('No valid fields to update')
+            }
+
+            const result = await db
+              .update(certifications)
+              .set(updates)
+              .where(eq(certifications.id, id))
+              .returning()
+
+            if (result.length === 0) {
+              throw new ValidationError('Certification not found')
+            }
+
+            invalidateCache('catalog:')
+            return json(result[0])
+          } catch (error) {
+            return handleApiError(error, 'PATCH /api/catalog')
           }
         }),
     },

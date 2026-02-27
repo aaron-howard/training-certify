@@ -7,7 +7,7 @@ This document outlines a strategic plan to elevate the Training Certify codebase
 **Current State:** A- (Excellent, production-ready with minor polish opportunities)  
 **Target State:** A+ (Exceptional, industry-leading codebase)
 
-**Last Updated:** February 26, 2026
+**Last Updated:** February 27, 2026
 
 ---
 
@@ -556,11 +556,23 @@ This document outlines a strategic plan to elevate the Training Certify codebase
 
 ---
 
+## Certification Catalog Admin (New Feature)
+
+Admins need better control over the certification catalog. This feature adds:
+
+- **Official Site URL** — Store and display a link to each certification’s official vendor page. The catalog detail modal “Official Site” button opens this URL when set; otherwise it appears disabled.
+- **Admin edit flow** — Admins can edit existing certifications from the catalog: Difficulty, Category, Exam Price, Details & Requirements, and Official Site URL. Code (certification ID) is read-only. Implemented via PATCH /api/catalog and an Edit modal on the catalog page.
+- **Optional bulk management** — CSV export/import for catalog (e.g. bulk Official Site URL updates) can be added later (see TASK.md Phase 9, Task 9.3).
+
+See **TASK.md Phase 9** for the full task breakdown and acceptance criteria.
+
+---
+
 ## Next Steps
 
 1. ✅ Review and approve this plan
-2. ✅ Begin Phase 1: Testing Infrastructure (1.1, 1.3, 1.4, 1.5 complete)
-3. **Remaining:** Complete **Phase 1.2 — Achieve >80% test coverage for API layer** (see TASK.md Task 1.2; run `pnpm run test:coverage`, add tests for low-coverage API routes, raise thresholds when met)
+2. ✅ Begin Phase 1: Testing Infrastructure (1.1–1.5 complete; API coverage ≥80%)
+3. ✅ Implement **Certification Catalog Admin** (see TASK.md Phase 9): Official Site URL, Edit flow; optional bulk in Task 9.3
 4. Track progress in `TASK.md`
 5. Update `CODE_REVIEW.md` with findings as needed
 

@@ -2,11 +2,11 @@
 
 This document provides a detailed, actionable task list for achieving **A+ grade** codebase quality. Tasks are organized by phase and priority.
 
-**Last Updated:** February 26, 2026  
+**Last Updated:** February 27, 2026  
 **Current Grade:** A-  
 **Target Grade:** A+
 
-**Remaining work:** None. Task 1.2 is complete: all API routes have ≥80% statement coverage; `pnpm run check:api-coverage` gates CI. Optional: raise global coverage thresholds in `vitest.config.ts` over time.
+**Remaining work:** Phase 9 (Certification Catalog Admin) in progress. Task 1.2 complete: all API routes have ≥80% statement coverage; `pnpm run check:api-coverage` gates CI. Optional: raise global coverage thresholds in `vitest.config.ts` over time.
 
 ---
 
@@ -1036,6 +1036,72 @@ logger.info({ userId, action: 'user_created' }, 'User created successfully')
 
 ---
 
+## Phase 9: Certification Catalog Admin (NEW FEATURE)
+
+### Task 9.1: Official Site URL
+
+**Files Affected:**
+
+- `src/db/schema.ts` (add `official_site_url` column)
+- `src/db/migrations/0006_add_official_site_url.sql`
+- `src/lib/validation.ts` (CatalogCertificationSchema, UpdateCatalogCertificationSchema)
+- `src/routes/api.catalog.ts` (GET/POST return and accept officialSiteUrl)
+- `src/routes/catalog.tsx` (detail modal link, Add form field)
+
+**Required Changes:**
+
+1. Add nullable `official_site_url` (varchar 2048) to certifications table and migration
+2. Add `officialSiteUrl` to catalog create/update validation schemas
+3. GET /api/catalog returns officialSiteUrl; POST accepts and persists it
+4. Detail modal: "Official Site" is a link when URL present, otherwise disabled/placeholder
+5. Add form: optional "Official site URL" input, included in POST body
+
+**Acceptance Criteria:**
+
+- [x] Official Site URL stored in DB and returned by GET /api/catalog
+- [x] Add certification form includes Official site URL field
+- [x] Detail modal "Official Site" button opens URL in new tab when configured; otherwise shows disabled state
+
+**Estimated Time:** 2 hours
+
+---
+
+### Task 9.2: Catalog Edit (Admin)
+
+**Files Affected:**
+
+- `src/routes/api.catalog.ts` (PATCH handler)
+- `src/routes/catalog.tsx` (Edit modal, update mutation)
+
+**Required Changes:**
+
+1. Add PATCH /api/catalog: Admin-only; body = UpdateCatalogCertificationSchema (id in body or query)
+2. Edit modal: Difficulty, Category, Exam Price, Details & Requirements, Official Site URL; Code (id) read-only
+3. Wire Edit button to open modal; on submit call PATCH and invalidate catalog query
+
+**Acceptance Criteria:**
+
+- [x] Admin can edit existing certifications from the catalog (Edit button on each card)
+- [x] Edit modal allows updating Difficulty, Category, Exam Price, Description, Official Site URL
+- [x] Changes persist and reflect in list and detail views
+
+**Estimated Time:** 3 hours
+
+---
+
+### Task 9.3 (Optional): Bulk catalog management
+
+**Scope:** Defer or implement after 9.1–9.2. CSV export (id, name, vendor, difficulty, category, price, description, officialSiteUrl) and/or CSV import for bulk Official Site URL updates.
+
+**Acceptance Criteria:**
+
+- [ ] Admin can export catalog to CSV
+- [ ] Admin can bulk-update (e.g. Official Site URLs) via CSV import or dedicated UI
+
+**Estimated Time:** 4 hours
+
+---
+
 ## Progress Tracking
 
 ### Phase 1: Testing Infrastructure
@@ -1084,6 +1150,12 @@ logger.info({ userId, action: 'user_created' }, 'User created successfully')
 - [x] Task 8.1: Deployment Documentation ✅
 - [x] Task 8.2: Monitoring & Alerting ✅
 
+### Phase 9: Certification Catalog Admin
+
+- [x] Task 9.1: Official Site URL ✅
+- [x] Task 9.2: Catalog Edit (Admin) ✅
+- [ ] Task 9.3 (Optional): Bulk catalog management
+
 ---
 
 ## Task Dependencies
@@ -1116,6 +1188,11 @@ Phase 7 (Security)
 
 Phase 8 (Production)
 └── Depends on all previous phases
+
+Phase 9 (Certification Catalog Admin)
+├── Task 9.1 (Official Site URL) — independent
+├── Task 9.2 (Catalog Edit) — independent
+└── Task 9.3 (Bulk) — optional; depends on 9.1/9.2
 ```
 
 ---

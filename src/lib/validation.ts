@@ -271,6 +271,11 @@ export const CatalogCertificationSchema = z.object({
     .max(1000, 'Description must be 1000 characters or less')
     .optional()
     .nullable(),
+  officialSiteUrl: z
+    .string()
+    .max(2048, 'Official site URL must be 2048 characters or less')
+    .optional()
+    .nullable(),
 })
 
 // Schema for catalog certification updates (partial updates)
@@ -297,7 +302,10 @@ export const UpdateCatalogCertificationSchema = z.object({
   difficulty: z
     .enum(['Beginner', 'Intermediate', 'Advanced', 'Expert'])
     .optional(),
-  price: z.number().optional().nullable(),
+  price: z
+    .union([z.number(), z.string().max(50)])
+    .optional()
+    .nullable(),
   description: z
     .string()
     .max(1000, 'Description must be 1000 characters or less')
@@ -308,6 +316,11 @@ export const UpdateCatalogCertificationSchema = z.object({
     .max(255, 'Validity period must be 255 characters or less')
     .optional(),
   renewalCycle: z.number().int().positive().optional(),
+  officialSiteUrl: z
+    .string()
+    .max(2048, 'Official site URL must be 2048 characters or less')
+    .optional()
+    .nullable(),
 })
 
 // Notification schemas

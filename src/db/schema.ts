@@ -133,6 +133,7 @@ export const certifications = pgTable(
     renewalCycle: integer('renewal_cycle'), // in months
     price: varchar('price', { length: 50 }), // Price as string, reasonable limit
     description: text('description'), // Can be longer, keep as text
+    officialSiteUrl: varchar('official_site_url', { length: 2048 }),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (t) => ({

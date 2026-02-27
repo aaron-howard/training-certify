@@ -24,6 +24,7 @@ interface CatalogCertification {
   category?: string
   price?: string | number
   description?: string
+  officialSiteUrl?: string
 }
 
 interface CatalogResponse {
@@ -82,6 +83,16 @@ function CatalogPage() {
   )
   const [assigningCert, setAssigningCert] =
     useState<CatalogCertification | null>(null)
+  const [editingCert, setEditingCert] = useState<CatalogCertification | null>(
+    null,
+  )
+  const [editForm, setEditForm] = useState({
+    difficulty: 'Associate',
+    category: 'Cloud',
+    price: '',
+    description: '',
+    officialSiteUrl: '',
+  })
   const [newCert, setNewCert] = useState({
     id: '',
     name: '',
@@ -90,6 +101,7 @@ function CatalogPage() {
     price: '',
     category: 'Cloud',
     description: '',
+    officialSiteUrl: '',
   })
 
   // Sync/Get User Role (no retry on 5xx to avoid console/network spam)
@@ -238,11 +250,22 @@ function CatalogPage() {
       price: string
       category: string
       description: string
+      officialSiteUrl?: string
     }) => {
+      const vendorId =
+        certData.vendorName
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, '-')
+          .replace(/[^a-z0-9-]/g, '') || 'vendor'
       const res = await fetchWithCsrf('/api/catalog', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(certData),
+        body: JSON.stringify({
+          ...certData,
+          vendorId,
+          officialSiteUrl: certData.officialSiteUrl || undefined,
+        }),
       })
       if (!res.ok) {
         const err = await res.json()
@@ -261,6 +284,7 @@ function CatalogPage() {
         price: '',
         category: 'Cloud',
         description: '',
+        officialSiteUrl: '',
       })
       alert('Certification added successfully!')
     },
@@ -275,6 +299,63 @@ function CatalogPage() {
       deleteMutation.mutate({ id })
     }
   }
+
+  const openEditModal = (cert: CatalogCertification) => {
+    setEditingCert(cert)
+    setEditForm({
+      difficulty: cert.level || 'Associate',
+      category: cert.category || 'Cloud',
+      price: String(cert.price ?? ''),
+      description: cert.description ?? '',
+      officialSiteUrl: cert.officialSiteUrl ?? '',
+    })
+  }
+
+  const difficultyToSchema = (
+    level: string,
+  ): 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert' => {
+    const map: Record<
+      string,
+      'Beginner' | 'Intermediate' | 'Advanced' | 'Expert'
+    > = {
+      Foundational: 'Beginner',
+      Associate: 'Intermediate',
+      Professional: 'Advanced',
+      Expert: 'Expert',
+    }
+    return map[level] ?? 'Intermediate'
+  }
+
+  const updateCertMutation = useMutation({
+    mutationFn: async (vars: { id: string; updates: typeof editForm }) => {
+      const res = await fetchWithCsrf('/api/catalog', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: vars.id,
+          difficulty: difficultyToSchema(vars.updates.difficulty),
+          category: vars.updates.category,
+          price: vars.updates.price || null,
+          description: vars.updates.description || null,
+          officialSiteUrl: vars.updates.officialSiteUrl || null,
+        }),
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || 'Failed to update certification')
+      }
+      return res.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['catalog'] })
+      setEditingCert(null)
+      alert('Certification updated successfully!')
+    },
+    onError: (err: unknown) => {
+      const message = err instanceof Error ? err.message : 'Unknown'
+      alert(`Update failed: ${message}`)
+    },
+  })
 
   if (isLoading) return <div className="p-8">Loading catalog...</div>
 
@@ -445,8 +526,9 @@ function CatalogPage() {
             {isAdmin && (
               <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
-                  onClick={() => alert('Edit Form To Be Implemented')}
+                  onClick={() => openEditModal(cert)}
                   className="p-1.5 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 text-slate-600 hover:text-blue-600"
+                  aria-label="Edit certification"
                 >
                   <Edit className="w-3.5 h-3.5" />
                 </button>
@@ -640,6 +722,20 @@ function CatalogPage() {
                   className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 outline-none"
                 />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Official site URL
+                </label>
+                <input
+                  type="url"
+                  value={newCert.officialSiteUrl}
+                  onChange={(e) =>
+                    setNewCert({ ...newCert, officialSiteUrl: e.target.value })
+                  }
+                  placeholder="https://..."
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
               <div className="flex gap-3 pt-2">
                 <button
                   type="button"
@@ -656,6 +752,154 @@ function CatalogPage() {
                   {addCertMutation.isPending
                     ? 'Adding...'
                     : 'Add Certification'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {editingCert && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-xl p-6 w-full max-w-md shadow-xl">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">
+                Edit Certification
+              </h2>
+              <button
+                onClick={() => setEditingCert(null)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+              {editingCert.name} — Code: <strong>{editingCert.id}</strong>
+            </p>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                updateCertMutation.mutate({
+                  id: editingCert.id,
+                  updates: editForm,
+                })
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Difficulty
+                </label>
+                <select
+                  value={editForm.difficulty}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, difficulty: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
+                >
+                  <option value="Foundational">Foundational</option>
+                  <option value="Associate">Associate</option>
+                  <option value="Professional">Professional</option>
+                  <option value="Expert">Expert</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Category
+                </label>
+                <select
+                  value={editForm.category}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, category: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
+                >
+                  <option value="AI & Machine Learning">
+                    AI & Machine Learning
+                  </option>
+                  <option value="Business Applications">
+                    Business Applications
+                  </option>
+                  <option value="Cloud">Cloud</option>
+                  <option value="Collaboration">Collaboration</option>
+                  <option value="Data & Analytics">Data & Analytics</option>
+                  <option value="Database">Database</option>
+                  <option value="DevOps">DevOps</option>
+                  <option value="Governance & Compliance">
+                    Governance & Compliance
+                  </option>
+                  <option value="Infrastructure">Infrastructure</option>
+                  <option value="IT Service Management">
+                    IT Service Management
+                  </option>
+                  <option value="Networking">Networking</option>
+                  <option value="Operating Systems">Operating Systems</option>
+                  <option value="Project Management">Project Management</option>
+                  <option value="Security">Security</option>
+                  <option value="Software Development">
+                    Software Development
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Exam Price
+                </label>
+                <input
+                  type="text"
+                  value={editForm.price}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, price: e.target.value })
+                  }
+                  placeholder="e.g., $165 or Contact Vendor"
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Details & Requirements
+                </label>
+                <textarea
+                  value={editForm.description}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, description: e.target.value })
+                  }
+                  placeholder="Exam requirements or description..."
+                  rows={3}
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Official site URL
+                </label>
+                <input
+                  type="url"
+                  value={editForm.officialSiteUrl}
+                  onChange={(e) =>
+                    setEditForm({
+                      ...editForm,
+                      officialSiteUrl: e.target.value,
+                    })
+                  }
+                  placeholder="https://..."
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingCert(null)}
+                  className="flex-1 px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-950 text-sm font-medium transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={updateCertMutation.isPending}
+                  className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 text-sm font-medium transition-colors"
+                >
+                  {updateCertMutation.isPending ? 'Saving...' : 'Save changes'}
                 </button>
               </div>
             </form>
@@ -755,9 +999,23 @@ function CatalogPage() {
               >
                 Close
               </button>
-              <button className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
-                Official Site <ExternalLink className="w-4 h-4" />
-              </button>
+              {selectedCert.officialSiteUrl ? (
+                <a
+                  href={selectedCert.officialSiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                >
+                  Official Site <ExternalLink className="w-4 h-4" />
+                </a>
+              ) : (
+                <span
+                  className="flex-1 px-4 py-2 bg-slate-300 dark:bg-slate-600 text-slate-500 dark:text-slate-400 rounded-lg text-sm font-medium flex items-center justify-center gap-2 cursor-not-allowed"
+                  title="No official site URL configured"
+                >
+                  Official Site <ExternalLink className="w-4 h-4" />
+                </span>
+              )}
             </div>
           </div>
         </div>
