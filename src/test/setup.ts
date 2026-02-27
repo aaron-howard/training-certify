@@ -29,7 +29,12 @@ afterEach(() => {
   vi.clearAllMocks()
   // Clear in-memory cache so tests don't leak state when running in parallel
   import('../lib/cache.server').then(
-    (m) => m.cache.clear(),
+    (m) => {
+      // Guard for mocked cache in tests (m.cache may lack clear)
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- cache may be mocked
+      if (m?.cache?.clear != null && typeof m.cache.clear === 'function')
+        m.cache.clear()
+    },
     () => {},
   )
 })

@@ -1,18 +1,18 @@
 blank_issues_enabled: false
 
 contact_links:
-  - name: 🐛 Report a bug or propose a fix
+  - name: Bug report
     url: https://github.com/aaron-howard/training-certify/issues/new?template=bug_report.md
-    about: Already checked existing issues and found a reproducible bug? Please report it using the bug report template.
+    about: Report a reproducible bug using the bug report template.
 
-  - name: 💡 Feature request or idea
+  - name: Feature request
     url: https://github.com/aaron-howard/training-certify/issues/new?template=feature_request.md
-    about: Request new features, integrations, or other improvements using the feature request template.
+    about: Propose a new feature using the feature request template.
 
-  - name: ❓ Ask a question
+  - name: Ask a question
     url: https://github.com/aaron-howard/training-certify/discussions
-    about: For community support and general questions, use GitHub Discussions.
+    about: For questions and discussions, use GitHub Discussions.
 
-  - name: 📗 Check the documentation
-    url: https://github.com/aaron-howard/training-certify
-    about: Please review the README and documentation before posting a bug, question, or idea.
+  - name: Documentation
+    url: https://github.com/aaron-howard/training-certify/blob/main/README.md
+    about: Check the README and docs before opening an issue.

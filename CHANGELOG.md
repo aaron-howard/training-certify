@@ -1,18 +1,23 @@
 # Changelog
 
-Get notified of major releases by subscribing here:
-https://buildermethods.com/design-os
+All notable changes to Training Certify are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [0.1.2] - 2025-12-19
+## [Unreleased]
 
-- Fixed errors related to importing google fonts out of order.
-- Handled sections that use '&' in their name.
+- (Add changes here before release.)
 
-## [0.1.1] - 2025-12-18
+## [0.2.0] — TBD
 
-- In the export package, consolidated '01-foundation' and '02-shell' into one.
-- Updated README.md tips that come in the export.
+- Production readiness: CSRF, rate limiting, security headers, health/ready endpoints.
+- API coverage gate (≥80% on API routes), E2E tests, Sentry and metrics.
+- Documentation: architecture, security, deployment, troubleshooting.
 
-## [0.1] - 2025-12-16
+## [0.1.0] — Initial release
 
-- Initial release
+- Training Certify: certification management, teams, catalog, dashboard, compliance.
+- TanStack Start, React 19, Drizzle ORM, PostgreSQL, Clerk auth.
+- Role-based access (Admin, Manager, Executive, Auditor, User).
+
+---
+
+For release process and versioning, see [RELEASES.md](./RELEASES.md).

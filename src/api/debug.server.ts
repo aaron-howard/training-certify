@@ -1,6 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
+import { logger } from '../lib/logging.server'
 
 export const checkRpc = createServerFn({ method: 'GET' }).handler(() => {
-  console.log('✅ [RPC Check] This should ONLY appear in the TERMINAL.')
+  logger.info({}, 'RPC check succeeded')
   return { message: 'RPC is working', timestamp: Date.now() }
 })

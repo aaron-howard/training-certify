@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
 import { users } from '../db/schema'
+import { logError } from '../lib/logging.server'
 
 export const testDbConnection = createServerFn({ method: 'GET' }).handler(
   async () => {
@@ -14,7 +15,7 @@ export const testDbConnection = createServerFn({ method: 'GET' }).handler(
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error'
-      console.error('Database connection failed:', error)
+      logError(error, { context: 'db-test' }, 'Database connection failed')
       return { success: false, error: errorMessage }
     }
   },

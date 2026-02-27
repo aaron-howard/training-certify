@@ -20,7 +20,7 @@ This guide covers deploying Training Certify to production environments.
 
 - [ ] Copy `docs/env.production.example` to `.env.production`
 - [ ] Fill in all required environment variables
-- [ ] Validate configuration: `npm run env:validate`
+- [ ] Validate configuration (ensure required env vars are set; see table below)
 
 ### 2. Database Setup
 
@@ -692,7 +692,7 @@ If storing user-uploaded files:
 
 ### Application Won't Start
 
-1. Check environment variables: `npm run env:validate`
+1. Check environment variables (see table above; ensure all required vars are set)
 2. Check database connectivity: `curl http://localhost:3000/health`
 3. Check logs for errors
 4. Verify Node.js version: `node --version`

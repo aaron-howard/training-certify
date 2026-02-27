@@ -62,9 +62,7 @@ function ApiDocs() {
                   tryItOutEnabled: true,
                   supportedSubmitMethods: ['get', 'post', 'put', 'patch', 'delete'],
                   validatorUrl: null,
-                  onComplete: function() {
-                    console.log("Swagger UI loaded");
-                  }
+                  onComplete: function() {}
                 });
               };
             `,

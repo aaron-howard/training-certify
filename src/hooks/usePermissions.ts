@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { logger } from '../lib/logging.client-stub'
 
 export type Role = 'Admin' | 'Manager' | 'Executive' | 'Auditor' | 'User'
 
@@ -132,9 +133,7 @@ export function usePermissions(
 ): Permissions {
   return useMemo(() => {
     const r = (role ?? 'User') as Role
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`🛡️ [Permissions] Calculating for role: ${r}`)
-    }
+    logger.debug({ role: r }, 'Permissions calculated')
     const perms = rolePermissions[r] as Permissions | undefined
     return perms ?? rolePermissions.User
   }, [role])

@@ -17,6 +17,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { useEffect } from 'react'
 import { AppShell } from '../components/shell/AppShell'
 import { ENV } from '../lib/env'
+import { logger } from '../lib/logging.client-stub'
 import { initSentry } from '../lib/sentry.server'
 import appCss from '../styles.css?url'
 
@@ -192,10 +193,13 @@ function RootComponent() {
         },
       })
         .then((data) => {
-          console.log('👤 [Client] User synced with DB:', data.role)
+          logger.info({ role: data.role }, 'User synced with DB')
         })
         .catch((err) => {
-          console.error('❌ [Client] Sync failed:', err)
+          logger.error(
+            { error: err instanceof Error ? err.message : String(err) },
+            'Sync failed',
+          )
         })
     }
   }, [isSignedIn, user])

@@ -1,7 +1,7 @@
 # What is Design OS?
 
 > [!NOTE]
-> This directory contains documentation for **Design OS**, the methodology used to scaffold this project. for **Training Certify** specific documentation, see `docs/architecture.md` and the root `README.md`.
+> This page describes **Design OS**, the methodology used to scaffold this project. For **Training Certify** documentation, see the root [README.md](../README.md) and [docs/README.md](./README.md).
 
 Design OS is the missing step between your product idea and your codebase.
 

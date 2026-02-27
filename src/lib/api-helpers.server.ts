@@ -5,7 +5,7 @@
 
 import { randomBytes } from 'node:crypto'
 import { json } from '@tanstack/react-start'
-import { logError } from './logging.server'
+import { logError, logger } from './logging.server'
 import { AppError, ValidationError } from './errors'
 import { requireRole } from './auth.server'
 import { RateLimitPresets, requireRateLimit } from './rateLimit.server'
@@ -65,20 +65,20 @@ export function handleApiError(error: unknown, context: string): Response {
   }
 
   const requestId = randomBytes(6).toString('hex')
-  logError(error, { context, requestId }, `Unexpected error in ${context}`)
   const err = error instanceof Error ? error : new Error(String(error))
-  // Single line with distinctive prefix so you can copy from browser and search in Vercel Logs
-  console.error(
-    `TRAINING_CERTIFY_500 requestId=${requestId} context=${context} message=${err.message}`,
+  logError(error, { context, requestId }, `Unexpected error in ${context}`)
+  logger.error(
+    {
+      context,
+      requestId,
+      message: err.message,
+      stack: err.stack,
+      ...(err.cause ? { cause: String(err.cause) } : {}),
+    },
+    'TRAINING_CERTIFY_500',
   )
-  console.error(`TRAINING_CERTIFY_500 requestId=${requestId} stack:`, err.stack)
-  if (err.cause)
-    console.error(
-      `TRAINING_CERTIFY_500 requestId=${requestId} cause:`,
-      err.cause,
-    )
 
-  // Return generic message to client; include requestId so you can search Vercel logs for it
+  // Return generic message to client; include requestId so you can search logs for it
   return json(
     { error: 'Internal server error', requestId },
     { status: 500, headers: { 'X-Request-Id': requestId } },

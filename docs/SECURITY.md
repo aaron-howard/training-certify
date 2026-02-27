@@ -1,4 +1,6 @@
-# Security Audit & Documentation
+# Security Audit & Documentation (full)
+
+**Summary:** See [SECURITY.md](../SECURITY.md) in the repo root for a short overview and links. This file is the full security audit and checklist.
 
 **Last Updated:** February 6, 2026  
 **Audit Status:** ✅ Complete
