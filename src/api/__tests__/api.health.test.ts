@@ -52,6 +52,12 @@ describe('/api/health Integration Tests', () => {
       expect(data).toHaveProperty('checks')
       expect(data.checks.database.status).toBe('connected')
       expect(data.checks.environment.healthy).toBe(true)
+      expect(data).toHaveProperty('metrics')
+      expect(data.metrics).toMatchObject({
+        uptime_seconds: expect.any(Number),
+        http_requests_total: expect.any(Number),
+        http_errors_total: expect.any(Number),
+      })
     })
 
     it('should return unhealthy status when database is disconnected', async () => {

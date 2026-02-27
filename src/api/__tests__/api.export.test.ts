@@ -33,14 +33,29 @@ vi.mock('../../lib/auth.server', async () => {
     getVerifiedAuth: vi.fn(),
   }
 })
-vi.mock('../../lib/api-helpers.server', () => ({
-  setupReadHandler: vi.fn(async (_request, options) => {
-    // Mock the auth check
-    const { requireRole } = await import('../../lib/auth.server')
-    const session = await requireRole(options.allowedRoles)
-    return session
-  }),
-}))
+vi.mock('../../lib/api-helpers.server', async (importOriginal) => {
+  const actual = await (
+    importOriginal as () => Promise<Record<string, unknown>>
+  )()
+  return {
+    ...actual,
+    setupReadHandler: vi.fn(
+      async (_request: unknown, options?: { allowedRoles?: Array<string> }) => {
+        const { requireRole } = await import('../../lib/auth.server')
+        const session = await requireRole(options?.allowedRoles ?? [])
+        return session
+      },
+    ),
+    // Passthrough so route handler runs; metrics not asserted in this test
+    withApiMetrics: vi.fn(
+      async (
+        _method: string,
+        _path: string,
+        handler: () => Promise<Response>,
+      ) => handler(),
+    ),
+  }
+})
 vi.mock('../../lib/rateLimit.server', () => ({
   requireRateLimit: vi.fn(),
   RateLimitPresets: {

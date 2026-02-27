@@ -33,6 +33,119 @@ export async function mockAuthForRole(
 }
 
 /**
+ * Sentinel for createMockDbWithSequence: use { __reject: error } as a response
+ * to make that query's promise reject (e.g. duplicate key).
+ */
+export const REJECT = (error: unknown) => ({ __reject: error })
+
+/**
+ * Create a mock DB that returns a different result for each successive query execution.
+ * Use for routes that run multiple queries (e.g. count then select for pagination).
+ * To make a query reject, pass REJECT(error) as that position in the array.
+ *
+ * @param responses - Array of results; each awaited query gets the next entry (last one repeats)
+ */
+export function createMockDbWithSequence(responses: Array<any>) {
+  let executionIndex = 0
+
+  const getNextResponse = () => {
+    const index = Math.min(executionIndex++, responses.length - 1)
+    return responses[index]
+  }
+
+  const normalizeResponse = (raw: any) => {
+    if (raw && typeof raw === 'object' && '__reject' in raw) return raw
+    return Array.isArray(raw) ? raw : [raw]
+  }
+
+  const createQueryBuilder = () => {
+    const queryBuilder: any = {
+      then: (resolve: any, reject?: any) => {
+        const response = getNextResponse()
+        if (response && typeof response === 'object' && '__reject' in response)
+          return Promise.reject(
+            (response as { __reject: unknown }).__reject,
+          ).then(resolve, reject)
+        return Promise.resolve(normalizeResponse(response)).then(
+          resolve,
+          reject,
+        )
+      },
+      catch: (reject: any) => {
+        const response = getNextResponse()
+        if (response && typeof response === 'object' && '__reject' in response)
+          return Promise.reject(
+            (response as { __reject: unknown }).__reject,
+          ).catch(reject)
+        return Promise.resolve(normalizeResponse(response)).catch(reject)
+      },
+      finally: (handler: any) => {
+        const response = getNextResponse()
+        if (response && typeof response === 'object' && '__reject' in response)
+          return Promise.reject(
+            (response as { __reject: unknown }).__reject,
+          ).finally(handler)
+        return Promise.resolve(normalizeResponse(response)).finally(handler)
+      },
+    }
+    const chainableMethods = [
+      'where',
+      'limit',
+      'offset',
+      'orderBy',
+      'groupBy',
+      'values',
+      'set',
+      'returning',
+      'onConflictDoNothing',
+      'onConflictDoUpdate',
+      'innerJoin',
+      'leftJoin',
+      'rightJoin',
+    ]
+    chainableMethods.forEach((method) => {
+      queryBuilder[method] = vi.fn().mockReturnValue(queryBuilder)
+    })
+    return queryBuilder
+  }
+
+  const createSelectBuilder = () => {
+    const builder = createQueryBuilder()
+    builder.from = vi.fn().mockReturnValue(builder)
+    return builder
+  }
+
+  const createInsertBuilder = () => {
+    const builder = createQueryBuilder()
+    builder.values = vi.fn().mockReturnValue(builder)
+    builder.onConflictDoNothing = vi.fn().mockReturnValue(builder)
+    builder.onConflictDoUpdate = vi.fn().mockReturnValue(builder)
+    return builder
+  }
+
+  const createUpdateBuilder = () => {
+    const builder = createQueryBuilder()
+    builder.set = vi.fn().mockReturnValue(builder)
+    builder.where = vi.fn().mockReturnValue(builder)
+    return builder
+  }
+
+  const mockDb: any = {
+    select: vi.fn().mockImplementation(() => createSelectBuilder()),
+    insert: vi.fn().mockReturnValue(createInsertBuilder()),
+    update: vi.fn().mockReturnValue(createUpdateBuilder()),
+    delete: vi.fn().mockReturnValue(createQueryBuilder()),
+    execute: vi
+      .fn()
+      .mockImplementation(() => Promise.resolve(getNextResponse())),
+    transaction: vi.fn(async (callback: (tx: any) => Promise<any>) => {
+      return await callback(mockDb)
+    }),
+  }
+  return mockDb
+}
+
+/**
  * Mock database with chainable query builder that properly handles Drizzle ORM patterns
  * Handles patterns like: db.select().from(table) and db.insert(table).values(data)
  */
@@ -268,22 +381,31 @@ export function clearRateLimiter() {
  * This ensures both getDb() and getDbOrThrow() are mocked, and requireRole returns the correct session
  *
  * @param user - The user to mock authentication for
- * @param mockData - The data to return from database queries (since requireRole is mocked, this is the main data)
- * @param options - Configuration options
+ * @param mockData - The data to return from database queries (since requireRole is mocked, this is the main data).
+ *   For routes that run multiple queries (e.g. count then select), pass options.dbSequence instead.
+ * @param options - Configuration options. Use dbSequence for pagination-style routes: first item is count result, second is data array.
  */
 export async function setupTestMocks(
   user: any,
   mockData: any,
-  options: { mockAuth?: boolean; skipAuthMock?: boolean } = {},
+  options: {
+    mockAuth?: boolean
+    skipAuthMock?: boolean
+    /** For routes that run count then select (e.g. GET /api/users). First response = [{ count: N }], second = data array. */
+    dbSequence?: Array<any>
+  } = {},
 ) {
   const { getDb, getDbOrThrow } = await import('../../db/db.server')
   const { requireRole } = await import('../../lib/auth.server')
 
-  // If requireRole is mocked (default), we don't need auth queries
-  // So create a mock that just returns the data directly
-  const mockDb = options.skipAuthMock
-    ? setupAuthAndDataMock(user, mockData) // Use auth/data sequence if auth isn't mocked
-    : createMockDb(mockData) // Just return data directly if auth is mocked
+  let mockDb: any
+  if (options.dbSequence && options.dbSequence.length > 0) {
+    mockDb = createMockDbWithSequence(options.dbSequence)
+  } else if (options.skipAuthMock) {
+    mockDb = setupAuthAndDataMock(user, mockData)
+  } else {
+    mockDb = createMockDb(mockData)
+  }
 
   vi.mocked(getDb).mockResolvedValue(mockDb)
   vi.mocked(getDbOrThrow).mockResolvedValue(mockDb)

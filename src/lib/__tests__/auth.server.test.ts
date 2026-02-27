@@ -9,6 +9,7 @@ import {
   getVerifiedAuth,
   requireRole,
 } from '../auth.server'
+import { ForbiddenError } from '../errors'
 import { factories } from '../../test/factories'
 
 // Mock Clerk auth
@@ -168,7 +169,7 @@ describe('auth.server.ts', () => {
       }
       vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
-      await expect(requireRole(['Admin'])).rejects.toThrow('Forbidden')
+      await expect(requireRole(['Admin'])).rejects.toThrow(ForbiddenError)
     })
 
     it('should handle multiple allowed roles', async () => {
@@ -243,7 +244,7 @@ describe('auth.server.ts', () => {
       vi.mocked(getDb).mockResolvedValue(mockDb as any)
 
       await expect(requireRole(['Admin', 'Manager'])).rejects.toThrow(
-        'Forbidden',
+        ForbiddenError,
       )
     })
 

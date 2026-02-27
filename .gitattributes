@@ -1,0 +1,14 @@
+# Normalize line endings: repo stores LF; Git converts on checkout per OS.
+* text=auto eol=lf
+
+# Binary files (no conversion)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary

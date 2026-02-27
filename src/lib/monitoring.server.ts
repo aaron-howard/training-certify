@@ -176,6 +176,20 @@ class MetricsCollector {
     this.counters.clear()
     this.histograms.clear()
   }
+
+  /**
+   * Summary for health check endpoint (uptime, request/error totals).
+   */
+  getHealthSummary() {
+    const uptime = process.uptime()
+    const httpRequestsTotal = this.counters.get('http_requests_total') ?? 0
+    const httpErrorsTotal = this.counters.get('http_errors_total') ?? 0
+    return {
+      uptime_seconds: Math.round(uptime * 10) / 10,
+      http_requests_total: httpRequestsTotal,
+      http_errors_total: httpErrorsTotal,
+    }
+  }
 }
 
 // Singleton metrics instance
@@ -196,7 +210,8 @@ function initMetrics() {
 }
 
 /**
- * Middleware to track request metrics
+ * Track HTTP request metrics (response time, count, status).
+ * Call from API handlers via withApiMetrics in api-helpers.server.ts.
  */
 export function trackRequestMetrics(
   method: string,
@@ -210,5 +225,23 @@ export function trackRequestMetrics(
   metrics.histogram(
     `http_request_duration_ms{method="${method}",path="${path}"}`,
     duration,
+  )
+  if (statusCode >= 400) {
+    metrics.increment(
+      `http_errors_total{method="${method}",path="${path}",status="${statusCode}"}`,
+    )
+    metrics.increment('http_errors_total')
+  }
+  metrics.increment('http_requests_total')
+}
+
+/**
+ * Record database query duration for performance monitoring.
+ * Use withDbTiming in api-helpers or wrap queries manually.
+ */
+export function recordDbQueryDuration(operation: string, durationMs: number) {
+  metrics.histogram(
+    `db_query_duration_ms{operation="${operation}"}`,
+    durationMs,
   )
 }

@@ -188,10 +188,13 @@ describe('cache.server.ts', () => {
 
   describe('SimpleCache.periodicCleanup', () => {
     it('should remove expired entries', () => {
+      const CLEANUP_INTERVAL = 300000 // 5 min, must match SimpleCache
       cache.set('key1', 'value1', 1000)
-      cache.set('key2', 'value2', 60000)
+      // key2 must outlive advance (1001 + CLEANUP_INTERVAL) so use TTL > 301001
+      cache.set('key2', 'value2', 400000)
 
-      vi.advanceTimersByTime(1001)
+      vi.advanceTimersByTime(1001) // key1 expired
+      vi.advanceTimersByTime(CLEANUP_INTERVAL) // so periodicCleanup runs on next get
 
       // Trigger cleanup by accessing cache
       cache.get('key2')
@@ -240,7 +243,9 @@ describe('cache.server.ts', () => {
         return 'async result'
       })
 
-      const result = await getOrCompute('key1', 60000, compute)
+      const resultPromise = getOrCompute('key1', 60000, compute)
+      await vi.advanceTimersByTimeAsync(100) // let setTimeout in compute resolve
+      const result = await resultPromise
 
       expect(result).toBe('async result')
       expect(cache.get('key1')).toBe('async result')

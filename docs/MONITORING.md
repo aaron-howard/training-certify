@@ -46,10 +46,12 @@ The Training Certify platform uses multiple monitoring tools to ensure reliabili
 
 **Metrics Exposed:**
 
-- Request counts
-- Response times
-- Error rates
-- Database query performance
+- **Request counts** — `http_requests_total` (per method/path/status) and aggregate `http_requests_total`
+- **Response times** — `http_request_duration_ms` histogram per method/path (avg, min, max, sum, count)
+- **Error rates** — `http_errors_total` (per method/path/status for 4xx/5xx and aggregate)
+- **Database query performance** — `db_query_duration_ms` histogram per operation (e.g. `users_list`); use `withDbTiming(operation, fn)` in API handlers to record
+
+All API routes are wrapped with `withApiMetrics()` so every request is timed and counted. Health check `GET /api/health` includes a `metrics` object with `uptime_seconds`, `http_requests_total`, and `http_errors_total`.
 
 **Usage:**
 
@@ -86,6 +88,19 @@ curl http://localhost:3000/ready
 - `warn` - Warnings
 - `info` - Informational messages
 - `debug` - Debug information (development only)
+
+---
+
+## Alerting Thresholds (Recommended)
+
+Configure your monitoring (e.g. Prometheus + Alertmanager, or Sentry Performance) with these thresholds:
+
+| Metric            | Threshold                                              | Action                            |
+| ----------------- | ------------------------------------------------------ | --------------------------------- |
+| Error rate        | `http_errors_total / http_requests_total` > 5% over 5m | Investigate Sentry and logs       |
+| API latency (p99) | `http_request_duration_ms` p99 > 2000 ms               | Check slow DB queries and caching |
+| DB query duration | `db_query_duration_ms` avg > 500 ms                    | Optimize query or add index       |
+| Health check      | `GET /api/health` returns non-200                      | Page on-call; check DB and env    |
 
 ---
 

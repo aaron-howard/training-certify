@@ -10,6 +10,7 @@ import { AppError, ValidationError } from './errors'
 import { requireRole } from './auth.server'
 import { RateLimitPresets, requireRateLimit } from './rateLimit.server'
 import { getCSRFTokenFromRequest, requireCSRFToken } from './csrf.server'
+import { trackRequestMetrics } from './monitoring.server'
 import type { AuthSession } from './auth.server'
 // Request is a global type in modern environments
 
@@ -97,6 +98,57 @@ export function withErrorHandling<T extends Response>(
   _context: string,
 ): Promise<Response> {
   return handler().catch((error) => handleApiError(error, _context))
+}
+
+/**
+ * Wraps an API handler to record performance metrics (duration, status, request count).
+ * Use for all API route handlers so /metrics and health expose consistent data.
+ *
+ * @param method - HTTP method (e.g. 'GET', 'POST')
+ * @param path - Route path (e.g. '/api/users')
+ * @param handler - Async function that returns the Response
+ * @returns Promise that resolves to the same Response
+ */
+export async function withApiMetrics(
+  method: string,
+  path: string,
+  handler: () => Promise<Response>,
+): Promise<Response> {
+  const start = Date.now()
+  try {
+    const response = await handler()
+    const duration = Date.now() - start
+    trackRequestMetrics(method, path, response.status, duration)
+    return response
+  } catch (error) {
+    const duration = Date.now() - start
+    trackRequestMetrics(method, path, 500, duration)
+    throw error
+  }
+}
+
+/**
+ * Runs an async function and records its duration as a database query metric.
+ * Use around key DB operations to populate db_query_duration_ms histograms.
+ *
+ * @param operation - Label for the operation (e.g. 'users_list', 'teams_with_metrics')
+ * @param fn - Async function that performs the DB work
+ * @returns Result of fn()
+ */
+export async function withDbTiming<T>(
+  operation: string,
+  fn: () => Promise<T>,
+): Promise<T> {
+  const { recordDbQueryDuration } = await import('./monitoring.server')
+  const start = Date.now()
+  try {
+    const result = await fn()
+    recordDbQueryDuration(operation, Date.now() - start)
+    return result
+  } catch (error) {
+    recordDbQueryDuration(operation, Date.now() - start)
+    throw error
+  }
 }
 
 /**

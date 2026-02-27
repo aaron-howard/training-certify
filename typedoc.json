@@ -1,0 +1,22 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "Training Certify",
+  "entryPoints": ["src"],
+  "entryPointStrategy": "expand",
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/__tests__/**",
+    "**/test/**",
+    "**/routeTree.gen.ts",
+    "**/factories.ts"
+  ],
+  "out": "docs/api-jsdoc",
+  "excludePrivate": true,
+  "excludeProtected": false,
+  "readme": "none",
+  "plugin": [],
+  "includeVersion": false
+}

@@ -2,13 +2,17 @@
 
 A modern web application for managing training certifications, built with TanStack Start, React 19, Drizzle ORM, and PostgreSQL.
 
+[![CI](https://github.com/aaron-howard/training-certify/actions/workflows/ci.yml/badge.svg)](https://github.com/aaron-howard/training-certify/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/aaron-howard/training-certify/graph/badge.svg)](https://codecov.io/gh/aaron-howard/training-certify)
+
 ## Local Development Setup
 
-This project uses a local PostgreSQL database.
+This project uses **pnpm** and a local PostgreSQL database.
 
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) (Latest LTS)
+- [pnpm](https://pnpm.io/) (e.g. `npm install -g pnpm`)
 - [PostgreSQL](https://www.postgresql.org/) (Local installation)
 
 ### Getting Started
@@ -16,7 +20,7 @@ This project uses a local PostgreSQL database.
 1.  **Clone the repository**
 2.  **Install dependencies**:
     ```bash
-    npm install
+    pnpm install
     ```
 3.  **Set up environment variables**:
     Create a `.env.local` file in the root directory (copy `.env.example` if available) and ensure `DATABASE_URL` points to your local PostgreSQL instance:
@@ -27,21 +31,25 @@ This project uses a local PostgreSQL database.
     ```
 4.  **Run database migrations**:
     ```bash
-    npx drizzle-kit push
+    pnpm exec drizzle-kit push
     ```
 5.  **Run the development server**:
     ```bash
-    npm run dev
+    pnpm run dev
     ```
 
 ### Scripts
 
-- `npm run dev`: Starts the development server on port 3000.
-- `npm run build`: Builds the application for production.
-- `npm run test`: Runs the test suite using Vitest.
-- `npm run lint`: Runs ESLint for code quality checks.
-- `npm run format`: Runs Prettier for code formatting.
-- `npm run check`: Runs both formatter and linter.
+- `pnpm run dev`: Starts the development server on port 3000.
+- `pnpm run build`: Builds the application for production.
+- `pnpm run test`: Runs the test suite using Vitest.
+- `pnpm run test:coverage`: Runs tests and generates coverage report (text, HTML in `coverage/`, lcov for CI). Thresholds are in `vitest.config.ts` (raise to 80% when coverage is increased per TASK.md Phase 1.2/1.3).
+- `pnpm run test:e2e`: Runs Playwright E2E tests (smoke, auth redirects, visual). Starts the dev server automatically if not already running. Use `pnpm run test:e2e -- --update-snapshots` to refresh visual baselines.
+- `pnpm run test:e2e:ui`: Opens the Playwright UI for debugging E2E tests.
+- `pnpm run lint`: Runs ESLint for code quality checks.
+- `pnpm run format`: Runs Prettier for code formatting.
+- `pnpm run check`: Runs both formatter and linter.
+- `pnpm run docs`: Generates JSDoc API documentation with TypeDoc into `docs/api-jsdoc/` (lib, db, api, routes).
 
 ## Architecture & Stack
 
@@ -55,9 +63,9 @@ This project uses a local PostgreSQL database.
 
 The database schema is defined in `src/db/schema.ts`. We use Drizzle Kit for managing migrations and schema pushes.
 
-- To preview the database: `npx drizzle-kit studio`
-- To generate migrations: `npx drizzle-kit generate`
-- To push schema changes: `npx drizzle-kit push`
+- To preview the database: `pnpm exec drizzle-kit studio`
+- To generate migrations: `pnpm exec drizzle-kit generate`
+- To push schema changes: `pnpm exec drizzle-kit push`
 
 ## Code Quality
 

@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { generateCSRFToken } from '../lib/csrf.server'
 import { requireRateLimit } from '../lib/rateLimit.server'
-import { handleApiError } from '../lib/api-helpers.server'
+import { handleApiError, withApiMetrics } from '../lib/api-helpers.server'
 
 /**
  * GET /api/csrf
@@ -15,23 +15,24 @@ import { handleApiError } from '../lib/api-helpers.server'
 export const Route = createFileRoute('/api/csrf')({
   server: {
     handlers: {
-      GET: async ({ request }) => {
-        try {
-          const clientId =
-            request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-            request.headers.get('x-real-ip') ||
-            'anonymous'
-          await requireRateLimit(`csrf:${clientId}`, {
-            windowMs: 60_000,
-            maxRequests: 30,
-          })
+      GET: async ({ request }) =>
+        withApiMetrics('GET', '/api/csrf', async () => {
+          try {
+            const clientId =
+              request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+              request.headers.get('x-real-ip') ||
+              'anonymous'
+            await requireRateLimit(`csrf:${clientId}`, {
+              windowMs: 60_000,
+              maxRequests: 30,
+            })
 
-          const token = generateCSRFToken()
-          return json({ token })
-        } catch (error) {
-          return handleApiError(error, 'GET /api/csrf')
-        }
-      },
+            const token = generateCSRFToken()
+            return json({ token })
+          } catch (error) {
+            return handleApiError(error, 'GET /api/csrf')
+          }
+        }),
     },
   },
 })

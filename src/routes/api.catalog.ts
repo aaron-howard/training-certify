@@ -11,6 +11,7 @@ import {
   handleApiError,
   setupMutationHandler,
   setupReadHandler,
+  withApiMetrics,
 } from '../lib/api-helpers.server'
 import { invalidateCache } from '../lib/cache.server'
 import {
@@ -21,155 +22,159 @@ import {
 export const Route = createFileRoute('/api/catalog')({
   server: {
     handlers: {
-      GET: async ({ request }) => {
-        try {
-          await setupReadHandler(request)
-
-          const db = await getDbOrThrow()
-          const url = new URL(request.url)
-
-          // Parse pagination parameters
-          const { page, limit } = parsePaginationParams(url, 50, 200) // Default 50, max 200 for catalog
-          const offset = (page - 1) * limit
-
-          // Get total count and paginated data
-          const [totalResult] = await db
-            .select({ count: count() })
-            .from(certifications)
-          const total = totalResult.count
-
-          const result = await db
-            .select({
-              id: certifications.id,
-              name: certifications.name,
-              vendorName: vendors.name,
-              level: certifications.difficulty,
-              price: certifications.price,
-              category: certifications.category,
-              description: certifications.description,
-            })
-            .from(certifications)
-            .innerJoin(vendors, eq(certifications.vendorId, vendors.id))
-            .limit(limit)
-            .offset(offset)
-
-          const mappedData = result.map((c) => ({
-            id: c.id,
-            name: c.name,
-            vendor: c.vendorName,
-            level: c.level,
-            price: c.price,
-            category: c.category,
-            description: c.description,
-          }))
-
-          const paginatedResponse = createPaginatedResponse(
-            mappedData,
-            total,
-            page,
-            limit,
-          )
-
-          return json(paginatedResponse, {
-            headers: {
-              'Cache-Control': 'public, max-age=300', // 5 minutes browser cache
-            },
-          })
-        } catch (error) {
-          return handleApiError(error, 'GET /api/catalog')
-        }
-      },
-      DELETE: async ({ request }) => {
-        try {
-          await setupMutationHandler(request, {
-            allowedRoles: ['Admin'],
-            rateLimit: RateLimitPresets.ADMIN,
-          })
-
-          const url = new URL(request.url)
-          const id = url.searchParams.get('id')
-          if (!id) throw new ValidationError('Missing id parameter')
-
-          const db = await getDbOrThrow()
-
-          await db.delete(certifications).where(eq(certifications.id, id))
-
-          // Invalidate catalog cache
-          invalidateCache('catalog:')
-
-          return json({ success: true, deletedId: id })
-        } catch (error) {
-          return handleApiError(error, 'DELETE /api/catalog')
-        }
-      },
-      POST: async ({ request }) => {
-        try {
-          await setupMutationHandler(request, {
-            allowedRoles: ['Admin'],
-            rateLimit: RateLimitPresets.ADMIN,
-          })
-
-          const rawData = await request.json()
-          const validation = CatalogCertificationSchema.safeParse(rawData)
-
-          if (!validation.success) {
-            throw new ValidationError(
-              'Invalid certification data',
-              validation.error.errors,
-            )
-          }
-
-          const data = validation.data
-          const db = await getDbOrThrow()
-          const vendorId = data.vendorId
-          const vendorName = data.vendorName ?? data.vendorId
-          const vendorLogo = data.vendorLogo ?? null
-
+      GET: async ({ request }) =>
+        withApiMetrics('GET', '/api/catalog', async () => {
           try {
-            await db
-              .insert(vendors)
-              .values({
-                id: vendorId,
-                name: vendorName,
-                logo: vendorLogo,
-              })
-              .onConflictDoUpdate({
-                target: vendors.id,
-                set: { name: vendorName, logo: vendorLogo },
-              })
+            await setupReadHandler(request)
+
+            const db = await getDbOrThrow()
+            const url = new URL(request.url)
+
+            // Parse pagination parameters
+            const { page, limit } = parsePaginationParams(url, 50, 200) // Default 50, max 200 for catalog
+            const offset = (page - 1) * limit
+
+            // Get total count and paginated data
+            const [totalResult] = await db
+              .select({ count: count() })
+              .from(certifications)
+            const total = totalResult.count
 
             const result = await db
-              .insert(certifications)
-              .values({
-                id: data.id,
-                name: data.name,
-                vendorId,
-                category: validateCategory(data.category || 'Cloud') ?? 'Cloud',
-                difficulty:
-                  validateDifficulty(data.difficulty || 'Associate') ??
-                  'Associate',
-                price: data.price != null ? String(data.price) : null,
-                description: data.description || null,
+              .select({
+                id: certifications.id,
+                name: certifications.name,
+                vendorName: vendors.name,
+                level: certifications.difficulty,
+                price: certifications.price,
+                category: certifications.category,
+                description: certifications.description,
               })
-              .returning()
+              .from(certifications)
+              .innerJoin(vendors, eq(certifications.vendorId, vendors.id))
+              .limit(limit)
+              .offset(offset)
+
+            const mappedData = result.map((c) => ({
+              id: c.id,
+              name: c.name,
+              vendor: c.vendorName,
+              level: c.level,
+              price: c.price,
+              category: c.category,
+              description: c.description,
+            }))
+
+            const paginatedResponse = createPaginatedResponse(
+              mappedData,
+              total,
+              page,
+              limit,
+            )
+
+            return json(paginatedResponse, {
+              headers: {
+                'Cache-Control': 'public, max-age=300', // 5 minutes browser cache
+              },
+            })
+          } catch (error) {
+            return handleApiError(error, 'GET /api/catalog')
+          }
+        }),
+      DELETE: async ({ request }) =>
+        withApiMetrics('DELETE', '/api/catalog', async () => {
+          try {
+            await setupMutationHandler(request, {
+              allowedRoles: ['Admin'],
+              rateLimit: RateLimitPresets.ADMIN,
+            })
+
+            const url = new URL(request.url)
+            const id = url.searchParams.get('id')
+            if (!id) throw new ValidationError('Missing id parameter')
+
+            const db = await getDbOrThrow()
+
+            await db.delete(certifications).where(eq(certifications.id, id))
 
             // Invalidate catalog cache
             invalidateCache('catalog:')
 
-            return json(result[0], { status: 201 })
-          } catch (dbError) {
-            const insertError = dbError as { code?: string }
-            if (insertError.code === '23505') {
+            return json({ success: true, deletedId: id })
+          } catch (error) {
+            return handleApiError(error, 'DELETE /api/catalog')
+          }
+        }),
+      POST: async ({ request }) =>
+        withApiMetrics('POST', '/api/catalog', async () => {
+          try {
+            await setupMutationHandler(request, {
+              allowedRoles: ['Admin'],
+              rateLimit: RateLimitPresets.ADMIN,
+            })
+
+            const rawData = await request.json()
+            const validation = CatalogCertificationSchema.safeParse(rawData)
+
+            if (!validation.success) {
               throw new ValidationError(
-                'Certification with this ID already exists',
+                'Invalid certification data',
+                validation.error.errors,
               )
             }
-            throw dbError
+
+            const data = validation.data
+            const db = await getDbOrThrow()
+            const vendorId = data.vendorId
+            const vendorName = data.vendorName ?? data.vendorId
+            const vendorLogo = data.vendorLogo ?? null
+
+            try {
+              await db
+                .insert(vendors)
+                .values({
+                  id: vendorId,
+                  name: vendorName,
+                  logo: vendorLogo,
+                })
+                .onConflictDoUpdate({
+                  target: vendors.id,
+                  set: { name: vendorName, logo: vendorLogo },
+                })
+
+              const result = await db
+                .insert(certifications)
+                .values({
+                  id: data.id,
+                  name: data.name,
+                  vendorId,
+                  category:
+                    validateCategory(data.category || 'Cloud') ?? 'Cloud',
+                  difficulty:
+                    validateDifficulty(data.difficulty || 'Associate') ??
+                    'Associate',
+                  price: data.price != null ? String(data.price) : null,
+                  description: data.description || null,
+                })
+                .returning()
+
+              // Invalidate catalog cache
+              invalidateCache('catalog:')
+
+              return json(result[0], { status: 201 })
+            } catch (dbError) {
+              const insertError = dbError as { code?: string }
+              if (insertError.code === '23505') {
+                throw new ValidationError(
+                  'Certification with this ID already exists',
+                )
+              }
+              throw dbError
+            }
+          } catch (error) {
+            return handleApiError(error, 'POST /api/catalog')
           }
-        } catch (error) {
-          return handleApiError(error, 'POST /api/catalog')
-        }
-      },
+        }),
     },
   },
 })

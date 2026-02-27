@@ -1,0 +1,1144 @@
+<!doctype html>
+<html class="default" lang="en" data-base="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="IE=edge" />
+    <title>RequestInstrumentationOptions | Training Certify</title>
+    <meta name="description" content="Documentation for Training Certify" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/highlight.css" />
+    <script defer src="../assets/main.js"></script>
+    <script async src="../assets/icons.js" id="tsd-icons-script"></script>
+    <script async src="../assets/search.js" id="tsd-search-script"></script>
+    <script async src="../assets/navigation.js" id="tsd-nav-script"></script>
+    <script
+      async
+      src="../assets/hierarchy.js"
+      id="tsd-hierarchy-script"
+    ></script>
+  </head>
+  <body>
+    <script>
+      document.documentElement.dataset.theme =
+        localStorage.getItem('tsd-theme') || 'os'
+      document.body.style.display = 'none'
+      setTimeout(
+        () =>
+          window.app
+            ? app.showPage()
+            : document.body.style.removeProperty('display'),
+        500,
+      )
+    </script>
+    <header class="tsd-page-toolbar">
+      <div class="tsd-toolbar-contents container">
+        <a href="../index.html" class="title">Training Certify</a>
+        <div id="tsd-toolbar-links"></div>
+        <button id="tsd-search-trigger" class="tsd-widget" aria-label="Search">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <use href="../assets/icons.svg#icon-search"></use>
+          </svg>
+        </button>
+        <dialog id="tsd-search" aria-label="Search">
+          <input
+            role="combobox"
+            id="tsd-search-input"
+            aria-controls="tsd-search-results"
+            aria-autocomplete="list"
+            aria-expanded="true"
+            autocapitalize="off"
+            autocomplete="off"
+            placeholder="Search the docs"
+            maxlength="100"
+          />
+          <ul role="listbox" id="tsd-search-results"></ul>
+          <div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+            <div>Preparing search index...</div>
+          </div>
+        </dialog>
+        <a
+          href="#"
+          class="tsd-widget menu"
+          id="tsd-toolbar-menu-trigger"
+          data-toggle="menu"
+          aria-label="Menu"
+          ><svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <use href="../assets/icons.svg#icon-menu"></use></svg
+        ></a>
+      </div>
+    </header>
+    <div class="container container-main">
+      <div class="col-content">
+        <div class="tsd-page-title">
+          <ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+            <li>
+              <a href="../modules/lib_sentry.server.html">lib/sentry.server</a>
+            </li>
+            <li>
+              <a href="../modules/lib_sentry.server.Sentry.html">Sentry</a>
+            </li>
+            <li>
+              <a href="" aria-current="page">RequestInstrumentationOptions</a>
+            </li>
+          </ul>
+          <h1>Interface RequestInstrumentationOptions</h1>
+        </div>
+        <section class="tsd-panel tsd-comment">
+          <div class="tsd-comment tsd-typography">
+            <p>Options for Request Instrumentation</p>
+          </div>
+        </section>
+        <div class="tsd-signature">
+          <span class="tsd-signature-keyword">interface</span>
+          <span class="tsd-kind-interface">RequestInstrumentationOptions</span>
+          <span class="tsd-signature-symbol">{</span><br />    <a
+            class="tsd-kind-property"
+            href="#enablehttptimings"
+            >enableHTTPTimings</a
+          ><span class="tsd-signature-symbol">:</span>
+          <span class="tsd-signature-type">boolean</span
+          ><span class="tsd-signature-symbol">;</span><br />    <a
+            class="tsd-kind-property"
+            href="#tracefetch"
+            >traceFetch</a
+          ><span class="tsd-signature-symbol">:</span>
+          <span class="tsd-signature-type">boolean</span
+          ><span class="tsd-signature-symbol">;</span><br />    <a
+            class="tsd-kind-property"
+            href="#tracepropagationtargets"
+            >tracePropagationTargets</a
+          ><span class="tsd-signature-symbol">?:</span> (<span
+            class="tsd-signature-type"
+            >string</span
+          >
+          <span class="tsd-signature-symbol">|</span>
+          <span class="tsd-signature-type">RegExp</span>)<span
+            class="tsd-signature-symbol"
+            >[]</span
+          ><span class="tsd-signature-symbol">;</span><br />    <a
+            class="tsd-kind-property"
+            href="#tracexhr"
+            >traceXHR</a
+          ><span class="tsd-signature-symbol">:</span>
+          <span class="tsd-signature-type">boolean</span
+          ><span class="tsd-signature-symbol">;</span><br />    <a
+            class="tsd-kind-property"
+            href="#trackfetchstreamperformance"
+            >trackFetchStreamPerformance</a
+          ><span class="tsd-signature-symbol">:</span>
+          <span class="tsd-signature-type">boolean</span
+          ><span class="tsd-signature-symbol">;</span><br />    <a
+            class="tsd-kind-call-signature"
+            href="#onrequestspanend-1"
+            >onRequestSpanEnd</a
+          ><span class="tsd-signature-symbol">?</span
+          ><span class="tsd-signature-symbol">(</span
+          ><span class="tsd-kind-parameter">span</span
+          ><span class="tsd-signature-symbol">:</span>
+          <a
+            href="lib_sentry.server.Sentry.Span.html"
+            class="tsd-signature-type tsd-kind-interface"
+            >Span</a
+          ><span class="tsd-signature-symbol">,</span>
+          <span class="tsd-kind-parameter">responseInformation</span
+          ><span class="tsd-signature-symbol">:</span>
+          <span class="tsd-signature-type">ResponseHookInfo</span
+          ><span class="tsd-signature-symbol">)</span
+          ><span class="tsd-signature-symbol">:</span>
+          <span class="tsd-signature-type">void</span
+          ><span class="tsd-signature-symbol">;</span><br />    <a
+            class="tsd-kind-call-signature"
+            href="#onrequestspanstart-1"
+            >onRequestSpanStart</a
+          ><span class="tsd-signature-symbol">?</span
+          ><span class="tsd-signature-symbol">(</span
+          ><span class="tsd-kind-parameter">span</span
+          ><span class="tsd-signature-symbol">:</span>
+          <a
+            href="lib_sentry.server.Sentry.Span.html"
+            class="tsd-signature-type tsd-kind-interface"
+            >Span</a
+          ><span class="tsd-signature-symbol">,</span>
+          <span class="tsd-kind-parameter">requestInformation</span
+          ><span class="tsd-signature-symbol">:</span>
+          <span class="tsd-signature-type">RequestHookInfo</span
+          ><span class="tsd-signature-symbol">)</span
+          ><span class="tsd-signature-symbol">:</span>
+          <span class="tsd-signature-type">void</span
+          ><span class="tsd-signature-symbol">;</span><br />    <a
+            class="tsd-kind-call-signature"
+            href="#shouldcreatespanforrequest-1"
+            >shouldCreateSpanForRequest</a
+          ><span class="tsd-signature-symbol">?</span
+          ><span class="tsd-signature-symbol">(</span
+          ><span class="tsd-kind-parameter">this</span
+          ><span class="tsd-signature-symbol">:</span>
+          <span class="tsd-signature-type">void</span
+          ><span class="tsd-signature-symbol">,</span>
+          <span class="tsd-kind-parameter">url</span
+          ><span class="tsd-signature-symbol">:</span>
+          <span class="tsd-signature-type">string</span
+          ><span class="tsd-signature-symbol">)</span
+          ><span class="tsd-signature-symbol">:</span>
+          <span class="tsd-signature-type">boolean</span
+          ><span class="tsd-signature-symbol">;</span><br /><span
+            class="tsd-signature-symbol"
+            >}</span
+          >
+        </div>
+        <aside class="tsd-sources">
+          <ul>
+            <li>
+              Defined in
+              node_modules/.pnpm/@sentry+browser@10.38.0/node_modules/@sentry/browser/build/npm/types/tracing/request.d.ts:3
+            </li>
+          </ul>
+        </aside>
+        <section class="tsd-panel-group tsd-index-group">
+          <section class="tsd-panel tsd-index-panel">
+            <details class="tsd-index-content tsd-accordion" open>
+              <summary class="tsd-accordion-summary tsd-index-summary">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <use href="../assets/icons.svg#icon-chevronDown"></use>
+                </svg>
+                <h5 class="tsd-index-heading uppercase">Index</h5>
+              </summary>
+              <div class="tsd-accordion-details">
+                <section class="tsd-index-section">
+                  <h3 class="tsd-index-heading">Properties</h3>
+                  <div class="tsd-index-list">
+                    <a
+                      href="#enablehttptimings"
+                      class="tsd-index-link tsd-is-external"
+                      ><svg
+                        class="tsd-kind-icon"
+                        viewBox="0 0 24 24"
+                        aria-label="Property"
+                      >
+                        <use href="../assets/icons.svg#icon-1024"></use></svg
+                      ><span>enable<wbr />HTTP<wbr />Timings</span></a
+                    >
+                    <a href="#tracefetch" class="tsd-index-link tsd-is-external"
+                      ><svg
+                        class="tsd-kind-icon"
+                        viewBox="0 0 24 24"
+                        aria-label="Property"
+                      >
+                        <use href="../assets/icons.svg#icon-1024"></use></svg
+                      ><span>trace<wbr />Fetch</span></a
+                    >
+                    <a
+                      href="#tracepropagationtargets"
+                      class="tsd-index-link tsd-is-external"
+                      ><svg
+                        class="tsd-kind-icon"
+                        viewBox="0 0 24 24"
+                        aria-label="Property"
+                      >
+                        <use href="../assets/icons.svg#icon-1024"></use></svg
+                      ><span>trace<wbr />Propagation<wbr />Targets?</span></a
+                    >
+                    <a href="#tracexhr" class="tsd-index-link tsd-is-external"
+                      ><svg
+                        class="tsd-kind-icon"
+                        viewBox="0 0 24 24"
+                        aria-label="Property"
+                      >
+                        <use href="../assets/icons.svg#icon-1024"></use></svg
+                      ><span>trace<wbr />XHR</span></a
+                    >
+                    <a
+                      href="#trackfetchstreamperformance"
+                      class="tsd-index-link tsd-is-external"
+                      ><svg
+                        class="tsd-kind-icon"
+                        viewBox="0 0 24 24"
+                        aria-label="Property"
+                      >
+                        <use href="../assets/icons.svg#icon-1024"></use></svg
+                      ><span
+                        >track<wbr />Fetch<wbr />Stream<wbr />Performance</span
+                      ></a
+                    >
+                  </div>
+                </section>
+                <section class="tsd-index-section">
+                  <h3 class="tsd-index-heading">Methods</h3>
+                  <div class="tsd-index-list">
+                    <a
+                      href="#onrequestspanend"
+                      class="tsd-index-link tsd-is-external"
+                      ><svg
+                        class="tsd-kind-icon"
+                        viewBox="0 0 24 24"
+                        aria-label="Method"
+                      >
+                        <use href="../assets/icons.svg#icon-2048"></use></svg
+                      ><span>on<wbr />Request<wbr />Span<wbr />End?</span></a
+                    >
+                    <a
+                      href="#onrequestspanstart"
+                      class="tsd-index-link tsd-is-external"
+                      ><svg
+                        class="tsd-kind-icon"
+                        viewBox="0 0 24 24"
+                        aria-label="Method"
+                      >
+                        <use href="../assets/icons.svg#icon-2048"></use></svg
+                      ><span>on<wbr />Request<wbr />Span<wbr />Start?</span></a
+                    >
+                    <a
+                      href="#shouldcreatespanforrequest"
+                      class="tsd-index-link tsd-is-external"
+                      ><svg
+                        class="tsd-kind-icon"
+                        viewBox="0 0 24 24"
+                        aria-label="Method"
+                      >
+                        <use href="../assets/icons.svg#icon-2048"></use></svg
+                      ><span
+                        >should<wbr />Create<wbr />Span<wbr />For<wbr />Request?</span
+                      ></a
+                    >
+                  </div>
+                </section>
+              </div>
+            </details>
+          </section>
+        </section>
+        <details class="tsd-panel-group tsd-member-group tsd-accordion" open>
+          <summary class="tsd-accordion-summary" data-key="section-Properties">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <use href="../assets/icons.svg#icon-chevronDown"></use>
+            </svg>
+            <h2>Properties</h2>
+          </summary>
+          <section>
+            <section class="tsd-panel tsd-member tsd-is-external">
+              <h3 class="tsd-anchor-link" id="enablehttptimings">
+                <span>enable<wbr />HTTP<wbr />Timings</span
+                ><a
+                  href="#enablehttptimings"
+                  aria-label="Permalink"
+                  class="tsd-anchor-icon"
+                  ><svg viewBox="0 0 24 24" aria-hidden="true">
+                    <use href="../assets/icons.svg#icon-anchor"></use></svg
+                ></a>
+              </h3>
+              <div class="tsd-signature">
+                <span class="tsd-kind-property">enableHTTPTimings</span
+                ><span class="tsd-signature-symbol">:</span>
+                <span class="tsd-signature-type">boolean</span>
+              </div>
+              <div class="tsd-comment tsd-typography">
+                <p>
+                  If true, Sentry will capture http timings and add them to the
+                  corresponding http spans.
+                </p>
+                <p>Default: true</p>
+              </div>
+              <aside class="tsd-sources">
+                <ul>
+                  <li>
+                    Defined in
+                    node_modules/.pnpm/@sentry+browser@10.38.0/node_modules/@sentry/browser/build/npm/types/tracing/request.d.ts:59
+                  </li>
+                </ul>
+              </aside>
+            </section>
+            <section class="tsd-panel tsd-member tsd-is-external">
+              <h3 class="tsd-anchor-link" id="tracefetch">
+                <span>trace<wbr />Fetch</span
+                ><a
+                  href="#tracefetch"
+                  aria-label="Permalink"
+                  class="tsd-anchor-icon"
+                  ><svg viewBox="0 0 24 24" aria-hidden="true">
+                    <use href="../assets/icons.svg#icon-anchor"></use></svg
+                ></a>
+              </h3>
+              <div class="tsd-signature">
+                <span class="tsd-kind-property">traceFetch</span
+                ><span class="tsd-signature-symbol">:</span>
+                <span class="tsd-signature-type">boolean</span>
+              </div>
+              <div class="tsd-comment tsd-typography">
+                <p>Flag to disable patching all together for fetch requests.</p>
+                <p>Default: true</p>
+              </div>
+              <aside class="tsd-sources">
+                <ul>
+                  <li>
+                    Defined in
+                    node_modules/.pnpm/@sentry+browser@10.38.0/node_modules/@sentry/browser/build/npm/types/tracing/request.d.ts:37
+                  </li>
+                </ul>
+              </aside>
+            </section>
+            <section class="tsd-panel tsd-member tsd-is-external">
+              <h3 class="tsd-anchor-link" id="tracepropagationtargets">
+                <code class="tsd-tag">Optional</code
+                ><span>trace<wbr />Propagation<wbr />Targets</span
+                ><a
+                  href="#tracepropagationtargets"
+                  aria-label="Permalink"
+                  class="tsd-anchor-icon"
+                  ><svg viewBox="0 0 24 24" aria-hidden="true">
+                    <use href="../assets/icons.svg#icon-anchor"></use></svg
+                ></a>
+              </h3>
+              <div class="tsd-signature">
+                <span class="tsd-kind-property">tracePropagationTargets</span
+                ><span class="tsd-signature-symbol">?:</span> (<span
+                  class="tsd-signature-type"
+                  >string</span
+                >
+                <span class="tsd-signature-symbol">|</span>
+                <span class="tsd-signature-type">RegExp</span>)<span
+                  class="tsd-signature-symbol"
+                  >[]</span
+                >
+              </div>
+              <div class="tsd-comment tsd-typography">
+                <p>
+                  List of strings and/or Regular Expressions used to determine
+                  which outgoing requests will have
+                  <code>sentry-trace</code> and <code>baggage</code> headers
+                  attached.
+                </p>
+                <p>
+                  <strong>Default:</strong> If this option is not provided,
+                  tracing headers will be attached to all outgoing requests. If
+                  you are using a browser SDK, by default, tracing headers will
+                  only be attached to outgoing requests to the same origin.
+                </p>
+                <p>
+                  <strong>Disclaimer:</strong> Carelessly setting this option in
+                  browser environments may result into CORS errors! Only attach
+                  tracing headers to requests to the same origin, or to requests
+                  to services you can control CORS headers of. Cross-origin
+                  requests, meaning requests to a different domain, for example
+                  a request to <code>https://api.example.com/</code> while
+                  you're on <code>https://example.com/</code>, take special
+                  care. If you are attaching headers to cross-origin requests,
+                  make sure the backend handling the request returns a
+                  <code
+                    >&quot;Access-Control-Allow-Headers: sentry-trace,
+                    baggage&quot;</code
+                  >
+                  header to ensure your requests aren't blocked.
+                </p>
+                <p>
+                  If you provide a <code>tracePropagationTargets</code> array,
+                  the entries you provide will be matched against the entire URL
+                  of the outgoing request. If you are using a browser SDK, the
+                  entries will also be matched against the pathname of the
+                  outgoing requests. This is so you can have matchers for
+                  relative requests, for example, <code>/^/api/</code> if you
+                  want to trace requests to your <code>/api</code> routes on the
+                  same domain.
+                </p>
+                <p>
+                  If any of the two match any of the provided values, tracing
+                  headers will be attached to the outgoing request. Both, the
+                  string values, and the RegExes you provide in the array will
+                  match if they partially match the URL or pathname.
+                </p>
+                <p>Examples:</p>
+                <ul>
+                  <li>
+                    <code>tracePropagationTargets: [/^/api/]</code> and request
+                    to <code>https://same-origin.com/api/posts</code>:
+                    <ul>
+                      <li>
+                        Tracing headers will be attached because the request is
+                        sent to the same origin and the regex matches the
+                        pathname &quot;/api/posts&quot;.
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <code>tracePropagationTargets: [/^/api/]</code> and request
+                    to <code>https://different-origin.com/api/posts</code>:
+                    <ul>
+                      <li>
+                        Tracing headers will not be attached because the
+                        pathname will only be compared when the request target
+                        lives on the same origin.
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <code
+                      >tracePropagationTargets: [/^/api/,
+                      'https://external-api.com']</code
+                    >
+                    and request to
+                    <code>https://external-api.com/v1/data</code>:
+                    <ul>
+                      <li>
+                        Tracing headers will be attached because the request URL
+                        matches the string
+                        <code>'https://external-api.com'</code>.
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+              <aside class="tsd-sources">
+                <ul>
+                  <li>
+                    Defined in
+                    node_modules/.pnpm/@sentry+browser@10.38.0/node_modules/@sentry/browser/build/npm/types/tracing/request.d.ts:31
+                  </li>
+                </ul>
+              </aside>
+            </section>
+            <section class="tsd-panel tsd-member tsd-is-external">
+              <h3 class="tsd-anchor-link" id="tracexhr">
+                <span>trace<wbr />XHR</span
+                ><a
+                  href="#tracexhr"
+                  aria-label="Permalink"
+                  class="tsd-anchor-icon"
+                  ><svg viewBox="0 0 24 24" aria-hidden="true">
+                    <use href="../assets/icons.svg#icon-anchor"></use></svg
+                ></a>
+              </h3>
+              <div class="tsd-signature">
+                <span class="tsd-kind-property">traceXHR</span
+                ><span class="tsd-signature-symbol">:</span>
+                <span class="tsd-signature-type">boolean</span>
+              </div>
+              <div class="tsd-comment tsd-typography">
+                <p>Flag to disable patching all together for xhr requests.</p>
+                <p>Default: true</p>
+              </div>
+              <aside class="tsd-sources">
+                <ul>
+                  <li>
+                    Defined in
+                    node_modules/.pnpm/@sentry+browser@10.38.0/node_modules/@sentry/browser/build/npm/types/tracing/request.d.ts:43
+                  </li>
+                </ul>
+              </aside>
+            </section>
+            <section class="tsd-panel tsd-member tsd-is-external">
+              <h3 class="tsd-anchor-link" id="trackfetchstreamperformance">
+                <span>track<wbr />Fetch<wbr />Stream<wbr />Performance</span
+                ><a
+                  href="#trackfetchstreamperformance"
+                  aria-label="Permalink"
+                  class="tsd-anchor-icon"
+                  ><svg viewBox="0 0 24 24" aria-hidden="true">
+                    <use href="../assets/icons.svg#icon-anchor"></use></svg
+                ></a>
+              </h3>
+              <div class="tsd-signature">
+                <span class="tsd-kind-property"
+                  >trackFetchStreamPerformance</span
+                ><span class="tsd-signature-symbol">:</span>
+                <span class="tsd-signature-type">boolean</span>
+              </div>
+              <div class="tsd-comment tsd-typography">
+                <p>
+                  Flag to disable tracking of long-lived streams, like
+                  server-sent events (SSE) via fetch. Do not enable this in case
+                  you have live streams or very long running streams.
+                </p>
+                <p>
+                  Disabled by default since it can lead to issues with streams
+                  using the <code>cancel()</code> api (<a
+                    href="https://github.com/getsentry/sentry-javascript/issues/13950"
+                    >https://github.com/getsentry/sentry-javascript/issues/13950</a
+                  >)
+                </p>
+                <p>Default: false</p>
+              </div>
+              <aside class="tsd-sources">
+                <ul>
+                  <li>
+                    Defined in
+                    node_modules/.pnpm/@sentry+browser@10.38.0/node_modules/@sentry/browser/build/npm/types/tracing/request.d.ts:53
+                  </li>
+                </ul>
+              </aside>
+            </section>
+          </section>
+        </details>
+        <details class="tsd-panel-group tsd-member-group tsd-accordion" open>
+          <summary class="tsd-accordion-summary" data-key="section-Methods">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <use href="../assets/icons.svg#icon-chevronDown"></use>
+            </svg>
+            <h2>Methods</h2>
+          </summary>
+          <section>
+            <section class="tsd-panel tsd-member tsd-is-external">
+              <h3 class="tsd-anchor-link" id="onrequestspanend">
+                <code class="tsd-tag">Optional</code
+                ><span>on<wbr />Request<wbr />Span<wbr />End</span
+                ><a
+                  href="#onrequestspanend"
+                  aria-label="Permalink"
+                  class="tsd-anchor-icon"
+                  ><svg viewBox="0 0 24 24" aria-hidden="true">
+                    <use href="../assets/icons.svg#icon-anchor"></use></svg
+                ></a>
+              </h3>
+              <ul class="tsd-signatures tsd-is-external">
+                <li class="tsd-is-external">
+                  <div
+                    class="tsd-signature tsd-anchor-link"
+                    id="onrequestspanend-1"
+                  >
+                    <span class="tsd-kind-call-signature">onRequestSpanEnd</span
+                    ><span class="tsd-signature-symbol">?</span
+                    ><span class="tsd-signature-symbol">(</span
+                    ><span class="tsd-kind-parameter">span</span
+                    ><span class="tsd-signature-symbol">:</span>
+                    <a
+                      href="lib_sentry.server.Sentry.Span.html"
+                      class="tsd-signature-type tsd-kind-interface"
+                      >Span</a
+                    ><span class="tsd-signature-symbol">,</span>
+                    <span class="tsd-kind-parameter">responseInformation</span
+                    ><span class="tsd-signature-symbol">:</span>
+                    <span class="tsd-signature-type">ResponseHookInfo</span
+                    ><span class="tsd-signature-symbol">)</span
+                    ><span class="tsd-signature-symbol">:</span>
+                    <span class="tsd-signature-type">void</span
+                    ><a
+                      href="#onrequestspanend-1"
+                      aria-label="Permalink"
+                      class="tsd-anchor-icon"
+                      ><svg viewBox="0 0 24 24" aria-hidden="true">
+                        <use href="../assets/icons.svg#icon-anchor"></use></svg
+                    ></a>
+                  </div>
+                  <div class="tsd-description">
+                    <div class="tsd-comment tsd-typography">
+                      <p>
+                        Is called when spans end for outgoing requests,
+                        providing access to response headers.
+                      </p>
+                    </div>
+                    <div class="tsd-parameters">
+                      <h4 class="tsd-parameters-title">Parameters</h4>
+                      <ul class="tsd-parameter-list">
+                        <li>
+                          <span
+                            ><span class="tsd-kind-parameter">span</span>:
+                            <a
+                              href="lib_sentry.server.Sentry.Span.html"
+                              class="tsd-signature-type tsd-kind-interface"
+                              >Span</a
+                            ></span
+                          >
+                        </li>
+                        <li>
+                          <span
+                            ><span class="tsd-kind-parameter"
+                              >responseInformation</span
+                            >:
+                            <span class="tsd-signature-type"
+                              >ResponseHookInfo</span
+                            ></span
+                          >
+                        </li>
+                      </ul>
+                    </div>
+                    <h4 class="tsd-returns-title">
+                      Returns <span class="tsd-signature-type">void</span>
+                    </h4>
+                    <aside class="tsd-sources">
+                      <ul>
+                        <li>
+                          Defined in
+                          node_modules/.pnpm/@sentry+browser@10.38.0/node_modules/@sentry/browser/build/npm/types/tracing/request.d.ts:74
+                        </li>
+                      </ul>
+                    </aside>
+                  </div>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-is-external">
+              <h3 class="tsd-anchor-link" id="onrequestspanstart">
+                <code class="tsd-tag">Optional</code
+                ><span>on<wbr />Request<wbr />Span<wbr />Start</span
+                ><a
+                  href="#onrequestspanstart"
+                  aria-label="Permalink"
+                  class="tsd-anchor-icon"
+                  ><svg viewBox="0 0 24 24" aria-hidden="true">
+                    <use href="../assets/icons.svg#icon-anchor"></use></svg
+                ></a>
+              </h3>
+              <ul class="tsd-signatures tsd-is-external">
+                <li class="tsd-is-external">
+                  <div
+                    class="tsd-signature tsd-anchor-link"
+                    id="onrequestspanstart-1"
+                  >
+                    <span class="tsd-kind-call-signature"
+                      >onRequestSpanStart</span
+                    ><span class="tsd-signature-symbol">?</span
+                    ><span class="tsd-signature-symbol">(</span
+                    ><span class="tsd-kind-parameter">span</span
+                    ><span class="tsd-signature-symbol">:</span>
+                    <a
+                      href="lib_sentry.server.Sentry.Span.html"
+                      class="tsd-signature-type tsd-kind-interface"
+                      >Span</a
+                    ><span class="tsd-signature-symbol">,</span>
+                    <span class="tsd-kind-parameter">requestInformation</span
+                    ><span class="tsd-signature-symbol">:</span>
+                    <span class="tsd-signature-type">RequestHookInfo</span
+                    ><span class="tsd-signature-symbol">)</span
+                    ><span class="tsd-signature-symbol">:</span>
+                    <span class="tsd-signature-type">void</span
+                    ><a
+                      href="#onrequestspanstart-1"
+                      aria-label="Permalink"
+                      class="tsd-anchor-icon"
+                      ><svg viewBox="0 0 24 24" aria-hidden="true">
+                        <use href="../assets/icons.svg#icon-anchor"></use></svg
+                    ></a>
+                  </div>
+                  <div class="tsd-description">
+                    <div class="tsd-comment tsd-typography">
+                      <p>
+                        Is called when spans are started for outgoing requests.
+                      </p>
+                    </div>
+                    <div class="tsd-parameters">
+                      <h4 class="tsd-parameters-title">Parameters</h4>
+                      <ul class="tsd-parameter-list">
+                        <li>
+                          <span
+                            ><span class="tsd-kind-parameter">span</span>:
+                            <a
+                              href="lib_sentry.server.Sentry.Span.html"
+                              class="tsd-signature-type tsd-kind-interface"
+                              >Span</a
+                            ></span
+                          >
+                        </li>
+                        <li>
+                          <span
+                            ><span class="tsd-kind-parameter"
+                              >requestInformation</span
+                            >:
+                            <span class="tsd-signature-type"
+                              >RequestHookInfo</span
+                            ></span
+                          >
+                        </li>
+                      </ul>
+                    </div>
+                    <h4 class="tsd-returns-title">
+                      Returns <span class="tsd-signature-type">void</span>
+                    </h4>
+                    <aside class="tsd-sources">
+                      <ul>
+                        <li>
+                          Defined in
+                          node_modules/.pnpm/@sentry+browser@10.38.0/node_modules/@sentry/browser/build/npm/types/tracing/request.d.ts:70
+                        </li>
+                      </ul>
+                    </aside>
+                  </div>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-is-external">
+              <h3 class="tsd-anchor-link" id="shouldcreatespanforrequest">
+                <code class="tsd-tag">Optional</code
+                ><span
+                  >should<wbr />Create<wbr />Span<wbr />For<wbr />Request</span
+                ><a
+                  href="#shouldcreatespanforrequest"
+                  aria-label="Permalink"
+                  class="tsd-anchor-icon"
+                  ><svg viewBox="0 0 24 24" aria-hidden="true">
+                    <use href="../assets/icons.svg#icon-anchor"></use></svg
+                ></a>
+              </h3>
+              <ul class="tsd-signatures tsd-is-external">
+                <li class="tsd-is-external">
+                  <div
+                    class="tsd-signature tsd-anchor-link"
+                    id="shouldcreatespanforrequest-1"
+                  >
+                    <span class="tsd-kind-call-signature"
+                      >shouldCreateSpanForRequest</span
+                    ><span class="tsd-signature-symbol">?</span
+                    ><span class="tsd-signature-symbol">(</span
+                    ><span class="tsd-kind-parameter">this</span
+                    ><span class="tsd-signature-symbol">:</span>
+                    <span class="tsd-signature-type">void</span
+                    ><span class="tsd-signature-symbol">,</span>
+                    <span class="tsd-kind-parameter">url</span
+                    ><span class="tsd-signature-symbol">:</span>
+                    <span class="tsd-signature-type">string</span
+                    ><span class="tsd-signature-symbol">)</span
+                    ><span class="tsd-signature-symbol">:</span>
+                    <span class="tsd-signature-type">boolean</span
+                    ><a
+                      href="#shouldcreatespanforrequest-1"
+                      aria-label="Permalink"
+                      class="tsd-anchor-icon"
+                      ><svg viewBox="0 0 24 24" aria-hidden="true">
+                        <use href="../assets/icons.svg#icon-anchor"></use></svg
+                    ></a>
+                  </div>
+                  <div class="tsd-description">
+                    <div class="tsd-comment tsd-typography">
+                      <p>
+                        This function will be called before creating a span for
+                        a request with the given url. Return false if you don't
+                        want a span for the given url.
+                      </p>
+                      <p>Default: (url: string) =&gt; true</p>
+                    </div>
+                    <div class="tsd-parameters">
+                      <h4 class="tsd-parameters-title">Parameters</h4>
+                      <ul class="tsd-parameter-list">
+                        <li>
+                          <span
+                            ><span class="tsd-kind-parameter">this</span>:
+                            <span class="tsd-signature-type">void</span></span
+                          >
+                        </li>
+                        <li>
+                          <span
+                            ><span class="tsd-kind-parameter">url</span>:
+                            <span class="tsd-signature-type">string</span></span
+                          >
+                        </li>
+                      </ul>
+                    </div>
+                    <h4 class="tsd-returns-title">
+                      Returns <span class="tsd-signature-type">boolean</span>
+                    </h4>
+                    <aside class="tsd-sources">
+                      <ul>
+                        <li>
+                          Defined in
+                          node_modules/.pnpm/@sentry+browser@10.38.0/node_modules/@sentry/browser/build/npm/types/tracing/request.d.ts:66
+                        </li>
+                      </ul>
+                    </aside>
+                  </div>
+                </li>
+              </ul>
+            </section>
+          </section>
+        </details>
+      </div>
+      <div class="col-sidebar">
+        <div class="page-menu">
+          <div class="tsd-navigation settings">
+            <details class="tsd-accordion">
+              <summary class="tsd-accordion-summary">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <use href="../assets/icons.svg#icon-chevronDown"></use>
+                </svg>
+                <h3>Settings</h3>
+              </summary>
+              <div class="tsd-accordion-details">
+                <div class="tsd-filter-visibility">
+                  <span class="settings-label">Member Visibility</span>
+                  <ul id="tsd-filter-options">
+                    <li class="tsd-filter-item">
+                      <label class="tsd-filter-input"
+                        ><input
+                          type="checkbox"
+                          id="tsd-filter-protected"
+                          name="protected"
+                        /><svg
+                          width="32"
+                          height="32"
+                          viewBox="0 0 32 32"
+                          aria-hidden="true"
+                        >
+                          <rect
+                            class="tsd-checkbox-background"
+                            width="30"
+                            height="30"
+                            x="1"
+                            y="1"
+                            rx="6"
+                            fill="none"
+                          ></rect>
+                          <path
+                            class="tsd-checkbox-checkmark"
+                            d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25"
+                            stroke="none"
+                            stroke-width="3.5"
+                            stroke-linejoin="round"
+                            fill="none"
+                          ></path></svg
+                        ><span>Protected</span></label
+                      >
+                    </li>
+                    <li class="tsd-filter-item">
+                      <label class="tsd-filter-input"
+                        ><input
+                          type="checkbox"
+                          id="tsd-filter-inherited"
+                          name="inherited"
+                          checked
+                        /><svg
+                          width="32"
+                          height="32"
+                          viewBox="0 0 32 32"
+                          aria-hidden="true"
+                        >
+                          <rect
+                            class="tsd-checkbox-background"
+                            width="30"
+                            height="30"
+                            x="1"
+                            y="1"
+                            rx="6"
+                            fill="none"
+                          ></rect>
+                          <path
+                            class="tsd-checkbox-checkmark"
+                            d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25"
+                            stroke="none"
+                            stroke-width="3.5"
+                            stroke-linejoin="round"
+                            fill="none"
+                          ></path></svg
+                        ><span>Inherited</span></label
+                      >
+                    </li>
+                    <li class="tsd-filter-item">
+                      <label class="tsd-filter-input"
+                        ><input
+                          type="checkbox"
+                          id="tsd-filter-external"
+                          name="external"
+                        /><svg
+                          width="32"
+                          height="32"
+                          viewBox="0 0 32 32"
+                          aria-hidden="true"
+                        >
+                          <rect
+                            class="tsd-checkbox-background"
+                            width="30"
+                            height="30"
+                            x="1"
+                            y="1"
+                            rx="6"
+                            fill="none"
+                          ></rect>
+                          <path
+                            class="tsd-checkbox-checkmark"
+                            d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25"
+                            stroke="none"
+                            stroke-width="3.5"
+                            stroke-linejoin="round"
+                            fill="none"
+                          ></path></svg
+                        ><span>External</span></label
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div class="tsd-theme-toggle">
+                  <label class="settings-label" for="tsd-theme">Theme</label
+                  ><select id="tsd-theme">
+                    <option value="os">OS</option>
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                  </select>
+                </div>
+              </div>
+            </details>
+          </div>
+          <details open class="tsd-accordion tsd-page-navigation">
+            <summary class="tsd-accordion-summary">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <use href="../assets/icons.svg#icon-chevronDown"></use>
+              </svg>
+              <h3>On This Page</h3>
+            </summary>
+            <div class="tsd-accordion-details">
+              <details open class="tsd-accordion tsd-page-navigation-section">
+                <summary
+                  class="tsd-accordion-summary"
+                  data-key="section-Properties"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <use href="../assets/icons.svg#icon-chevronDown"></use></svg
+                  >Properties
+                </summary>
+                <div>
+                  <a href="#enablehttptimings" class="tsd-is-external"
+                    ><svg
+                      class="tsd-kind-icon"
+                      viewBox="0 0 24 24"
+                      aria-label="Property"
+                    >
+                      <use href="../assets/icons.svg#icon-1024"></use></svg
+                    ><span>enable<wbr />HTTP<wbr />Timings</span></a
+                  ><a href="#tracefetch" class="tsd-is-external"
+                    ><svg
+                      class="tsd-kind-icon"
+                      viewBox="0 0 24 24"
+                      aria-label="Property"
+                    >
+                      <use href="../assets/icons.svg#icon-1024"></use></svg
+                    ><span>trace<wbr />Fetch</span></a
+                  ><a href="#tracepropagationtargets" class="tsd-is-external"
+                    ><svg
+                      class="tsd-kind-icon"
+                      viewBox="0 0 24 24"
+                      aria-label="Property"
+                    >
+                      <use href="../assets/icons.svg#icon-1024"></use></svg
+                    ><span>trace<wbr />Propagation<wbr />Targets</span></a
+                  ><a href="#tracexhr" class="tsd-is-external"
+                    ><svg
+                      class="tsd-kind-icon"
+                      viewBox="0 0 24 24"
+                      aria-label="Property"
+                    >
+                      <use href="../assets/icons.svg#icon-1024"></use></svg
+                    ><span>trace<wbr />XHR</span></a
+                  ><a
+                    href="#trackfetchstreamperformance"
+                    class="tsd-is-external"
+                    ><svg
+                      class="tsd-kind-icon"
+                      viewBox="0 0 24 24"
+                      aria-label="Property"
+                    >
+                      <use href="../assets/icons.svg#icon-1024"></use></svg
+                    ><span
+                      >track<wbr />Fetch<wbr />Stream<wbr />Performance</span
+                    ></a
+                  >
+                </div>
+              </details>
+              <details open class="tsd-accordion tsd-page-navigation-section">
+                <summary
+                  class="tsd-accordion-summary"
+                  data-key="section-Methods"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <use href="../assets/icons.svg#icon-chevronDown"></use></svg
+                  >Methods
+                </summary>
+                <div>
+                  <a href="#onrequestspanend" class="tsd-is-external"
+                    ><svg
+                      class="tsd-kind-icon"
+                      viewBox="0 0 24 24"
+                      aria-label="Method"
+                    >
+                      <use href="../assets/icons.svg#icon-2048"></use></svg
+                    ><span>on<wbr />Request<wbr />Span<wbr />End</span></a
+                  ><a href="#onrequestspanstart" class="tsd-is-external"
+                    ><svg
+                      class="tsd-kind-icon"
+                      viewBox="0 0 24 24"
+                      aria-label="Method"
+                    >
+                      <use href="../assets/icons.svg#icon-2048"></use></svg
+                    ><span>on<wbr />Request<wbr />Span<wbr />Start</span></a
+                  ><a href="#shouldcreatespanforrequest" class="tsd-is-external"
+                    ><svg
+                      class="tsd-kind-icon"
+                      viewBox="0 0 24 24"
+                      aria-label="Method"
+                    >
+                      <use href="../assets/icons.svg#icon-2048"></use></svg
+                    ><span
+                      >should<wbr />Create<wbr />Span<wbr />For<wbr />Request</span
+                    ></a
+                  >
+                </div>
+              </details>
+            </div>
+          </details>
+        </div>
+        <div class="site-menu">
+          <nav class="tsd-navigation">
+            <a href="../index.html">Training Certify</a>
+            <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+              <li>Loading...</li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <p class="tsd-generator">
+        Generated using
+        <a href="https://typedoc.org/" target="_blank">TypeDoc</a>
+      </p>
+    </footer>
+    <div class="overlay"></div>
+  </body>
+</html>

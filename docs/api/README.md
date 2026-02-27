@@ -5,6 +5,7 @@ This directory contains the API documentation for the Training Certify applicati
 ## Files
 
 - `openapi.yaml` - OpenAPI 3.0 specification file documenting all API endpoints
+- `../api-jsdoc/` - JSDoc/TypeDoc-generated API docs (run `pnpm run docs` from repo root to regenerate)
 
 ## Accessing the Documentation
 

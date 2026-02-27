@@ -1,34 +1,41 @@
 /**
  * Test setup file for Vitest
- * Configures global test environment, mocks, and utilities
+ * Configures global test environment, mocks, and utilities.
+ * Ensures test isolation (cache cleared, mocks reset) so tests can run in parallel.
  */
 
 import { afterEach, beforeAll, vi } from 'vitest'
 
-// Mock Clerk auth globally
+// Mock Clerk auth and client globally so API tests don't hit real Clerk
 vi.mock('@clerk/tanstack-react-start/server', () => ({
   auth: vi.fn(),
+  clerkClient: {
+    users: {
+      getUser: vi
+        .fn()
+        .mockResolvedValue({ id: 'test-user', emailAddresses: [] }),
+    },
+  },
 }))
 
-// Setup before all tests
 beforeAll(() => {
-  // Set test environment variables
   process.env.NODE_ENV = 'test'
   process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test'
   process.env.CLERK_SECRET_KEY = 'test_secret_key'
   process.env.VITE_CLERK_PUBLISHABLE_KEY = 'test_publishable_key'
 })
 
-// Cleanup after each test
 afterEach(() => {
   vi.clearAllMocks()
+  // Clear in-memory cache so tests don't leak state when running in parallel
+  import('../lib/cache.server').then(
+    (m) => m.cache.clear(),
+    () => {},
+  )
 })
 
-// Global test utilities
 declare global {
   var testUtils: Record<string, any>
 }
 
-global.testUtils = {
-  // Add any global test utilities here
-}
+global.testUtils = {}
