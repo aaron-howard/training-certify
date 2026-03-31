@@ -15,10 +15,11 @@ import {
 } from '@clerk/tanstack-react-start'
 import { createServerFn } from '@tanstack/react-start'
 import { useEffect } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 import { AppShell } from '../components/shell/AppShell'
 import { ENV } from '../lib/env'
 import { logger } from '../lib/logging.client-stub'
-import { initSentry } from '../lib/sentry.server'
+import { initSentry } from '../lib/sentry.client-stub'
 import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
@@ -156,6 +157,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             {children}
           </QueryClientProvider>
         </ClerkProvider>
+        <Analytics />
         <Scripts />
       </body>
     </html>
