@@ -1,18 +1,14 @@
 blank_issues_enabled: false
 
 contact_links:
-  - name: Bug report
-    url: https://github.com/aaron-howard/training-certify/issues/new?template=bug_report.md
-    about: Report a reproducible bug using the bug report template.
-
-  - name: Feature request
-    url: https://github.com/aaron-howard/training-certify/issues/new?template=feature_request.md
-    about: Propose a new feature using the feature request template.
-
   - name: Ask a question
     url: https://github.com/aaron-howard/training-certify/discussions
-    about: For questions and discussions, use GitHub Discussions.
+    about: Questions and general discussion belong in GitHub Discussions.
 
-  - name: Documentation
+  - name: Security policy
+    url: https://github.com/aaron-howard/training-certify/security/policy
+    about: Do not file public issues for security vulnerabilities; use the security policy.
+
+  - name: Documentation index
     url: https://github.com/aaron-howard/training-certify/blob/main/README.md
-    about: Check the README and docs before opening an issue.
+    about: Overview and links to setup, architecture, API, and deployment docs.

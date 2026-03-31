@@ -1,8 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dir:*)",
-      "Bash(cp:*)"
+      "Bash(pnpm:*)",
+      "Bash(git:*)"
     ]
   }
 }

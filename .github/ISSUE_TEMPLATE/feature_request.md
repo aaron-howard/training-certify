@@ -1,28 +1,33 @@
 ---
 name: Feature request
-description: Propose a new feature or improvement
-title: '[Enhancement] '
-labels: ['enhancement']
+description: Propose a product or technical improvement for Training Certify
+title: "[Enhancement] "
+labels: ["enhancement"]
 assignees: []
 ---
 
 ## Problem and motivation
 
-What problem does this solve? Why is it important?
+What user or operational problem does this address? Who benefits (e.g. end users, managers, auditors)?
 
-## Proposed change
+## Proposed solution
 
-Describe the feature or improvement. How would it work?
+Describe the change. If it touches UX, note the main screens or flows.
+
+## Scope notes (optional)
+
+- **Roles affected:** (e.g. user, manager, admin)
+- **Data / compliance:** Does this affect certifications, audit logs, or exports?
+- **Breaking changes:** APIs, DB schema, or migrations expected?
 
 ## Alternatives considered
 
-Other approaches you thought about.
+What else did you consider?
 
-## Impact
+## Acceptance criteria (optional)
 
-- User experience:
-- Backward compatibility / migration (if any):
+Bullet list of what “done” looks like.
 
 ## Additional context
 
-Mockups, links, or references if helpful.
+Mockups, links, prior art, or related issues.
