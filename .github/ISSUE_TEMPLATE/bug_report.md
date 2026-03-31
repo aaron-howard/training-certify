@@ -1,8 +1,8 @@
 ---
 name: Bug report
 description: Report a reproducible defect in the app, API, or tooling
-title: "[Bug] "
-labels: ["bug"]
+title: '[Bug] '
+labels: ['bug']
 assignees: []
 ---
 

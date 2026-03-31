@@ -1,8 +1,8 @@
 ---
 name: Feature request
 description: Propose a product or technical improvement for Training Certify
-title: "[Enhancement] "
-labels: ["enhancement"]
+title: '[Enhancement] '
+labels: ['enhancement']
 assignees: []
 ---
 

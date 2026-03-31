@@ -1,8 +1,8 @@
 ---
 name: Documentation
 description: Fix or improve README, guides, API docs, or in-repo technical docs
-title: "[Docs] "
-labels: ["documentation"]
+title: '[Docs] '
+labels: ['documentation']
 assignees: []
 ---
 
