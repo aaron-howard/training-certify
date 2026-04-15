@@ -1,0 +1,43 @@
+# Reminder: quarterly manual review of dependency majors (Dependabot policy #12).
+# Creates an issue with a checklist; does not change dependencies.
+
+name: Dependency major review reminder
+
+on:
+  schedule:
+    # 09:15 UTC on the 2nd of Jan, Apr, Jul, Oct (quarterly)
+    - cron: '15 9 2 1,4,7,10 *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  open-reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create quarterly review issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const repo = `${context.repo.owner}/${context.repo.repo}`;
+            const title = `[Quarterly] Dependency major review (${new Date().toISOString().slice(0, 10)})`;
+            const body = [
+              'Scheduled reminder for **manual major-version upgrades** and Dependabot ignore-list review.',
+              '',
+              `**Checklist:** [docs/dependabot-majors.md](https://github.com/${repo}/blob/main/docs/dependabot-majors.md)`,
+              '',
+              '- [ ] Run `pnpm outdated` and note majors for the framework stack (React, TanStack, Vite, Clerk, Drizzle, Nitro, …)',
+              '- [ ] One stack per PR; run typecheck, tests, build',
+              `- [ ] Revisit [.github/dependabot.yml](https://github.com/${repo}/blob/main/.github/dependabot.yml) — add or remove \`semver-major\` ignores as appropriate`,
+              '',
+              '_Workflow: `.github/workflows/dependency-major-review-reminder.yml`_',
+            ].join('\n');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+            });

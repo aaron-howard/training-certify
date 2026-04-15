@@ -5,7 +5,7 @@ import { count, eq } from 'drizzle-orm'
 import { getDbOrThrow } from '../db/db.server'
 import { certifications, vendors } from '../db/schema'
 import { RateLimitPresets } from '../lib/rateLimit.server'
-import { ValidationError } from '../lib/errors'
+import { AppError, ValidationError } from '../lib/errors'
 import {
   CatalogCertificationSchema,
   UpdateCatalogCertificationSchema,
@@ -17,6 +17,7 @@ import {
   setupReadHandler,
   withApiMetrics,
 } from '../lib/api-helpers.server'
+import { API_ROLE_SETS } from '../lib/roles'
 import { invalidateCache } from '../lib/cache.server'
 import {
   createPaginatedResponse,
@@ -54,7 +55,7 @@ export const Route = createFileRoute('/api/catalog')({
 
             if (formatCsv) {
               await setupMutationHandler(request, {
-                allowedRoles: ['Admin'],
+                allowedRoles: API_ROLE_SETS.adminOnly,
                 rateLimit: RateLimitPresets.ADMIN,
                 requireCSRF: false, // GET request; browser does not send CSRF token for GET
               })
@@ -201,9 +202,12 @@ export const Route = createFileRoute('/api/catalog')({
               },
             })
           } catch (error) {
-            // For CSV export, return the real error so the client can show it (Admin-only endpoint)
             const url = new URL(request.url)
-            if (url.searchParams.get('format') === 'csv') {
+            // Auth / validation errors should use normal API error shape (e.g. 403 for non-Admin CSV)
+            if (
+              url.searchParams.get('format') === 'csv' &&
+              !(error instanceof AppError)
+            ) {
               const requestId = randomBytes(6).toString('hex')
               const err =
                 error instanceof Error ? error : new Error(String(error))
@@ -223,7 +227,7 @@ export const Route = createFileRoute('/api/catalog')({
         withApiMetrics('DELETE', '/api/catalog', async () => {
           try {
             await setupMutationHandler(request, {
-              allowedRoles: ['Admin'],
+              allowedRoles: API_ROLE_SETS.adminOnly,
               rateLimit: RateLimitPresets.ADMIN,
             })
 
@@ -247,7 +251,7 @@ export const Route = createFileRoute('/api/catalog')({
         withApiMetrics('POST', '/api/catalog', async () => {
           try {
             await setupMutationHandler(request, {
-              allowedRoles: ['Admin'],
+              allowedRoles: API_ROLE_SETS.adminOnly,
               rateLimit: RateLimitPresets.ADMIN,
             })
 
@@ -489,7 +493,7 @@ export const Route = createFileRoute('/api/catalog')({
         withApiMetrics('PATCH', '/api/catalog', async () => {
           try {
             await setupMutationHandler(request, {
-              allowedRoles: ['Admin'],
+              allowedRoles: API_ROLE_SETS.adminOnly,
               rateLimit: RateLimitPresets.ADMIN,
             })
 

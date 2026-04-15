@@ -12,6 +12,7 @@ import { validateCategory, validateDifficulty } from '../lib/enum-helpers'
 import { UpdateCatalogCertificationSchema } from '../lib/validation'
 import { ValidationError } from '../lib/errors'
 import { getAuthenticatedUser, requireRole } from '../lib/auth.server'
+import { API_ROLE_SETS } from '../lib/roles'
 import { logError, logInfo } from '../lib/logging.server'
 
 /**
@@ -267,7 +268,7 @@ export const createCatalogCertification = createServerFn({ method: 'POST' })
 
     try {
       // Use centralized auth helper
-      await requireRole(['Admin'])
+      await requireRole(API_ROLE_SETS.adminOnly)
 
       const vendorId = String(data.cert.vendorId)
       const vendorName = String(data.cert.vendorName ?? data.cert.vendorId)
@@ -322,7 +323,7 @@ export const updateCatalogCertification = createServerFn({ method: 'POST' })
 
     try {
       // Use centralized auth helper
-      await requireRole(['Admin'])
+      await requireRole(API_ROLE_SETS.adminOnly)
 
       // Validate updates with Zod schema
       const validation = UpdateCatalogCertificationSchema.safeParse(
@@ -395,7 +396,7 @@ export const deleteCatalogCertification = createServerFn({ method: 'POST' })
 
     try {
       // Use centralized auth helper
-      await requireRole(['Admin'])
+      await requireRole(API_ROLE_SETS.adminOnly)
 
       await db.delete(certifications).where(eq(certifications.id, data.id))
       return { success: true }
@@ -505,7 +506,7 @@ export const syncCatalog = createServerFn({ method: 'POST' })
 
     try {
       // Use centralized auth helper
-      await requireRole(['Admin'])
+      await requireRole(API_ROLE_SETS.adminOnly)
 
       logInfo('Triggering ITExams Sync', {
         function: 'syncCatalog',
@@ -523,6 +524,10 @@ export const syncCatalog = createServerFn({ method: 'POST' })
         details: `Synced ${result.totalProcessed} certifications from ITExams`,
       })
 
+      const { invalidateCache } = await import('../lib/cache.server')
+      invalidateCache('compliance:')
+      invalidateCache('dashboard:')
+
       return { success: true, count: result.totalProcessed }
     } catch (error) {
       logError(error, { function: 'syncCatalog' }, 'Catalog sync failed')
@@ -538,7 +543,7 @@ export const clearCatalog = createServerFn({ method: 'POST' })
 
     try {
       // Use centralized auth helper
-      await requireRole(['Admin'])
+      await requireRole(API_ROLE_SETS.adminOnly)
 
       logInfo('Clearing catalog', { function: 'clearCatalog' })
       await db.delete(userCertifications)

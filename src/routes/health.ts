@@ -6,6 +6,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { getDb } from '../db/db.server'
+import { requireInternalOpsAuth } from '../lib/internalOpsAuth.server'
+import { applySecurityHeaders } from '../lib/securityHeaders.server'
 
 interface HealthCheck {
   status: 'healthy' | 'unhealthy'
@@ -89,7 +91,10 @@ function checkMemory(): {
 export const Route = createFileRoute('/health')({
   server: {
     handlers: {
-      GET: async () => {
+      GET: async ({ request }) => {
+        const denied = requireInternalOpsAuth(request)
+        if (denied) return applySecurityHeaders(denied)
+
         try {
           const [database, memory] = await Promise.all([
             checkDatabase(),
@@ -116,17 +121,19 @@ export const Route = createFileRoute('/health')({
 
           const statusCode = healthCheck.status === 'healthy' ? 200 : 503
 
-          return json(healthCheck, { status: statusCode })
+          return applySecurityHeaders(json(healthCheck, { status: statusCode }))
         } catch (error: unknown) {
           const message =
             error instanceof Error ? error.message : 'Unknown error'
-          return json(
-            {
-              status: 'unhealthy',
-              timestamp: new Date().toISOString(),
-              error: message,
-            },
-            { status: 503 },
+          return applySecurityHeaders(
+            json(
+              {
+                status: 'unhealthy',
+                timestamp: new Date().toISOString(),
+                error: message,
+              },
+              { status: 503 },
+            ),
           )
         }
       },

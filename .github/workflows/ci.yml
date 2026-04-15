@@ -133,8 +133,9 @@ jobs:
         run: pnpm run test:e2e
         env:
           CI: true
-          # Optional: set PLAYWRIGHT_BASE_URL if app is deployed elsewhere
-          # CLERK_* secrets can be added for full auth flows
+          # Optional signed-in E2E (see docs/e2e-clerk.md): set repo/org secrets and pass them here, e.g.
+          # DATABASE_URL, CLERK_SECRET_KEY, VITE_CLERK_PUBLISHABLE_KEY, E2E_CLERK_USER_USERNAME, E2E_CLERK_USER_PASSWORD
+          # Avoid ${{ secrets.X }} for required app env unless the secret exists — empty values can fail validateEnv.
 
   build:
     name: Build
@@ -187,15 +188,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Block critical CVEs; moderate/high are common in transitive dev/build tools — track via Dependabot + periodic review
       - name: Run pnpm audit
-        run: pnpm audit --audit-level=moderate
-        continue-on-error: true
+        run: pnpm audit --audit-level=critical
 
       - name: Check for known vulnerabilities
         run: |
           echo "Security vulnerabilities are tracked via Dependabot"
           echo "See .github/dependabot.yml for automated security updates"
-          # npm audit is already run above, this is informational
 
   all-checks:
     name: All Checks Passed
@@ -210,6 +210,7 @@ jobs:
              [ "${{ needs.lint.result }}" != "success" ] || \
              [ "${{ needs.type-check.result }}" != "success" ] || \
              [ "${{ needs.build.result }}" != "success" ] || \
+             [ "${{ needs.security-scan.result }}" != "success" ] || \
              [ "${{ needs.e2e.result }}" != "success" ]; then
             echo "One or more required checks failed"
             exit 1

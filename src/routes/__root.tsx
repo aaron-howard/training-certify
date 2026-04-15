@@ -176,7 +176,11 @@ function RootComponent() {
   const router = useRouter()
   const path = router.state.location.pathname
 
-  const isAuthPage = path.startsWith('/sign-in') || path.startsWith('/sign-up')
+  // Public entry: sign-in/up + API docs (Swagger); docs do not use AppShell
+  const isAuthPage =
+    path.startsWith('/sign-in') ||
+    path.startsWith('/sign-up') ||
+    path.startsWith('/api-docs')
 
   useEffect(() => {
     if (isSignedIn && user) {

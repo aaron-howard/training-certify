@@ -32,3 +32,7 @@ By participating, you agree to our [Code of Conduct](./CODE_OF_CONDUCT.md). Be r
 ## Development setup
 
 See [SETUP.md](./SETUP.md) for local setup and [TESTING.md](./TESTING.md) for running tests. Ensure `pnpm run type-check` and `pnpm run lint` pass before submitting a PR.
+
+## Dependency updates
+
+Dependabot opens grouped **minor/patch** PRs on a weekly schedule. Maintainers follow **[docs/dependency-minor-patch-workflow.md](./docs/dependency-minor-patch-workflow.md)** for triage cadence and merge criteria; majors and overrides are covered in [docs/dependabot-majors.md](./docs/dependabot-majors.md) and [docs/dependency-overrides.md](./docs/dependency-overrides.md).

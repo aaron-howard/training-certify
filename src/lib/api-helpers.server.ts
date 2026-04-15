@@ -11,7 +11,10 @@ import { requireRole } from './auth.server'
 import { RateLimitPresets, requireRateLimit } from './rateLimit.server'
 import { getCSRFTokenFromRequest, requireCSRFToken } from './csrf.server'
 import { trackRequestMetrics } from './monitoring.server'
+import { applySecurityHeaders } from './securityHeaders.server'
+import { ALL_APP_ROLES } from './roles'
 import type { AuthSession } from './auth.server'
+import type { AppUserRole } from './roles'
 // Request is a global type in modern environments
 
 /**
@@ -54,13 +57,15 @@ export function handleApiError(error: unknown, context: string): Response {
 
   if (error instanceof AppError) {
     const sanitizedMessage = sanitizeErrorMessage(error.message, isProduction)
-    return json(
-      {
-        error: sanitizedMessage,
-        code: error.code,
-        ...(error instanceof ValidationError && { details: error.errors }),
-      },
-      { status: error.statusCode },
+    return applySecurityHeaders(
+      json(
+        {
+          error: sanitizedMessage,
+          code: error.code,
+          ...(error instanceof ValidationError && { details: error.errors }),
+        },
+        { status: error.statusCode },
+      ),
     )
   }
 
@@ -79,9 +84,11 @@ export function handleApiError(error: unknown, context: string): Response {
   )
 
   // Return generic message to client; include requestId so you can search logs for it
-  return json(
-    { error: 'Internal server error', requestId },
-    { status: 500, headers: { 'X-Request-Id': requestId } },
+  return applySecurityHeaders(
+    json(
+      { error: 'Internal server error', requestId },
+      { status: 500, headers: { 'X-Request-Id': requestId } },
+    ),
   )
 }
 
@@ -119,7 +126,7 @@ export async function withApiMetrics(
     const response = await handler()
     const duration = Date.now() - start
     trackRequestMetrics(method, path, response.status, duration)
-    return response
+    return applySecurityHeaders(response)
   } catch (error) {
     const duration = Date.now() - start
     trackRequestMetrics(method, path, 500, duration)
@@ -156,7 +163,7 @@ export async function withDbTiming<T>(
  * Handles role checking, rate limiting, and CSRF protection
  */
 export interface ApiHandlerOptions {
-  allowedRoles?: Array<string>
+  allowedRoles?: ReadonlyArray<AppUserRole>
   rateLimit?: (typeof RateLimitPresets)[keyof typeof RateLimitPresets]
   requireCSRF?: boolean
 }
@@ -180,7 +187,7 @@ export async function setupApiHandler(
   options: ApiHandlerOptions = {},
 ): Promise<AuthSession> {
   const {
-    allowedRoles = ['Admin', 'Manager', 'Auditor', 'Executive', 'User'],
+    allowedRoles = ALL_APP_ROLES,
     rateLimit,
     requireCSRF = false,
   } = options

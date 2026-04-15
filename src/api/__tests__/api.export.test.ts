@@ -6,6 +6,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { factories } from '../../test/factories'
 import { mockAuthForRole, setupTestMocks } from './helpers'
+import type { AppUserRole } from '../../lib/roles'
 
 // Mock dependencies
 vi.mock('@clerk/tanstack-react-start/server', () => ({
@@ -40,7 +41,10 @@ vi.mock('../../lib/api-helpers.server', async (importOriginal) => {
   return {
     ...actual,
     setupReadHandler: vi.fn(
-      async (_request: unknown, options?: { allowedRoles?: Array<string> }) => {
+      async (
+        _request: unknown,
+        options?: { allowedRoles?: ReadonlyArray<AppUserRole> },
+      ) => {
         const { requireRole } = await import('../../lib/auth.server')
         const session = await requireRole(options?.allowedRoles ?? [])
         return session

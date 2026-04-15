@@ -13,15 +13,10 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core'
 import { sql } from 'drizzle-orm'
+import { USER_ROLE_ENUM_VALUES } from '../lib/roles'
 
 // Enums for various statuses and types
-export const roleEnum = pgEnum('role', [
-  'Admin',
-  'User',
-  'Manager',
-  'Executive',
-  'Auditor',
-])
+export const roleEnum = pgEnum('role', USER_ROLE_ENUM_VALUES)
 export const certificationStatusEnum = pgEnum('certification_status', [
   'active',
   'expiring',

@@ -13,13 +13,13 @@ Training Certify uses layered security: Clerk auth, role-based access, CSRF and 
 
 ## Protections
 
-| Area              | Implementation                                                                      |
-| ----------------- | ----------------------------------------------------------------------------------- |
-| **CSRF**          | HMAC-SHA256 tokens; required for mutations; `CSRF_SECRET` required in production.   |
-| **Rate limiting** | Per-endpoint presets (e.g. READ 100/min, MUTATION 30/min); DB-backed in production. |
-| **Input**         | Zod schemas on all inputs; DB constraints; no raw SQL with user input (Drizzle).    |
-| **Headers**       | CSP, HSTS, X-Frame-Options, X-Content-Type-Options, etc.                            |
-| **Errors**        | Sanitized in production (no stack traces to client).                                |
+| Area              | Implementation                                                                                                                                                                      |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **CSRF**          | HMAC-SHA256 tokens; required for mutations; `CSRF_SECRET` required in production.                                                                                                   |
+| **Rate limiting** | Per-endpoint presets (e.g. READ 100/min, MUTATION 30/min); Postgres-backed in production across instances — [docs/rate-limiting-serverless.md](./docs/rate-limiting-serverless.md). |
+| **Input**         | Zod schemas on all inputs; DB constraints; no raw SQL with user input (Drizzle).                                                                                                    |
+| **Headers**       | CSP, HSTS, X-Frame-Options, X-Content-Type-Options, etc.                                                                                                                            |
+| **Errors**        | Sanitized in production (no stack traces to client).                                                                                                                                |
 
 ## Required production env
 

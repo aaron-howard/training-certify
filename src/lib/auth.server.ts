@@ -3,10 +3,12 @@ import { eq } from 'drizzle-orm'
 import { users } from '../db/schema'
 import { getDb } from '../db/db.server'
 import { ForbiddenError, UnauthorizedError } from './errors'
+import { assertAppUserRole } from './roles'
+import type { AppUserRole } from './roles'
 
 export interface AuthSession {
   userId: string
-  role: string
+  role: AppUserRole
   email?: string
 }
 
@@ -67,7 +69,7 @@ export async function getAuthenticatedUser(): Promise<AuthSession> {
 
   return {
     userId: user[0].id,
-    role: user[0].role,
+    role: assertAppUserRole(String(user[0].role)),
     email: user[0].email || undefined,
   }
 }
@@ -91,7 +93,7 @@ export async function getAuthenticatedUser(): Promise<AuthSession> {
  * ```
  */
 export async function requireRole(
-  allowedRoles: Array<string>,
+  allowedRoles: ReadonlyArray<AppUserRole>,
 ): Promise<AuthSession> {
   const session = await getAuthenticatedUser()
 

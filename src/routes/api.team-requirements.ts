@@ -11,6 +11,8 @@ import {
   setupReadHandler,
   withApiMetrics,
 } from '../lib/api-helpers.server'
+import { API_ROLE_SETS } from '../lib/roles'
+import { CacheTTL, getOrCompute, invalidateCache } from '../lib/cache.server'
 import type { AuthSession } from '../lib/auth.server'
 
 async function checkTeamManagementOrThrow(
@@ -46,22 +48,32 @@ export const Route = createFileRoute('/api/team-requirements')({
 
             const db = await getDbOrThrow()
 
-            const requirements = await db
-              .select({
-                id: teamRequirements.id,
-                teamId: teamRequirements.teamId,
-                certificationId: teamRequirements.certificationId,
-                targetCount: teamRequirements.targetCount,
-                certificationName: certifications.name,
-              })
-              .from(teamRequirements)
-              .leftJoin(
-                certifications,
-                eq(teamRequirements.certificationId, certifications.id),
-              )
-              .where(eq(teamRequirements.teamId, teamId))
+            const requirements = await getOrCompute(
+              `team-requirements:${teamId}`,
+              CacheTTL.MEDIUM,
+              async () => {
+                return db
+                  .select({
+                    id: teamRequirements.id,
+                    teamId: teamRequirements.teamId,
+                    certificationId: teamRequirements.certificationId,
+                    targetCount: teamRequirements.targetCount,
+                    certificationName: certifications.name,
+                  })
+                  .from(teamRequirements)
+                  .leftJoin(
+                    certifications,
+                    eq(teamRequirements.certificationId, certifications.id),
+                  )
+                  .where(eq(teamRequirements.teamId, teamId))
+              },
+            )
 
-            return json(requirements)
+            return json(requirements, {
+              headers: {
+                'Cache-Control': 'private, max-age=120',
+              },
+            })
           } catch (error) {
             return handleApiError(error, 'GET /api/team-requirements')
           }
@@ -70,7 +82,7 @@ export const Route = createFileRoute('/api/team-requirements')({
         withApiMetrics('POST', '/api/team-requirements', async () => {
           try {
             const session = await setupMutationHandler(request, {
-              allowedRoles: ['Admin', 'Manager'],
+              allowedRoles: API_ROLE_SETS.adminManager,
             })
 
             const rawData = await request.json()
@@ -104,6 +116,10 @@ export const Route = createFileRoute('/api/team-requirements')({
               })
               .returning()
 
+            invalidateCache('teams:')
+            invalidateCache('dashboard:')
+            invalidateCache('team-requirements:')
+
             return json(result[0], { status: 201 })
           } catch (error) {
             return handleApiError(error, 'POST /api/team-requirements')
@@ -113,7 +129,7 @@ export const Route = createFileRoute('/api/team-requirements')({
         withApiMetrics('DELETE', '/api/team-requirements', async () => {
           try {
             const session = await setupMutationHandler(request, {
-              allowedRoles: ['Admin', 'Manager'],
+              allowedRoles: API_ROLE_SETS.adminManager,
             })
 
             const url = new URL(request.url)
@@ -135,6 +151,11 @@ export const Route = createFileRoute('/api/team-requirements')({
             await checkTeamManagementOrThrow(db, session, reqResult[0].teamId)
 
             await db.delete(teamRequirements).where(eq(teamRequirements.id, id))
+
+            invalidateCache('teams:')
+            invalidateCache('dashboard:')
+            invalidateCache('team-requirements:')
+
             return json({ success: true })
           } catch (error) {
             return handleApiError(error, 'DELETE /api/team-requirements')

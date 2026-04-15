@@ -40,13 +40,13 @@
 
 ## Technology stack
 
-| Layer             | Technology                                                                       |
-| ----------------- | -------------------------------------------------------------------------------- |
-| **Frontend**      | TanStack Start (React 19), TanStack Router, Tailwind CSS v4, TanStack Query      |
-| **Backend**       | Node (Vinxi/Nitro), Server Functions + file-based API routes, Zod, custom errors |
-| **Database**      | PostgreSQL, Drizzle ORM, Drizzle Kit migrations                                  |
-| **Auth**          | Clerk; CSRF, rate limiting, security headers                                     |
-| **Observability** | Sentry, Pino logging, `/api/health`, `/ready`, `/metrics`                        |
+| Layer             | Technology                                                                                                                                                                                         |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Frontend**      | TanStack Start (React 19), TanStack Router, Tailwind CSS v4, TanStack Query                                                                                                                        |
+| **Backend**       | Node (TanStack Start + Nitro), Server Functions + file-based API routes, Zod, custom errors — see [docs/nitro-tanstack-upgrade-path.md](./docs/nitro-tanstack-upgrade-path.md) for toolchain bumps |
+| **Database**      | PostgreSQL, Drizzle ORM, Drizzle Kit migrations                                                                                                                                                    |
+| **Auth**          | Clerk; CSRF, rate limiting ([serverless / multi-instance](./docs/rate-limiting-serverless.md)), security headers                                                                                   |
+| **Observability** | Sentry, Pino logging, `/api/health`, `/ready`, `/metrics`                                                                                                                                          |
 
 ## Project structure
 
@@ -69,6 +69,7 @@ src/
 - **RBAC** — `requireRole(['Admin', 'Manager'])` and resource-level checks.
 - **Errors** — `ValidationError`, `ForbiddenError`, `NotFoundError` with consistent JSON shape.
 - **Validation** — Zod schemas for all inputs.
+- **Bundle / perf** — Heavy UI routes (`/catalog`, `/team-management`, `/certification-management`) use **`lazyRouteComponent`** so their JS loads on navigation; run **`pnpm run build:analyze`** for **`dist/bundle-stats.html`**. See [docs/bundle-analysis.md](./docs/bundle-analysis.md).
 
 ## Request flow
 

@@ -1,3 +1,4 @@
+# Grouped minor/patch review habit: docs/dependency-minor-patch-workflow.md
 version: 2
 updates:
   # Enable version updates for npm
@@ -28,17 +29,51 @@ updates:
         update-types:
           - 'minor'
           - 'patch'
-    # Ignore major version updates (require manual review)
+    # Major bumps: allow by default (typescript, zod, @types/*, prettier, etc.).
+    # Ignore only packages where majors are usually breaking / need a dedicated upgrade branch.
+    # Policy: docs/dependabot-majors.md — quarterly review: .github/workflows/dependency-major-review-reminder.yml
     ignore:
-      # Major version updates should be reviewed manually
-      - dependency-name: '*'
-        update-types:
-          - 'version-update:semver-major'
-    # Security updates always allowed
-    allow:
-      - dependency-type: 'production'
-        update-types:
-          - 'security'
-      - dependency-type: 'development'
-        update-types:
-          - 'security'
+      - dependency-name: 'react'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'react-dom'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'vite'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'vitest'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@vitejs*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@vitest*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@tanstack*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'drizzle-orm'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'drizzle-kit'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'nitro'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'tailwindcss'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@tailwindcss*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@clerk*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@sentry*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'vercel'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@playwright*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'eslint'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@eslint*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'pg'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'lucide-react'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'pino'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'pino-pretty'
+        update-types: ['version-update:semver-major']

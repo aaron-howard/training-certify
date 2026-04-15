@@ -62,12 +62,13 @@ These variables **must** be set for the application to run:
 
 ### Optional Variables (Recommended for Production)
 
-| Variable      | Description                           | Default | When to Use                                      |
-| ------------- | ------------------------------------- | ------- | ------------------------------------------------ |
-| `SENTRY_DSN`  | Sentry error tracking DSN             | -       | Production error monitoring                      |
-| `REDIS_URL`   | Redis connection string               | -       | Multi-instance deployments (distributed caching) |
-| `HTTPS_ONLY`  | Force HTTPS redirects                 | `false` | Production (set to `true`)                       |
-| `CSRF_SECRET` | CSRF protection secret (min 32 chars) | -       | Production (required for CSRF protection)        |
+| Variable            | Description                                                | Default                       | When to Use                                                                                                                               |
+| ------------------- | ---------------------------------------------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `SENTRY_DSN`        | Sentry error tracking DSN                                  | -                             | Production error monitoring                                                                                                               |
+| `REDIS_URL`         | Redis connection string                                    | -                             | Multi-instance deployments (distributed caching)                                                                                          |
+| `USE_DB_RATE_LIMIT` | Keep API rate limits on Postgres (shared across instances) | unset (enabled in production) | Set to `false` only for debugging — forces per-process in-memory limits. See [rate-limiting-serverless.md](./rate-limiting-serverless.md) |
+| `HTTPS_ONLY`        | Force HTTPS redirects                                      | `false`                       | Production (set to `true`)                                                                                                                |
+| `CSRF_SECRET`       | CSRF protection secret (min 32 chars)                      | -                             | Production (required for CSRF protection)                                                                                                 |
 
 ### Environment Variable Details
 

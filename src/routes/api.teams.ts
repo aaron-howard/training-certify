@@ -17,6 +17,7 @@ import {
   setupReadHandler,
   withApiMetrics,
 } from '../lib/api-helpers.server'
+import { API_ROLE_SETS } from '../lib/roles'
 import {
   createPaginatedResponse,
   parsePaginationParams,
@@ -312,7 +313,7 @@ export const Route = createFileRoute('/api/teams')({
         withApiMetrics('POST', '/api/teams', async () => {
           try {
             await setupMutationHandler(request, {
-              allowedRoles: ['Admin'],
+              allowedRoles: API_ROLE_SETS.adminOnly,
             })
 
             const rawData = await request.json()
@@ -337,9 +338,10 @@ export const Route = createFileRoute('/api/teams')({
               })
               .returning()
 
-            // Invalidate cache
-            const { cache } = await import('../lib/cache.server')
-            cache.invalidate('teams:')
+            const { invalidateCache } = await import('../lib/cache.server')
+            invalidateCache('teams:')
+            invalidateCache('dashboard:')
+            invalidateCache('team-requirements:')
 
             return json(result[0], { status: 201 })
           } catch (error) {
@@ -351,7 +353,7 @@ export const Route = createFileRoute('/api/teams')({
         withApiMetrics('DELETE', '/api/teams', async () => {
           try {
             await setupMutationHandler(request, {
-              allowedRoles: ['Admin'],
+              allowedRoles: API_ROLE_SETS.adminOnly,
             })
 
             const url = new URL(request.url)
@@ -365,9 +367,10 @@ export const Route = createFileRoute('/api/teams')({
               await tx.delete(teams).where(eq(teams.id, id))
             })
 
-            // Invalidate cache
-            const { cache } = await import('../lib/cache.server')
-            cache.invalidate('teams:')
+            const { invalidateCache } = await import('../lib/cache.server')
+            invalidateCache('teams:')
+            invalidateCache('dashboard:')
+            invalidateCache('team-requirements:')
 
             return json({ success: true })
           } catch (error) {
@@ -379,7 +382,7 @@ export const Route = createFileRoute('/api/teams')({
         withApiMetrics('PATCH', '/api/teams', async () => {
           try {
             const session = await setupMutationHandler(request, {
-              allowedRoles: ['Admin', 'Manager'],
+              allowedRoles: API_ROLE_SETS.adminManager,
             })
 
             const data = await request.json()
@@ -410,9 +413,10 @@ export const Route = createFileRoute('/api/teams')({
                 .values({ teamId, userId })
                 .onConflictDoNothing()
 
-              // Invalidate cache
-              const { cache } = await import('../lib/cache.server')
-              cache.invalidate('teams:')
+              const { invalidateCache } = await import('../lib/cache.server')
+              invalidateCache('teams:')
+              invalidateCache('dashboard:')
+              invalidateCache('team-requirements:')
 
               return json({ success: true, action: 'added' })
             } else if (action === 'remove') {
@@ -425,9 +429,10 @@ export const Route = createFileRoute('/api/teams')({
                   ),
                 )
 
-              // Invalidate cache
-              const { cache } = await import('../lib/cache.server')
-              cache.invalidate('teams:')
+              const { invalidateCache } = await import('../lib/cache.server')
+              invalidateCache('teams:')
+              invalidateCache('dashboard:')
+              invalidateCache('team-requirements:')
 
               return json({ success: true, action: 'removed' })
             } else {

@@ -15,6 +15,7 @@ import {
   setupReadHandler,
   withApiMetrics,
 } from '../lib/api-helpers.server'
+import { invalidateCache } from '../lib/cache.server'
 
 // Default notification categories
 const defaultCategories = [
@@ -124,6 +125,7 @@ export const Route = createFileRoute('/api/notification-settings')({
                     eq(notifications.userId, session.userId),
                   ),
                 )
+              invalidateCache('notifications:')
               return json({ success: true })
             } else if (action === 'markAllRead') {
               const targetId = userId || session.userId
@@ -136,6 +138,7 @@ export const Route = createFileRoute('/api/notification-settings')({
                 .update(notifications)
                 .set({ isRead: true })
                 .where(eq(notifications.userId, targetId))
+              invalidateCache('notifications:')
               return json({ success: true })
             } else if (action === 'dismiss' && notificationId) {
               await db
@@ -147,6 +150,7 @@ export const Route = createFileRoute('/api/notification-settings')({
                     eq(notifications.userId, session.userId),
                   ),
                 )
+              invalidateCache('notifications:')
               return json({ success: true })
             }
 

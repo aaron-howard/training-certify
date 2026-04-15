@@ -6,11 +6,70 @@
  */
 
 /**
+ * Build Content-Security-Policy (roadmap P7 / #22).
+ * - Production: omit `unsafe-eval`; allow Swagger UI CDN (`unpkg.com`); add `object-src`, `base-uri`, `upgrade-insecure-requests`.
+ * - Development: keep `unsafe-eval` for Vite; widen `connect-src` for localhost WebSocket HMR.
+ * - `script-src` / `style-src` still allow `unsafe-inline` for Clerk, `/api-docs` inline boot, and framework-injected tags; nonces are a follow-up.
+ */
+export function buildContentSecurityPolicy(isProduction: boolean): string {
+  const scriptSrc = [
+    "'self'",
+    "'unsafe-inline'",
+    'https://clerk.com',
+    'https://*.clerk.accounts.dev',
+    'https://unpkg.com',
+  ]
+  if (!isProduction) {
+    scriptSrc.push("'unsafe-eval'")
+  }
+
+  const connectSrc = [
+    "'self'",
+    'https://clerk.com',
+    'https://*.clerk.accounts.dev',
+    'https://api.clerk.com',
+    'https://*.ingest.sentry.io',
+    'https://*.sentry.io',
+  ]
+  if (!isProduction) {
+    connectSrc.push(
+      'http://127.0.0.1:*',
+      'http://localhost:*',
+      'ws://127.0.0.1:*',
+      'ws://localhost:*',
+      'wss://127.0.0.1:*',
+      'wss://localhost:*',
+    )
+  }
+
+  const directives = [
+    "default-src 'self'",
+    `script-src ${scriptSrc.join(' ')}`,
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com",
+    "font-src 'self' https://fonts.gstatic.com",
+    "img-src 'self' data: https: blob:",
+    `connect-src ${connectSrc.join(' ')}`,
+    "frame-src 'self' https://clerk.com https://*.clerk.accounts.dev",
+    "worker-src 'self' blob:",
+  ]
+
+  if (isProduction) {
+    directives.push(
+      "object-src 'none'",
+      "base-uri 'self'",
+      'upgrade-insecure-requests',
+    )
+  }
+
+  return directives.join('; ')
+}
+
+/**
  * Get security headers for HTTP responses.
  *
  * Returns a comprehensive set of security headers including:
  * - X-Frame-Options: Prevents clickjacking
- * - X-Content-Type-Options: Prevents MIME type sniffing
+ * - X-Content-Type-Options: Prevents MIME sniffing
  * - X-XSS-Protection: Enables XSS protection
  * - Strict-Transport-Security: Forces HTTPS in production
  * - Content-Security-Policy: Restricts resource loading
@@ -44,16 +103,7 @@ export function getSecurityHeaders(): Record<string, string> {
         'max-age=31536000; includeSubDomains; preload',
     }),
 
-    // Content Security Policy
-    'Content-Security-Policy': [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://clerk.com https://*.clerk.accounts.dev",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: https: blob:",
-      "connect-src 'self' https://clerk.com https://*.clerk.accounts.dev https://api.clerk.com",
-      "frame-src 'self' https://clerk.com https://*.clerk.accounts.dev",
-    ].join('; '),
+    'Content-Security-Policy': buildContentSecurityPolicy(isProduction),
 
     // Referrer policy
     'Referrer-Policy': 'strict-origin-when-cross-origin',

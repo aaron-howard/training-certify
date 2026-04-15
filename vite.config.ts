@@ -7,6 +7,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { nitro } from 'nitro/vite'
 import path from 'path'
 import type { Plugin } from 'vite'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 // Plugin to stub server-only files for client builds ONLY
 const stubServerFiles = (): Plugin => {
@@ -43,7 +44,7 @@ const stubServerFiles = (): Plugin => {
   }
 }
 
-const config = defineConfig({
+export default defineConfig(({ mode }) => ({
   envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
   plugins: [
     devtools(),
@@ -57,6 +58,17 @@ const config = defineConfig({
     tanstackStart(),
     nitro(),
     viteReact(),
+    ...(mode === 'analyze'
+      ? [
+          visualizer({
+            filename: 'dist/bundle-stats.html',
+            template: 'treemap',
+            gzipSize: true,
+            brotliSize: true,
+            open: false,
+          }),
+        ]
+      : []),
   ],
   optimizeDeps: {
     include: [
@@ -76,9 +88,9 @@ const config = defineConfig({
   // Client code splitting: Let Vite/Rollup handle chunking automatically.
   // Custom manualChunks breaks React's internal module initialization order
   // (scheduler, react-dom, etc.) causing hydration failures.
+  // Route-level lazy loading: lazyRouteComponent in src/routes/*.tsx for heavy pages.
+  // Bundle treemap: pnpm run build:analyze → dist/bundle-stats.html (see docs/bundle-analysis.md).
   build: {
     chunkSizeWarningLimit: 600,
   },
-})
-
-export default config
+}))

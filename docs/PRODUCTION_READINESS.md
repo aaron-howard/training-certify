@@ -39,7 +39,7 @@
 ## 2. Security
 
 - **CSRF:** Required for state-changing requests; `CSRF_SECRET` required in production (fails fast if missing).
-- **Rate limiting:** In-memory in dev; database-backed in production when `USE_DB_RATE_LIMIT` not disabled.
+- **Rate limiting:** In-memory in dev; Postgres-backed in production when `USE_DB_RATE_LIMIT` is not `false` (coordinates across serverless instances). See [rate-limiting-serverless.md](./rate-limiting-serverless.md).
 - **Errors:** `api-helpers.server.ts` sanitizes error messages in production (no stack/details to client).
 - **HTTPS:** `HTTPS_ONLY=true` and `NODE_ENV=production` enable redirect in `src/lib/https.server.ts`.
 - **Headers:** Security headers (e.g. HSTS in production) in `src/lib/securityHeaders.server.ts`.

@@ -131,7 +131,7 @@ The Training Certify platform implements **comprehensive security measures** acr
 - **X-Content-Type-Options:** `nosniff` (prevents MIME sniffing)
 - **X-XSS-Protection:** `1; mode=block` (XSS protection)
 - **Strict-Transport-Security:** `max-age=31536000; includeSubDomains; preload` (production only)
-- **Content-Security-Policy:** Comprehensive CSP with Clerk integration
+- **Content-Security-Policy:** Clerk + Swagger (`unpkg.com`); production omits `unsafe-eval` (see `buildContentSecurityPolicy` in `src/lib/securityHeaders.server.ts`)
 - **Referrer-Policy:** `strict-origin-when-cross-origin`
 - **Permissions-Policy:** Restricts camera, microphone, geolocation
 
@@ -139,12 +139,14 @@ The Training Certify platform implements **comprehensive security measures** acr
 
 ```
 default-src 'self'
-script-src 'self' 'unsafe-inline' 'unsafe-eval' https://clerk.com https://*.clerk.accounts.dev
-style-src 'self' 'unsafe-inline' https://fonts.googleapis.com
+script-src 'self' 'unsafe-inline' [+'unsafe-eval' in dev] https://clerk.com https://*.clerk.accounts.dev https://unpkg.com
+style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com
 font-src 'self' https://fonts.gstatic.com
 img-src 'self' data: https: blob:
-connect-src 'self' https://clerk.com https://*.clerk.accounts.dev https://api.clerk.com
+connect-src 'self' https://clerk.com https://*.clerk.accounts.dev https://api.clerk.com https://*.ingest.sentry.io https://*.sentry.io [+ localhost ws/http in dev]
 frame-src 'self' https://clerk.com https://*.clerk.accounts.dev
+worker-src 'self' blob:
+(production) object-src 'none'; base-uri 'self'; upgrade-insecure-requests
 ```
 
 **Status:** ✅ Comprehensive
@@ -227,8 +229,8 @@ frame-src 'self' https://clerk.com https://*.clerk.accounts.dev
 
 ### ✅ Rate Limit Bypass
 
-- **Protection:** Database-backed rate limiting, sliding window algorithm
-- **Status:** ✅ Protected
+- **Protection:** In production, **Postgres-backed** rate limiting via `rate_limit_logs` so limits are **shared across serverless instances** (see **[rate-limiting-serverless.md](./rate-limiting-serverless.md)**). Development uses in-memory limits. DB failures fall back to in-memory (per-instance); monitor warnings in logs.
+- **Status:** ✅ Protected (with documented concurrency and fallback caveats)
 
 ---
 
@@ -262,7 +264,7 @@ frame-src 'self' https://clerk.com https://*.clerk.accounts.dev
 ### Rate Limiting
 
 - [x] Rate limiting on all endpoints
-- [x] Database-backed storage (production)
+- [x] Shared Postgres storage in production (multi-instance); see [rate-limiting-serverless.md](./rate-limiting-serverless.md)
 - [x] Appropriate limits per endpoint type
 - [x] IP-based limiting for health checks
 

@@ -1,7 +1,10 @@
 import { useMemo } from 'react'
 import { logger } from '../lib/logging.client-stub'
+import { ROLE_PRIVILEGE_ORDER } from '../lib/roles'
+import type { AppUserRole } from '../lib/roles'
 
-export type Role = 'Admin' | 'Manager' | 'Executive' | 'Auditor' | 'User'
+/** Platform role — alias of `AppUserRole` from `src/lib/roles.ts`. */
+export type Role = AppUserRole
 
 export interface Permissions {
   // Dashboard
@@ -35,7 +38,7 @@ export interface Permissions {
   canManageOwnNotificationSettings: boolean
 }
 
-const rolePermissions: Record<Role, Permissions> = {
+const rolePermissions: Record<AppUserRole, Permissions> = {
   Admin: {
     canViewDashboard: true,
     canManageOwnCerts: true,
@@ -132,7 +135,7 @@ export function usePermissions(
   role: Role | string | undefined | null,
 ): Permissions {
   return useMemo(() => {
-    const r = (role ?? 'User') as Role
+    const r = (role ?? 'User') as AppUserRole
     logger.debug({ role: r }, 'Permissions calculated')
     const perms = rolePermissions[r] as Permissions | undefined
     return perms ?? rolePermissions.User
@@ -144,14 +147,8 @@ export function isAtLeastRole(
   currentRole: Role | string | undefined,
   requiredRole: Role,
 ): boolean {
-  const roleHierarchy: Array<Role> = [
-    'User',
-    'Auditor',
-    'Executive',
-    'Manager',
-    'Admin',
-  ]
-  const currentIndex = roleHierarchy.indexOf(currentRole as Role)
-  const requiredIndex = roleHierarchy.indexOf(requiredRole)
+  const currentIndex = ROLE_PRIVILEGE_ORDER.indexOf(currentRole as AppUserRole)
+  const requiredIndex = ROLE_PRIVILEGE_ORDER.indexOf(requiredRole)
+  if (currentIndex === -1 || requiredIndex === -1) return false
   return currentIndex >= requiredIndex
 }

@@ -24,7 +24,8 @@ import {
   withApiMetrics,
   withDbTiming,
 } from '../lib/api-helpers.server'
-import { invalidateCache } from '../lib/cache.server'
+import { API_ROLE_SETS } from '../lib/roles'
+import { CacheTTL, getOrCompute, invalidateCache } from '../lib/cache.server'
 import {
   createPaginatedResponse,
   parsePaginationParams,
@@ -58,7 +59,7 @@ export const Route = createFileRoute('/api/users')({
         withApiMetrics('GET', '/api/users', async () => {
           try {
             await setupReadHandler(request, {
-              allowedRoles: ['Admin', 'Auditor', 'Executive'],
+              allowedRoles: API_ROLE_SETS.adminAuditorExecutive,
             })
             const db = await getDbOrThrow()
             const url = new URL(request.url)
@@ -67,26 +68,27 @@ export const Route = createFileRoute('/api/users')({
             const { page, limit } = parsePaginationParams(url, 20, 100)
             const offset = (page - 1) * limit
 
-            // Get total count and paginated data (with DB timing for metrics)
-            const [totalResult, data] = await withDbTiming(
-              'users_list',
+            const paginatedResponse = await getOrCompute(
+              `users:list:${page}:${limit}`,
+              CacheTTL.SHORT,
               async () => {
-                const [total] = await db.select({ count: count() }).from(users)
-                const rows = await db
-                  .select()
-                  .from(users)
-                  .limit(limit)
-                  .offset(offset)
-                return [total, rows] as const
+                const [totalResult, data] = await withDbTiming(
+                  'users_list',
+                  async () => {
+                    const [total] = await db
+                      .select({ count: count() })
+                      .from(users)
+                    const rows = await db
+                      .select()
+                      .from(users)
+                      .limit(limit)
+                      .offset(offset)
+                    return [total, rows] as const
+                  },
+                )
+                const total = totalResult.count
+                return createPaginatedResponse(data, total, page, limit)
               },
-            )
-            const total = totalResult.count
-
-            const paginatedResponse = createPaginatedResponse(
-              data,
-              total,
-              page,
-              limit,
             )
 
             return json(paginatedResponse, {
@@ -209,8 +211,10 @@ export const Route = createFileRoute('/api/users')({
                 })
                 .returning()
 
-              // Invalidate users cache
               invalidateCache('users:')
+              invalidateCache('dashboard:')
+              invalidateCache('compliance:')
+              invalidateCache('notifications:')
 
               return json(result[0], { status: 201 })
             } catch (error) {
@@ -281,8 +285,10 @@ export const Route = createFileRoute('/api/users')({
                   await tx.delete(users).where(eq(users.id, oldUserId))
                 })
 
-                // Invalidate users cache after migration
                 invalidateCache('users:')
+                invalidateCache('dashboard:')
+                invalidateCache('compliance:')
+                invalidateCache('notifications:')
 
                 const newUser = await db
                   .select()
@@ -303,7 +309,7 @@ export const Route = createFileRoute('/api/users')({
         withApiMetrics('PATCH', '/api/users', async () => {
           try {
             await setupMutationHandler(request, {
-              allowedRoles: ['Admin'],
+              allowedRoles: API_ROLE_SETS.adminOnly,
             })
 
             const rawData = await request.json()
@@ -336,8 +342,10 @@ export const Route = createFileRoute('/api/users')({
 
             if (result.length === 0) throw new NotFoundError('User not found')
 
-            // Invalidate users cache
             invalidateCache('users:')
+            invalidateCache('dashboard:')
+            invalidateCache('compliance:')
+            invalidateCache('notifications:')
 
             return json(result[0])
           } catch (error) {
@@ -348,7 +356,7 @@ export const Route = createFileRoute('/api/users')({
         withApiMetrics('DELETE', '/api/users', async () => {
           try {
             await setupMutationHandler(request, {
-              allowedRoles: ['Admin'],
+              allowedRoles: API_ROLE_SETS.adminOnly,
             })
 
             const url = new URL(request.url)
@@ -371,8 +379,10 @@ export const Route = createFileRoute('/api/users')({
               await tx.delete(users).where(eq(users.id, id))
             })
 
-            // Invalidate users cache
             invalidateCache('users:')
+            invalidateCache('dashboard:')
+            invalidateCache('compliance:')
+            invalidateCache('notifications:')
 
             return json({ success: true })
           } catch (error) {

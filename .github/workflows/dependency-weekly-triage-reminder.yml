@@ -1,0 +1,45 @@
+# Reminder: weekly triage of grouped minor/patch Dependabot PRs (roadmap #14).
+# Creates an issue with a checklist; does not change dependencies.
+
+name: Dependency weekly triage reminder
+
+on:
+  schedule:
+    # Monday 10:30 UTC — after Dependabot’s Monday 09:00 UTC run
+    - cron: '30 10 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  open-reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create weekly triage issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const repo = `${context.repo.owner}/${context.repo.repo}`;
+            const title = `[Weekly] Dependency triage — minor/patch (${new Date().toISOString().slice(0, 10)})`;
+            const prsUrl = `https://github.com/${repo}/pulls?q=is%3Apr+is%3Aopen+label%3Adependencies`;
+            const body = [
+              'Reminder to **triage open Dependabot PRs** (grouped **minor** and **patch**). Merge or defer so `open-pull-requests-limit` does not block new updates.',
+              '',
+              `- **Open PRs:** [label \`dependencies\`](${prsUrl})`,
+              `- **Checklist:** [docs/dependency-minor-patch-workflow.md](https://github.com/${repo}/blob/main/docs/dependency-minor-patch-workflow.md)`,
+              '',
+              '- [ ] CI green on each open dependency PR',
+              '- [ ] Skim release notes for notable packages',
+              '- [ ] Merge or comment + close / draft if deferring',
+              '',
+              '_Workflow: `.github/workflows/dependency-weekly-triage-reminder.yml`_',
+            ].join('\n');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+            });

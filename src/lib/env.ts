@@ -54,6 +54,9 @@ const envSchema = z.object({
     .transform((val) => val === 'true')
     .optional(),
   CSRF_SECRET: z.string().min(32).optional(),
+
+  /** When set, /metrics and /health require Bearer or X-Internal-Ops-Token (see internalOpsAuth.server.ts). */
+  INTERNAL_OPS_TOKEN: z.string().min(16).optional(),
 })
 
 export type Env = z.infer<typeof envSchema>

@@ -228,6 +228,8 @@ Different endpoints have different rate limits:
 - **EXPORT**: 5 requests/minute
 - **ADMIN**: 50 requests/minute
 
+For **Vercel / multiple instances**, which backend applies (Postgres vs in-memory), env flags, and fallback behavior, see **[rate-limiting-serverless.md](./rate-limiting-serverless.md)**.
+
 ### 3. Token Validation
 
 - Tokens are validated on every request

@@ -5,6 +5,8 @@
  */
 
 import { logger } from './logging.server'
+import { isAppUserRole } from './roles'
+import type { AppUserRole } from './roles'
 
 // Category enum values (normalized domain areas)
 const VALID_CATEGORIES = [
@@ -33,18 +35,10 @@ const VALID_DIFFICULTIES = [
   'Expert',
 ] as const
 
-// Role enum values
-const VALID_ROLES = [
-  'Admin',
-  'User',
-  'Manager',
-  'Executive',
-  'Auditor',
-] as const
-
 export type CertificationCategory = (typeof VALID_CATEGORIES)[number]
 export type CertificationDifficulty = (typeof VALID_DIFFICULTIES)[number]
-export type UserRole = (typeof VALID_ROLES)[number]
+/** @deprecated Prefer importing `AppUserRole` from `./roles`. */
+export type UserRole = AppUserRole
 
 /**
  * Maps legacy/non-standard category values to the normalized categories.
@@ -215,8 +209,8 @@ export function validateRole(
 ): UserRole | undefined {
   if (!value) return undefined
   const trimmed = value.trim()
-  if (VALID_ROLES.includes(trimmed as UserRole)) {
-    return trimmed as UserRole
+  if (isAppUserRole(trimmed)) {
+    return trimmed
   }
   logger.warn({ role: value }, `Unknown role "${value}"`)
   return undefined

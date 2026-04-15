@@ -1,7 +1,7 @@
 /**
  * Rate limiter for API endpoints.
- * Uses database-backed storage in production, in-memory in development.
- * Tracks requests per identifier (user ID or IP) within a time window.
+ * Production: Postgres `rate_limit_logs` when NODE_ENV=production and USE_DB_RATE_LIMIT !== 'false' (shared across instances).
+ * Otherwise in-memory; DB errors also fall back to in-memory. See docs/rate-limiting-serverless.md.
  */
 
 import { logger } from './logging.server'
@@ -271,8 +271,8 @@ export const rateLimiter = new RateLimiter()
  * Rate limit guard for use in API handlers.
  *
  * Checks if the request should be allowed based on rate limit configuration.
- * Uses database-backed rate limiting in production (for horizontal scaling),
- * falls back to in-memory rate limiting in development.
+ * Uses Postgres-backed rate limiting in production (shared across serverless instances; see docs/rate-limiting-serverless.md).
+ * Uses in-memory limiting in development, when USE_DB_RATE_LIMIT=false, or when the database path errors.
  *
  * Throws an error if the rate limit is exceeded, which should be caught
  * and converted to a 429 Too Many Requests response.

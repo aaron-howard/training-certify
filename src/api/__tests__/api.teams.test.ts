@@ -46,17 +46,19 @@ vi.mock('../../lib/rateLimit.server', () => ({
     ADMIN: { windowMs: 60000, maxRequests: 50 },
   },
 }))
-vi.mock('../../lib/cache.server', () => ({
-  getOrCompute: vi.fn(
-    (_key: string, _ttl: number, compute: () => Promise<any>) => compute(),
-  ),
-  cache: {
-    invalidate: vi.fn(),
-  },
-  CacheTTL: {
-    MEDIUM: 300000,
-  },
-}))
+vi.mock('../../lib/cache.server', async (importOriginal) => {
+  const actual = await (
+    importOriginal as () => Promise<Record<string, unknown>>
+  )()
+  return {
+    ...actual,
+    getOrCompute: vi.fn(
+      (_key: string, _ttl: number, compute: () => Promise<unknown>) =>
+        compute(),
+    ),
+    invalidateCache: vi.fn(),
+  }
+})
 vi.mock('../../lib/csrf.server', () => ({
   getCSRFTokenFromRequest: vi.fn(() => 'test-token'),
   requireCSRFToken: vi.fn(),

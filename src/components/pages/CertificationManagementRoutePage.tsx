@@ -1,0 +1,201 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useUser } from '@clerk/tanstack-react-start'
+import { CertificationManagement } from '../sections/certification-management/CertificationManagement'
+import { ensureUser } from '../../api/users.server'
+import { fetchWithCsrf } from '../../lib/csrf.client'
+
+type CertificationStatus =
+  | 'active'
+  | 'expiring'
+  | 'expiring-soon'
+  | 'expired'
+  | 'assigned'
+
+type CertificationCreateData = {
+  certificationId: string
+  certificationNumber?: string | null
+  issueDate?: string | null
+  expirationDate?: string | null
+  certificationName?: string
+  vendorName?: string
+  status?: CertificationStatus
+}
+
+type CertificationCreateRequest = CertificationCreateData & {
+  userId: string
+}
+
+type CertificationUpdateData = {
+  status?: CertificationStatus
+  issueDate?: string | null
+  expirationDate?: string | null
+  certificationNumber?: string | null
+}
+
+type CertificationUpdateRequest = {
+  id: string
+  updates: CertificationUpdateData
+}
+
+type CertificationProof = {
+  fileName: string
+  fileUrl?: string
+}
+
+type UploadProofRequest = {
+  id: string
+  proof: CertificationProof
+}
+
+// Use fetch API instead of server imports
+const fetchUserCertifications = async (userId: string) => {
+  const res = await fetch(`/api/certifications?userId=${userId}`)
+  if (!res.ok) return []
+  return res.json()
+}
+
+// Use server function so CSRF is handled by TanStack Start
+const fetchEnsureUser = async (data: {
+  id: string
+  name: string
+  email: string
+  avatarUrl?: string
+}) => ensureUser({ data })
+
+const createCertification = async (data: CertificationCreateRequest) => {
+  const res = await fetchWithCsrf('/api/certifications', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) throw new Error('Failed to create certification')
+  return res.json()
+}
+
+const deleteCertification = async (id: string) => {
+  const res = await fetchWithCsrf(`/api/certifications?id=${id}`, {
+    method: 'DELETE',
+  })
+  if (!res.ok) throw new Error('Failed to delete certification')
+  return res.json()
+}
+
+const uploadProof = async ({ id, proof }: UploadProofRequest) => {
+  const res = await fetchWithCsrf('/api/certifications', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'addProof', id, proof }),
+  })
+  if (!res.ok) throw new Error('Failed to upload proof')
+  return res.json()
+}
+
+const updateCertification = async ({
+  id,
+  updates,
+}: CertificationUpdateRequest) => {
+  const res = await fetchWithCsrf('/api/certifications', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'updateDetails', id, updates }),
+  })
+  if (!res.ok) throw new Error('Failed to update certification')
+  return res.json()
+}
+
+export function CertificationManagementRoutePage() {
+  const queryClient = useQueryClient()
+  const { user } = useUser()
+
+  // Sync user to database first
+  const { data: dbUser } = useQuery({
+    queryKey: ['dbUser', user?.id],
+    queryFn: async () => {
+      if (!user) return null
+      const fallbackEmail =
+        user.emailAddresses[0]?.emailAddress || `${user.id}@example.com`
+      return fetchEnsureUser({
+        id: user.id,
+        name: user.fullName || 'User',
+        email: fallbackEmail,
+        avatarUrl: user.imageUrl,
+      })
+    },
+    enabled: !!user,
+  })
+
+  const { data: certs } = useQuery({
+    queryKey: ['userCertifications', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return []
+      return fetchUserCertifications(user.id)
+    },
+    enabled: !!user?.id && !!dbUser, // Wait for user to be synced
+  })
+
+  const createMutation = useMutation({
+    mutationFn: createCertification,
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ['userCertifications'] }),
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteCertification,
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ['userCertifications'] }),
+  })
+
+  const uploadMutation = useMutation({
+    mutationFn: uploadProof,
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ['userCertifications'] }),
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: updateCertification,
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ['userCertifications'] }),
+  })
+
+  const handleCreate = (data: CertificationCreateData) => {
+    createMutation.mutate({
+      ...data,
+      userId: user?.id || 'unknown',
+    })
+  }
+
+  const handleEdit = (id: string, updates: CertificationUpdateData) => {
+    updateMutation.mutate({ id, updates })
+  }
+
+  const handleDelete = (id: string) => {
+    if (confirm('Are you sure you want to delete this certification?')) {
+      deleteMutation.mutate(id)
+    }
+  }
+
+  const handleUpload = (id: string, file: File) => {
+    // In a real app, you'd upload the file to S3/Blob storage first
+    // Here we'll simulate it by sending the filename
+    uploadMutation.mutate({
+      id,
+      proof: {
+        fileName: file.name,
+        fileUrl: URL.createObjectURL(file), // Mock URL for local preview
+      },
+    })
+  }
+
+  return (
+    <CertificationManagement
+      userCertifications={certs || []}
+      onCreate={handleCreate}
+      onEdit={handleEdit}
+      onDelete={handleDelete}
+      onView={() => {
+        // The component handles opening the modal internally
+      }}
+      onUploadProof={handleUpload}
+    />
+  )
+}

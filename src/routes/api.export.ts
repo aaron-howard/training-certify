@@ -15,6 +15,7 @@ import { AppError } from '../lib/errors'
 import { RateLimitPresets } from '../lib/rateLimit.server'
 import { setupReadHandler, withApiMetrics } from '../lib/api-helpers.server'
 import { logError } from '../lib/logging.server'
+import { API_ROLE_SETS } from '../lib/roles'
 
 export const Route = createFileRoute('/api/export')({
   server: {
@@ -24,7 +25,7 @@ export const Route = createFileRoute('/api/export')({
           try {
             // Apply rate limiting and authentication
             await setupReadHandler(request, {
-              allowedRoles: ['Admin', 'Manager', 'Auditor', 'Executive'],
+              allowedRoles: API_ROLE_SETS.exportReaders,
               rateLimit: RateLimitPresets.EXPORT, // Strict rate limit for exports
             })
 

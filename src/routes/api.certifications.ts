@@ -19,6 +19,7 @@ import {
   setupReadHandler,
   withApiMetrics,
 } from '../lib/api-helpers.server'
+import { API_ROLE_SETS } from '../lib/roles'
 import {
   CertificationPatchSchema,
   CreateUserCertificationSchema,
@@ -260,7 +261,7 @@ export const Route = createFileRoute('/api/certifications')({
         withApiMetrics('POST', '/api/certifications', async () => {
           try {
             const session = await setupMutationHandler(request, {
-              allowedRoles: ['Admin', 'Manager', 'User'],
+              allowedRoles: API_ROLE_SETS.certificationWrite,
             })
 
             const rawData = await request.json()
@@ -336,8 +337,9 @@ export const Route = createFileRoute('/api/certifications')({
                   : `Added ${certificationName}`,
             })
 
-            // Invalidate dashboard cache for affected user and executive view
+            // Invalidate dashboard / compliance list caches
             invalidateCache('dashboard:')
+            invalidateCache('compliance:')
 
             const response = {
               ...result,
@@ -356,7 +358,7 @@ export const Route = createFileRoute('/api/certifications')({
         withApiMetrics('PATCH', '/api/certifications', async () => {
           try {
             const session = await setupMutationHandler(request, {
-              allowedRoles: ['Admin', 'Manager', 'User'],
+              allowedRoles: API_ROLE_SETS.certificationWrite,
             })
 
             const rawData = await request.json()
@@ -414,8 +416,9 @@ export const Route = createFileRoute('/api/certifications')({
                 .set(updates)
                 .where(eq(userCertifications.id, data.id))
 
-              // Invalidate dashboard cache for affected user and executive view
+              // Invalidate dashboard / compliance list caches
               invalidateCache('dashboard:')
+              invalidateCache('compliance:')
 
               return json({ success: true, proof: newProof[0] })
             }
@@ -446,8 +449,9 @@ export const Route = createFileRoute('/api/certifications')({
               .where(eq(userCertifications.id, data.id))
               .returning()
 
-            // Invalidate dashboard cache for affected user and executive view
+            // Invalidate dashboard / compliance list caches
             invalidateCache('dashboard:')
+            invalidateCache('compliance:')
 
             return json({ success: true, certification: result[0] })
           } catch (error) {
@@ -458,7 +462,7 @@ export const Route = createFileRoute('/api/certifications')({
         withApiMetrics('DELETE', '/api/certifications', async () => {
           try {
             const session = await setupMutationHandler(request, {
-              allowedRoles: ['Admin', 'Manager', 'User'],
+              allowedRoles: API_ROLE_SETS.certificationWrite,
             })
 
             const url = new URL(request.url)
@@ -488,8 +492,9 @@ export const Route = createFileRoute('/api/certifications')({
               .delete(userCertifications)
               .where(eq(userCertifications.id, id))
 
-            // Invalidate dashboard cache for affected user and executive view
+            // Invalidate dashboard / compliance list caches
             invalidateCache('dashboard:')
+            invalidateCache('compliance:')
 
             return json({ success: true })
           } catch (error) {

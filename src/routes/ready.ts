@@ -6,6 +6,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { getDb } from '../db/db.server'
+import { applySecurityHeaders } from '../lib/securityHeaders.server'
 
 interface ReadinessCheck {
   ready: boolean
@@ -49,17 +50,21 @@ export const Route = createFileRoute('/ready')({
 
           const statusCode = readinessCheck.ready ? 200 : 503
 
-          return json(readinessCheck, { status: statusCode })
+          return applySecurityHeaders(
+            json(readinessCheck, { status: statusCode }),
+          )
         } catch (error: unknown) {
           const message =
             error instanceof Error ? error.message : 'Unknown error'
-          return json(
-            {
-              ready: false,
-              timestamp: new Date().toISOString(),
-              error: message,
-            },
-            { status: 503 },
+          return applySecurityHeaders(
+            json(
+              {
+                ready: false,
+                timestamp: new Date().toISOString(),
+                error: message,
+              },
+              { status: 503 },
+            ),
           )
         }
       },

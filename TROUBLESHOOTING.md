@@ -36,7 +36,7 @@
 
 ## Rate limiting / CSRF
 
-- **429:** Ease limits in `src/lib/rateLimit.server.ts` if needed; check DB if using DB-backed storage.
+- **429:** Ease limits in `src/lib/rateLimit.server.ts` if needed. In production, limits are normally **Postgres-backed** (shared across instances); see [docs/rate-limiting-serverless.md](./docs/rate-limiting-serverless.md). If the database errors, the app **falls back to in-memory** limits per instance — check logs for `falling back to in-memory`.
 - **CSRF errors:** Set `CSRF_SECRET` (min 32 chars); ensure token is sent (e.g. X-CSRF-Token header). Generate with `openssl rand -hex 32`.
 
 ## Migrations

@@ -45,6 +45,8 @@ Different endpoints have different rate limits:
 - **EXPORT**: 5 requests/minute
 - **ADMIN**: 50 requests/minute
 
+Production / serverless behavior (shared Postgres vs in-memory): [rate-limiting-serverless.md](../rate-limiting-serverless.md).
+
 ## CSRF Protection
 
 All mutation endpoints (POST, PATCH, DELETE) require a CSRF token in the `X-CSRF-Token` header.

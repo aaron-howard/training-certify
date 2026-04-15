@@ -35,6 +35,22 @@ Dependabot is configured via `.github/dependabot.yml` to automatically:
 - **Major version updates** (not auto-updated)
 - **Breaking changes** (manual review required)
 
+### pnpm overrides (`package.json`)
+
+Transitive dependency versions are sometimes pinned with pnpm **`overrides`**. Each entry is documented (reason, advisories, removal checklist) in **[dependency-overrides.md](./dependency-overrides.md)**. Update that file whenever you add, bump, or remove an override.
+
+### Dependabot major versions
+
+**[dependabot-majors.md](./dependabot-majors.md)** describes which packages get **automatic major** PRs vs **ignored majors** (manual upgrade path), and the **quarterly review** checklist. The scheduled reminder workflow is `.github/workflows/dependency-major-review-reminder.yml`.
+
+### Nitro + TanStack Start
+
+Toolchain bumps (Nitro prereleases, TanStack Start/Router lockstep upgrades) are documented in **[nitro-tanstack-upgrade-path.md](./nitro-tanstack-upgrade-path.md)**.
+
+### Routine minor / patch workflow
+
+**[dependency-minor-patch-workflow.md](./dependency-minor-patch-workflow.md)** describes the **weekly** triage habit for Dependabot’s grouped production and dev **minor/patch** PRs, SLAs, and local verification commands. The scheduled nudge is **`.github/workflows/dependency-weekly-triage-reminder.yml`** (Mondays 10:30 UTC).
+
 ---
 
 ## Dependency Update Process
@@ -52,10 +68,10 @@ When Dependabot finds updates:
 
 The CI pipeline automatically:
 
-- ✅ Runs tests (`npm test`)
-- ✅ Runs linting (`npm run lint`)
-- ✅ Runs type checking (`npm run type-check`)
-- ✅ Builds the project (`npm run build`)
+- ✅ Runs tests (`pnpm test`)
+- ✅ Runs linting (`pnpm run lint`)
+- ✅ Runs type checking (`pnpm run type-check`)
+- ✅ Builds the project (`pnpm run build`)
 
 ### 3. Review Process
 

@@ -131,6 +131,16 @@ export const CacheTTL = {
 }
 
 /**
+ * Common **server-side** cache key prefixes (invalidate with `invalidateCache(prefix)` — substring match):
+ * - `teams:` — GET /api/teams aggregated list + metrics
+ * - `dashboard:` — GET /api/dashboard (executive + per-user stats)
+ * - `compliance:` — GET /api/compliance audit list
+ * - `team-requirements:` — GET /api/team-requirements per `teamId`
+ * - `users:list:` — GET /api/users paginated rows
+ * - `notifications:` — GET /api/notifications per user
+ */
+
+/**
  * Get a value from cache or compute it if not found.
  *
  * This function implements a cache-aside pattern. It first checks the cache

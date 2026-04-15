@@ -20,9 +20,10 @@ How to run and extend tests.
 
 ## E2E (Playwright)
 
-- **Location:** `e2e/` (or project’s Playwright config).
+- **Location:** `e2e/` — `playwright.config.ts` loads `.env` / `.env.local` and runs `e2e/playwright-global-setup.ts` for Clerk testing tokens when keys are present.
 - **Usage:** `pnpm run test:e2e`; use `pnpm run test:e2e -- --update-snapshots` to refresh visual baselines.
 - **Debug:** `pnpm run test:e2e:ui`.
+- **Signed-in flows (Clerk):** `e2e/signed-in-clerk.spec.ts` — requires test user env vars; see **[docs/e2e-clerk.md](./docs/e2e-clerk.md)** for CI secrets and Clerk dashboard setup.
 
 ## Before CI / PR
 

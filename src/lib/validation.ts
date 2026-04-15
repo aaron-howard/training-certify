@@ -1,24 +1,18 @@
 import { z } from 'zod'
+import { USER_ROLES } from './roles'
+
+const USER_ROLE_ZOD_VALUES = [
+  USER_ROLES[0],
+  USER_ROLES[1],
+  USER_ROLES[2],
+  USER_ROLES[3],
+  USER_ROLES[4],
+] as const
 
 /**
- * Roles enum schema (must be kept in sync with schema.ts roleEnum).
- *
- * Validates that a role is one of the allowed values: Admin, Manager, Executive, Auditor, or User.
- * Used for user role validation in API endpoints and database operations.
- *
- * @example
- * ```typescript
- * const result = RoleSchema.parse('Admin') // Returns 'Admin'
- * const invalid = RoleSchema.parse('SuperAdmin') // Throws ZodError
- * ```
+ * Roles enum schema — values match `USER_ROLES` / Postgres `role` enum.
  */
-export const RoleSchema = z.enum([
-  'Admin',
-  'Manager',
-  'Executive',
-  'Auditor',
-  'User',
-])
+export const RoleSchema = z.enum(USER_ROLE_ZOD_VALUES)
 
 /**
  * Schema for updating user information.
