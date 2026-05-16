@@ -28,7 +28,7 @@
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
-    "@clerk/tanstack-react-start": "^0.27.12",
+    "@clerk/tanstack-react-start": "^0.29.11",
     "@sentry/tanstackstart-react": "^10.32.1",
     "@tailwindcss/vite": "^4.0.6",
     "@tanstack/react-devtools": "0.7.0",
@@ -40,7 +40,7 @@
     "@tanstack/router-plugin": "^1.158.4",
     "@vercel/analytics": "2.0.1",
     "date-fns": "^4.1.0",
-    "drizzle-orm": "^0.45.1",
+    "drizzle-orm": "^0.45.2",
     "lucide-react": "^0.561.0",
     "nitro": "3.0.260311-beta",
     "pg": "^8.16.3",
@@ -78,15 +78,21 @@
     "typedoc": "^0.28.17",
     "typescript": "^5.7.2",
     "vercel": "^50.12.2",
-    "vite": "^7.1.7",
+    "vite": "^7.3.2",
     "vitest": "^3.0.5",
     "web-vitals": "^5.1.0"
   },
-  "overrides": {
-    "tar": "^7.5.8",
-    "seroval": "^1.4.1",
-    "undici": "^6.23.0",
-    "path-to-regexp": "^6.3.0",
-    "esbuild": "^0.25.0"
+  "pnpm": {
+    "overrides": {
+      "tar": "^7.5.8",
+      "seroval": "^1.4.1",
+      "undici": "^6.23.0",
+      "path-to-regexp": "^6.3.0",
+      "esbuild": "^0.25.0",
+      "minimatch": "^10.2.3",
+      "picomatch": "^4.0.4",
+      "rollup": "^4.59.0",
+      "flatted": "^3.4.1"
+    }
   }
 }
