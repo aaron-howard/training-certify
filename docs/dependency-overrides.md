@@ -1,6 +1,6 @@
 # `package.json` overrides (pnpm)
 
-pnpm [`overrides`](https://pnpm.io/package_json#pnpmoverrides) live under **`pnpm.overrides`** in `package.json` (not npm’s top-level `overrides` field). They force specific versions of **transitive** dependencies. JSON does not allow comments in `package.json`, so each entry is documented here: **why it exists**, **what to verify before removing it**, and **authoritative advisories** where applicable.
+pnpm [`overrides`](https://pnpm.io/package_json#pnpmoverrides) live under **`pnpm.overrides`** in `package.json` (not npm’s top-level `overrides` field). They force specific versions of **transitive** dependencies. JSON does not allow comments in `package.json`, so this file keeps a complete summary table for all active overrides, plus detailed rationale/removal guidance for high-risk or long-lived entries.
 
 **Review cadence:** When upgrading Vite, TanStack Start, Nitro, or `vercel`, re-run the checks below and try deleting overrides one at a time.
 
