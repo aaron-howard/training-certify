@@ -104,11 +104,30 @@ jobs:
       - name: Run TypeScript type check
         run: pnpm run type-check
 
+  e2e-gate:
+    name: E2E gate
+    runs-on: ubuntu-latest
+    outputs:
+      enabled: ${{ steps.check.outputs.enabled }}
+    steps:
+      - name: Check Clerk secrets for Playwright
+        id: check
+        env:
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
+        run: |
+          if [ -n "$CLERK_SECRET_KEY" ] && [ -n "$VITE_CLERK_PUBLISHABLE_KEY" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::E2E skipped — add CLERK_SECRET_KEY and VITE_CLERK_PUBLISHABLE_KEY secrets (see docs/e2e-clerk.md)"
+          fi
+
   e2e:
     name: E2E (Playwright)
+    needs: e2e-gate
+    if: needs.e2e-gate.outputs.enabled == 'true'
     runs-on: ubuntu-latest
-    # Clerk validates publishable keys; smoke E2E needs real development keys (see docs/e2e-clerk.md).
-    if: ${{ secrets.CLERK_SECRET_KEY != '' && secrets.VITE_CLERK_PUBLISHABLE_KEY != '' }}
 
     steps:
       - name: Checkout code
@@ -204,7 +223,7 @@ jobs:
   all-checks:
     name: All Checks Passed
     runs-on: ubuntu-latest
-    needs: [test, lint, type-check, build, security-scan, e2e]
+    needs: [test, lint, type-check, build, security-scan, e2e-gate, e2e]
     if: always()
 
     steps:
@@ -214,7 +233,8 @@ jobs:
              [ "${{ needs.lint.result }}" != "success" ] || \
              [ "${{ needs.type-check.result }}" != "success" ] || \
              [ "${{ needs.build.result }}" != "success" ] || \
-             [ "${{ needs.security-scan.result }}" != "success" ]; then
+             [ "${{ needs.security-scan.result }}" != "success" ] || \
+             [ "${{ needs.e2e-gate.result }}" != "success" ]; then
             echo "One or more required checks failed"
             exit 1
           fi
@@ -222,8 +242,5 @@ jobs:
              [ "${{ needs.e2e.result }}" != "skipped" ]; then
             echo "E2E job failed"
             exit 1
-          fi
-          if [ "${{ needs.e2e.result }}" == "skipped" ]; then
-            echo "E2E skipped (set CLERK_SECRET_KEY and VITE_CLERK_PUBLISHABLE_KEY secrets to enable)"
           fi
           echo "All required checks passed"
