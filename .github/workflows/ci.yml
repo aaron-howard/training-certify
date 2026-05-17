@@ -11,13 +11,10 @@ permissions:
   pull-requests: write
 
 jobs:
+  # Job display names must match ruleset required checks: lint, test
   test:
-    name: Test
+    name: test
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20.x]
 
     steps:
       - name: Checkout code
@@ -28,10 +25,10 @@ jobs:
         with:
           version: 9
 
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '20.x'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -55,7 +52,7 @@ jobs:
           # Note: Coverage upload is optional - fails gracefully if CODECOV_TOKEN is not set
 
   lint:
-    name: Lint
+    name: lint
     runs-on: ubuntu-latest
 
     steps:
