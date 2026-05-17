@@ -43,6 +43,7 @@ function ApiDocs() {
         <div id="swagger-ui"></div>
         <script src="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui-bundle.js"></script>
         <script src="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui-standalone-preset.js"></script>
+        {/* Static Swagger UI bootstrap only — not user-controlled HTML */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
