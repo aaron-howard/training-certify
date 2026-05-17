@@ -6,7 +6,7 @@ import { createFileRoute } from '@tanstack/react-router'
  * Serves the Swagger UI for interactive API documentation.
  * The OpenAPI spec is loaded from /docs/api/openapi.yaml
  */
-export const Route = createFileRoute('/api-docs' as any)({
+export const Route = createFileRoute('/api-docs')({
   component: ApiDocs,
 })
 

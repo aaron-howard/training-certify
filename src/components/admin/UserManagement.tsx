@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Check, Edit2, Search, Trash2, X } from 'lucide-react'
-import { fetchWithCsrf } from '../../lib/csrf.client'
+import { fetchWithCsrf } from '../../lib/csrf'
 
 export function UserManagement() {
   const queryClient = useQueryClient()

@@ -6,7 +6,7 @@ import { handleApiError, withApiMetrics } from '../lib/api-helpers.server'
 import { logError } from '../lib/logging.server'
 import { metrics } from '../lib/monitoring.server'
 
-export const Route = createFileRoute('/api/health' as any)({
+export const Route = createFileRoute('/api/health')({
   ssr: true,
   server: {
     handlers: {

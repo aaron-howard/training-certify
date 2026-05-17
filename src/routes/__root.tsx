@@ -18,7 +18,7 @@ import { useEffect } from 'react'
 import { AppShell } from '../components/shell/AppShell'
 import { ENV } from '../lib/env'
 import { logger } from '../lib/logging.client-stub'
-import { initSentry } from '../lib/sentry.server'
+import { initSentry } from '../lib/sentry'
 import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'

@@ -13,7 +13,7 @@ function DbHealthPage() {
   } = useQuery({
     queryKey: ['dbHealth'],
     queryFn: async () => {
-      const { testDbConnection } = await import('../api/db-test.server')
+      const { testDbConnection } = await import('../api/db-test')
       return testDbConnection()
     },
   })
