@@ -5,7 +5,7 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { factories } from '../../test/factories'
-import { mockAuthForRole, setupTestMocks } from './helpers'
+import { REJECT, mockAuthForRole, setupTestMocks } from './helpers'
 
 // Mock dependencies
 vi.mock('@clerk/tanstack-react-start/server', () => ({
@@ -208,6 +208,37 @@ describe('/api/catalog Integration Tests', () => {
       expect(data).toHaveProperty('vendorId')
     })
 
+    it('should return 400 when certification id already exists', async () => {
+      const { auth } = await import('@clerk/tanstack-react-start/server')
+      const admin = await mockAuthForRole('Admin', auth)
+
+      await setupTestMocks(admin, [], {
+        dbSequence: [{}, REJECT({ code: '23505' })],
+      })
+
+      const { Route } = await import('../../routes/api.catalog')
+      const handler = (Route.options.server?.handlers as any)?.POST
+
+      if (!handler) throw new Error('POST handler not found')
+
+      const request = new Request('http://localhost/api/catalog', {
+        method: 'POST',
+        body: JSON.stringify({
+          id: 'cert-dup',
+          name: 'Duplicate',
+          vendorId: 'microsoft',
+          vendorName: 'Microsoft',
+          category: 'Cloud',
+          difficulty: 'Intermediate',
+        }),
+      })
+
+      const response = await handler({ request } as any)
+      expect(response.status).toBe(400)
+      const data = await response.json()
+      expect(data.error).toContain('already exists')
+    })
+
     it('should return 403 for non-Admin', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
       const user = await mockAuthForRole('User', auth)
@@ -358,6 +389,143 @@ Cert A,Vendor A`
       expect(response.status).toBe(400)
       const data = await response.json()
       expect(data.error).toContain('id')
+    })
+
+    it('POST ?action=import records not-found rows as skipped', async () => {
+      const { auth } = await import('@clerk/tanstack-react-start/server')
+      const admin = await mockAuthForRole('Admin', auth)
+
+      await setupTestMocks(admin, [])
+
+      const csv = `id,name,vendor
+missing-id,Missing Cert,Microsoft`
+
+      const request = new Request(
+        'http://localhost/api/catalog?action=import',
+        {
+          method: 'POST',
+          body: csv,
+          headers: { 'Content-Type': 'text/csv; charset=utf-8' },
+        },
+      )
+
+      const { Route } = await import('../../routes/api.catalog')
+      const handler = (Route.options.server?.handlers as any)?.POST
+      if (!handler) throw new Error('POST handler not found')
+
+      const response = await handler({ request } as any)
+      expect(response.status).toBe(200)
+      const data = await response.json()
+      expect(data.updated).toBe(0)
+      expect(data.skipped).toBe(1)
+      expect(data.errors?.[0]?.message).toContain('not found')
+    })
+  })
+
+  describe('PATCH /api/catalog', () => {
+    it('should update certification fields for Admin', async () => {
+      const { auth } = await import('@clerk/tanstack-react-start/server')
+      const admin = await mockAuthForRole('Admin', auth)
+
+      const updated = {
+        id: 'cert123',
+        name: 'Updated Name',
+        vendorId: 'microsoft',
+        category: 'Cloud',
+        difficulty: 'Intermediate',
+      }
+
+      await setupTestMocks(admin, [updated])
+
+      const { Route } = await import('../../routes/api.catalog')
+      const handler = (Route.options.server?.handlers as any)?.PATCH
+
+      if (!handler) throw new Error('PATCH handler not found')
+
+      const request = new Request('http://localhost/api/catalog', {
+        method: 'PATCH',
+        body: JSON.stringify({
+          id: 'cert123',
+          name: 'Updated Name',
+        }),
+      })
+
+      const response = await handler({ request } as any)
+      expect(response.status).toBe(200)
+      const data = await response.json()
+      expect(data.name).toBe('Updated Name')
+    })
+
+    it('should upsert vendor when vendorId is provided', async () => {
+      const { auth } = await import('@clerk/tanstack-react-start/server')
+      const admin = await mockAuthForRole('Admin', auth)
+
+      const updated = {
+        id: 'cert123',
+        name: 'Cert',
+        vendorId: 'amazon-web-services',
+        category: 'Cloud',
+        difficulty: 'Associate',
+      }
+
+      await setupTestMocks(admin, [{}, updated])
+
+      const { Route } = await import('../../routes/api.catalog')
+      const handler = (Route.options.server?.handlers as any)?.PATCH
+
+      if (!handler) throw new Error('PATCH handler not found')
+
+      const request = new Request('http://localhost/api/catalog', {
+        method: 'PATCH',
+        body: JSON.stringify({
+          id: 'cert123',
+          vendorId: 'amazon-web-services',
+          vendorName: 'Amazon Web Services',
+        }),
+      })
+
+      const response = await handler({ request } as any)
+      expect(response.status).toBe(200)
+    })
+
+    it('should return 400 when no fields to update', async () => {
+      const { auth } = await import('@clerk/tanstack-react-start/server')
+      const admin = await mockAuthForRole('Admin', auth)
+
+      await setupTestMocks(admin, [])
+
+      const { Route } = await import('../../routes/api.catalog')
+      const handler = (Route.options.server?.handlers as any)?.PATCH
+
+      if (!handler) throw new Error('PATCH handler not found')
+
+      const request = new Request('http://localhost/api/catalog', {
+        method: 'PATCH',
+        body: JSON.stringify({ id: 'cert123' }),
+      })
+
+      const response = await handler({ request } as any)
+      expect(response.status).toBe(400)
+    })
+
+    it('should return 400 when certification not found', async () => {
+      const { auth } = await import('@clerk/tanstack-react-start/server')
+      const admin = await mockAuthForRole('Admin', auth)
+
+      await setupTestMocks(admin, [])
+
+      const { Route } = await import('../../routes/api.catalog')
+      const handler = (Route.options.server?.handlers as any)?.PATCH
+
+      if (!handler) throw new Error('PATCH handler not found')
+
+      const request = new Request('http://localhost/api/catalog', {
+        method: 'PATCH',
+        body: JSON.stringify({ id: 'missing', name: 'Nope' }),
+      })
+
+      const response = await handler({ request } as any)
+      expect(response.status).toBe(400)
     })
   })
 

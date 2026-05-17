@@ -8,7 +8,7 @@ import { createFileRoute } from '@tanstack/react-router'
  * This route serves the OpenAPI YAML file for Swagger UI and API documentation tools.
  * Accessible at /docs/api/openapi.yaml
  */
-export const Route = createFileRoute('/docs/api/openapi.yaml' as any)({
+export const Route = createFileRoute('/docs/api/openapi')({
   server: {
     handlers: {
       GET: () => {

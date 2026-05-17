@@ -15,8 +15,8 @@ import {
 import { usePermissions } from '../../hooks/usePermissions'
 import { UserManagement } from '../admin/UserManagement'
 import { TeamRequirementsModal } from '../admin/TeamRequirementsModal'
-import { ensureUser } from '../../api/users.server'
-import { fetchWithCsrf } from '../../lib/csrf.client'
+import { ensureUser } from '../../api/users'
+import { fetchWithCsrf } from '../../lib/csrf'
 
 interface TeamMetric {
   label: string

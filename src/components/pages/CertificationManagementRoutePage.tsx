@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useUser } from '@clerk/tanstack-react-start'
 import { CertificationManagement } from '../sections/certification-management/CertificationManagement'
-import { ensureUser } from '../../api/users.server'
-import { fetchWithCsrf } from '../../lib/csrf.client'
+import { ensureUser } from '../../api/users'
+import { fetchWithCsrf } from '../../lib/csrf'
 
 type CertificationStatus =
   | 'active'

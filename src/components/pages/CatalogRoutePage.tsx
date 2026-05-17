@@ -13,8 +13,8 @@ import { useUser } from '@clerk/tanstack-react-start'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { CertificationAssignmentModal } from '../catalog/CertificationAssignmentModal'
-import { ensureUser } from '../../api/users.server'
-import { fetchWithCsrf } from '../../lib/csrf.client'
+import { ensureUser } from '../../api/users'
+import { fetchWithCsrf } from '../../lib/csrf'
 
 interface CatalogCertification {
   id: string
