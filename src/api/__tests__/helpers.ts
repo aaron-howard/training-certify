@@ -3,15 +3,16 @@
  * Provides utilities for mocking auth, database, and making test requests
  */
 
+import { auth } from '@clerk/tanstack-react-start/server'
 import { expect, vi } from 'vitest'
 import { factories } from '../../test/factories'
 
 /**
  * Mock Clerk auth for a specific user and role
  */
-export async function mockAuthForRole(
+export function mockAuthForRole(
   role: string,
-  authMock?: any,
+  authMock: typeof auth = auth,
   userId?: string,
 ) {
   const factory = (factories as any)[role.toLowerCase()]
@@ -19,15 +20,7 @@ export async function mockAuthForRole(
     ? factory(userId ? { id: userId } : {})
     : factories.user(userId ? { role, id: userId } : { role })
 
-  if (authMock) {
-    vi.mocked(authMock).mockResolvedValue({ userId: user.id } as any)
-  } else {
-    // Fallback to internal import
-    const { auth } = await import('@clerk/tanstack-react-start/server')
-    if (vi.isMockFunction(auth)) {
-      vi.mocked(auth).mockResolvedValue({ userId: user.id } as any)
-    }
-  }
+  vi.mocked(authMock).mockResolvedValue({ userId: user.id } as any)
 
   return user
 }

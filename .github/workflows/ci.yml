@@ -11,13 +11,10 @@ permissions:
   pull-requests: write
 
 jobs:
+  # Job display names must match ruleset required checks: lint, test
   test:
-    name: Test
+    name: test
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20.x]
 
     steps:
       - name: Checkout code
@@ -28,10 +25,10 @@ jobs:
         with:
           version: 9
 
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '20.x'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -55,7 +52,7 @@ jobs:
           # Note: Coverage upload is optional - fails gracefully if CODECOV_TOKEN is not set
 
   lint:
-    name: Lint
+    name: lint
     runs-on: ubuntu-latest
 
     steps:
@@ -104,8 +101,29 @@ jobs:
       - name: Run TypeScript type check
         run: pnpm run type-check
 
+  e2e-gate:
+    name: E2E gate
+    runs-on: ubuntu-latest
+    outputs:
+      enabled: ${{ steps.check.outputs.enabled }}
+    steps:
+      - name: Check Clerk secrets for Playwright
+        id: check
+        env:
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
+        run: |
+          if [ -n "$CLERK_SECRET_KEY" ] && [ -n "$VITE_CLERK_PUBLISHABLE_KEY" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::E2E skipped — add CLERK_SECRET_KEY and VITE_CLERK_PUBLISHABLE_KEY secrets (see docs/e2e-clerk.md)"
+          fi
+
   e2e:
     name: E2E (Playwright)
+    needs: e2e-gate
+    if: needs.e2e-gate.outputs.enabled == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -133,9 +151,11 @@ jobs:
         run: pnpm run test:e2e
         env:
           CI: true
-          # Optional signed-in E2E (see docs/e2e-clerk.md): set repo/org secrets and pass them here, e.g.
-          # DATABASE_URL, CLERK_SECRET_KEY, VITE_CLERK_PUBLISHABLE_KEY, E2E_CLERK_USER_USERNAME, E2E_CLERK_USER_PASSWORD
-          # Avoid ${{ secrets.X }} for required app env unless the secret exists — empty values can fail validateEnv.
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
+          E2E_CLERK_USER_USERNAME: ${{ secrets.E2E_CLERK_USER_USERNAME }}
+          E2E_CLERK_USER_PASSWORD: ${{ secrets.E2E_CLERK_USER_PASSWORD }}
 
   build:
     name: Build
@@ -200,7 +220,7 @@ jobs:
   all-checks:
     name: All Checks Passed
     runs-on: ubuntu-latest
-    needs: [test, lint, type-check, build, security-scan, e2e]
+    needs: [test, lint, type-check, build, security-scan, e2e-gate, e2e]
     if: always()
 
     steps:
@@ -211,8 +231,13 @@ jobs:
              [ "${{ needs.type-check.result }}" != "success" ] || \
              [ "${{ needs.build.result }}" != "success" ] || \
              [ "${{ needs.security-scan.result }}" != "success" ] || \
-             [ "${{ needs.e2e.result }}" != "success" ]; then
+             [ "${{ needs.e2e-gate.result }}" != "success" ]; then
             echo "One or more required checks failed"
+            exit 1
+          fi
+          if [ "${{ needs.e2e.result }}" != "success" ] && \
+             [ "${{ needs.e2e.result }}" != "skipped" ]; then
+            echo "E2E job failed"
             exit 1
           fi
           echo "All required checks passed"

@@ -21,8 +21,11 @@ vi.mock('@clerk/tanstack-react-start/server', () => ({
 beforeAll(() => {
   process.env.NODE_ENV = 'test'
   process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test'
-  process.env.CLERK_SECRET_KEY = 'test_secret_key'
-  process.env.VITE_CLERK_PUBLISHABLE_KEY = 'test_publishable_key'
+  process.env.CLERK_SECRET_KEY =
+    process.env.CLERK_SECRET_KEY ?? 'sk_test_00000000000000000000000000000000'
+  process.env.VITE_CLERK_PUBLISHABLE_KEY =
+    process.env.VITE_CLERK_PUBLISHABLE_KEY ??
+    'pk_test_00000000000000000000000000000000'
 })
 
 afterEach(() => {
