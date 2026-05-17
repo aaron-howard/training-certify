@@ -1,8 +1,7 @@
 import {
   SignInButton,
-  SignedIn,
-  SignedOut,
   UserButton,
+  useAuth,
   useUser,
 } from '@clerk/tanstack-react-start'
 import { Bell } from 'lucide-react'
@@ -10,6 +9,7 @@ import { Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 
 export function UserMenu() {
+  const { isSignedIn } = useAuth()
   const { user } = useUser()
 
   const { data: unreadNotifications = [] } = useQuery({
@@ -18,26 +18,24 @@ export function UserMenu() {
       const res = await fetch('/api/notifications')
       if (!res.ok) return []
       const data = await res.json()
-      return data.filter((n: any) => !n.read)
+      return data.filter((n: { read: boolean }) => !n.read)
     },
     enabled: !!user?.id,
-    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchInterval: 30000,
   })
 
   const hasUnread = unreadNotifications.length > 0
 
   return (
     <div className="flex items-center gap-2">
-      <SignedOut>
+      {!isSignedIn ? (
         <SignInButton mode="modal">
           <button className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
             Sign In
           </button>
         </SignInButton>
-      </SignedOut>
-      <SignedIn>
+      ) : (
         <div className="flex items-center gap-4">
-          {/* Only keep one icon for notifications since it was specifically mentioned */}
           <Link
             to="/notifications"
             className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors relative"
@@ -60,13 +58,12 @@ export function UserMenu() {
               </div>
             </div>
             <UserButton
-              afterSignOutUrl="/"
               userProfileMode="navigation"
               userProfileUrl="/user-profile"
             />
           </div>
         </div>
-      </SignedIn>
+      )}
     </div>
   )
 }

@@ -106,29 +106,29 @@ The CI pipeline automatically:
 
 ```bash
 # Check outdated packages
-npm outdated
+pnpm outdated
 
 # Check for security vulnerabilities
-npm audit
+pnpm audit
 
 # Fix automatically fixable issues
-npm audit fix
+pnpm audit --fix
 
 # Review detailed vulnerability report
-npm audit --json
+pnpm audit --json
 ```
 
 ### Updating Dependencies
 
 ```bash
 # Update a specific package
-npm install package-name@latest
+pnpm add package-name@latest
 
 # Update all packages (use with caution)
-npm update
+pnpm update
 
-# Update package-lock.json
-npm install
+# Update lockfile after manifest changes
+pnpm install
 ```
 
 ### Testing Updates
@@ -142,13 +142,13 @@ npm install
 2. **Update dependencies:**
 
    ```bash
-   npm install package-name@version
+   pnpm add package-name@version
    ```
 
 3. **Run tests:**
 
    ```bash
-   npm test
+   pnpm test
    npm run lint
    npm run type-check
    npm run build
@@ -156,7 +156,7 @@ npm install
 
 4. **Commit and push:**
    ```bash
-   git add package.json package-lock.json
+   git add package.json pnpm-lock.yaml
    git commit -m "chore: update package-name to version"
    git push
    ```
@@ -203,16 +203,18 @@ npm install
 
 ## Dependency Overrides
 
-Some dependencies require version overrides (in `package.json`):
+Some dependencies require version overrides (in `package.json` under `pnpm.overrides`):
 
 ```json
 {
-  "overrides": {
-    "tar": "^7.5.4",
-    "seroval": "^1.4.1",
-    "undici": "^6.23.0",
-    "path-to-regexp": "^6.3.0",
-    "esbuild": "^0.25.0"
+  "pnpm": {
+    "overrides": {
+      "tar": "^7.5.8",
+      "seroval": "^1.4.1",
+      "undici": "^6.23.0",
+      "path-to-regexp": "^6.3.0",
+      "esbuild": "^0.25.0"
+    }
   }
 }
 ```
@@ -229,7 +231,7 @@ Some dependencies require version overrides (in `package.json`):
 - Test updates before merging
 - Keep security updates prioritized
 - Review changelogs for breaking changes
-- Use `npm audit` before production deployments
+- Use `pnpm audit` before production deployments
 
 ### ❌ Don't
 
@@ -249,7 +251,7 @@ Some dependencies require version overrides (in `package.json`):
 - **Security Alerts:** ✅ Enabled
 - **Automated PRs:** ✅ Configured
 - **CI Integration:** ✅ Automatic
-- **npm audit:** ✅ 0 vulnerabilities (as of February 6, 2026)
+- **pnpm audit:** ✅ 0 vulnerabilities (as of May 17, 2026)
 
 ### Regular Tasks
 
@@ -262,7 +264,7 @@ Some dependencies require version overrides (in `package.json`):
 **Monthly:**
 
 - Review major version updates
-- Audit dependency tree (`npm ls`)
+- Audit dependency tree (`pnpm ls`)
 - Review and update overrides if needed
 
 **Quarterly:**
@@ -277,10 +279,10 @@ Some dependencies require version overrides (in `package.json`):
 
 ### Commands
 
-- `npm audit` - Check for vulnerabilities
-- `npm audit fix` - Auto-fix vulnerabilities
-- `npm outdated` - List outdated packages
-- `npm ls` - Show dependency tree
+- `pnpm audit` - Check for vulnerabilities
+- `pnpm audit --fix` - Auto-fix vulnerabilities
+- `pnpm outdated` - List outdated packages
+- `pnpm ls` - Show dependency tree
 
 ### Resources
 
@@ -316,4 +318,4 @@ If a critical vulnerability is discovered:
 
 ---
 
-**Last Updated:** February 6, 2026
+**Last Updated:** May 17, 2026
