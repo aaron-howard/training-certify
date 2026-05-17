@@ -37,6 +37,11 @@ export default defineConfig({
         url: 'http://localhost:3000',
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,
+        // Requires real Clerk development keys in .env / .env.local (see docs/e2e-clerk.md).
+        env: {
+          ...process.env,
+          NODE_ENV: 'development',
+        },
       },
   expect: {
     toHaveScreenshot: { maxDiffPixelRatio: 0.02 },
