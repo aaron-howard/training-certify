@@ -28,7 +28,7 @@
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
-    "@clerk/tanstack-react-start": "^0.27.12",
+    "@clerk/tanstack-react-start": "^0.29.11",
     "@sentry/tanstackstart-react": "^10.32.1",
     "@tailwindcss/vite": "^4.0.6",
     "@tanstack/react-devtools": "0.7.0",
@@ -54,7 +54,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@clerk/testing": "^2.0.14",
+    "@clerk/testing": "^2.0.29",
     "@playwright/test": "^1.58.2",
     "@tanstack/devtools-vite": "^0.3.11",
     "@tanstack/eslint-config": "^0.3.0",
@@ -87,6 +87,8 @@
     "seroval": "^1.4.1",
     "undici": "^6.23.0",
     "path-to-regexp": "^6.3.0",
-    "esbuild": "^0.25.0"
+    "esbuild": "^0.25.0",
+    "@clerk/shared@3": "3.47.4",
+    "@clerk/shared@4": "4.8.1"
   }
 }

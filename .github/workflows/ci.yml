@@ -133,9 +133,13 @@ jobs:
         run: pnpm run test:e2e
         env:
           CI: true
-          # Optional signed-in E2E (see docs/e2e-clerk.md): set repo/org secrets and pass them here, e.g.
-          # DATABASE_URL, CLERK_SECRET_KEY, VITE_CLERK_PUBLISHABLE_KEY, E2E_CLERK_USER_USERNAME, E2E_CLERK_USER_PASSWORD
-          # Avoid ${{ secrets.X }} for required app env unless the secret exists — empty values can fail validateEnv.
+          # Smoke E2E defaults are set in playwright.config.ts webServer.env when secrets are unset.
+          # Optional signed-in E2E (see docs/e2e-clerk.md): add repo secrets only when you want signed-in specs.
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
+          E2E_CLERK_USER_USERNAME: ${{ secrets.E2E_CLERK_USER_USERNAME }}
+          E2E_CLERK_USER_PASSWORD: ${{ secrets.E2E_CLERK_USER_PASSWORD }}
 
   build:
     name: Build
