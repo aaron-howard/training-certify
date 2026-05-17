@@ -28,7 +28,7 @@
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
-    "@clerk/tanstack-react-start": "^0.27.12",
+    "@clerk/tanstack-react-start": "^0.29.11",
     "@sentry/tanstackstart-react": "^10.32.1",
     "@tailwindcss/vite": "^4.0.6",
     "@tanstack/react-devtools": "0.7.0",
