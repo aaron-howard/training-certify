@@ -107,6 +107,8 @@ jobs:
   e2e:
     name: E2E (Playwright)
     runs-on: ubuntu-latest
+    # Clerk validates publishable keys; smoke E2E needs real development keys (see docs/e2e-clerk.md).
+    if: ${{ secrets.CLERK_SECRET_KEY != '' && secrets.VITE_CLERK_PUBLISHABLE_KEY != '' }}
 
     steps:
       - name: Checkout code
@@ -133,8 +135,6 @@ jobs:
         run: pnpm run test:e2e
         env:
           CI: true
-          # Smoke E2E defaults are set in playwright.config.ts webServer.env when secrets are unset.
-          # Optional signed-in E2E (see docs/e2e-clerk.md): add repo secrets only when you want signed-in specs.
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
           VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
@@ -214,9 +214,16 @@ jobs:
              [ "${{ needs.lint.result }}" != "success" ] || \
              [ "${{ needs.type-check.result }}" != "success" ] || \
              [ "${{ needs.build.result }}" != "success" ] || \
-             [ "${{ needs.security-scan.result }}" != "success" ] || \
-             [ "${{ needs.e2e.result }}" != "success" ]; then
+             [ "${{ needs.security-scan.result }}" != "success" ]; then
             echo "One or more required checks failed"
             exit 1
+          fi
+          if [ "${{ needs.e2e.result }}" != "success" ] && \
+             [ "${{ needs.e2e.result }}" != "skipped" ]; then
+            echo "E2E job failed"
+            exit 1
+          fi
+          if [ "${{ needs.e2e.result }}" == "skipped" ]; then
+            echo "E2E skipped (set CLERK_SECRET_KEY and VITE_CLERK_PUBLISHABLE_KEY secrets to enable)"
           fi
           echo "All required checks passed"

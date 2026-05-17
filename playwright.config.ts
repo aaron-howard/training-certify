@@ -37,19 +37,10 @@ export default defineConfig({
         url: 'http://localhost:3000',
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,
-        // CI smoke tests need format-valid env; real keys come from GitHub secrets when set.
+        // Requires real Clerk development keys in .env / .env.local (see docs/e2e-clerk.md).
         env: {
           ...process.env,
           NODE_ENV: 'development',
-          DATABASE_URL:
-            process.env.DATABASE_URL?.trim() ||
-            'postgresql://ci:ci@127.0.0.1:5432/training_certify_ci',
-          CLERK_SECRET_KEY:
-            process.env.CLERK_SECRET_KEY?.trim() ||
-            'sk_test_ci_e2e_smoke_only_not_for_production',
-          VITE_CLERK_PUBLISHABLE_KEY:
-            process.env.VITE_CLERK_PUBLISHABLE_KEY?.trim() ||
-            'pk_test_ci_e2e_smoke_only_not_for_production',
         },
       },
   expect: {
