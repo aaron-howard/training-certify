@@ -249,7 +249,7 @@ Some dependencies require version overrides (in `package.json`):
 - **Security Alerts:** ✅ Enabled
 - **Automated PRs:** ✅ Configured
 - **CI Integration:** ✅ Automatic
-- **npm audit:** ✅ 0 vulnerabilities (as of February 6, 2026)
+- **pnpm audit:** ✅ 0 vulnerabilities (as of May 17, 2026)
 
 ### Regular Tasks
 
