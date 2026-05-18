@@ -31,22 +31,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        run: npm test
+        run: pnpm test
         env:
           NODE_ENV: test
 
       - name: Build project
-        run: npm run build
+        run: pnpm run build
         env:
           NODE_ENV: production
 
@@ -56,8 +61,8 @@ jobs:
           echo "Deploying to staging environment..."
           # Vercel deployment (if using Vercel)
           if [ -n "${{ secrets.VERCEL_TOKEN }}" ]; then
-            npx vercel --token ${{ secrets.VERCEL_TOKEN }} --yes
-            echo "url=$(npx vercel inspect --token ${{ secrets.VERCEL_TOKEN }} | grep -o 'https://[^ ]*' | head -1)" >> $GITHUB_OUTPUT
+            pnpm exec vercel --token ${{ secrets.VERCEL_TOKEN }} --yes
+            echo "url=$(pnpm exec vercel inspect --token ${{ secrets.VERCEL_TOKEN }} | grep -o 'https://[^ ]*' | head -1)" >> $GITHUB_OUTPUT
           else
             # Add other deployment commands here
             # Examples:
@@ -95,22 +100,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        run: npm test
+        run: pnpm test
         env:
           NODE_ENV: test
 
       - name: Build project
-        run: npm run build
+        run: pnpm run build
         env:
           NODE_ENV: production
 
@@ -120,8 +130,8 @@ jobs:
           echo "Deploying to production environment..."
           # Vercel production deployment (if using Vercel)
           if [ -n "${{ secrets.VERCEL_TOKEN }}" ]; then
-            npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
-            echo "url=$(npx vercel inspect --token ${{ secrets.VERCEL_TOKEN }} --prod | grep -o 'https://[^ ]*' | head -1)" >> $GITHUB_OUTPUT
+            pnpm exec vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
+            echo "url=$(pnpm exec vercel inspect --token ${{ secrets.VERCEL_TOKEN }} --prod | grep -o 'https://[^ ]*' | head -1)" >> $GITHUB_OUTPUT
           else
             # Add other deployment commands here
             # Examples:
@@ -129,7 +139,7 @@ jobs:
             # - AWS: aws s3 sync dist/ s3://your-bucket
             # - Custom: your-deployment-script.sh
             echo "url=https://example.com" >> $GITHUB_OUTPUT
-            echo "⚠️ NOTE: Configure VERCEL_TOKEN secret or update with your deployment commands"
+            echo "⚠️ NOTE: Configure VERCEL_TOKEN secret or update with your deployment instructions"
           fi
 
       - name: Create deployment
