@@ -17,6 +17,12 @@ const DEFAULT_COVERAGE_FILE = 'coverage/coverage-final.json'
 const THRESHOLD_PCT = 80
 const API_ROUTE_PATTERN = /[\\/]routes[\\/]api\.[^/\\]+\.ts$/i
 
+/** Thin API routes that delegate to lib handlers — enforce coverage on the lib file instead. */
+const DELEGATE_COVERAGE_LIB = {
+  'src/routes/api.certifications.proof.ts':
+    'src/lib/certificationProofUpload.server.ts',
+}
+
 function normalizePath(filePath) {
   return path.normalize(filePath).replace(/\\/g, '/')
 }
@@ -57,10 +63,34 @@ function main() {
 
   const entries = Object.entries(data)
   const apiEntries = entries.filter(([filePath]) => isApiRoute(filePath))
+  const byShortPath = new Map(
+    entries.map(([filePath, entry]) => [
+      path.relative(process.cwd(), filePath).replace(/\\/g, '/'),
+      { filePath, entry },
+    ]),
+  )
+
   const results = []
   for (const [filePath, entry] of apiEntries) {
-    const pct = statementCoveragePct(entry)
     const short = path.relative(process.cwd(), filePath).replace(/\\/g, '/')
+    const delegateLib = DELEGATE_COVERAGE_LIB[short]
+    if (delegateLib) {
+      const lib = byShortPath.get(delegateLib)
+      if (!lib) {
+        console.error(
+          `Error: delegate coverage missing for ${short} → ${delegateLib}`,
+        )
+        process.exit(1)
+      }
+      const pct = statementCoveragePct(lib.entry)
+      results.push({
+        file: `${short} (via ${delegateLib})`,
+        pct,
+        path: lib.filePath,
+      })
+      continue
+    }
+    const pct = statementCoveragePct(entry)
     results.push({ file: short, pct, path: filePath })
   }
 

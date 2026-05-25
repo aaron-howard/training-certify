@@ -46,13 +46,6 @@ vi.mock('../../lib/csrf.server', () => ({
   requireCSRFToken: vi.fn(),
   getCSRFTokenFromRequest: vi.fn(() => 'test-token'),
 }))
-vi.mock('../../lib/certificationProofStorage.server', () => ({
-  uploadCertificationProof: vi.fn().mockResolvedValue({
-    fileName: 'certificate.pdf',
-    fileUrl: 'https://example.test/certification-proofs/cert/certificate.pdf',
-  }),
-}))
-
 describe('/api/certifications Integration Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks()
