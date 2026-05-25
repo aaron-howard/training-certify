@@ -265,6 +265,10 @@ export const Route = createFileRoute('/api/users')({
                     .set({ userId: data.id })
                     .where(eq(userCertifications.userId, oldUserId))
                   await tx
+                    .update(userCertifications)
+                    .set({ assignedById: data.id })
+                    .where(eq(userCertifications.assignedById, oldUserId))
+                  await tx
                     .update(notifications)
                     .set({ userId: data.id })
                     .where(eq(notifications.userId, oldUserId))

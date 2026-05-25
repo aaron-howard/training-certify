@@ -47,35 +47,14 @@ export const ensureUser = createServerFn({ method: 'POST' })
     }
 
     const { getDb, instanceId } = await import('../db/db.server')
+    const { upsertUserFromClerkProfile } =
+      await import('../lib/clerkUserSync.server')
     const db = await getDb()
     if (!db)
       throw new Error(`Database not available (Server Instance: ${instanceId})`)
 
     try {
-      // Check if user exists
-      const existing = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, data.id))
-        .limit(1)
-
-      if (existing.length > 0) {
-        return existing[0]
-      }
-
-      // Create user
-      const result = await db
-        .insert(users)
-        .values({
-          id: data.id,
-          name: data.name,
-          email: data.email,
-          avatarUrl: data.avatarUrl,
-          role: 'User', // Default role
-        })
-        .returning()
-
-      return result[0]
+      return await upsertUserFromClerkProfile(db, data)
     } catch (error) {
       logError(
         error,
