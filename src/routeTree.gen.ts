@@ -37,6 +37,7 @@ import { Route as ApiComplianceRouteImport } from './routes/api.compliance'
 import { Route as ApiCertificationsRouteImport } from './routes/api.certifications'
 import { Route as ApiCatalogRouteImport } from './routes/api.catalog'
 import { Route as DocsApiOpenapiRouteImport } from './routes/docs.api.openapi'
+import { Route as ApiCertificationsProofRouteImport } from './routes/api.certifications.proof'
 
 const TeamManagementRoute = TeamManagementRouteImport.update({
   id: '/team-management',
@@ -178,6 +179,11 @@ const DocsApiOpenapiRoute = DocsApiOpenapiRouteImport.update({
   path: '/docs/api/openapi',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCertificationsProofRoute = ApiCertificationsProofRouteImport.update({
+  id: '/proof',
+  path: '/proof',
+  getParentRoute: () => ApiCertificationsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -194,7 +200,7 @@ export interface FileRoutesByFullPath {
   '/sign-up': typeof SignUpRoute
   '/team-management': typeof TeamManagementRoute
   '/api/catalog': typeof ApiCatalogRoute
-  '/api/certifications': typeof ApiCertificationsRoute
+  '/api/certifications': typeof ApiCertificationsRouteWithChildren
   '/api/compliance': typeof ApiComplianceRoute
   '/api/csrf': typeof ApiCsrfRoute
   '/api/dashboard': typeof ApiDashboardRoute
@@ -207,6 +213,7 @@ export interface FileRoutesByFullPath {
   '/api/teams': typeof ApiTeamsRoute
   '/api/users': typeof ApiUsersRoute
   '/user-profile/$': typeof UserProfileSplatRoute
+  '/api/certifications/proof': typeof ApiCertificationsProofRoute
   '/docs/api/openapi': typeof DocsApiOpenapiRoute
 }
 export interface FileRoutesByTo {
@@ -224,7 +231,7 @@ export interface FileRoutesByTo {
   '/sign-up': typeof SignUpRoute
   '/team-management': typeof TeamManagementRoute
   '/api/catalog': typeof ApiCatalogRoute
-  '/api/certifications': typeof ApiCertificationsRoute
+  '/api/certifications': typeof ApiCertificationsRouteWithChildren
   '/api/compliance': typeof ApiComplianceRoute
   '/api/csrf': typeof ApiCsrfRoute
   '/api/dashboard': typeof ApiDashboardRoute
@@ -237,6 +244,7 @@ export interface FileRoutesByTo {
   '/api/teams': typeof ApiTeamsRoute
   '/api/users': typeof ApiUsersRoute
   '/user-profile/$': typeof UserProfileSplatRoute
+  '/api/certifications/proof': typeof ApiCertificationsProofRoute
   '/docs/api/openapi': typeof DocsApiOpenapiRoute
 }
 export interface FileRoutesById {
@@ -255,7 +263,7 @@ export interface FileRoutesById {
   '/sign-up': typeof SignUpRoute
   '/team-management': typeof TeamManagementRoute
   '/api/catalog': typeof ApiCatalogRoute
-  '/api/certifications': typeof ApiCertificationsRoute
+  '/api/certifications': typeof ApiCertificationsRouteWithChildren
   '/api/compliance': typeof ApiComplianceRoute
   '/api/csrf': typeof ApiCsrfRoute
   '/api/dashboard': typeof ApiDashboardRoute
@@ -268,6 +276,7 @@ export interface FileRoutesById {
   '/api/teams': typeof ApiTeamsRoute
   '/api/users': typeof ApiUsersRoute
   '/user-profile/$': typeof UserProfileSplatRoute
+  '/api/certifications/proof': typeof ApiCertificationsProofRoute
   '/docs/api/openapi': typeof DocsApiOpenapiRoute
 }
 export interface FileRouteTypes {
@@ -300,6 +309,7 @@ export interface FileRouteTypes {
     | '/api/teams'
     | '/api/users'
     | '/user-profile/$'
+    | '/api/certifications/proof'
     | '/docs/api/openapi'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -330,6 +340,7 @@ export interface FileRouteTypes {
     | '/api/teams'
     | '/api/users'
     | '/user-profile/$'
+    | '/api/certifications/proof'
     | '/docs/api/openapi'
   id:
     | '__root__'
@@ -360,6 +371,7 @@ export interface FileRouteTypes {
     | '/api/teams'
     | '/api/users'
     | '/user-profile/$'
+    | '/api/certifications/proof'
     | '/docs/api/openapi'
   fileRoutesById: FileRoutesById
 }
@@ -378,7 +390,7 @@ export interface RootRouteChildren {
   SignUpRoute: typeof SignUpRoute
   TeamManagementRoute: typeof TeamManagementRoute
   ApiCatalogRoute: typeof ApiCatalogRoute
-  ApiCertificationsRoute: typeof ApiCertificationsRoute
+  ApiCertificationsRoute: typeof ApiCertificationsRouteWithChildren
   ApiComplianceRoute: typeof ApiComplianceRoute
   ApiCsrfRoute: typeof ApiCsrfRoute
   ApiDashboardRoute: typeof ApiDashboardRoute
@@ -592,8 +604,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocsApiOpenapiRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/certifications/proof': {
+      id: '/api/certifications/proof'
+      path: '/proof'
+      fullPath: '/api/certifications/proof'
+      preLoaderRoute: typeof ApiCertificationsProofRouteImport
+      parentRoute: typeof ApiCertificationsRoute
+    }
   }
 }
+
+interface ApiCertificationsRouteChildren {
+  ApiCertificationsProofRoute: typeof ApiCertificationsProofRoute
+}
+
+const ApiCertificationsRouteChildren: ApiCertificationsRouteChildren = {
+  ApiCertificationsProofRoute: ApiCertificationsProofRoute,
+}
+
+const ApiCertificationsRouteWithChildren =
+  ApiCertificationsRoute._addFileChildren(ApiCertificationsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -610,7 +640,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignUpRoute: SignUpRoute,
   TeamManagementRoute: TeamManagementRoute,
   ApiCatalogRoute: ApiCatalogRoute,
-  ApiCertificationsRoute: ApiCertificationsRoute,
+  ApiCertificationsRoute: ApiCertificationsRouteWithChildren,
   ApiComplianceRoute: ApiComplianceRoute,
   ApiCsrfRoute: ApiCsrfRoute,
   ApiDashboardRoute: ApiDashboardRoute,

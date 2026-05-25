@@ -2,9 +2,10 @@ import pg from 'pg'
 import 'dotenv/config'
 
 async function checkEnum() {
-  const url =
-    process.env.DATABASE_URL ||
-    'postgresql://postgres:password@127.0.0.1:5433/devdb'
+  const url = process.env.DATABASE_URL
+  if (!url) {
+    throw new Error('DATABASE_URL is required. Set it in .env (see SETUP.md).')
+  }
   const client = new pg.Client({ connectionString: url })
   await client.connect()
 

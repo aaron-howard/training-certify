@@ -6,10 +6,8 @@ import { getDbOrThrow } from '../db/db.server'
 import {
   auditLogs,
   certifications,
-  teams,
   userCertificationProofs,
   userCertifications,
-  userTeams,
   vendors,
 } from '../db/schema'
 import { ForbiddenError, NotFoundError, ValidationError } from '../lib/errors'
@@ -29,51 +27,7 @@ import {
   createPaginatedResponse,
   parsePaginationParams,
 } from '../lib/pagination.server'
-import type { AuthSession } from '../lib/auth.server'
-import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
-import type * as schema from '../db/schema'
-
-/**
- * Helper to check if a requester has authority over a specific user.
- * Authority exists if:
- * 1. Requester is the user themselves.
- * 2. Requester is an Admin or Auditor.
- * 3. Requester is a Manager of a team the user belongs to.
- */
-async function checkAuthority(
-  db: NodePgDatabase<typeof schema>,
-  requester: AuthSession,
-  targetUserId: string,
-) {
-  if (requester.userId === targetUserId) return true
-  if (
-    requester.role === 'Admin' ||
-    requester.role === 'Auditor' ||
-    requester.role === 'Executive'
-  )
-    return true
-
-  if (requester.role === 'Manager') {
-    // Check if requester manages a team that targetUserId is in
-    const managedTeams = await db
-      .select({ id: teams.id })
-      .from(teams)
-      .where(eq(teams.managerId, requester.userId))
-
-    if (managedTeams.length > 0) {
-      const teamIds = managedTeams.map((t) => t.id)
-      const membership = await db
-        .select()
-        .from(userTeams)
-        .where(eq(userTeams.userId, targetUserId))
-
-      const isMember = membership.some((m) => teamIds.includes(m.teamId))
-      if (isMember) return true
-    }
-  }
-
-  return false
-}
+import { checkCertificationAuthority } from '../lib/certificationAuthority.server'
 
 function computeDaysUntilExpiration(
   expirationDate: Date | string | null,
@@ -132,7 +86,9 @@ export const Route = createFileRoute('/api/certifications')({
                 throw new NotFoundError('Certification not found')
 
               const row = certResult[0]
-              if (!(await checkAuthority(db, session, row.userId))) {
+              if (
+                !(await checkCertificationAuthority(db, session, row.userId))
+              ) {
                 throw new ForbiddenError(
                   'You do not have permission to view this certification',
                 )
@@ -155,7 +111,9 @@ export const Route = createFileRoute('/api/certifications')({
 
             // If requesting by user
             if (userIdParam) {
-              if (!(await checkAuthority(db, session, userIdParam))) {
+              if (
+                !(await checkCertificationAuthority(db, session, userIdParam))
+              ) {
                 throw new ForbiddenError(
                   "You do not have permission to view this user's certifications",
                 )
@@ -278,7 +236,9 @@ export const Route = createFileRoute('/api/certifications')({
             const db = await getDbOrThrow()
 
             // Authority check
-            if (!(await checkAuthority(db, session, data.userId))) {
+            if (
+              !(await checkCertificationAuthority(db, session, data.userId))
+            ) {
               throw new ForbiddenError(
                 'You do not have permission to add certifications for this user',
               )
@@ -385,7 +345,13 @@ export const Route = createFileRoute('/api/certifications')({
             const existingCert = certResult[0]
 
             // Authority check
-            if (!(await checkAuthority(db, session, existingCert.userId))) {
+            if (
+              !(await checkCertificationAuthority(
+                db,
+                session,
+                existingCert.userId,
+              ))
+            ) {
               throw new ForbiddenError(
                 'You do not have permission to modify this certification',
               )
@@ -398,9 +364,7 @@ export const Route = createFileRoute('/api/certifications')({
                 .values({
                   userCertificationId: data.id,
                   fileName: proof.fileName,
-                  fileUrl:
-                    proof.fileUrl ||
-                    `https://storage.training-certify.com/proofs/${proof.fileName}`, // Fixed hardcoded example URL
+                  fileUrl: proof.fileUrl,
                 })
                 .returning()
 
@@ -482,7 +446,13 @@ export const Route = createFileRoute('/api/certifications')({
             const existingCert = certResult[0]
 
             // Authority check
-            if (!(await checkAuthority(db, session, existingCert.userId))) {
+            if (
+              !(await checkCertificationAuthority(
+                db,
+                session,
+                existingCert.userId,
+              ))
+            ) {
               throw new ForbiddenError(
                 'You do not have permission to delete this certification',
               )

@@ -7,13 +7,21 @@ if (!process.env.DATABASE_URL) {
   )
 }
 
+function getDatabaseUrl(): string {
+  const url = process.env.DATABASE_URL
+  if (!url) {
+    throw new Error(
+      'DATABASE_URL is required for Drizzle Kit. Set it in .env (see SETUP.md).',
+    )
+  }
+  return url
+}
+
 export default defineConfig({
   out: './src/db/migrations',
   schema: './src/db/schema.ts',
   dialect: 'postgresql',
   dbCredentials: {
-    url:
-      process.env.DATABASE_URL ||
-      'postgresql://postgres:password@127.0.0.1:5433/devdb',
+    url: getDatabaseUrl(),
   },
 })
