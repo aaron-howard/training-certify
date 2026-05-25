@@ -621,6 +621,7 @@ function CertificationRow({
               id={`proof-upload-${certification.id}`}
               name="proof-upload"
               type="file"
+              accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
               className="absolute inset-0 opacity-0 cursor-pointer"
               onChange={(e) => {
                 const file = e.target.files?.[0]

@@ -18,6 +18,11 @@ vi.mock('@clerk/tanstack-react-start/server', () => ({
   },
 }))
 
+// Avoid loading Vercel Blob client in unit tests (can hang or require network)
+vi.mock('@vercel/blob', () => ({
+  put: vi.fn().mockResolvedValue({ url: 'https://example.test/mock-blob' }),
+}))
+
 beforeAll(() => {
   process.env.NODE_ENV = 'test'
   process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test'

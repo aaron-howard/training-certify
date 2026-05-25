@@ -37,16 +37,6 @@ type CertificationUpdateRequest = {
   updates: CertificationUpdateData
 }
 
-type CertificationProof = {
-  fileName: string
-  fileUrl?: string
-}
-
-type UploadProofRequest = {
-  id: string
-  proof: CertificationProof
-}
-
 // Use fetch API instead of server imports
 const fetchUserCertifications = async (userId: string) => {
   const res = await fetch(`/api/certifications?userId=${userId}`)
@@ -80,13 +70,20 @@ const deleteCertification = async (id: string) => {
   return res.json()
 }
 
-const uploadProof = async ({ id, proof }: UploadProofRequest) => {
-  const res = await fetchWithCsrf('/api/certifications', {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action: 'addProof', id, proof }),
+const uploadProofFile = async (certificationId: string, file: File) => {
+  const form = new FormData()
+  form.append('certificationId', certificationId)
+  form.append('file', file)
+  const res = await fetchWithCsrf('/api/certifications/proof', {
+    method: 'POST',
+    body: form,
   })
-  if (!res.ok) throw new Error('Failed to upload proof')
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    const message =
+      typeof err?.error === 'string' ? err.error : 'Failed to upload proof'
+    throw new Error(message)
+  }
   return res.json()
 }
 
@@ -146,7 +143,8 @@ export function CertificationManagementRoutePage() {
   })
 
   const uploadMutation = useMutation({
-    mutationFn: uploadProof,
+    mutationFn: ({ id, file }: { id: string; file: File }) =>
+      uploadProofFile(id, file),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ['userCertifications'] }),
   })
@@ -175,15 +173,7 @@ export function CertificationManagementRoutePage() {
   }
 
   const handleUpload = (id: string, file: File) => {
-    // In a real app, you'd upload the file to S3/Blob storage first
-    // Here we'll simulate it by sending the filename
-    uploadMutation.mutate({
-      id,
-      proof: {
-        fileName: file.name,
-        fileUrl: URL.createObjectURL(file), // Mock URL for local preview
-      },
-    })
+    uploadMutation.mutate({ id, file })
   }
 
   return (

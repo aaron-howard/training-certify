@@ -4,9 +4,10 @@ import * as schema from './src/db/schema'
 import 'dotenv/config'
 
 async function diagnose() {
-  const url =
-    process.env.DATABASE_URL ||
-    'postgresql://postgres:password@127.0.0.1:5433/devdb'
+  const url = process.env.DATABASE_URL
+  if (!url) {
+    throw new Error('DATABASE_URL is required. Set it in .env (see SETUP.md).')
+  }
   console.log(
     'Actual DATABASE_URL from process.env:',
     process.env.DATABASE_URL ? 'SET' : 'NOT SET',

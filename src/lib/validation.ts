@@ -186,9 +186,15 @@ export const AddCertificationProofSchema = z.object({
       .max(255, 'File name must be 255 characters or less'),
     fileUrl: z
       .string()
-      .url()
+      .url('Proof file URL must be a valid HTTPS URL')
       .max(2048, 'File URL must be 2048 characters or less')
-      .optional(),
+      .refine(
+        (url) =>
+          !url.startsWith('blob:') &&
+          !url.startsWith('data:') &&
+          url.startsWith('https://'),
+        'Proof file URL must use HTTPS (upload via POST /api/certifications/proof)',
+      ),
   }),
 })
 

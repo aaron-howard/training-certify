@@ -46,7 +46,6 @@ vi.mock('../../lib/csrf.server', () => ({
   requireCSRFToken: vi.fn(),
   getCSRFTokenFromRequest: vi.fn(() => 'test-token'),
 }))
-
 describe('/api/certifications Integration Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks()

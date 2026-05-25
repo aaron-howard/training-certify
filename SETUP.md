@@ -30,6 +30,8 @@ CLERK_SECRET_KEY="sk_test_..."
 
 For production variables and optional settings, see `docs/env.production.example` and [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md).
 
+**Certification proof uploads** require a Vercel Blob store and `BLOB_READ_WRITE_TOKEN` in `.env.local` when testing file upload locally (see [Vercel Blob](https://vercel.com/docs/storage/vercel-blob)). Without it, the upload API returns 503.
+
 ### 3. Database
 
 Create a local database (e.g. `devdb`), then:
