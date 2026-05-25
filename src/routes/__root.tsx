@@ -6,7 +6,7 @@ import {
   createRootRouteWithContext,
   useRouter,
 } from '@tanstack/react-router'
-import { QueryClientProvider } from '@tanstack/react-query'
+import { QueryClientProvider, useQuery } from '@tanstack/react-query'
 import {
   ClerkProvider,
   RedirectToSignIn,
@@ -20,7 +20,6 @@ import { ENV } from '../lib/env'
 import { logger } from '../lib/logging.client-stub'
 import { initSentry } from '../lib/sentry'
 import appCss from '../styles.css?url'
-
 import type { QueryClient } from '@tanstack/react-query'
 
 // Server function to sync user - handles CSRF automatically via TanStack Start
@@ -37,10 +36,10 @@ const syncUser = createServerFn({ method: 'POST' })
     const { ForbiddenError } = await import('../lib/errors')
 
     const authenticatedId = await getVerifiedAuth()
+    const db = await getDbOrThrow()
 
     // Security: User can only sync themselves unless they're an admin
     if (authenticatedId !== data.id) {
-      const db = await getDbOrThrow()
       const requester = await db
         .select({ role: users.role })
         .from(users)
@@ -54,29 +53,9 @@ const syncUser = createServerFn({ method: 'POST' })
       }
     }
 
-    const db = await getDbOrThrow()
-    const existing = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, data.id))
-      .limit(1)
-
-    if (existing.length > 0) {
-      return existing[0]
-    }
-
-    const result = await db
-      .insert(users)
-      .values({
-        id: data.id,
-        name: data.name,
-        email: data.email,
-        avatarUrl: data.avatarUrl,
-        role: 'User',
-      })
-      .returning()
-
-    return result[0]
+    const { upsertUserFromClerkProfile } =
+      await import('../lib/clerkUserSync.server')
+    return upsertUserFromClerkProfile(db, data)
   })
 
 export const Route = createRootRouteWithContext<{
@@ -164,7 +143,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { isLoaded, isSignedIn } = useAuth()
-  const { user } = useUser()
+  const { user, isLoaded: userLoaded } = useUser()
 
   // Initialize Sentry on client-side
   useEffect(() => {
@@ -182,31 +161,33 @@ function RootComponent() {
     path.startsWith('/sign-up') ||
     path.startsWith('/api-docs')
 
-  useEffect(() => {
-    if (isSignedIn && user) {
-      // Use server function which handles CSRF automatically via TanStack Start
+  // Block the app until the Clerk user exists in Postgres. API routes use
+  // getAuthenticatedUser(); if children fetch before syncUser completes, they
+  // get 401 "User record not found" and the catalog/dashboard look empty.
+  const dbSync = useQuery({
+    queryKey: ['clerkDbSync', user?.id],
+    queryFn: () =>
       syncUser({
         data: {
-          id: user.id,
+          id: user!.id,
           name:
-            `${user.firstName} ${user.lastName}`.trim() ||
-            user.username ||
+            `${user!.firstName} ${user!.lastName}`.trim() ||
+            user!.username ||
             'User',
-          email: user.emailAddresses[0]?.emailAddress || '',
-          avatarUrl: user.imageUrl,
+          email: user!.emailAddresses[0]?.emailAddress || '',
+          avatarUrl: user!.imageUrl,
         },
-      })
-        .then((data) => {
-          logger.info({ role: data.role }, 'User synced with DB')
-        })
-        .catch((err) => {
-          logger.error(
-            { error: err instanceof Error ? err.message : String(err) },
-            'Sync failed',
-          )
-        })
+      }),
+    enabled: Boolean(isLoaded && userLoaded && isSignedIn && user?.id),
+    staleTime: Infinity,
+    retry: 1,
+  })
+
+  useEffect(() => {
+    if (dbSync.isSuccess) {
+      logger.info({ role: dbSync.data.role }, 'User synced with DB')
     }
-  }, [isSignedIn, user])
+  }, [dbSync.isSuccess, dbSync.data])
 
   if (!isLoaded) {
     return (
@@ -218,6 +199,46 @@ function RootComponent() {
 
   if (!isSignedIn && !isAuthPage) {
     return <RedirectToSignIn />
+  }
+
+  if (isSignedIn) {
+    if (!userLoaded || !user?.id) {
+      return (
+        <div className="flex items-center justify-center min-h-screen">
+          Loading...
+        </div>
+      )
+    }
+    if (dbSync.isPending) {
+      return (
+        <div className="flex items-center justify-center min-h-screen text-slate-600 dark:text-slate-400">
+          Preparing your workspace…
+        </div>
+      )
+    }
+    if (dbSync.isError) {
+      const message =
+        dbSync.error instanceof Error
+          ? dbSync.error.message
+          : String(dbSync.error)
+      return (
+        <div className="flex flex-col items-center justify-center min-h-screen gap-4 p-8 text-center">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+            Could not sync your account
+          </h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400 max-w-md">
+            {message}
+          </p>
+          <button
+            type="button"
+            className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+            onClick={() => void dbSync.refetch()}
+          >
+            Retry
+          </button>
+        </div>
+      )
+    }
   }
 
   return (

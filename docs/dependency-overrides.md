@@ -42,6 +42,8 @@ pnpm audit --audit-level=high
 | `postcss`           | `^8.5.14`  | Security: XSS in CSS stringify (Vite)               |
 | `@clerk/shared@3`   | `3.47.4`   | Clerk 0.x peer line until full Clerk 1.x migration  |
 | `@clerk/shared@4`   | `4.12.0`   | Clerk 1.x: ≥4.8.1 for GHSA-vqx2-fgx2-5wq9           |
+| `js-cookie`         | `^3.0.7`   | Security: prototype hijack in assign() (Clerk tree) |
+| `ws`                | `^8.20.1`  | Security: memory disclosure (TanStack devtools)     |
 
 ---
 
@@ -105,6 +107,28 @@ pnpm audit --audit-level=high
 
 1. Upgrade `vite` and `@tanstack/react-start` / `nitro` to versions that declare a safe `esbuild` range.
 2. `pnpm run build` must succeed; watch for native `esbuild` binary platform issues after bumps.
+
+---
+
+## `js-cookie` → `^3.0.7`
+
+**Why:** `@clerk/testing` → `@clerk/shared` still resolves `js-cookie` **≤ 3.0.5**, which has a **high** advisory ([GHSA-qjx8-664m-686j](https://github.com/advisories/GHSA-qjx8-664m-686j)) for cookie-attribute injection via `assign()`.
+
+**Before removing:**
+
+1. `pnpm why js-cookie` — confirm `@clerk/shared` (or upstream) declares **≥ 3.0.7** without the override.
+2. `pnpm audit --audit-level=high` — no `js-cookie` finding.
+
+---
+
+## `ws` → `^8.20.1`
+
+**Why:** `@tanstack/devtools-vite` → `@tanstack/devtools-event-bus` pulls `ws` **&lt; 8.20.1**, flagged **moderate** for uninitialized memory disclosure ([GHSA-58qx-3vcg-4xpx](https://github.com/advisories/GHSA-58qx-3vcg-4xpx)).
+
+**Before removing:**
+
+1. Bump `@tanstack/devtools-vite` (or the event-bus package) if a release pins `ws` ≥ 8.20.1, then try removing the override.
+2. `pnpm audit --audit-level=moderate` — no `ws` finding.
 
 ---
 

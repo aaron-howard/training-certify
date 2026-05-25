@@ -1,10 +1,12 @@
-import { createStart } from '@tanstack/react-start'
+import { createCsrfMiddleware, createStart } from '@tanstack/react-start'
 import { clerkMiddleware } from '@clerk/tanstack-react-start/server'
-// ENV is used via process.env in some places, but not explicitly here anymore
+
+const csrfMiddleware = createCsrfMiddleware({
+  filter: (ctx) => ctx.handlerType === 'serverFn',
+})
 
 export const startInstance = createStart(() => ({
-  // @ts-ignore - Middleware type mismatch in current TanStack Start version
-  requestMiddleware: [clerkMiddleware()],
+  requestMiddleware: [clerkMiddleware(), csrfMiddleware],
 }))
 
 export default startInstance

@@ -45,10 +45,10 @@
       "breakpoints": true
     },
     {
-      "idx": 6,
+      "idx": 7,
       "version": "7",
-      "when": 1770700000000,
-      "tag": "0006_add_official_site_url",
+      "when": 1770800000000,
+      "tag": "0007_users_fk_on_update_cascade",
       "breakpoints": true
     }
   ]

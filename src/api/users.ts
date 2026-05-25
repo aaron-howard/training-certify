@@ -6,11 +6,11 @@ export const ensureUser = createServerFn({ method: 'POST' })
       data,
   )
   .handler(async ({ data }) => {
-    const { eq } = await import('drizzle-orm')
-    const { users } = await import('../db/schema')
     const { getVerifiedAuth } = await import('../lib/auth.server')
     const { logError } = await import('../lib/logging.server')
     const { getDb, instanceId } = await import('../db/db.server')
+    const { upsertUserFromClerkProfile } =
+      await import('../lib/clerkUserSync.server')
 
     const authenticatedId = await getVerifiedAuth()
     if (authenticatedId !== data.id) {
@@ -22,28 +22,7 @@ export const ensureUser = createServerFn({ method: 'POST' })
       throw new Error(`Database not available (Server Instance: ${instanceId})`)
 
     try {
-      const existing = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, data.id))
-        .limit(1)
-
-      if (existing.length > 0) {
-        return existing[0]
-      }
-
-      const result = await db
-        .insert(users)
-        .values({
-          id: data.id,
-          name: data.name,
-          email: data.email,
-          avatarUrl: data.avatarUrl,
-          role: 'User',
-        })
-        .returning()
-
-      return result[0]
+      return await upsertUserFromClerkProfile(db, data)
     } catch (error) {
       logError(
         error,
