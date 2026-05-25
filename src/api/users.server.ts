@@ -54,7 +54,9 @@ export const ensureUser = createServerFn({ method: 'POST' })
       throw new Error(`Database not available (Server Instance: ${instanceId})`)
 
     try {
-      return await upsertUserFromClerkProfile(db, data)
+      return await upsertUserFromClerkProfile(db, data, {
+        allowEmailMigration: true,
+      })
     } catch (error) {
       logError(
         error,
