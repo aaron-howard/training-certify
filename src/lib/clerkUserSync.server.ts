@@ -19,6 +19,10 @@ function truncateAvatar(url: string | undefined): string | undefined {
  * still use ON UPDATE NO ACTION (before migration 0007) or in edge cases with
  * composite keys.
  */
+function normalizeEmail(email: string): string {
+  return email.trim()
+}
+
 export async function upsertUserFromClerkProfile(
   db: NodePgDatabase<typeof schema>,
   data: {
@@ -28,6 +32,13 @@ export async function upsertUserFromClerkProfile(
     avatarUrl?: string
   },
 ) {
+  const email = normalizeEmail(data.email)
+  if (!email) {
+    throw new Error(
+      'A verified email address is required to sync your account.',
+    )
+  }
+
   const {
     users,
     userCertifications,
@@ -48,7 +59,7 @@ export async function upsertUserFromClerkProfile(
   const byEmail = await db
     .select()
     .from(users)
-    .where(eq(users.email, data.email))
+    .where(eq(users.email, email))
     .limit(2)
 
   if (byEmail.length > 1) {
@@ -64,13 +75,13 @@ export async function upsertUserFromClerkProfile(
     await db.transaction(async (tx) => {
       await tx
         .update(users)
-        .set({ email: `${data.email}_migrated_${Date.now()}` })
+        .set({ email: `${email}_migrated_${Date.now()}` })
         .where(eq(users.id, old.id))
 
       await tx.insert(users).values({
         id: data.id,
         name: data.name,
-        email: data.email,
+        email,
         avatarUrl: avatarUrl ?? old.avatarUrl ?? null,
         role: old.role,
       })
@@ -123,7 +134,7 @@ export async function upsertUserFromClerkProfile(
     .values({
       id: data.id,
       name: data.name,
-      email: data.email,
+      email,
       avatarUrl,
       role: 'User',
     })

@@ -11,6 +11,7 @@ import {
   Settings,
   X,
 } from 'lucide-react'
+import { fetchWithCsrf } from '../lib/csrf'
 
 interface Notification {
   id: string
@@ -75,7 +76,7 @@ function NotificationsPage() {
   // Mark all as read mutation
   const markAllReadMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch('/api/notification-settings', {
+      const res = await fetchWithCsrf('/api/notification-settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'markAllRead', userId: user?.id }),
@@ -89,7 +90,7 @@ function NotificationsPage() {
   // Dismiss notification mutation
   const dismissMutation = useMutation({
     mutationFn: async (notificationId: string) => {
-      const res = await fetch('/api/notification-settings', {
+      const res = await fetchWithCsrf('/api/notification-settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'dismiss', notificationId }),
@@ -103,7 +104,7 @@ function NotificationsPage() {
   // Save preferences mutation
   const savePreferencesMutation = useMutation({
     mutationFn: async (prefs: Record<string, boolean>) => {
-      const res = await fetch('/api/notification-settings', {
+      const res = await fetchWithCsrf('/api/notification-settings', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user?.id, preferences: prefs }),
