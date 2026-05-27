@@ -227,3 +227,49 @@ The Design OS application itself uses a "Refined Utility" aesthetic:
 - **Layout**: Maximum 800px content width, generous whitespace
 - **Cards**: Minimal borders (1px), subtle shadows, generous padding
 - **Motion**: Subtle fade-ins (200ms), no bouncy animations
+
+---
+
+## Cursor Cloud specific instructions
+
+### Overview
+
+Training Certify is a TanStack Start (React 19) + Vite 7 web application with PostgreSQL (Drizzle ORM) and Clerk authentication. Standard commands are in `README.md` and `SETUP.md`.
+
+### Prerequisites already installed by the update script
+
+- Node.js 22+ and pnpm 10+ (pre-installed)
+- `pnpm install` runs automatically on startup
+
+### PostgreSQL
+
+PostgreSQL 16 must be running locally. Start it before running the dev server or drizzle-kit commands:
+
+```bash
+sudo pg_ctlcluster 16 main start
+```
+
+The local dev database is `devdb` at `postgresql://postgres:password@localhost:5432/devdb`. A `.env` file (loaded by `drizzle.config.ts` via `dotenv/config`) and `.env.local` (loaded by Vite) both need `DATABASE_URL` set. Push the schema with:
+
+```bash
+DATABASE_URL="postgresql://postgres:password@localhost:5432/devdb" pnpm exec drizzle-kit push
+```
+
+### Clerk authentication (required)
+
+The app requires valid Clerk API keys (`VITE_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`) in `.env.local`. Without real keys, the Clerk middleware returns HTTP 500 for all routes (including `/api/health`). Tests mock Clerk and pass without real keys.
+
+### Running services
+
+- `pnpm run dev` — starts Vite dev server on port 3000
+- `pnpm run test` — Vitest (258 unit/API tests, mocks Clerk)
+- `pnpm run lint` — ESLint
+- `pnpm run type-check` — TypeScript
+- `pnpm run build` — production build
+
+### Gotchas
+
+- `drizzle.config.ts` uses `import 'dotenv/config'` which reads `.env` (not `.env.local`). Set `DATABASE_URL` in `.env` or pass it as an env var on the command line.
+- pnpm 10 blocks build scripts by default. The update script handles esbuild/unrs-resolver/sentry-cli rebuild.
+- Husky pre-commit hooks run `format:check`, `lint`, and `type-check`. To bypass during dev: `git commit --no-verify`.
+- The `cookie` dependency warning on dev server start ("Failed to resolve dependency: cookie") is non-critical and doesn't affect functionality.
