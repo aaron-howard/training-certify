@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { AlertCircle, CheckCircle2, Plus, Trash2, X } from 'lucide-react'
+import { fetchWithCsrf } from '../../lib/csrf'
 
 interface Requirement {
   id: string
@@ -60,7 +61,7 @@ export function TeamRequirementsModal({
       certificationId: string
       targetCount: number
     }) => {
-      const res = await fetch('/api/team-requirements', {
+      const res = await fetchWithCsrf('/api/team-requirements', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ teamId, ...req }),
@@ -78,7 +79,7 @@ export function TeamRequirementsModal({
 
   const deleteReqMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/team-requirements?id=${id}`, {
+      const res = await fetchWithCsrf(`/api/team-requirements?id=${id}`, {
         method: 'DELETE',
       })
       if (!res.ok) throw new Error('Failed to delete requirement')

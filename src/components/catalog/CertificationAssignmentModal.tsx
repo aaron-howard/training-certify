@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { UserPlus, X } from 'lucide-react'
+import { fetchWithCsrf } from '../../lib/csrf'
 
 export function CertificationAssignmentModal({
   cert,
@@ -27,7 +28,7 @@ export function CertificationAssignmentModal({
 
   const assignMutation = useMutation({
     mutationFn: async (userId: string) => {
-      const res = await fetch('/api/certifications', {
+      const res = await fetchWithCsrf('/api/certifications', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

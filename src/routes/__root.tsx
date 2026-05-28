@@ -168,18 +168,25 @@ function RootComponent() {
   // get 401 "User record not found" and the catalog/dashboard look empty.
   const dbSync = useQuery({
     queryKey: ['clerkDbSync', user?.id],
-    queryFn: () =>
-      syncUser({
+    queryFn: () => {
+      const email = user!.emailAddresses[0]?.emailAddress?.trim()
+      if (!email) {
+        throw new Error(
+          'Your Clerk account must have a verified email address before using this app.',
+        )
+      }
+      return syncUser({
         data: {
           id: user!.id,
           name:
             `${user!.firstName} ${user!.lastName}`.trim() ||
             user!.username ||
             'User',
-          email: user!.emailAddresses[0]?.emailAddress || '',
+          email,
           avatarUrl: user!.imageUrl,
         },
-      }),
+      })
+    },
     enabled: Boolean(isLoaded && userLoaded && isSignedIn && user?.id),
     staleTime: Infinity,
     retry: 1,
