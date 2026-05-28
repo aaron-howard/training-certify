@@ -42,10 +42,6 @@ function truncateAvatar(url: string | undefined): string | undefined {
  * still use ON UPDATE NO ACTION (before migration 0007) or in edge cases with
  * composite keys.
  */
-function normalizeEmail(email: string): string {
-  return email.trim()
-}
-
 export async function upsertUserFromClerkProfile(
   db: NodePgDatabase<typeof schema>,
   data: {
@@ -56,12 +52,6 @@ export async function upsertUserFromClerkProfile(
   },
   options: UpsertUserFromClerkOptions = {},
 ) {
-  const email = normalizeEmail(data.email)
-  if (!email) {
-    throw new Error(
-      'A verified email address is required to sync your account.',
-    )
-  }
   const email = data.email.trim()
   assertClerkEmail(email)
   const allowEmailMigration = options.allowEmailMigration === true
