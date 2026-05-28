@@ -55,7 +55,9 @@ const syncUser = createServerFn({ method: 'POST' })
 
     const { upsertUserFromClerkProfile } =
       await import('../lib/clerkUserSync.server')
-    return upsertUserFromClerkProfile(db, data)
+    return upsertUserFromClerkProfile(db, data, {
+      allowEmailMigration: authenticatedId === data.id,
+    })
   })
 
 export const Route = createRootRouteWithContext<{

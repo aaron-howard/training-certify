@@ -4,6 +4,29 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
 
 const AVATAR_MAX_LEN = 2048
 
+export type UpsertUserFromClerkOptions = {
+  /**
+   * When true, a row with the same email but a different Clerk id is migrated to
+   * `data.id` (Clerk dev reset / account recreation). Must only be enabled for
+   * self-sync (`authenticatedId === data.id`); never for cross-user admin calls.
+   */
+  allowEmailMigration?: boolean
+}
+
+function assertClerkEmail(email: string): void {
+  const trimmed = email.trim()
+  if (!trimmed) {
+    throw new Error(
+      'A verified email address is required before syncing your account',
+    )
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+    throw new Error(
+      'A valid email address is required before syncing your account',
+    )
+  }
+}
+
 function truncateAvatar(url: string | undefined): string | undefined {
   if (url == null || url === '') return undefined
   return url.length <= AVATAR_MAX_LEN ? url : url.slice(0, AVATAR_MAX_LEN)
@@ -27,7 +50,12 @@ export async function upsertUserFromClerkProfile(
     email: string
     avatarUrl?: string
   },
+  options: UpsertUserFromClerkOptions = {},
 ) {
+  const email = data.email.trim()
+  assertClerkEmail(email)
+  const allowEmailMigration = options.allowEmailMigration === true
+
   const {
     users,
     userCertifications,
@@ -48,7 +76,7 @@ export async function upsertUserFromClerkProfile(
   const byEmail = await db
     .select()
     .from(users)
-    .where(eq(users.email, data.email))
+    .where(eq(users.email, email))
     .limit(2)
 
   if (byEmail.length > 1) {
@@ -61,16 +89,22 @@ export async function upsertUserFromClerkProfile(
     const old = byEmail[0]
     if (old.id === data.id) return old
 
+    if (!allowEmailMigration) {
+      throw new Error(
+        'This email is already linked to another account. Sign in with that account or contact an administrator.',
+      )
+    }
+
     await db.transaction(async (tx) => {
       await tx
         .update(users)
-        .set({ email: `${data.email}_migrated_${Date.now()}` })
+        .set({ email: `${email}_migrated_${Date.now()}` })
         .where(eq(users.id, old.id))
 
       await tx.insert(users).values({
         id: data.id,
         name: data.name,
-        email: data.email,
+        email,
         avatarUrl: avatarUrl ?? old.avatarUrl ?? null,
         role: old.role,
       })
@@ -123,7 +157,7 @@ export async function upsertUserFromClerkProfile(
     .values({
       id: data.id,
       name: data.name,
-      email: data.email,
+      email,
       avatarUrl,
       role: 'User',
     })
