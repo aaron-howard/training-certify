@@ -269,6 +269,8 @@ The app requires valid Clerk API keys (`VITE_CLERK_PUBLISHABLE_KEY` and `CLERK_S
 
 ### Gotchas
 
+- **DATABASE_URL must include `?sslmode=disable`** for local PostgreSQL (e.g. `postgresql://postgres:password@localhost:5432/devdb?sslmode=disable`). The app's `db.server.ts` defaults to `ssl: { rejectUnauthorized: true }`, which fails against a local Postgres without SSL.
+- **Clerk keys must be development/test keys** (`pk_test_...` / `sk_test_...`). Production keys are domain-restricted and will fail on `localhost`.
 - `drizzle.config.ts` uses `import 'dotenv/config'` which reads `.env` (not `.env.local`). Set `DATABASE_URL` in `.env` or pass it as an env var on the command line.
 - pnpm 10 blocks build scripts by default. The update script handles esbuild/unrs-resolver/sentry-cli rebuild.
 - Husky pre-commit hooks run `format:check`, `lint`, and `type-check`. To bypass during dev: `git commit --no-verify`.
