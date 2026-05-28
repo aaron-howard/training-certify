@@ -470,7 +470,11 @@ function MemberManagementModal({
       email: string
       role: string
     }) => {
-      const newUserId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      const randomBytes = crypto.getRandomValues(new Uint8Array(9))
+      const randomSuffix = Array.from(randomBytes)
+        .map((b) => b.toString(36).padStart(2, '0'))
+        .join('')
+      const newUserId = `user_${Date.now()}_${randomSuffix}`
       const createRes = await fetchWithCsrf('/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
