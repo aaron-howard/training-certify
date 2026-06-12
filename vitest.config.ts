@@ -24,7 +24,6 @@ export default defineConfig({
         'drizzle/',
       ],
       include: ['src/**/*.ts', 'src/**/*.tsx'],
-      all: true,
       // Enforce minimum to prevent regression. Target 80% per TASK.md Phase 1.2; raise thresholds as coverage increases.
       thresholds: {
         lines: 25,
