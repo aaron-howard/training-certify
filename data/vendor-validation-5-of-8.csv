@@ -1,81 +1,81 @@
 vendorName,inCatalog,hasCertProgram,notes
-"Lever (Advanced Track)",,,
-"ServiceNow",,,
-"Linkerd",,,
-"Linode",,,
-"Linux Foundation",,,
-"Linux Professional Institute",,,
-"LitmusChaos",,,
-"LivePerson",,,
-"LogicGate",,,
-"LogicMonitor",,,
-"LogRhythm",,,
-"Logz.io",,,
-"Longhorn",,,
-"Looker",,,
-"Lucid (Lucidchart/Lucidspark)",,,
-"Luigi",,,
-"Mailchimp",,,
-"Malwarebytes Nebula",,,
-"ManageEngine",,,
-"ManageEngine OpManager",,,
-"ManageEngine ServiceDesk Plus",,,
-"Marketo",,,
-"Matillion",,,
-"McAfee",,,
-"Meltano",,,
-"MetalLB",,,
-"MetricStream",,,
-"Micro Focus",,,
-"MicroK8s",,,
-"Microsoft 365",,,
-"Microsoft Defender for Endpoint",,,
-"Microsoft Defender for Office 365",,,
-"Microsoft Dynamics 365",,,
-"Microsoft Intune",,,
-"Microsoft Sentinel",,,
-"MicroStrategy",,,
-"MikroTik",,,
-"Mimecast",,,
-"Mirantis Kubernetes Engine",,,
-"Miro",,,
-"Mixpanel",,,
-"MLflow",,,
-"Mode Analytics",,,
-"MoEngage",,,
-"Monday.com",,,
-"Monte Carlo",,,
-"Moodle Workplace",,,
-"Moogsoft",,,
-"mParticle",,,
-"MuleSoft",,,
-"Nagios XI",,,
-"NATS.io",,,
-"Neo4j",,,
-"NetApp Cloud",,,
-"NetBrain",,,
-"Netgear Business",,,
-"NETSCOUT",,,
-"NetSuite",,,
-"New Relic",,,
-"NICE CXone",,,
-"NinjaOne",,,
-"Nokia Networks",,,
-"Nomad",,,
-"Noname Security",,,
-"Notion",,,
-"Nutanix",,,
-"Offensive Security",,,
-"Okta",,,
-"OneLogin",,,
-"OneTrust",,,
-"Open Policy Agent",,,
-"OpenEBS",,,
-"OpenFaaS",,,
-"OpenKruise",,,
-"OpenTelemetry",,,
-"OpenText",,,
-"OpenYurt",,,
-"Oracle",,,
-"Oracle Analytics",,,
-"Oracle BI (OBIEE)",,,
+"Lever (Advanced Track)",Y,Y,Present in production seed catalog
+"ServiceNow",Y,Y,Present in production seed catalog
+"Linkerd",Y,Y,Present in production seed catalog
+"Linode",Y,Y,Present in production seed catalog
+"Linux Foundation",Y,Y,Present in production seed catalog
+"Linux Professional Institute",Y,Y,Present in production seed catalog
+"LitmusChaos",Y,Y,Present in production seed catalog
+"LivePerson",Y,Y,Present in production seed catalog
+"LogicGate",Y,Y,Present in production seed catalog
+"LogicMonitor",Y,Y,Present in production seed catalog
+"LogRhythm",Y,Y,Present in production seed catalog
+"Logz.io",Y,Y,Present in production seed catalog
+"Longhorn",Y,Y,Present in production seed catalog
+"Looker",Y,Y,Present in production seed catalog
+"Lucid (Lucidchart/Lucidspark)",Y,Y,Present in production seed catalog
+"Luigi",Y,Y,Present in production seed catalog
+"Mailchimp",Y,Y,Present in production seed catalog
+"Malwarebytes Nebula",Y,Y,Present in production seed catalog
+"ManageEngine",Y,Y,Present in production seed catalog
+"ManageEngine OpManager",Y,Y,Present in production seed catalog
+"ManageEngine ServiceDesk Plus",Y,Y,Present in production seed catalog
+"Marketo",Y,Y,Present in production seed catalog
+"Matillion",Y,Y,Present in production seed catalog
+"McAfee",Y,Y,Present in production seed catalog
+"Meltano",Y,Y,Present in production seed catalog
+"MetalLB",Y,Y,Present in production seed catalog
+"MetricStream",Y,Y,Present in production seed catalog
+"Micro Focus",Y,Y,Present in production seed catalog
+"MicroK8s",Y,Y,Present in production seed catalog
+"Microsoft 365",Y,Y,Present in production seed catalog
+"Microsoft Defender for Endpoint",Y,Y,Present in production seed catalog
+"Microsoft Defender for Office 365",Y,Y,Present in production seed catalog
+"Microsoft Dynamics 365",Y,Y,Present in production seed catalog
+"Microsoft Intune",Y,Y,Present in production seed catalog
+"Microsoft Sentinel",Y,Y,Present in production seed catalog
+"MicroStrategy",Y,Y,Present in production seed catalog
+"MikroTik",Y,Y,Present in production seed catalog
+"Mimecast",Y,Y,Present in production seed catalog
+"Mirantis Kubernetes Engine",Y,Y,Present in production seed catalog
+"Miro",Y,Y,Present in production seed catalog
+"Mixpanel",Y,Y,Present in production seed catalog
+"MLflow",Y,Y,Present in production seed catalog
+"Mode Analytics",Y,Y,Present in production seed catalog
+"MoEngage",Y,Y,Present in production seed catalog
+"Monday.com",Y,Y,Present in production seed catalog
+"Monte Carlo",Y,Y,Present in production seed catalog
+"Moodle Workplace",Y,Y,Present in production seed catalog
+"Moogsoft",Y,Y,Present in production seed catalog
+"mParticle",Y,Y,Present in production seed catalog
+"MuleSoft",Y,Y,Present in production seed catalog
+"Nagios XI",Y,Y,Present in production seed catalog
+"NATS.io",Y,Y,Present in production seed catalog
+"Neo4j",Y,Y,Present in production seed catalog
+"NetApp Cloud",Y,Y,Present in production seed catalog
+"NetBrain",Y,Y,Present in production seed catalog
+"Netgear Business",Y,Y,Present in production seed catalog
+"NETSCOUT",Y,Y,Present in production seed catalog
+"NetSuite",Y,Y,Present in production seed catalog
+"New Relic",Y,Y,Present in production seed catalog
+"NICE CXone",Y,Y,Present in production seed catalog
+"NinjaOne",Y,Y,Present in production seed catalog
+"Nokia Networks",Y,Y,Present in production seed catalog
+"Nomad",Y,Y,Present in production seed catalog
+"Noname Security",Y,Y,Present in production seed catalog
+"Notion",Y,Y,Present in production seed catalog
+"Nutanix",Y,Y,Present in production seed catalog
+"Offensive Security",Y,Y,Present in production seed catalog
+"Okta",Y,Y,Present in production seed catalog
+"OneLogin",Y,Y,Present in production seed catalog
+"OneTrust",Y,Y,Present in production seed catalog
+"Open Policy Agent",Y,Y,Present in production seed catalog
+"OpenEBS",Y,Y,Present in production seed catalog
+"OpenFaaS",Y,Y,Present in production seed catalog
+"OpenKruise",Y,Y,Present in production seed catalog
+"OpenTelemetry",Y,Y,Present in production seed catalog
+"OpenText",Y,Y,Present in production seed catalog
+"OpenYurt",Y,Y,Present in production seed catalog
+"Oracle",Y,Y,Present in production seed catalog
+"Oracle Analytics",Y,Y,Present in production seed catalog
+"Oracle BI (OBIEE)",Y,Y,Present in production seed catalog

@@ -1,81 +1,81 @@
 vendorName,inCatalog,hasCertProgram,notes
-"Bloomreach Engagement",,,
-"Blue Prism",Y,,
-"BMC Helix",,,
-"BMC Software",,,
-"Boomi",,,
-"Bottlerocket OS",,,
-"Box",,,
-"Braze",,,
-"Braze (Advanced Track)",,,
-"Broadcom",,,
-"Buddy CI/CD",,,
-"Buildkite",,,
-"Calendly",,,
-"Calico",,,
-"Calix",,,
-"Cambium Networks",,,
-"Cequence Security",,,
-"Chargebee",,,
-"Check Point",Y,,
-"Check Point Harmony Connect",,,
-"Chef",,,
-"Cherwell",,,
-"Chorus.ai",,,
-"Chronosphere",,,
-"Ciena",,,
-"Cilium",,,
-"CircleCI",,,
-"Cisco",Y,,
-"Cisco Firepower",,,
-"Citrix",Y,,
-"Clari",,,
-"CleverTap",,,
-"ClickUp",,,
-"Cloud Native Computing Foundation",Y,,
-"Apptio",,,
-"CloudBees",,,
-"Cloudera",Y,,
-"Cloudflare",,,
-"Cloudflare API Shield",,,
-"Cloudflare Zero Trust",,,
-"CloudHealth",,,
-"Cluster API",,,
-"CNCF",,,
-"Codefresh",,,
-"Cofense",,,
-"Cohesity",Y,,
-"Collibra",,,
-"commercetools",,,
-"Commvault",,,
-"CompTIA",Y,,
-"ConnectWise",,,
-"Consul",,,
-"Contour",,,
-"Control-M",,,
-"Coralogix",,,
-"Cornerstone OnDemand",,,
-"Couchbase",,,
-"Coupa",,,
-"Crossplane",,,
-"CrowdStrike",Y,,
-"CrowdStrike Falcon",,,
-"CrowdStrike Falcon Fusion",,,
-"Customer.io",,,
-"CyberArk",,,
-"Cylance",,,
-"Dagger",,,
-"Dagster",,,
-"Dapr",,,
-"Darktrace",,,
-"Data Theorem",,,
-"Databand",,,
-"Databricks",Y,,
-"Databricks ML",,,
-"Databricks MLflow",,,
-"Datadog",,,
-"Datadog Infrastructure",,,
-"DataHub",,,
-"Dataiku",,,
-"DataRobot",,,
-"DataStax",,,
+"Bloomreach Engagement",Y,Y,Present in production seed catalog
+"Blue Prism",Y,Y,Present in production seed catalog
+"BMC Helix",Y,Y,Present in production seed catalog
+"BMC Software",Y,Y,Present in production seed catalog
+"Boomi",Y,Y,Present in production seed catalog
+"Bottlerocket OS",Y,Y,Present in production seed catalog
+"Box",Y,Y,Present in production seed catalog
+"Braze",Y,Y,Present in production seed catalog
+"Braze (Advanced Track)",Y,Y,Present in production seed catalog
+"Broadcom",,N,Not in production seed catalog — exclude until manually validated
+"Buddy CI/CD",Y,Y,Present in production seed catalog
+"Buildkite",Y,Y,Present in production seed catalog
+"Calendly",Y,Y,Present in production seed catalog
+"Calico",Y,Y,Present in production seed catalog
+"Calix",Y,Y,Present in production seed catalog
+"Cambium Networks",Y,Y,Present in production seed catalog
+"Cequence Security",Y,Y,Present in production seed catalog
+"Chargebee",Y,Y,Present in production seed catalog
+"Check Point",Y,Y,Present in production seed catalog
+"Check Point Harmony Connect",Y,Y,Present in production seed catalog
+"Chef",Y,Y,Present in production seed catalog
+"Cherwell",Y,Y,Present in production seed catalog
+"Chorus.ai",Y,Y,Present in production seed catalog
+"Chronosphere",Y,Y,Present in production seed catalog
+"Ciena",Y,Y,Present in production seed catalog
+"Cilium",Y,Y,Present in production seed catalog
+"CircleCI",Y,Y,Present in production seed catalog
+"Cisco",Y,Y,Present in production seed catalog
+"Cisco Firepower",Y,Y,Present in production seed catalog
+"Citrix",Y,Y,Present in production seed catalog
+"Clari",Y,Y,Present in production seed catalog
+"CleverTap",Y,Y,Present in production seed catalog
+"ClickUp",Y,Y,Present in production seed catalog
+"Cloud Native Computing Foundation",Y,Y,Present in production seed catalog
+"Apptio",,N,Not in production seed catalog — exclude until manually validated
+"CloudBees",Y,Y,Present in production seed catalog
+"Cloudera",Y,Y,Present in production seed catalog
+"Cloudflare",Y,Y,Present in production seed catalog
+"Cloudflare API Shield",Y,Y,Present in production seed catalog
+"Cloudflare Zero Trust",Y,Y,Present in production seed catalog
+"CloudHealth",Y,Y,Present in production seed catalog
+"Cluster API",Y,Y,Present in production seed catalog
+"CNCF",Y,Y,Present in production seed catalog
+"Codefresh",Y,Y,Present in production seed catalog
+"Cofense",Y,Y,Present in production seed catalog
+"Cohesity",Y,Y,Present in production seed catalog
+"Collibra",Y,Y,Present in production seed catalog
+"commercetools",Y,Y,Present in production seed catalog
+"Commvault",Y,Y,Present in production seed catalog
+"CompTIA",Y,Y,Present in production seed catalog
+"ConnectWise",Y,Y,Present in production seed catalog
+"Consul",Y,Y,Present in production seed catalog
+"Contour",Y,Y,Present in production seed catalog
+"Control-M",Y,Y,Present in production seed catalog
+"Coralogix",Y,Y,Present in production seed catalog
+"Cornerstone OnDemand",Y,Y,Present in production seed catalog
+"Couchbase",Y,Y,Present in production seed catalog
+"Coupa",Y,Y,Present in production seed catalog
+"Crossplane",Y,Y,Present in production seed catalog
+"CrowdStrike",Y,Y,Present in production seed catalog
+"CrowdStrike Falcon",Y,Y,Present in production seed catalog
+"CrowdStrike Falcon Fusion",Y,Y,Present in production seed catalog
+"Customer.io",Y,Y,Present in production seed catalog
+"CyberArk",Y,Y,Present in production seed catalog
+"Cylance",Y,Y,Present in production seed catalog
+"Dagger",Y,Y,Present in production seed catalog
+"Dagster",Y,Y,Present in production seed catalog
+"Dapr",Y,Y,Present in production seed catalog
+"Darktrace",Y,Y,Present in production seed catalog
+"Data Theorem",Y,Y,Present in production seed catalog
+"Databand",Y,Y,Present in production seed catalog
+"Databricks",Y,Y,Present in production seed catalog
+"Databricks ML",Y,Y,Present in production seed catalog
+"Databricks MLflow",Y,Y,Present in production seed catalog
+"Datadog",Y,Y,Present in production seed catalog
+"Datadog Infrastructure",Y,Y,Present in production seed catalog
+"DataHub",Y,Y,Present in production seed catalog
+"Dataiku",Y,Y,Present in production seed catalog
+"DataRobot",Y,Y,Present in production seed catalog
+"DataStax",Y,Y,Present in production seed catalog

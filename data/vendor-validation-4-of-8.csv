@@ -1,81 +1,81 @@
 vendorName,inCatalog,hasCertProgram,notes
-"HDI",,,
-"Heap Analytics",,,
-"Hevo Data",,,
-"Honeycomb.io",,,
-"Hortonworks (Legacy)",,,
-"Hotjar",,,
-"HPE",,,
-"HPE Networking",,,
-"Huawei Enterprise Networking",,,
-"HubSpot",,,
-"HubSpot Marketing Hub",,,
-"HubSpot Sales Hub",,,
-"Hugging Face Enterprise",,,
-"Hyperproof",,,
-"IBM",,,
-"IBM Cognos",,,
-"IBM Data & AI",,,
-"IBM InfoSphere MDM",,,
-"IBM QRadar",,,
-"IBM Watson Knowledge Catalog",,,
-"iCIMS",,,
-"Imperva",,,
-"Imperva API Security",,,
-"Infoblox",,,
-"Informatica",,,
-"Informatica Cloud",,,
-"Informatica Data Governance",,,
-"Informatica Data Quality",,,
-"Informatica MDM",,,
-"Insider",,,
-"Intercom",,,
-"Intercom Fin AI",,,
-"IRONSCALES",,,
-"ISACA",,,
-"Istio",,,
-"Iterable",,,
-"Iterable (Advanced Track)",,,
-"Ivanti",,,
-"Ivanti Neurons",,,
-"JAMF",,,
-"JazzHR",,,
-"Jenkins",,,
-"JFrog",,,
-"JFrog Artifactory",,,
-"Jitterbit",,,
-"JumpCloud",,,
-"Juniper Mist",,,
-"Juniper Mist AI",,,
-"Juniper Networks",,,
-"Juniper SRX",,,
-"k0s",,,
-"K3s",,,
-"Kandji",,,
-"Karmada",,,
-"Karpenter",,,
-"Kaseya",,,
-"Kaspersky",,,
-"KEDA",,,
-"Keeper Security",,,
-"Kentik",,,
-"Keptn",,,
-"Klaviyo",,,
-"Klipfolio",,,
-"Knative",,,
-"KNIME",,,
-"Kong",,,
-"KubeArmor",,,
-"Kubecost",,,
-"KubeEdge",,,
-"Kubeflow",,,
-"KubeVela",,,
-"KubeVirt",,,
-"Kyverno",,,
-"Labelbox",,,
-"Lacework",,,
-"LastPass",,,
-"LearnUpon",,,
-"Lenovo",,,
-"Lens",,,
-"Lever",,,
+"HDI",Y,Y,Present in production seed catalog
+"Heap Analytics",Y,Y,Present in production seed catalog
+"Hevo Data",Y,Y,Present in production seed catalog
+"Honeycomb.io",Y,Y,Present in production seed catalog
+"Hortonworks (Legacy)",Y,Y,Present in production seed catalog
+"Hotjar",Y,Y,Present in production seed catalog
+"HPE",Y,Y,Present in production seed catalog
+"HPE Networking",Y,Y,Present in production seed catalog
+"Huawei Enterprise Networking",Y,Y,Present in production seed catalog
+"HubSpot",Y,Y,Present in production seed catalog
+"HubSpot Marketing Hub",Y,Y,Present in production seed catalog
+"HubSpot Sales Hub",Y,Y,Present in production seed catalog
+"Hugging Face Enterprise",Y,Y,Present in production seed catalog
+"Hyperproof",Y,Y,Present in production seed catalog
+"IBM",Y,Y,Present in production seed catalog
+"IBM Cognos",Y,Y,Present in production seed catalog
+"IBM Data & AI",Y,Y,Present in production seed catalog
+"IBM InfoSphere MDM",Y,Y,Present in production seed catalog
+"IBM QRadar",Y,Y,Present in production seed catalog
+"IBM Watson Knowledge Catalog",Y,Y,Present in production seed catalog
+"iCIMS",Y,Y,Present in production seed catalog
+"Imperva",Y,Y,Present in production seed catalog
+"Imperva API Security",Y,Y,Present in production seed catalog
+"Infoblox",Y,Y,Present in production seed catalog
+"Informatica",Y,Y,Present in production seed catalog
+"Informatica Cloud",Y,Y,Present in production seed catalog
+"Informatica Data Governance",Y,Y,Present in production seed catalog
+"Informatica Data Quality",Y,Y,Present in production seed catalog
+"Informatica MDM",Y,Y,Present in production seed catalog
+"Insider",Y,Y,Present in production seed catalog
+"Intercom",Y,Y,Present in production seed catalog
+"Intercom Fin AI",Y,Y,Present in production seed catalog
+"IRONSCALES",Y,Y,Present in production seed catalog
+"ISACA",Y,Y,Present in production seed catalog
+"Istio",Y,Y,Present in production seed catalog
+"Iterable",Y,Y,Present in production seed catalog
+"Iterable (Advanced Track)",Y,Y,Present in production seed catalog
+"Ivanti",Y,Y,Present in production seed catalog
+"Ivanti Neurons",Y,Y,Present in production seed catalog
+"JAMF",Y,Y,Present in production seed catalog
+"JazzHR",Y,Y,Present in production seed catalog
+"Jenkins",Y,Y,Present in production seed catalog
+"JFrog",Y,Y,Present in production seed catalog
+"JFrog Artifactory",Y,Y,Present in production seed catalog
+"Jitterbit",Y,Y,Present in production seed catalog
+"JumpCloud",Y,Y,Present in production seed catalog
+"Juniper Mist",Y,Y,Present in production seed catalog
+"Juniper Mist AI",Y,Y,Present in production seed catalog
+"Juniper Networks",Y,Y,Present in production seed catalog
+"Juniper SRX",Y,Y,Present in production seed catalog
+"k0s",Y,Y,Present in production seed catalog
+"K3s",Y,Y,Present in production seed catalog
+"Kandji",Y,Y,Present in production seed catalog
+"Karmada",Y,Y,Present in production seed catalog
+"Karpenter",Y,Y,Present in production seed catalog
+"Kaseya",Y,Y,Present in production seed catalog
+"Kaspersky",Y,Y,Present in production seed catalog
+"KEDA",Y,Y,Present in production seed catalog
+"Keeper Security",Y,Y,Present in production seed catalog
+"Kentik",Y,Y,Present in production seed catalog
+"Keptn",Y,Y,Present in production seed catalog
+"Klaviyo",Y,Y,Present in production seed catalog
+"Klipfolio",Y,Y,Present in production seed catalog
+"Knative",Y,Y,Present in production seed catalog
+"KNIME",Y,Y,Present in production seed catalog
+"Kong",Y,Y,Present in production seed catalog
+"KubeArmor",Y,Y,Present in production seed catalog
+"Kubecost",Y,Y,Present in production seed catalog
+"KubeEdge",Y,Y,Present in production seed catalog
+"Kubeflow",Y,Y,Present in production seed catalog
+"KubeVela",Y,Y,Present in production seed catalog
+"KubeVirt",Y,Y,Present in production seed catalog
+"Kyverno",Y,Y,Present in production seed catalog
+"Labelbox",Y,Y,Present in production seed catalog
+"Lacework",Y,Y,Present in production seed catalog
+"LastPass",Y,Y,Present in production seed catalog
+"LearnUpon",Y,Y,Present in production seed catalog
+"Lenovo",Y,Y,Present in production seed catalog
+"Lens",Y,Y,Present in production seed catalog
+"Lever",Y,Y,Present in production seed catalog

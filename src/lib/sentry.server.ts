@@ -27,13 +27,17 @@ export function initSentry() {
     environment: process.env.SENTRY_ENVIRONMENT || 'production',
     release: process.env.SENTRY_RELEASE || 'training-certify@1.0.0',
 
-    // Performance Monitoring
+    // Performance Monitoring — default 10% in production to control cost/noise
     tracesSampleRate: parseFloat(
-      process.env.SENTRY_TRACES_SAMPLE_RATE || '1.0',
+      process.env.SENTRY_TRACES_SAMPLE_RATE ||
+        (process.env.NODE_ENV === 'production' ? '0.1' : '1.0'),
     ),
 
-    // Profiling
-    profilesSampleRate: 1.0,
+    // Profiling — keep aligned with traces; override via env if needed
+    profilesSampleRate: parseFloat(
+      process.env.SENTRY_PROFILES_SAMPLE_RATE ||
+        (process.env.NODE_ENV === 'production' ? '0.1' : '1.0'),
+    ),
 
     // Session Replay (client-side only)
     replaysSessionSampleRate: parseFloat(

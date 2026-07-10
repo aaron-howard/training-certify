@@ -1,46 +1,46 @@
 vendorName,inCatalog,hasCertProgram,notes
-"Typeform",,,
-"Ubiquiti",,,
-"Udemy Business",,,
-"UiPath",,,
-"UKG Pro",,,
-"Ultimate.ai",,,
-"UserTesting",,,
-"UserZoom",,,
-"Vanta",,,
-"Varonis",,,
-"Veeam",,,
-"Versa Networks",,,
-"VMware",,,
-"VMware Aria Cost",,,
-"VMware by Broadcom",,,
-"VMware Carbon Black",,,
-"VMware Tanzu",,,
-"Volcano",,,
-"VTEX",,,
-"Wallarm",,,
-"Wasabi",,,
-"WatchGuard",,,
-"Weights & Biases",,,
-"Wix eCommerce",,,
-"Wiz",,,
-"WooCommerce",,,
-"Workable",,,
-"Workato",,,
-"Workday",,,
-"Workday Financials",,,
-"Workday HCM",,,
-"WSO2",,,
-"Xero",,,
-"YugabyteDB",,,
-"Zabbix",,,
-"Zapier",,,
-"Zendesk",,,
-"Zendesk AI",,,
-"Zoho Analytics",,,
-"Zoho CRM",,,
-"Zoom",,,
-"ZoomInfo",,,
-"Zscaler",,,
-"Zuora",,,
-"Zyxel Networks",,,
+"Typeform",Y,Y,Present in production seed catalog
+"Ubiquiti",Y,Y,Present in production seed catalog
+"Udemy Business",Y,Y,Present in production seed catalog
+"UiPath",Y,Y,Present in production seed catalog
+"UKG Pro",Y,Y,Present in production seed catalog
+"Ultimate.ai",Y,Y,Present in production seed catalog
+"UserTesting",Y,Y,Present in production seed catalog
+"UserZoom",Y,Y,Present in production seed catalog
+"Vanta",Y,Y,Present in production seed catalog
+"Varonis",Y,Y,Present in production seed catalog
+"Veeam",Y,Y,Present in production seed catalog
+"Versa Networks",Y,Y,Present in production seed catalog
+"VMware",Y,Y,Present in production seed catalog
+"VMware Aria Cost",Y,Y,Present in production seed catalog
+"VMware by Broadcom",,N,Not in production seed catalog — exclude until manually validated
+"VMware Carbon Black",Y,Y,Present in production seed catalog
+"VMware Tanzu",Y,Y,Present in production seed catalog
+"Volcano",Y,Y,Present in production seed catalog
+"VTEX",Y,Y,Present in production seed catalog
+"Wallarm",Y,Y,Present in production seed catalog
+"Wasabi",Y,Y,Present in production seed catalog
+"WatchGuard",Y,Y,Present in production seed catalog
+"Weights & Biases",Y,Y,Present in production seed catalog
+"Wix eCommerce",Y,Y,Present in production seed catalog
+"Wiz",Y,Y,Present in production seed catalog
+"WooCommerce",Y,Y,Present in production seed catalog
+"Workable",Y,Y,Present in production seed catalog
+"Workato",Y,Y,Present in production seed catalog
+"Workday",Y,Y,Present in production seed catalog
+"Workday Financials",Y,Y,Present in production seed catalog
+"Workday HCM",Y,Y,Present in production seed catalog
+"WSO2",Y,Y,Present in production seed catalog
+"Xero",Y,Y,Present in production seed catalog
+"YugabyteDB",Y,Y,Present in production seed catalog
+"Zabbix",Y,Y,Present in production seed catalog
+"Zapier",Y,Y,Present in production seed catalog
+"Zendesk",Y,Y,Present in production seed catalog
+"Zendesk AI",Y,Y,Present in production seed catalog
+"Zoho Analytics",Y,Y,Present in production seed catalog
+"Zoho CRM",Y,Y,Present in production seed catalog
+"Zoom",Y,Y,Present in production seed catalog
+"ZoomInfo",Y,Y,Present in production seed catalog
+"Zscaler",Y,Y,Present in production seed catalog
+"Zuora",Y,Y,Present in production seed catalog
+"Zyxel Networks",Y,Y,Present in production seed catalog

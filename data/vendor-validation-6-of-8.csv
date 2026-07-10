@@ -1,81 +1,81 @@
 vendorName,inCatalog,hasCertProgram,notes
-"Oracle Cloud",,,
-"Oracle Customer Data Management",,,
-"Oracle Fusion Cloud Apps",,,
-"Orca Security",,,
-"Outreach",,,
-"OvalEdge",,,
-"PagerDuty",,,
-"Palo Alto Cortex XSOAR",,,
-"Palo Alto Networks",,,
-"Palo Alto Prisma Access",,,
-"Paychex",,,
-"PayPal / Braintree",,,
-"Pendo",,,
-"Hitachi Vantara",,,
-"Ping Identity",,,
-"Pipedrive",,,
-"Portainer",,,
-"Postman",,,
-"Prefect",,,
-"Prisma Cloud (Palo Alto Networks)",,,
-"Productboard",,,
-"Profisee",,,
-"Project Management Institute",,,
-"Prometheus",,,
-"Proofpoint",,,
-"PRTG Network Monitor",,,
-"Pulumi",,,
-"Puppet",,,
-"Qlik",,,
-"Qualtrics",,,
-"Qualys",,,
-"QuickBooks Online",,,
-"Radware",,,
-"Rancher",,,
-"Rapid7",,,
-"Rapid7 InsightCloudSec",,,
-"Rapid7 InsightIDR",,,
-"RapidMiner",,,
-"Ray",,,
-"Reblaze",,,
-"Recurly",,,
-"Red Hat",,,
-"Red Hat OpenShift",,,
-"Redis",,,
-"Reltio",,,
-"RingCentral",,,
-"Rippling",,,
-"Riverbed",,,
-"Roadmunk",,,
-"Rollbar",,,
-"Rook",,,
-"Rubrik",,,
-"Sage Intacct",,,
-"SailPoint",,,
-"Salesforce",,,
-"Salesforce Commerce Cloud",,,
-"Salesforce Marketing Cloud",,,
-"Salesforce Pardot / Account Engagement",,,
-"Salesforce Sales Cloud",,,
-"Salesloft",,,
-"Salt Security",,,
-"SaltStack",,,
-"SAP",,,
-"SAP Analytics Cloud",,,
-"SAP BW/BI",,,
-"SAP Concur",,,
-"SAP Litmos",,,
-"SAP Master Data Governance",,,
-"SAP SuccessFactors",,,
-"SAS",,,
-"SAS Viya",,,
-"ScienceLogic",,,
-"Scrum.org",,,
-"Securiti.ai",,,
-"SeekOut",,,
-"Twilio",,,
-"Semaphore CI",,,
-"Semarchy xDM",,,
-"SendGrid",,,
-"SentinelOne",,,
+"Oracle Cloud",Y,Y,Present in production seed catalog
+"Oracle Customer Data Management",Y,Y,Present in production seed catalog
+"Oracle Fusion Cloud Apps",Y,Y,Present in production seed catalog
+"Orca Security",Y,Y,Present in production seed catalog
+"Outreach",Y,Y,Present in production seed catalog
+"OvalEdge",Y,Y,Present in production seed catalog
+"PagerDuty",Y,Y,Present in production seed catalog
+"Palo Alto Cortex XSOAR",Y,Y,Present in production seed catalog
+"Palo Alto Networks",Y,Y,Present in production seed catalog
+"Palo Alto Prisma Access",Y,Y,Present in production seed catalog
+"Paychex",Y,Y,Present in production seed catalog
+"PayPal / Braintree",Y,Y,Present in production seed catalog
+"Pendo",Y,Y,Present in production seed catalog
+"Hitachi Vantara",,N,Not in production seed catalog — exclude until manually validated
+"Ping Identity",Y,Y,Present in production seed catalog
+"Pipedrive",Y,Y,Present in production seed catalog
+"Portainer",Y,Y,Present in production seed catalog
+"Postman",Y,Y,Present in production seed catalog
+"Prefect",Y,Y,Present in production seed catalog
+"Prisma Cloud (Palo Alto Networks)",Y,Y,Present in production seed catalog
+"Productboard",Y,Y,Present in production seed catalog
+"Profisee",Y,Y,Present in production seed catalog
+"Project Management Institute",,N,Not in production seed catalog — exclude until manually validated
+"Prometheus",Y,Y,Present in production seed catalog
+"Proofpoint",Y,Y,Present in production seed catalog
+"PRTG Network Monitor",Y,Y,Present in production seed catalog
+"Pulumi",Y,Y,Present in production seed catalog
+"Puppet",Y,Y,Present in production seed catalog
+"Qlik",Y,Y,Present in production seed catalog
+"Qualtrics",Y,Y,Present in production seed catalog
+"Qualys",Y,Y,Present in production seed catalog
+"QuickBooks Online",Y,Y,Present in production seed catalog
+"Radware",Y,Y,Present in production seed catalog
+"Rancher",Y,Y,Present in production seed catalog
+"Rapid7",Y,Y,Present in production seed catalog
+"Rapid7 InsightCloudSec",Y,Y,Present in production seed catalog
+"Rapid7 InsightIDR",Y,Y,Present in production seed catalog
+"RapidMiner",Y,Y,Present in production seed catalog
+"Ray",Y,Y,Present in production seed catalog
+"Reblaze",Y,Y,Present in production seed catalog
+"Recurly",Y,Y,Present in production seed catalog
+"Red Hat",Y,Y,Present in production seed catalog
+"Red Hat OpenShift",Y,Y,Present in production seed catalog
+"Redis",Y,Y,Present in production seed catalog
+"Reltio",Y,Y,Present in production seed catalog
+"RingCentral",Y,Y,Present in production seed catalog
+"Rippling",Y,Y,Present in production seed catalog
+"Riverbed",Y,Y,Present in production seed catalog
+"Roadmunk",Y,Y,Present in production seed catalog
+"Rollbar",Y,Y,Present in production seed catalog
+"Rook",Y,Y,Present in production seed catalog
+"Rubrik",Y,Y,Present in production seed catalog
+"Sage Intacct",Y,Y,Present in production seed catalog
+"SailPoint",Y,Y,Present in production seed catalog
+"Salesforce",Y,Y,Present in production seed catalog
+"Salesforce Commerce Cloud",Y,Y,Present in production seed catalog
+"Salesforce Marketing Cloud",Y,Y,Present in production seed catalog
+"Salesforce Pardot / Account Engagement",Y,Y,Present in production seed catalog
+"Salesforce Sales Cloud",Y,Y,Present in production seed catalog
+"Salesloft",Y,Y,Present in production seed catalog
+"Salt Security",Y,Y,Present in production seed catalog
+"SaltStack",Y,Y,Present in production seed catalog
+"SAP",Y,Y,Present in production seed catalog
+"SAP Analytics Cloud",Y,Y,Present in production seed catalog
+"SAP BW/BI",Y,Y,Present in production seed catalog
+"SAP Concur",Y,Y,Present in production seed catalog
+"SAP Litmos",Y,Y,Present in production seed catalog
+"SAP Master Data Governance",Y,Y,Present in production seed catalog
+"SAP SuccessFactors",Y,Y,Present in production seed catalog
+"SAS",Y,Y,Present in production seed catalog
+"SAS Viya",Y,Y,Present in production seed catalog
+"ScienceLogic",Y,Y,Present in production seed catalog
+"Scrum.org",Y,Y,Present in production seed catalog
+"Securiti.ai",Y,Y,Present in production seed catalog
+"SeekOut",Y,Y,Present in production seed catalog
+"Twilio",Y,Y,Present in production seed catalog
+"Semaphore CI",Y,Y,Present in production seed catalog
+"Semarchy xDM",Y,Y,Present in production seed catalog
+"SendGrid",Y,Y,Present in production seed catalog
+"SentinelOne",Y,Y,Present in production seed catalog

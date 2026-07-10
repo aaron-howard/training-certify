@@ -1,81 +1,81 @@
 vendorName,inCatalog,hasCertProgram,notes
-"(ISC)²",Y,,
-"1Password Business",,,
-"42Crunch",,,
-"8x8",,,
-"A10 Networks",,,
-"Abnormal Security",,,
-"Absorb LMS",,,
-"Acceldata",,,
-"Acoustic Campaign",,,
-"Acronis",,,
-"ActiveCampaign",,,
-"Ada",,,
-"Adobe",Y,,
-"ADP Workforce Now",,,
-"ADTRAN",,,
-"Aha!",,,
-"Airbyte",,,
-"Airtable",,,
-"Akamai",,,
-"Akamai API Security",,,
-"Alation",,,
-"Alibaba Cloud",,,
-"Allied Telesis",,,
-"Alteryx",Y,,
-"Amazon Web Services",Y,,
-"Amplitude",,,
-"Amundsen",,,
-"Anchore",,,
-"Anomalo",,,
-"Ansible",,,
-"Apache Airflow",,,
-"Apache NiFi",,,
-"Apigee",,,
-"Apollo.io",,,
-"Appcues",,,
-"AppDynamics",,,
-"Apple",,,
-"Aqua Security",,,
-"Aqua Security (Trivy)",,,
-"Archer",,,
-"Arctic Wolf",,,
-"Area 1 Security",,,
-"Argo CD",,,
-"Argo Project",,,
-"Argo Workflows",,,
-"Arista Networks",,,
-"Aruba / HPE",Y,,
-"Aruba Networks",,,
-"Asana",,,
-"Ashby",,,
-"Astronomer",,,
-"Ataccama",,,
-"Ataccama MDM",,,
-"Atera",,,
-"Atlan",,,
-"Atlassian",Y,,
-"Atlassian Bamboo",,,
-"Auth0",,,
-"Autodesk",Y,,
-"Automation Anywhere",Y,,
-"Avanan",,,
-"Axelos",Y,,
-"Microsoft",,,
-"Backblaze B2",,,
-"Backstage (Spotify)",,,
-"BambooHR",,,
-"BambooHR (Advanced Track)",,,
-"Barracuda",,,
-"Barracuda CloudGen Firewall",,,
-"Barracuda Email Security",,,
-"Barracuda Networks",,,
-"BeyondTrust",,,
-"BigCommerce",,,
-"Bigeye",,,
-"BigID",,,
-"BigPanda",,,
-"Bill.com",,,
-"Bitdefender",,,
-"Bitdefender GravityZone",,,
-"Bitrise",,,
+"(ISC)²",Y,Y,Present in production seed catalog
+"1Password Business",Y,Y,Present in production seed catalog
+"42Crunch",Y,Y,Present in production seed catalog
+"8x8",Y,Y,Present in production seed catalog
+"A10 Networks",Y,Y,Present in production seed catalog
+"Abnormal Security",Y,Y,Present in production seed catalog
+"Absorb LMS",Y,Y,Present in production seed catalog
+"Acceldata",Y,Y,Present in production seed catalog
+"Acoustic Campaign",Y,Y,Present in production seed catalog
+"Acronis",Y,Y,Present in production seed catalog
+"ActiveCampaign",Y,Y,Present in production seed catalog
+"Ada",Y,Y,Present in production seed catalog
+"Adobe",Y,Y,Present in production seed catalog
+"ADP Workforce Now",Y,Y,Present in production seed catalog
+"ADTRAN",Y,Y,Present in production seed catalog
+"Aha!",Y,Y,Present in production seed catalog
+"Airbyte",Y,Y,Present in production seed catalog
+"Airtable",Y,Y,Present in production seed catalog
+"Akamai",Y,Y,Present in production seed catalog
+"Akamai API Security",Y,Y,Present in production seed catalog
+"Alation",Y,Y,Present in production seed catalog
+"Alibaba Cloud",Y,Y,Present in production seed catalog
+"Allied Telesis",Y,Y,Present in production seed catalog
+"Alteryx",Y,Y,Present in production seed catalog
+"Amazon Web Services",Y,Y,Present in production seed catalog
+"Amplitude",Y,Y,Present in production seed catalog
+"Amundsen",Y,Y,Present in production seed catalog
+"Anchore",Y,Y,Present in production seed catalog
+"Anomalo",Y,Y,Present in production seed catalog
+"Ansible",Y,Y,Present in production seed catalog
+"Apache Airflow",Y,Y,Present in production seed catalog
+"Apache NiFi",Y,Y,Present in production seed catalog
+"Apigee",Y,Y,Present in production seed catalog
+"Apollo.io",Y,Y,Present in production seed catalog
+"Appcues",Y,Y,Present in production seed catalog
+"AppDynamics",Y,Y,Present in production seed catalog
+"Apple",Y,Y,Present in production seed catalog
+"Aqua Security",Y,Y,Present in production seed catalog
+"Aqua Security (Trivy)",Y,Y,Present in production seed catalog
+"Archer",Y,Y,Present in production seed catalog
+"Arctic Wolf",Y,Y,Present in production seed catalog
+"Area 1 Security",Y,Y,Present in production seed catalog
+"Argo CD",Y,Y,Present in production seed catalog
+"Argo Project",Y,Y,Present in production seed catalog
+"Argo Workflows",Y,Y,Present in production seed catalog
+"Arista Networks",Y,Y,Present in production seed catalog
+"Aruba / HPE",Y,Y,Present in production seed catalog
+"Aruba Networks",Y,Y,Present in production seed catalog
+"Asana",Y,Y,Present in production seed catalog
+"Ashby",Y,Y,Present in production seed catalog
+"Astronomer",Y,Y,Present in production seed catalog
+"Ataccama",Y,Y,Present in production seed catalog
+"Ataccama MDM",Y,Y,Present in production seed catalog
+"Atera",Y,Y,Present in production seed catalog
+"Atlan",Y,Y,Present in production seed catalog
+"Atlassian",Y,Y,Present in production seed catalog
+"Atlassian Bamboo",Y,Y,Present in production seed catalog
+"Auth0",Y,Y,Present in production seed catalog
+"Autodesk",Y,Y,Present in production seed catalog
+"Automation Anywhere",Y,Y,Present in production seed catalog
+"Avanan",Y,Y,Present in production seed catalog
+"Axelos",Y,Y,Present in production seed catalog
+"Microsoft",Y,Y,Present in production seed catalog
+"Backblaze B2",Y,Y,Present in production seed catalog
+"Backstage (Spotify)",Y,Y,Present in production seed catalog
+"BambooHR",Y,Y,Present in production seed catalog
+"BambooHR (Advanced Track)",Y,Y,Present in production seed catalog
+"Barracuda",Y,Y,Present in production seed catalog
+"Barracuda CloudGen Firewall",Y,Y,Present in production seed catalog
+"Barracuda Email Security",Y,Y,Present in production seed catalog
+"Barracuda Networks",Y,Y,Present in production seed catalog
+"BeyondTrust",Y,Y,Present in production seed catalog
+"BigCommerce",Y,Y,Present in production seed catalog
+"Bigeye",Y,Y,Present in production seed catalog
+"BigID",Y,Y,Present in production seed catalog
+"BigPanda",Y,Y,Present in production seed catalog
+"Bill.com",Y,Y,Present in production seed catalog
+"Bitdefender",Y,Y,Present in production seed catalog
+"Bitdefender GravityZone",Y,Y,Present in production seed catalog
+"Bitrise",Y,Y,Present in production seed catalog
