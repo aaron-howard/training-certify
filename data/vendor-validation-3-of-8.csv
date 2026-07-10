@@ -1,81 +1,81 @@
 vendorName,inCatalog,hasCertProgram,notes
-"dbt Labs",,,
-"Dell EMC PowerProtect",,,
-"Dell Networking",,,
-"Dell Technologies",,,
-"DevSpace",,,
-"DigitalOcean",,,
-"Docebo",,,
-"Docker",,,
-"DocuSign",,,
-"Domino Data Lab",,,
-"Domo",,,
-"Drata",,,
-"Drone CI",,,
-"Dropbox Business",,,
-"Druva",,,
-"Duo Security",,,
-"Dynatrace",,,
-"EC-Council",,,
-"Eightfold AI",,,
-"Elastic",,,
-"Elastic Observability",,,
-"Elastic Path",,,
-"Eloqua (Oracle)",,,
-"Emarsys",,,
-"Envoy Proxy",,,
-"ESET Protect",,,
-"etcd",,,
-"Exabeam",,,
-"Expensify",,,
-"Extreme Networks",,,
-"F5",,,
-"F5 Networks",,,
-"Falco",,,
-"Fastly",,,
-"Figma",,,
-"Five9",,,
-"Fivetran",,,
-"Flatcar Linux",,,
-"Flexera",,,
-"FluxCD",,,
-"Forcepoint",,,
-"Forethought",,,
-"Fortinet",,,
-"Fortinet FortiGate",,,
-"Fortinet Secure SD-WAN",,,
-"FreshBooks",,,
-"Freshsales",,,
-"Freshservice",,,
-"Freshworks",,,
-"FullStory",,,
-"Gainsight",,,
-"Garden.io",,,
-"Gem",,,
-"Genesys Cloud CX",,,
-"GIAC / SANS",,,
-"GitHub",,,
-"GitLab",,,
-"Gong",,,
-"GoodData",,,
-"Google",,,
-"Google Cloud",,,
-"Google Cloud Billing",,,
-"Google Cloud Build",,,
-"Google Cloud Composer",,,
-"Google Vertex AI",,,
-"Google Workspace",,,
-"Grafana Cloud",,,
-"Grafana Labs",,,
-"Grafana Labs (k6)",,,
-"Great Expectations",,,
-"Greenhouse",,,
-"Greenhouse (Advanced Track)",,,
-"Gusto",,,
-"H2O.ai",,,
-"Harbor",,,
-"Harness",,,
-"Harness Cloud Cost",,,
-"Harness STO",,,
-"HashiCorp",,,
-"HashiCorp Terraform Cloud",,,
+"dbt Labs",Y,Y,Present in production seed catalog
+"Dell EMC PowerProtect",Y,Y,Present in production seed catalog
+"Dell Networking",Y,Y,Present in production seed catalog
+"Dell Technologies",Y,Y,Present in production seed catalog
+"DevSpace",Y,Y,Present in production seed catalog
+"DigitalOcean",Y,Y,Present in production seed catalog
+"Docebo",Y,Y,Present in production seed catalog
+"Docker",Y,Y,Present in production seed catalog
+"DocuSign",Y,Y,Present in production seed catalog
+"Domino Data Lab",Y,Y,Present in production seed catalog
+"Domo",Y,Y,Present in production seed catalog
+"Drata",Y,Y,Present in production seed catalog
+"Drone CI",Y,Y,Present in production seed catalog
+"Dropbox Business",Y,Y,Present in production seed catalog
+"Druva",Y,Y,Present in production seed catalog
+"Duo Security",Y,Y,Present in production seed catalog
+"Dynatrace",Y,Y,Present in production seed catalog
+"EC-Council",Y,Y,Present in production seed catalog
+"Eightfold AI",Y,Y,Present in production seed catalog
+"Elastic",Y,Y,Present in production seed catalog
+"Elastic Observability",Y,Y,Present in production seed catalog
+"Elastic Path",Y,Y,Present in production seed catalog
+"Eloqua (Oracle)",Y,Y,Present in production seed catalog
+"Emarsys",Y,Y,Present in production seed catalog
+"Envoy Proxy",Y,Y,Present in production seed catalog
+"ESET Protect",Y,Y,Present in production seed catalog
+"etcd",Y,Y,Present in production seed catalog
+"Exabeam",Y,Y,Present in production seed catalog
+"Expensify",Y,Y,Present in production seed catalog
+"Extreme Networks",Y,Y,Present in production seed catalog
+"F5",Y,Y,Present in production seed catalog
+"F5 Networks",Y,Y,Present in production seed catalog
+"Falco",Y,Y,Present in production seed catalog
+"Fastly",Y,Y,Present in production seed catalog
+"Figma",Y,Y,Present in production seed catalog
+"Five9",Y,Y,Present in production seed catalog
+"Fivetran",Y,Y,Present in production seed catalog
+"Flatcar Linux",Y,Y,Present in production seed catalog
+"Flexera",Y,Y,Present in production seed catalog
+"FluxCD",Y,Y,Present in production seed catalog
+"Forcepoint",Y,Y,Present in production seed catalog
+"Forethought",Y,Y,Present in production seed catalog
+"Fortinet",Y,Y,Present in production seed catalog
+"Fortinet FortiGate",Y,Y,Present in production seed catalog
+"Fortinet Secure SD-WAN",Y,Y,Present in production seed catalog
+"FreshBooks",Y,Y,Present in production seed catalog
+"Freshsales",Y,Y,Present in production seed catalog
+"Freshservice",Y,Y,Present in production seed catalog
+"Freshworks",Y,Y,Present in production seed catalog
+"FullStory",Y,Y,Present in production seed catalog
+"Gainsight",Y,Y,Present in production seed catalog
+"Garden.io",Y,Y,Present in production seed catalog
+"Gem",Y,Y,Present in production seed catalog
+"Genesys Cloud CX",Y,Y,Present in production seed catalog
+"GIAC / SANS",Y,Y,Present in production seed catalog
+"GitHub",Y,Y,Present in production seed catalog
+"GitLab",Y,Y,Present in production seed catalog
+"Gong",Y,Y,Present in production seed catalog
+"GoodData",Y,Y,Present in production seed catalog
+"Google",Y,Y,Present in production seed catalog
+"Google Cloud",Y,Y,Present in production seed catalog
+"Google Cloud Billing",Y,Y,Present in production seed catalog
+"Google Cloud Build",Y,Y,Present in production seed catalog
+"Google Cloud Composer",Y,Y,Present in production seed catalog
+"Google Vertex AI",Y,Y,Present in production seed catalog
+"Google Workspace",Y,Y,Present in production seed catalog
+"Grafana Cloud",Y,Y,Present in production seed catalog
+"Grafana Labs",Y,Y,Present in production seed catalog
+"Grafana Labs (k6)",Y,Y,Present in production seed catalog
+"Great Expectations",Y,Y,Present in production seed catalog
+"Greenhouse",Y,Y,Present in production seed catalog
+"Greenhouse (Advanced Track)",Y,Y,Present in production seed catalog
+"Gusto",Y,Y,Present in production seed catalog
+"H2O.ai",Y,Y,Present in production seed catalog
+"Harbor",Y,Y,Present in production seed catalog
+"Harness",Y,Y,Present in production seed catalog
+"Harness Cloud Cost",Y,Y,Present in production seed catalog
+"Harness STO",Y,Y,Present in production seed catalog
+"HashiCorp",Y,Y,Present in production seed catalog
+"HashiCorp Terraform Cloud",Y,Y,Present in production seed catalog

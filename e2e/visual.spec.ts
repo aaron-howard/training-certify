@@ -3,14 +3,43 @@
  * First run / UI change: pnpm run test:e2e -- e2e/visual.spec.ts --update-snapshots
  * Baselines: e2e/visual.spec.ts-snapshots/ (see playwright.config snapshotPathTemplate — no OS suffix).
  *
+ * Baselines are committed under e2e/visual.spec.ts-snapshots/. If that directory is empty
+ * or missing expected PNGs, these tests skip so CI does not fail on a fresh clone without
+ * regenerating snapshots.
+ *
  * Clerk sign-in/up embeds can drift with @clerk/ui releases — bump snapshots when upgrading Clerk.
  * If GitHub Actions (Linux) fails on pixels but Windows passes, regenerate baselines inside the
  * official Playwright Docker image (Linux) so CI and committed PNGs match.
  */
 
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { expect, test } from '@playwright/test'
 
+const snapshotsDir = path.join(
+  path.dirname(fileURLToPath(import.meta.url)),
+  'visual.spec.ts-snapshots',
+)
+
+const requiredBaselines = [
+  'sign-in-chromium.png',
+  'sign-up-chromium.png',
+  'api-docs-viewport-chromium.png',
+]
+
+const baselinesPresent =
+  fs.existsSync(snapshotsDir) &&
+  requiredBaselines.every((name) =>
+    fs.existsSync(path.join(snapshotsDir, name)),
+  )
+
 test.describe('Visual regression', () => {
+  test.skip(
+    !baselinesPresent,
+    'Visual baselines missing under e2e/visual.spec.ts-snapshots/ — run with --update-snapshots',
+  )
+
   test('sign-in page matches snapshot', async ({ page }) => {
     await page.goto('/sign-in', { waitUntil: 'domcontentloaded' })
     await expect(page.locator('body')).toBeVisible()

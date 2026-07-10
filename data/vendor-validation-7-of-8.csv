@@ -1,81 +1,81 @@
 vendorName,inCatalog,hasCertProgram,notes
-"Sentry",,,
-"Service Desk Institute",,,
-"ServiceNow ITSM",,,
-"Shopify",,,
-"Sigma Computing",,,
-"Signal Sciences",,,
-"SingleStore",,,
-"Sisense",,,
-"Skaffold",,,
-"Skillsoft Percipio",,,
-"Slack",,,
-"Smartsheet",,,
-"Snowflake",,,
-"Snowplow Analytics",,,
-"Snyk",,,
-"Soda",,,
-"SolarWinds",,,
-"SolarWinds NPM",,,
-"SolarWinds Service Desk",,,
-"Solidatus",,,
-"Sonatype",,,
-"Sonatype Nexus",,,
-"SonicWall",,,
-"Sophos",,,
-"Sophos Firewall",,,
-"Sophos Intercept X",,,
-"Spiceworks",,,
-"Spinnaker",,,
-"Splunk",,,
-"Splunk Enterprise",,,
-"Splunk SOAR",,,
-"Spot by NetApp",,,
-"Square",,,
-"Squarespace Commerce",,,
-"Stibo Systems",,,
-"Stitch",,,
-"StreamSets",,,
-"Stripe",,,
-"Sumo Logic",,,
-"Sumo Logic Cloud SIEM",,,
-"SuperEdge",,,
-"Supermicro Networking",,,
-"Momentive",,,
-"SUSE",,,
-"SysAid",,,
-"Sysdig",,,
-"Sysdig Secure",,,
-"Tableau",,,
-"Talend",,,
-"Talend Cloud",,,
-"Talend Data Catalog",,,
-"Talend Data Quality",,,
-"TalentLMS",,,
-"Talkdesk",,,
-"Talos Linux",,,
-"Tamr",,,
-"Tealium",,,
-"TeamCity (JetBrains)",,,
-"Tekton",,,
-"Tenable",,,
-"Tenable.io",,,
-"Tencent Cloud",,,
-"Terraform (HashiCorp)",,,
-"Tessian",,,
-"The Open Group",,,
-"ThoughtSpot",,,
-"ThousandEyes",,,
-"TIBCO Spotfire",,,
-"Tilt",,,
-"TimescaleDB",,,
-"TOPdesk",,,
-"Totango",,,
-"TP-Link Omada",,,
-"Traceable AI",,,
-"Travis CI",,,
-"Tray.io",,,
-"Trend Micro",,,
-"Trend Micro Apex One",,,
-"TrustArc",,,
-"Tyk",,,
+"Sentry",Y,Y,Present in production seed catalog
+"Service Desk Institute",Y,Y,Present in production seed catalog
+"ServiceNow ITSM",Y,Y,Present in production seed catalog
+"Shopify",Y,Y,Present in production seed catalog
+"Sigma Computing",Y,Y,Present in production seed catalog
+"Signal Sciences",Y,Y,Present in production seed catalog
+"SingleStore",Y,Y,Present in production seed catalog
+"Sisense",Y,Y,Present in production seed catalog
+"Skaffold",Y,Y,Present in production seed catalog
+"Skillsoft Percipio",Y,Y,Present in production seed catalog
+"Slack",Y,Y,Present in production seed catalog
+"Smartsheet",Y,Y,Present in production seed catalog
+"Snowflake",Y,Y,Present in production seed catalog
+"Snowplow Analytics",Y,Y,Present in production seed catalog
+"Snyk",Y,Y,Present in production seed catalog
+"Soda",Y,Y,Present in production seed catalog
+"SolarWinds",Y,Y,Present in production seed catalog
+"SolarWinds NPM",Y,Y,Present in production seed catalog
+"SolarWinds Service Desk",Y,Y,Present in production seed catalog
+"Solidatus",Y,Y,Present in production seed catalog
+"Sonatype",Y,Y,Present in production seed catalog
+"Sonatype Nexus",Y,Y,Present in production seed catalog
+"SonicWall",Y,Y,Present in production seed catalog
+"Sophos",Y,Y,Present in production seed catalog
+"Sophos Firewall",Y,Y,Present in production seed catalog
+"Sophos Intercept X",Y,Y,Present in production seed catalog
+"Spiceworks",Y,Y,Present in production seed catalog
+"Spinnaker",Y,Y,Present in production seed catalog
+"Splunk",Y,Y,Present in production seed catalog
+"Splunk Enterprise",Y,Y,Present in production seed catalog
+"Splunk SOAR",Y,Y,Present in production seed catalog
+"Spot by NetApp",Y,Y,Present in production seed catalog
+"Square",Y,Y,Present in production seed catalog
+"Squarespace Commerce",Y,Y,Present in production seed catalog
+"Stibo Systems",Y,Y,Present in production seed catalog
+"Stitch",Y,Y,Present in production seed catalog
+"StreamSets",Y,Y,Present in production seed catalog
+"Stripe",Y,Y,Present in production seed catalog
+"Sumo Logic",Y,Y,Present in production seed catalog
+"Sumo Logic Cloud SIEM",Y,Y,Present in production seed catalog
+"SuperEdge",Y,Y,Present in production seed catalog
+"Supermicro Networking",Y,Y,Present in production seed catalog
+"Momentive",,N,Not in production seed catalog — exclude until manually validated
+"SUSE",Y,Y,Present in production seed catalog
+"SysAid",Y,Y,Present in production seed catalog
+"Sysdig",Y,Y,Present in production seed catalog
+"Sysdig Secure",Y,Y,Present in production seed catalog
+"Tableau",Y,Y,Present in production seed catalog
+"Talend",Y,Y,Present in production seed catalog
+"Talend Cloud",Y,Y,Present in production seed catalog
+"Talend Data Catalog",Y,Y,Present in production seed catalog
+"Talend Data Quality",Y,Y,Present in production seed catalog
+"TalentLMS",Y,Y,Present in production seed catalog
+"Talkdesk",Y,Y,Present in production seed catalog
+"Talos Linux",Y,Y,Present in production seed catalog
+"Tamr",Y,Y,Present in production seed catalog
+"Tealium",Y,Y,Present in production seed catalog
+"TeamCity (JetBrains)",Y,Y,Present in production seed catalog
+"Tekton",Y,Y,Present in production seed catalog
+"Tenable",Y,Y,Present in production seed catalog
+"Tenable.io",Y,Y,Present in production seed catalog
+"Tencent Cloud",Y,Y,Present in production seed catalog
+"Terraform (HashiCorp)",Y,Y,Present in production seed catalog
+"Tessian",Y,Y,Present in production seed catalog
+"The Open Group",Y,Y,Present in production seed catalog
+"ThoughtSpot",Y,Y,Present in production seed catalog
+"ThousandEyes",Y,Y,Present in production seed catalog
+"TIBCO Spotfire",Y,Y,Present in production seed catalog
+"Tilt",Y,Y,Present in production seed catalog
+"TimescaleDB",Y,Y,Present in production seed catalog
+"TOPdesk",Y,Y,Present in production seed catalog
+"Totango",Y,Y,Present in production seed catalog
+"TP-Link Omada",Y,Y,Present in production seed catalog
+"Traceable AI",Y,Y,Present in production seed catalog
+"Travis CI",Y,Y,Present in production seed catalog
+"Tray.io",Y,Y,Present in production seed catalog
+"Trend Micro",Y,Y,Present in production seed catalog
+"Trend Micro Apex One",Y,Y,Present in production seed catalog
+"TrustArc",Y,Y,Present in production seed catalog
+"Tyk",Y,Y,Present in production seed catalog

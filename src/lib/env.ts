@@ -6,60 +6,97 @@
 import { z } from 'zod'
 // Note: Logging imports are done dynamically in validateEnv() to prevent client bundle inclusion
 
-const envSchema = z.object({
-  // Database
-  DATABASE_URL: z.preprocess(
-    (val) =>
-      val || process.env.POSTGRES_URL || process.env.POSTGRES_URL_NON_POOLING,
-    z
+const envSchema = z
+  .object({
+    // Database
+    DATABASE_URL: z.preprocess(
+      (val) =>
+        val || process.env.POSTGRES_URL || process.env.POSTGRES_URL_NON_POOLING,
+      z
+        .string()
+        .url('DATABASE_URL or POSTGRES_URL must be a valid PostgreSQL URL'),
+    ),
+
+    // Clerk Authentication
+    CLERK_SECRET_KEY: z
       .string()
-      .url('DATABASE_URL or POSTGRES_URL must be a valid PostgreSQL URL'),
-  ),
+      .min(1, 'CLERK_SECRET_KEY is required')
+      .startsWith('sk_', 'CLERK_SECRET_KEY must start with sk_'),
+    VITE_CLERK_PUBLISHABLE_KEY: z.preprocess(
+      (val) =>
+        val ||
+        process.env.CLERK_PUBLISHABLE_KEY ||
+        process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+        process.env.VITE_PUBLIC_CLERK_PUBLISHABLE_KEY,
+      z
+        .string()
+        .min(1, 'Clerk Publishable Key is required')
+        .startsWith('pk_', 'Clerk Publishable Key must start with pk_'),
+    ),
 
-  // Clerk Authentication
-  CLERK_SECRET_KEY: z
-    .string()
-    .min(1, 'CLERK_SECRET_KEY is required')
-    .startsWith('sk_', 'CLERK_SECRET_KEY must start with sk_'),
-  VITE_CLERK_PUBLISHABLE_KEY: z.preprocess(
-    (val) =>
-      val ||
-      process.env.CLERK_PUBLISHABLE_KEY ||
-      process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-      process.env.VITE_PUBLIC_CLERK_PUBLISHABLE_KEY,
-    z
+    // Application
+    NODE_ENV: z
+      .enum(['development', 'production', 'test'])
+      .default('development'),
+    PORT: z.string().default('3000'),
+
+    // Monitoring (Optional)
+    SENTRY_DSN: z
       .string()
-      .min(1, 'Clerk Publishable Key is required')
-      .startsWith('pk_', 'Clerk Publishable Key must start with pk_'),
-  ),
+      .trim()
+      .optional()
+      .refine((val) => !val || val.startsWith('http'), {
+        message: 'Invalid SENTRY_DSN URL',
+      }),
 
-  // Application
-  NODE_ENV: z
-    .enum(['development', 'production', 'test'])
-    .default('development'),
-  PORT: z.string().default('3000'),
+    // Security
+    HTTPS_ONLY: z
+      .string()
+      .transform((val) => val === 'true')
+      .optional(),
+    /** Required in production (min 32 chars). Optional in development/test. */
+    CSRF_SECRET: z.string().min(32).optional(),
 
-  // Monitoring (Optional)
-  SENTRY_DSN: z
-    .string()
-    .trim()
-    .optional()
-    .refine((val) => !val || val.startsWith('http'), {
-      message: 'Invalid SENTRY_DSN URL',
-    }),
+    /**
+     * Vercel Blob token for certification proof uploads.
+     * Required in production so uploads fail at startup instead of at request time.
+     */
+    BLOB_READ_WRITE_TOKEN: z.string().min(1).optional(),
 
-  // Security (Optional)
-  HTTPS_ONLY: z
-    .string()
-    .transform((val) => val === 'true')
-    .optional(),
-  CSRF_SECRET: z.string().min(32).optional(),
+    /** When set, /metrics and /health require Bearer or X-Internal-Ops-Token (see internalOpsAuth.server.ts). */
+    INTERNAL_OPS_TOKEN: z.string().min(16).optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.NODE_ENV !== 'production') return
 
-  /** When set, /metrics and /health require Bearer or X-Internal-Ops-Token (see internalOpsAuth.server.ts). */
-  INTERNAL_OPS_TOKEN: z.string().min(16).optional(),
-})
+    if (!data.CSRF_SECRET || data.CSRF_SECRET.length < 32) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['CSRF_SECRET'],
+        message:
+          'CSRF_SECRET is required in production and must be at least 32 characters (openssl rand -base64 32)',
+      })
+    }
+
+    if (!data.BLOB_READ_WRITE_TOKEN) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['BLOB_READ_WRITE_TOKEN'],
+        message:
+          'BLOB_READ_WRITE_TOKEN is required in production for certification proof uploads',
+      })
+    }
+  })
 
 export type Env = z.infer<typeof envSchema>
+
+/**
+ * Parse and validate an env object (defaults to process.env).
+ * Prefer this in unit tests; use validateEnv() at server startup.
+ */
+export function parseEnv(env: NodeJS.ProcessEnv = process.env): Env {
+  return envSchema.parse(env)
+}
 
 /**
  * Validate environment variables
@@ -73,7 +110,7 @@ export function validateEnv(): Env {
   }
 
   try {
-    const validated = envSchema.parse(process.env)
+    const validated = parseEnv(process.env)
     // Logging removed from env.ts to prevent client bundle inclusion
     // Logging is handled in entry-server.tsx where it's safe
     return validated
@@ -107,7 +144,7 @@ export function validateEnv(): Env {
  * ```
  */
 export function getEnv(): Env {
-  return envSchema.parse(process.env)
+  return parseEnv(process.env)
 }
 
 /**
@@ -184,7 +221,7 @@ export const ENV = new Proxy({} as Env & { CLERK_PUBLISHABLE_KEY: string }, {
     if (!_env) {
       // Only parse on server-side
       if (typeof window === 'undefined') {
-        _env = envSchema.parse(process.env)
+        _env = parseEnv(process.env)
       } else {
         _env = {} as Env
       }

@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { json } from '@tanstack/react-start'
 import { desc } from 'drizzle-orm'
 import { getDbOrThrow } from '../db/db.server'
-import { auditLogs } from '../db/schema'
+import { auditLogs, userCertifications } from '../db/schema'
 import {
   handleApiError,
   setupReadHandler,
@@ -10,6 +10,18 @@ import {
 } from '../lib/api-helpers.server'
 import { API_ROLE_SETS } from '../lib/roles'
 import { CacheTTL, getOrCompute } from '../lib/cache.server'
+
+/**
+ * Org-wide compliance rate: share of user certifications with status `active`.
+ * Matches the executive dashboard formula in api.dashboard.ts.
+ */
+export function computeComplianceRate(
+  certs: Array<{ status: string }>,
+): number {
+  if (certs.length === 0) return 0
+  const active = certs.filter((c) => c.status === 'active').length
+  return Math.round((active / certs.length) * 100)
+}
 
 export const Route = createFileRoute('/api/compliance')({
   server: {
@@ -39,6 +51,10 @@ export const Route = createFileRoute('/api/compliance')({
                     l.action.toLowerCase().includes('failed'),
                 ).length
 
+                const allUserCerts = await db
+                  .select({ status: userCertifications.status })
+                  .from(userCertifications)
+
                 return {
                   auditLogs: logs.map((l) => ({
                     id: l.id,
@@ -48,7 +64,7 @@ export const Route = createFileRoute('/api/compliance')({
                     status: 'verified',
                   })),
                   stats: {
-                    complianceRate: 98,
+                    complianceRate: computeComplianceRate(allUserCerts),
                     totalAudits,
                     issuesFound,
                   },

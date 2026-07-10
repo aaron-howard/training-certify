@@ -23,6 +23,8 @@
     "db:studio": "drizzle-kit studio",
     "db:drop": "drizzle-kit drop",
     "db:seed-vendors": "npx tsx scripts/run-seed-vendors-keep-list.ts",
+    "catalog:fill-validation": "pnpm dlx tsx scripts/fill-vendor-validation-from-catalog.ts",
+    "env:validate": "node --experimental-strip-types -e \"import { validateEnv } from './src/lib/env.ts'; validateEnv(); console.log('Environment OK')\"",
     "docs": "typedoc",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui"

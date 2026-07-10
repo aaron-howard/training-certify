@@ -33,12 +33,14 @@ This directory contains GitHub Actions workflows for CI/CD and repository manage
 
 **Jobs:**
 
-- **deploy-staging** - Deploys to staging environment
-- **deploy-production** - Deploys to production (requires manual approval)
+- **deploy-staging** - Deploys to staging via Vercel CLI (`vercel pull` → `build` → `deploy --prebuilt`)
+- **deploy-production** - Deploys to production (manual `workflow_dispatch` only)
 
-**Note:** Deployment steps are placeholders. Update with your actual deployment commands.
+**Required secrets:** `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
 
-**Status:** ⚠️ Template - Requires configuration
+**Post-deploy:** Run `pnpm run db:migrate` against the target `DATABASE_URL`, then bootstrap the first Admin (see `docs/DEPLOYMENT.md`).
+
+**Status:** ✅ Configured (fails fast if Vercel secrets are missing)
 
 ---
 
