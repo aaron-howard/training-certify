@@ -19,31 +19,31 @@ pnpm audit --audit-level=high
 
 ## Summary table
 
-| Package             | Override   | Primary reason                                      |
-| ------------------- | ---------- | --------------------------------------------------- |
-| `tar`               | `^7.5.8`   | Security: patched release for extraction/CVE class  |
-| `seroval`           | `^1.4.1`   | Align serialization across TanStack / Nitro tree    |
-| `undici`            | `^6.23.0`  | Security: keep 6.x on a patched minor               |
-| `path-to-regexp`    | `^6.3.0`   | Security: ReDoS / routing fixes in 6.x              |
-| `esbuild`           | `^0.25.0`  | Security: build tool chain; path handling fixes     |
-| `minimatch@3`       | `^3.1.5`   | Security: ReDoS fix for ESLint’s 3.x line           |
-| `minimatch@9`       | `^9.0.6`   | Security: ReDoS fix for TanStack ESLint 9.x line    |
-| `minimatch@10`      | `^10.2.5`  | Security: ReDoS fix for other 10.x consumers        |
-| `picomatch`         | `^4.0.4`   | Security: align fdir/vite picomatch consumers       |
-| `rollup`            | `^4.59.0`  | Security: build-time path handling fixes            |
-| `flatted`           | `^3.4.1`   | Security: circular JSON / prototype pollution fix   |
-| `ajv@6`             | `^6.14.0`  | Security: ReDoS with `$data` (ESLint tree)          |
-| `ajv@8`             | `^8.18.0`  | Security: ReDoS with `$data` (Vercel CLI tree)      |
-| `@tootallnate/once` | `^3.0.1`   | Security: control-flow scoping (Vercel CLI)         |
-| `smol-toml`         | `^1.6.1`   | Security: DoS via commented lines (Vercel CLI)      |
-| `srvx`              | `^0.11.15` | Security: middleware bypass; lifts 0.8.x stragglers |
-| `brace-expansion@2` | `^2.0.3`   | Security: ReDoS / hang in minimatch 10.x tree       |
-| `yaml`              | `^2.8.3`   | Security: stack overflow on nested YAML (typedoc)   |
-| `postcss`           | `^8.5.14`  | Security: XSS in CSS stringify (Vite)               |
-| `@clerk/shared@3`   | `3.47.4`   | Clerk 0.x peer line until full Clerk 1.x migration  |
-| `@clerk/shared@4`   | `4.12.0`   | Clerk 1.x: ≥4.8.1 for GHSA-vqx2-fgx2-5wq9           |
-| `js-cookie`         | `^3.0.7`   | Security: prototype hijack in assign() (Clerk tree) |
-| `ws`                | `^8.20.1`  | Security: memory disclosure (TanStack devtools)     |
+| Package             | Override   | Primary reason                                                   |
+| ------------------- | ---------- | ---------------------------------------------------------------- |
+| `tar`               | `^7.5.8`   | Security: patched release for extraction/CVE class               |
+| `seroval`           | `^1.4.1`   | Align serialization across TanStack / Nitro tree                 |
+| `undici`            | `^6.27.0`  | Security: keep 6.x on a patched minor (CVE-2026-9679/6733/11525) |
+| `path-to-regexp`    | `^6.3.0`   | Security: ReDoS / routing fixes in 6.x                           |
+| `esbuild`           | `^0.25.0`  | Security: build tool chain; path handling fixes                  |
+| `minimatch@3`       | `^3.1.5`   | Security: ReDoS fix for ESLint’s 3.x line                        |
+| `minimatch@9`       | `^9.0.6`   | Security: ReDoS fix for TanStack ESLint 9.x line                 |
+| `minimatch@10`      | `^10.2.5`  | Security: ReDoS fix for other 10.x consumers                     |
+| `picomatch`         | `^4.0.4`   | Security: align fdir/vite picomatch consumers                    |
+| `rollup`            | `^4.59.0`  | Security: build-time path handling fixes                         |
+| `flatted`           | `^3.4.1`   | Security: circular JSON / prototype pollution fix                |
+| `ajv@6`             | `^6.14.0`  | Security: ReDoS with `$data` (ESLint tree)                       |
+| `ajv@8`             | `^8.18.0`  | Security: ReDoS with `$data` (Vercel CLI tree)                   |
+| `@tootallnate/once` | `^3.0.1`   | Security: control-flow scoping (Vercel CLI)                      |
+| `smol-toml`         | `^1.6.1`   | Security: DoS via commented lines (Vercel CLI)                   |
+| `srvx`              | `^0.11.15` | Security: middleware bypass; lifts 0.8.x stragglers              |
+| `brace-expansion@2` | `^2.0.3`   | Security: ReDoS / hang in minimatch 10.x tree                    |
+| `yaml`              | `^2.8.3`   | Security: stack overflow on nested YAML (typedoc)                |
+| `postcss`           | `^8.5.14`  | Security: XSS in CSS stringify (Vite)                            |
+| `@clerk/shared@3`   | `3.47.4`   | Clerk 0.x peer line until full Clerk 1.x migration               |
+| `@clerk/shared@4`   | `4.12.0`   | Clerk 1.x: ≥4.8.1 for GHSA-vqx2-fgx2-5wq9                        |
+| `js-cookie`         | `^3.0.7`   | Security: prototype hijack in assign() (Clerk tree)              |
+| `ws`                | `^8.20.1`  | Security: memory disclosure (TanStack devtools)                  |
 
 ---
 
@@ -73,9 +73,9 @@ pnpm audit --audit-level=high
 
 ---
 
-## `undici` → `^6.23.0`
+## `undici` → `^6.27.0`
 
-**Why:** `undici` is pulled in by **Node tooling** and some **framework / adapter** paths. Older 6.x minors had **security fixes** landed in later 6.x releases; the override keeps the whole tree on a **patched** 6.x line without jumping to an incompatible major.
+**Why:** `undici` is pulled in by **Node tooling** and some **framework / adapter** paths (notably `@vercel/blob` for certification proof uploads). Older 6.x minors had **security fixes** landed in later 6.x releases; the override keeps the whole tree on a **patched** 6.x line without jumping to an incompatible major. As of Jul 2026, `6.27.0` patches CVE-2026-9679, CVE-2026-6733, and CVE-2026-11525.
 
 **Before removing:**
 
