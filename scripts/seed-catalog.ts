@@ -183,7 +183,9 @@ async function main() {
     } catch (err) {
       errorCount++
       console.error(
-        `❌ Error seeding "${entry.name}" (${entry.id}):`,
+        '❌ Error seeding',
+        entry.name,
+        `(${entry.id}):`,
         err instanceof Error ? err.message : String(err),
       )
     }
