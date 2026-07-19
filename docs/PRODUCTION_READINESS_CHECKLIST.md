@@ -4,11 +4,11 @@
 > **Version:** 1.0.0-pre
 > **Review Date:** 2026-06-25  
 > **Reviewed By:** Aaron Howard (automated assessment)
-> **Status:** 🟡 In Progress — **Ready for Beta / Staging but requires work before GA**
+> **Status:** 🟡 In Progress — **Conditional STAGED GO** (beta blocked until monitoring/alerting gates; GA not approved)
 
-This checklist verifies production-readiness based on the current repository state, CI/CD configuration, security documentation, and source code. **Completion rate: ~55% of critical items checked (36/65 at a glance).**
+This checklist verifies production-readiness based on the current repository state, CI/CD configuration, security documentation, and source code. **Completion rate: 59/241 items checked (~24%).** Counts below are derived from the checklist rows (canonical source).
 
-### Executive Summary
+## Executive Summary
 
 **Strengths:** Architecture is well-designed with Clerk auth, RBAC, and comprehensive security headers. Strong CI/CD foundation (lint, test, type-check, build, security scan). Good test coverage on API routes (≥80%). Security documentation is solid. Deployment guidance exists.
 
@@ -133,7 +133,7 @@ This checklist verifies production-readiness based on the current repository sta
 
 ### 2.6 Penetration Testing & Code Review
 
-- [x] Static Application Security Testing (SAST) integrated into CI pipeline <!-- ESLint and CI security checks are present; no dedicated SAST tool is configured -->
+- [ ] Static Application Security Testing (SAST) integrated into CI pipeline <!-- CI runs ESLint and `pnpm audit`; no dedicated SAST tool (e.g. Semgrep/CodeQL) is configured in-repo -->
 - [ ] Dynamic Application Security Testing (DAST) performed against staging <!-- Not yet evidenced -->
 - [ ] Manual security code review completed for authentication, authorisation, and data handling paths <!-- Not documented as a completed review -->
 - [ ] Penetration test scheduled or completed (if required by risk level) <!-- Not evidenced -->
@@ -528,73 +528,73 @@ This checklist verifies production-readiness based on the current repository sta
 
 ### 1. Architecture
 
-**Status:** ✅ Well-structured (5/6 checked)  
-**Gap:** No formal ADR directory, resilience patterns (circuit breakers, retries) not implemented  
+**Status:** 🟡 Partial (3/21 checked)  
+**Gap:** No formal ADR directory; resilience patterns (circuit breakers, retries) not implemented; scalability/HA not validated  
 **Next:** Document resilience patterns in code; add ADRs for major design decisions
 
 ### 2. Security
 
-**Status:** ✅ Strong foundation (12/14 checked)  
-**Gap:** SBOM not generated; manual security code review not completed; no DAST  
-**Next:** Add SBOM generation to CI; schedule penetration test; update SAST tooling
+**Status:** 🟡 Strong foundation with gaps (17/31 checked)  
+**Gap:** No dedicated SAST in CI; SBOM not generated; manual security code review not completed; no DAST  
+**Next:** Add Semgrep or CodeQL to CI; add SBOM generation; schedule penetration test
 
 ### 3. Testing
 
-**Status:** 🟡 Partial (test infrastructure good, coverage gaps remain) (5/13 checked)  
+**Status:** 🟡 Partial (test infrastructure good, coverage gaps remain) (5/19 checked)  
 **Gap:** Unit coverage overall is low; no integration DB tests; no load/stress tests  
 **Next:** Increase unit test coverage; add integration tests for DB layer; implement k6 load tests
 
 ### 4. Performance
 
-**Status:** 🟡 Partial (bundle analysis present, monitoring absent) (3/10 checked)  
+**Status:** 🟡 Partial (bundle analysis present, monitoring absent) (4/16 checked)  
 **Gap:** No Core Web Vitals monitoring; no backend SLOs; no performance dashboard  
 **Next:** Add web-vitals to app; define p50/p95/p99 latency targets; configure Grafana or Datadog
 
 ### 5. Reliability
 
-**Status:** ❌ Not ready (SLOs, HA, DR missing) (2/11 checked)  
+**Status:** ❌ Not ready (SLOs, HA, DR missing) (2/16 checked)  
 **Gap:** No SLOs, no HA architecture, no DR testing, no chaos engineering  
 **Next:** Define SLOs (e.g., 99.9% uptime, <200ms p95); design multi-AZ failover; test recovery
 
 ### 6. Observability
 
-**Status:** 🟡 Partial (logging/metrics started, no dashboards/alerting) (5/18 checked)  
+**Status:** 🟡 Partial (logging/metrics started, no dashboards/alerting) (5/21 checked)  
 **Gap:** No metrics dashboards, no alerting rules, no distributed tracing, no log retention policy  
 **Next:** Wire up Datadog/Grafana; define alert thresholds; add OpenTelemetry or Sentry tracing
 
 ### 7. DevOps & CI/CD
 
-**Status:** 🟡 Partial (CI solid, CD and IaC missing) (4/24 checked)  
+**Status:** 🟡 Partial (CI solid, CD and IaC missing) (6/29 checked)  
 **Gap:** No CD pipeline, no IaC, no container/K8s config, no environment parity guarantees  
 **Next:** Build CD pipeline with approval gates; create Terraform config; document env parity checks
 
 ### 8. Data Management
 
-**Status:** 🟡 Partial (schema versioning present, backup/DR missing) (3/12 checked)  
+**Status:** 🟡 Partial (schema versioning present, backup/DR missing) (3/19 checked)  
 **Gap:** No backup testing, no RTO/RPO defined, no data lifecycle policy  
 **Next:** Document backup schedule and test recovery; define RPO/RTO; add data retention policies
 
 ### 9. Compliance & Privacy
 
-**Status:** ❌ Not addressed (0/12 checked)  
+**Status:** ❌ Not addressed (0/15 checked)  
 **Gap:** No privacy policy, no GDPR mapping, no audit logging, no accessibility audit  
 **Next:** Legal review of compliance obligations; implement audit logs; run WCAG 2.1 AA audit
 
 ### 10. Operations & Incident Management
 
-**Status:** 🟡 Partial (runbooks exist, on-call/SLAs missing) (3/13 checked)  
+**Status:** 🟡 Partial (runbooks exist, on-call/SLAs missing) (3/17 checked)  
 **Gap:** No on-call rotation, no incident SLAs, no post-mortem process, no change freeze calendar  
 **Next:** Define on-call SLAs (e.g., P0 response <15 min); document incident workflow
 
 ### 11. Documentation
 
-**Status:** ✅ Strong (11/15 checked)  
+**Status:** ✅ Strong (11/18 checked)  
 **Gap:** No ADRs, no auto-published API spec, no on-call guide, no release notes  
 **Next:** Start ADR directory; publish OpenAPI spec; create on-call runbook index
 
 ### 12. User Experience
 
-**Status:** 🟡 Partial (design validation and UAT incomplete) (1/17 checked)  
+**Status:** ❌ Not validated (0/19 checked)  
 **Gap:** No WCAG audit, no cross-browser testing, no formal UAT, no error state validation  
 **Next:** Run Lighthouse/Axe audit; test on mobile/tablet; conduct UAT with stakeholders
 
@@ -602,52 +602,68 @@ This checklist verifies production-readiness based on the current repository sta
 
 ## Sign-off
 
-| Area                     | Completion  | Owner        | Sign-off Date | Comments                                            |
-| ------------------------ | ----------- | ------------ | ------------- | --------------------------------------------------- |
-| **Architecture**         | 5/6 (83%)   | Aaron Howard | 2026-06-25    | Resilience patterns need implementation             |
-| **Security**             | 12/14 (86%) | Aaron Howard | 2026-06-25    | Strong auth/CSRF; needs SBOM + DAST                 |
-| **Testing**              | 5/13 (38%)  | Aaron Howard | —             | API coverage good; unit coverage low; no load tests |
-| **Performance**          | 3/10 (30%)  | Aaron Howard | —             | Bundle analysis present; monitoring missing         |
-| **Reliability**          | 2/11 (18%)  | Aaron Howard | —             | **CRITICAL:** No SLOs, HA, or DR testing            |
-| **Observability**        | 5/18 (28%)  | Aaron Howard | —             | Logging present; no dashboards/alerting             |
-| **DevOps / CI/CD**       | 4/24 (17%)  | Aaron Howard | —             | **CRITICAL:** No CD pipeline or IaC                 |
-| **Data Management**      | 3/12 (25%)  | Aaron Howard | —             | **CRITICAL:** No backup/DR testing                  |
-| **Compliance & Privacy** | 0/12 (0%)   | Aaron Howard | —             | **CRITICAL:** No privacy/GDPR documentation         |
-| **Operations**           | 3/13 (23%)  | Aaron Howard | —             | Runbooks exist; no on-call SLAs                     |
-| **Documentation**        | 11/15 (73%) | Aaron Howard | 2026-06-25    | Missing ADRs and auto-published API spec            |
-| **User Experience**      | 1/17 (6%)   | Aaron Howard | —             | **CRITICAL:** No WCAG/UAT validation                |
+| Area                     | Completion  | Owner        | Sign-off Date | Comments                                              |
+| ------------------------ | ----------- | ------------ | ------------- | ----------------------------------------------------- |
+| **Architecture**         | 3/21 (14%)  | Aaron Howard | —             | Structure present; resilience/scalability unvalidated |
+| **Security**             | 17/31 (55%) | Aaron Howard | —             | Strong auth/CSRF; dedicated SAST + SBOM + DAST needed |
+| **Testing**              | 5/19 (26%)  | Aaron Howard | —             | API coverage good; unit coverage low; no load tests   |
+| **Performance**          | 4/16 (25%)  | Aaron Howard | —             | Bundle analysis present; monitoring missing           |
+| **Reliability**          | 2/16 (12%)  | Aaron Howard | —             | **CRITICAL:** No SLOs, HA, or DR testing              |
+| **Observability**        | 5/21 (24%)  | Aaron Howard | —             | Logging present; no dashboards/alerting               |
+| **DevOps / CI/CD**       | 6/29 (21%)  | Aaron Howard | —             | **CRITICAL:** No CD pipeline or IaC                   |
+| **Data Management**      | 3/19 (16%)  | Aaron Howard | —             | **CRITICAL:** No backup/DR testing                    |
+| **Compliance & Privacy** | 0/15 (0%)   | Aaron Howard | —             | **CRITICAL:** No privacy/GDPR documentation           |
+| **Operations**           | 3/17 (18%)  | Aaron Howard | —             | Runbooks exist; no on-call SLAs                       |
+| **Documentation**        | 11/18 (61%) | Aaron Howard | —             | Missing ADRs and auto-published API spec              |
+| **User Experience**      | 0/19 (0%)   | Aaron Howard | —             | **CRITICAL:** No WCAG/UAT validation                  |
 
-**Overall Score: 54/144 (37.5%)**
+**Overall Score: 59/241 (24.5%)** — totals match checklist `[x]` / item counts above.
 
 ---
 
-### Pre-Release Decision Matrix
+## Pre-Release Decision Matrix
 
-**Current Status:** 🟡 **STAGED RELEASE RECOMMENDED**
+**Current Status:** 🟡 **CONDITIONAL STAGED GO** (beta not yet unblocked)
 
-This application is **ready for beta/staging deployment** with the following caveats:
+**Decision (unambiguous):**
 
-- ✅ **Safe to run in production infrastructure** (assuming staging/canary first)
-  - Security controls are solid (auth, CSRF, input validation, rate limiting)
-  - Database migrations are versioned and automated
-  - CI/CD quality gates are in place
+- **Beta:** **BLOCKED** until the beta prerequisites below are verified.
+- **GA:** **BLOCKED** until critical gaps (HA/DR, load testing, compliance, on-call) are closed.
+- **STAGED GO** means engineering may proceed toward a limited beta _after_ beta gates pass — it is **not** an unconditional approval to deploy beta today.
 
-- ⚠️ **NOT recommended for immediate GA** — resolve critical gaps first:
-  1. **Observability/Alerting** — Cannot detect outages without monitoring
-  2. **HA/DR Strategy** — No failover or recovery plan
-  3. **Load Testing** — Unknown capacity limits
-  4. **Compliance** — Missing privacy/GDPR requirements
+**Beta prerequisites (must verify before any beta deploy):**
 
-- 📋 **Staged Rollout Path:**
-  1. **Beta (Week 1–2):** Internal team + limited external testers; monitoring/alerting in place
-  2. **Staging (Week 2–3):** Load testing and HA validation; compliance review
-  3. **GA (Week 4+):** Full production rollout with on-call rotation in place
+1. Minimal monitoring/alerting for health, errors, and uptime (even if not full SLO dashboards)
+2. Staging environment with `/api/health` and `/ready` wired into the host/load balancer
+3. Production/staging secrets set and `pnpm run db:migrate` completed against the target DB
+4. First Admin bootstrap completed for the beta environment
+
+**What is already solid for a later beta:**
+
+- Security controls (auth, CSRF, input validation, rate limiting)
+- Versioned database migrations
+- CI quality gates (lint, test, type-check, build, security audit, E2E)
+
+**GA remains blocked until:**
+
+1. **Observability/Alerting** — Cannot detect outages without monitoring
+2. **HA/DR Strategy** — No failover or recovery plan
+3. **Load Testing** — Unknown capacity limits
+4. **Compliance** — Missing privacy/GDPR requirements
+
+**Staged Rollout Path (after beta gates pass):**
+
+1. **Beta:** Internal team + limited external testers; monitoring/alerting verified
+2. **Staging soak:** Load testing and HA validation; compliance review
+3. **GA:** Full production rollout with on-call rotation in place
 
 ---
 
 > **Go / No-Go Decision:**  
 > ☐ **GO** — All critical gaps resolved; HA/DR/monitoring in place; compliance approved  
-> ☑️ **STAGED GO** — Beta deployment OK; GA blocked until critical gaps closed  
+> ☑️ **STAGED GO (conditional)** — Proceed toward beta only after beta prerequisites above are verified; GA remains blocked  
 > ☐ **NO-GO** — Major blockers require rework
 >
-> **Release Approved By:** Aaron Howard **Date:** 2026-06-25 (Beta approval pending critical gap resolution)
+> **Release Approved By:** Aaron Howard  
+> **Date:** 2026-06-25  
+> **Approval scope:** Conditional STAGED GO only — **beta blocked** until monitoring/alerting and other beta prerequisites are verified; **GA not approved**.
