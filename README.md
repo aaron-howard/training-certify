@@ -12,6 +12,8 @@ A modern web application for managing training certifications, built with TanSta
 - **API:** [API.md](./API.md) — endpoints, auth, OpenAPI, Swagger UI
 - **Testing:** [TESTING.md](./TESTING.md) — unit, E2E, coverage
 - **Deployment:** [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) — production deploy, env, health checks
+- **Monitoring:** [docs/MONITORING.md](./docs/MONITORING.md) — SLOs, uptime workflow, Sentry alerts
+- **Privacy:** [docs/PRIVACY.md](./docs/PRIVACY.md) — data categories, retention, DSAR (ops guidance)
 - **Security:** [SECURITY.md](./SECURITY.md) — auth, CSRF, rate limiting, headers
 - **pnpm overrides:** [docs/dependency-overrides.md](./docs/dependency-overrides.md) — why each `package.json` override exists
 - **Troubleshooting:** [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) — common issues and fixes
@@ -28,6 +30,9 @@ A modern web application for managing training certifications, built with TanSta
 | [docs/dependency-overrides.md](./docs/dependency-overrides.md)                       | `package.json` pnpm overrides (transitive pins)                     |
 | [docs/dependabot-majors.md](./docs/dependabot-majors.md)                             | Dependabot major bumps policy + quarterly review                    |
 | [docs/dependency-minor-patch-workflow.md](./docs/dependency-minor-patch-workflow.md) | Weekly triage for grouped minor/patch Dependabot PRs                |
+| [docs/MONITORING.md](./docs/MONITORING.md)                                           | SLOs, uptime probes, Sentry alert playbook                          |
+| [docs/PRIVACY.md](./docs/PRIVACY.md)                                                 | Privacy / DSAR ops guidance (not legal sign-off)                    |
+| [docs/PRODUCTION_READINESS_CHECKLIST.md](./docs/PRODUCTION_READINESS_CHECKLIST.md)   | Production readiness checklist assessment                           |
 | [docs/rate-limiting-serverless.md](./docs/rate-limiting-serverless.md)               | Rate limits on serverless / many instances (shared DB vs in-memory) |
 | [docs/bundle-analysis.md](./docs/bundle-analysis.md)                                 | Client bundle analysis (`pnpm run build:analyze`) and lazy routes   |
 | [docs/e2e-clerk.md](./docs/e2e-clerk.md)                                             | Playwright + Clerk signed-in E2E and CI env                         |

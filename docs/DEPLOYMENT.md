@@ -71,6 +71,42 @@ Optional: after the first Admin exists, use the in-app User Management UI to pro
 
 ---
 
+## Go-live verify (staging / beta)
+
+Vercel environment variables are assumed already configured. Complete this checklist before calling beta unblocked:
+
+### Secrets & config (confirm in Vercel)
+
+- [ ] Required: `DATABASE_URL`, `CLERK_SECRET_KEY`, `VITE_CLERK_PUBLISHABLE_KEY`, `CSRF_SECRET`, `BLOB_READ_WRITE_TOKEN`, `NODE_ENV=production`
+- [ ] Recommended: `SENTRY_DSN`, `INTERNAL_OPS_TOKEN`, `HTTPS_ONLY=true`
+- [ ] Optional sampling overrides only if needed: `SENTRY_TRACES_SAMPLE_RATE`, `SENTRY_PROFILES_SAMPLE_RATE`
+
+### Database & Admin
+
+- [ ] Run migrations against the target DB (never `drizzle-kit push` in prod):
+
+```bash
+DATABASE_URL="postgresql://..." pnpm run db:migrate
+```
+
+- [ ] Complete [First Admin bootstrap](#first-admin-bootstrap)
+- [ ] Sign out/in and confirm Admin UI + `GET /api/users`
+
+### Health, metrics, and monitoring
+
+- [ ] `GET /ready` returns `ready: true`
+- [ ] `GET /api/health` returns `status: "healthy"`
+- [ ] With `INTERNAL_OPS_TOKEN` set, unauthenticated `GET /metrics` and `GET /health` are denied; bearer token succeeds
+- [ ] Set GitHub Actions variables `STAGING_BASE_URL` / `PRODUCTION_BASE_URL` and confirm **Uptime** workflow is green
+- [ ] Sentry project receives events; create alert rules per [MONITORING.md](./MONITORING.md#sentry-alert-playbook)
+
+### Deploy path
+
+- [ ] Staging deploy via `deploy.yml` (or Vercel Git) completes **post-deploy health smoke** and Playwright smoke
+- [ ] Operator notice: migrate still runs manually after schema-changing deploys
+
+---
+
 ## Environment Variables
 
 ### Required Variables
@@ -395,9 +431,7 @@ npm run db:migrate
 
 ### Rollback Migration
 
-```bash
-npm run db:rollback
-```
+There is no `db:rollback` script. Prefer provider PITR or `pnpm run db:backup` restore; otherwise author a reverse forward-migration. See [ROLLBACK.md](./ROLLBACK.md) and [DATABASE.md](./DATABASE.md).
 
 **IMPORTANT:** Never use `drizzle-kit push` in production. Always use migrations.
 
@@ -405,30 +439,56 @@ npm run db:rollback
 
 ## Monitoring Setup
 
+Full details: [MONITORING.md](./MONITORING.md) (SLOs, uptime workflow, Sentry alert playbook).
+
 ### 1. Error Tracking (Sentry)
 
-1. Create Sentry project at https://sentry.io
-2. Copy DSN to `SENTRY_DSN` environment variable
-3. Errors will be automatically tracked
+1. Confirm `SENTRY_DSN` is set in Vercel (already done for this project if env is configured)
+2. Create Sentry alert rules (new issue + error spike) — see [Sentry alert playbook](./MONITORING.md#sentry-alert-playbook)
+3. Verify a test notification reaches email/Slack
 
-### 2. Application Monitoring
+### 2. External uptime
 
-Configure your APM tool to monitor:
+1. Set `STAGING_BASE_URL` and `PRODUCTION_BASE_URL` GitHub repository variables
+2. Confirm `.github/workflows/uptime.yml` runs on schedule and on demand
+3. CD (`deploy.yml`) also probes `/ready` and `/api/health` after each deploy
 
-- Response times (target: <500ms p95)
-- Error rates (target: <1%)
-- Database query performance
-- Memory usage
+### 3. Application metrics
 
-### 3. Alerting Rules
+- Scrape `GET /metrics` with `Authorization: Bearer $INTERNAL_OPS_TOKEN`
+- Public liveness: `GET /api/health`; LB readiness: `GET /ready`
 
-Set up alerts for:
+---
 
-- Error rate > 5%
-- Response time > 1s (p95)
-- Database connection failures
-- Memory usage > 90%
-- Health check failures
+## High availability & disaster recovery (Vercel + managed Postgres)
+
+Training Certify is a **stateless** Node app on Vercel plus a **managed PostgreSQL** primary. Multi-region active-active is out of scope for beta.
+
+### Platform assumptions
+
+| Layer        | HA model                                         | Operator action                                     |
+| ------------ | ------------------------------------------------ | --------------------------------------------------- |
+| App (Vercel) | Multi-instance serverless / edge routing         | Keep production env healthy; use Instant Rollback   |
+| Auth (Clerk) | Vendor SaaS                                      | Monitor Clerk status; keep live keys in Vercel      |
+| Database     | Managed Postgres (provider HA / Multi-AZ / PITR) | Enable PITR + backups in provider console           |
+| Files        | Vercel Blob                                      | Confirm project retention; proofs are durable blobs |
+
+### Operator HA/DR checklist
+
+- [ ] Managed Postgres **PITR** (or continuous backup) enabled
+- [ ] Backup retention ≥ **7 days** (prefer 14+ for GA)
+- [ ] Document who can restore (DB admin / platform owner)
+- [ ] Staging **restore drill** completed once (see [DATABASE.md](./DATABASE.md#restore-drill-sign-off))
+- [ ] RTO/RPO targets understood (see table under [Backup & Recovery](#backup--recovery-procedures))
+- [ ] Failover owner steps: declare incident → restore/PITR to new DB → update `DATABASE_URL` in Vercel → redeploy → verify `/ready`
+
+### Failover sketch
+
+1. Confirm outage via uptime workflow + `/api/health`
+2. Follow [INCIDENT_RESPONSE.md](./INCIDENT_RESPONSE.md) severity process
+3. Restore DB from provider PITR or `pnpm run db:backup` artifact into a new instance
+4. Point Vercel `DATABASE_URL` at the restored DB and redeploy
+5. Verify `/ready`, Admin login, and a sample certification read/write
 
 ---
 
@@ -483,7 +543,17 @@ Set up alerts for:
 
 #### Manual Backup Script
 
-Create a backup script (`scripts/backup-db.sh`):
+The repo includes [`scripts/backup-db.sh`](../scripts/backup-db.sh). Run:
+
+```bash
+DATABASE_URL="postgresql://..." pnpm run db:backup
+# or: BACKUP_DIR=./backups RETENTION_DAYS=7 DATABASE_URL=... ./scripts/backup-db.sh
+```
+
+Requires `pg_dump` on PATH. Output: `backups/backup_YYYYMMDD_HHMMSS.sql.gz`.
+
+<details>
+<summary>Legacy inline example (same behavior)</summary>
 
 ```bash
 #!/bin/bash
@@ -507,6 +577,8 @@ find "$BACKUP_DIR" -name "backup_*.sql.gz" -mtime +7 -delete
 
 echo "Backup created: $BACKUP_FILE.gz"
 ```
+
+</details>
 
 **Schedule with cron:**
 
@@ -792,15 +864,11 @@ If storing user-uploaded files:
    pm2 restart training-certify
    ```
 
-3. **Database rollback (if needed):**
-
-   ```bash
-   npm run db:rollback
-   ```
+3. **Database rollback (if needed):** restore from provider PITR or a `pnpm run db:backup` artifact (no `db:rollback` script).
 
 4. **Verify:**
-   - Check `/health` endpoint
-   - Monitor error rates
+   - Check `/ready` and `/api/health`
+   - Monitor error rates (Sentry + uptime workflow)
    - Test critical user flows
 
 ---

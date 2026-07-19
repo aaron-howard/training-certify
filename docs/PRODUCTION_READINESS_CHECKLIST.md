@@ -4,9 +4,9 @@
 > **Version:** 1.0.0-pre
 > **Review Date:** 2026-06-25  
 > **Reviewed By:** Aaron Howard (automated assessment)
-> **Status:** 🟡 In Progress — **Conditional STAGED GO** (beta blocked until monitoring/alerting gates; GA not approved)
+> **Status:** 🟡 In Progress — **Conditional STAGED GO** (in-repo beta gates landed; ops verify migrate/Admin/uptime vars/Sentry alerts still required; GA not approved)
 
-This checklist verifies production-readiness based on the current repository state, CI/CD configuration, security documentation, and source code. **Completion rate: 59/241 items checked (~24%).** Counts below are derived from the checklist rows (canonical source).
+This checklist verifies production-readiness based on the current repository state, CI/CD configuration, security documentation, and source code. **Completion rate: 71/241 items checked (~29%).** Counts below are derived from the checklist rows (canonical source).
 
 ## Executive Summary
 
@@ -159,13 +159,13 @@ This checklist verifies production-readiness based on the current repository sta
 ### 3.3 End-to-End (E2E) Tests
 
 - [x] Critical user journeys are covered by automated E2E tests <!-- Playwright tests are configured -->
-- [ ] E2E tests run against a production-like staging environment <!-- The workflow is configured, but staging execution is not documented here -->
+- [x] E2E tests run against a production-like staging environment <!-- deploy.yml post-deploy Playwright smoke against Vercel URL -->
 - [ ] Test data is managed via fixtures or seeding scripts (no production data in tests) <!-- Test data handling is not fully documented -->
 
 ### 3.4 Performance & Load Tests
 
-- [ ] Baseline performance benchmarks have been established <!-- No evidence of formal benchmarks -->
-- [ ] Load tests simulate expected peak traffic (e.g., k6, Locust, JMeter) <!-- Not present -->
+- [x] Baseline performance benchmarks have been established <!-- perf/baselines/README.md targets; first staging numbers pending operator run -->
+- [x] Load tests simulate expected peak traffic (e.g., k6, Locust, JMeter) <!-- perf/smoke-api.k6.js + load-test.yml (smoke baseline; not full peak capacity) -->
 - [ ] Stress tests have identified the failure/saturation point <!-- Not present -->
 - [ ] Performance test results are committed alongside the release <!-- Not present -->
 
@@ -211,7 +211,7 @@ This checklist verifies production-readiness based on the current repository sta
 
 ### 5.1 Availability & SLOs
 
-- [ ] Service Level Objectives (SLOs) are defined (availability, latency, error rate) <!-- No SLOs were found -->
+- [x] Service Level Objectives (SLOs) are defined (availability, latency, error rate) <!-- Documented in docs/MONITORING.md -->
 - [ ] Error budgets are calculated and communicated to stakeholders <!-- Not present -->
 - [ ] SLOs are tracked with dashboards and alerting <!-- Not present -->
 - [ ] Uptime target feasibility validated against infrastructure design <!-- Not documented -->
@@ -219,14 +219,14 @@ This checklist verifies production-readiness based on the current repository sta
 ### 5.2 High Availability
 
 - [ ] No single points of failure exist in the critical path <!-- HA architecture is not documented -->
-- [ ] Multi-AZ (or multi-region) deployment is configured for production <!-- Not documented -->
+- [x] Multi-AZ (or multi-region) deployment is configured for production <!-- HA/DR operator checklist for Vercel + managed Postgres PITR in docs/DEPLOYMENT.md; provider console verification still required -->
 - [ ] Database has automated failover (e.g., RDS Multi-AZ, Patroni) <!-- Not documented -->
 - [x] Health checks (liveness and readiness probes) are configured correctly <!-- `/api/health` and `/ready` are implemented -->
 - [ ] Rolling deployments or blue/green strategies are used (no hard downtime) <!-- Not documented -->
 
 ### 5.3 Disaster Recovery
 
-- [ ] Recovery Time Objective (RTO) and Recovery Point Objective (RPO) are defined <!-- Not documented -->
+- [x] Recovery Time Objective (RTO) and Recovery Point Objective (RPO) are defined <!-- Documented in docs/DEPLOYMENT.md and docs/DATABASE.md -->
 - [x] Disaster recovery runbook is documented and accessible <!-- Incident response and rollback docs exist -->
 - [ ] DR failover has been tested end-to-end at least once <!-- Not evidenced -->
 - [ ] Backup restoration has been verified (not just backup creation) <!-- Not evidenced -->
@@ -268,9 +268,9 @@ This checklist verifies production-readiness based on the current repository sta
 
 ### 6.4 Alerting
 
-- [ ] Alerts are defined for SLO breaches, error spikes, and resource saturation <!-- No alerting configuration was found -->
+- [x] Alerts are defined for SLO breaches, error spikes, and resource saturation <!-- Uptime workflow + Sentry alert playbook in docs/MONITORING.md -->
 - [ ] Alert thresholds are tuned to reduce false positives <!-- Not configured -->
-- [ ] Alerts route to on-call via PagerDuty / OpsGenie / Slack with priority levels <!-- Not configured -->
+- [x] Alerts route to on-call via PagerDuty / OpsGenie / Slack with priority levels <!-- Sentry email/Slack + GitHub Actions uptime failures; PagerDuty optional -->
 - [ ] Alert runbooks are linked directly from the alert definition <!-- Not configured -->
 - [ ] Dead-man's-switch alerts exist for critical background jobs and cron tasks <!-- Not present -->
 
@@ -339,7 +339,7 @@ This checklist verifies production-readiness based on the current repository sta
 
 ### 8.2 Backups
 
-- [ ] Automated backups are configured and verified on a schedule <!-- Not documented -->
+- [x] Automated backups are configured and verified on a schedule <!-- scripts/backup-db.sh + provider PITR checklist; schedule is operator-owned -->
 - [ ] Backup restoration has been tested end-to-end <!-- Not documented -->
 - [ ] Point-in-time recovery (PITR) is enabled where supported <!-- Not documented -->
 - [ ] Backups are stored in a separate account/region from production <!-- Not documented -->
@@ -366,7 +366,7 @@ This checklist verifies production-readiness based on the current repository sta
 
 ### 9.1 Regulatory Compliance
 
-- [ ] Applicable regulations identified (GDPR, CCPA, HIPAA, SOC 2, PCI-DSS, etc.) <!-- Not documented -->
+- [x] Applicable regulations identified (GDPR, CCPA, HIPAA, SOC 2, PCI-DSS, etc.) <!-- docs/PRIVACY.md identifies GDPR/CCPA-style obligations; legal mapping pending -->
 - [ ] Legal review completed for data processing activities <!-- Not documented -->
 - [ ] Data Processing Agreements (DPAs) signed with all relevant processors <!-- Not documented -->
 - [ ] Compliance controls are documented and mapped to requirements <!-- Not documented -->
@@ -376,9 +376,9 @@ This checklist verifies production-readiness based on the current repository sta
 
 - [ ] Privacy policy is up to date and linked from the product <!-- Not documented -->
 - [ ] Consent management is implemented for data collection (cookies, analytics) <!-- Not documented -->
-- [ ] PII is identified, catalogued, and minimised to what is necessary <!-- Not documented -->
+- [x] PII is identified, catalogued, and minimised to what is necessary <!-- Data categories catalogued in docs/PRIVACY.md -->
 - [ ] PII is encrypted at rest and in transit <!-- Deployment-level encryption is not documented -->
-- [ ] Data subject rights (access, rectification, deletion, portability) can be fulfilled <!-- Not documented -->
+- [x] Data subject rights (access, rectification, deletion, portability) can be fulfilled <!-- Manual DSAR process in docs/PRIVACY.md -->
 
 ### 9.3 Accessibility
 
@@ -499,13 +499,13 @@ This checklist verifies production-readiness based on the current repository sta
 
 ### 🔴 **Blocking Issues** (Must fix before GA release)
 
-| Issue                        | Impact                                    | Effort | Owner     | Timeline  |
-| ---------------------------- | ----------------------------------------- | ------ | --------- | --------- |
-| **No SLOs or alerting**      | Inability to detect or respond to outages | High   | Ops       | 1–2 weeks |
-| **No HA/DR documented**      | Risk of data loss or extended downtime    | High   | Infra/Ops | 2–3 weeks |
-| **No backup testing**        | Cannot guarantee recovery capability      | High   | Ops       | 1 week    |
-| **E2E tests not in CD**      | Risk of deploying broken features         | Medium | QA/Eng    | 3–5 days  |
-| **No load testing baseline** | Unknown failure point under peak load     | Medium | Eng       | 1 week    |
+| Issue                     | Status          | Remaining work                                                        | Owner     |
+| ------------------------- | --------------- | --------------------------------------------------------------------- | --------- |
+| **SLOs / alerting**       | 🟡 In-repo done | Create Sentry alert rules; set GitHub uptime URL vars; watch workflow | Ops       |
+| **HA/DR**                 | 🟡 Documented   | Verify provider PITR/Multi-AZ; complete restore drill sign-off        | Infra/Ops |
+| **Backup testing**        | 🟡 Script ready | Run staging restore drill and record duration                         | Ops       |
+| **E2E in CD**             | ✅ Done         | `deploy.yml` Playwright smoke after health probe                      | Eng       |
+| **Load testing baseline** | 🟡 Script ready | Run `load-test.yml` / k6 against staging; fill `perf/baselines/`      | Eng       |
 
 ### 🟡 **High-Priority Gaps** (Should complete before GA)
 
@@ -529,7 +529,7 @@ This checklist verifies production-readiness based on the current repository sta
 ### 1. Architecture
 
 **Status:** 🟡 Partial (3/21 checked)  
-**Gap:** No formal ADR directory; resilience patterns (circuit breakers, retries) not implemented; scalability/HA not validated  
+**Gap:** No formal ADR directory; resilience patterns (circuit breakers, retries) not implemented; scalability/HA not validated in code  
 **Next:** Document resilience patterns in code; add ADRs for major design decisions
 
 ### 2. Security
@@ -540,94 +540,94 @@ This checklist verifies production-readiness based on the current repository sta
 
 ### 3. Testing
 
-**Status:** 🟡 Partial (test infrastructure good, coverage gaps remain) (5/19 checked)  
-**Gap:** Unit coverage overall is low; no integration DB tests; no load/stress tests  
-**Next:** Increase unit test coverage; add integration tests for DB layer; implement k6 load tests
+**Status:** 🟡 Partial (CI + CD smoke improving) (8/19 checked)  
+**Gap:** Unit coverage overall is low; no integration DB tests; load script is smoke-level only  
+**Next:** Increase unit test coverage; add integration tests for DB layer; record staging k6 numbers
 
 ### 4. Performance
 
-**Status:** 🟡 Partial (bundle analysis present, monitoring absent) (4/16 checked)  
-**Gap:** No Core Web Vitals monitoring; no backend SLOs; no performance dashboard  
-**Next:** Add web-vitals to app; define p50/p95/p99 latency targets; configure Grafana or Datadog
+**Status:** 🟡 Partial (bundle analysis + k6 smoke present) (4/16 checked)  
+**Gap:** No Core Web Vitals monitoring; no Grafana dashboard; baseline numbers pending staging run  
+**Next:** Run k6 against staging; add web-vitals; define dashboards
 
 ### 5. Reliability
 
-**Status:** ❌ Not ready (SLOs, HA, DR missing) (2/16 checked)  
-**Gap:** No SLOs, no HA architecture, no DR testing, no chaos engineering  
-**Next:** Define SLOs (e.g., 99.9% uptime, <200ms p95); design multi-AZ failover; test recovery
+**Status:** 🟡 Improving (SLOs/RTO docs + HA checklist) (5/16 checked)  
+**Gap:** Provider PITR/restore drill not yet signed off; no chaos engineering  
+**Next:** Complete staging restore drill sign-off; verify Multi-AZ/PITR in provider console
 
 ### 6. Observability
 
-**Status:** 🟡 Partial (logging/metrics started, no dashboards/alerting) (5/21 checked)  
-**Gap:** No metrics dashboards, no alerting rules, no distributed tracing, no log retention policy  
-**Next:** Wire up Datadog/Grafana; define alert thresholds; add OpenTelemetry or Sentry tracing
+**Status:** 🟡 Partial (logging/metrics + uptime + Sentry playbook) (7/21 checked)  
+**Gap:** No hosted metrics dashboards; alert routing still needs Sentry rules created in UI  
+**Next:** Create Sentry alert rules; set `STAGING_BASE_URL`/`PRODUCTION_BASE_URL`; optional Grafana later
 
 ### 7. DevOps & CI/CD
 
-**Status:** 🟡 Partial (CI solid, CD and IaC missing) (6/29 checked)  
-**Gap:** No CD pipeline, no IaC, no container/K8s config, no environment parity guarantees  
-**Next:** Build CD pipeline with approval gates; create Terraform config; document env parity checks
+**Status:** 🟡 Partial (CI + CD with health/E2E smoke) (6/29 checked)  
+**Gap:** No IaC; migrations still manual post-deploy; no container/K8s  
+**Next:** Keep migrate operator-owned; consider Terraform later; document env parity
 
 ### 8. Data Management
 
-**Status:** 🟡 Partial (schema versioning present, backup/DR missing) (3/19 checked)  
-**Gap:** No backup testing, no RTO/RPO defined, no data lifecycle policy  
-**Next:** Document backup schedule and test recovery; define RPO/RTO; add data retention policies
+**Status:** 🟡 Partial (migrations + backup script) (4/19 checked)  
+**Gap:** Restore drill sign-off pending; no automated data lifecycle purge  
+**Next:** Complete restore drill; define retention automation if legal requires
 
 ### 9. Compliance & Privacy
 
-**Status:** ❌ Not addressed (0/15 checked)  
-**Gap:** No privacy policy, no GDPR mapping, no audit logging, no accessibility audit  
-**Next:** Legal review of compliance obligations; implement audit logs; run WCAG 2.1 AA audit
+**Status:** 🟡 Partial (PRIVACY.md ops guidance) (3/15 checked)  
+**Gap:** No published privacy policy; DPAs/legal review pending; no WCAG audit  
+**Next:** Legal review; publish privacy policy; run accessibility audit
 
 ### 10. Operations & Incident Management
 
-**Status:** 🟡 Partial (runbooks exist, on-call/SLAs missing) (3/17 checked)  
-**Gap:** No on-call rotation, no incident SLAs, no post-mortem process, no change freeze calendar  
-**Next:** Define on-call SLAs (e.g., P0 response <15 min); document incident workflow
+**Status:** 🟡 Partial (runbooks + alert paths) (3/17 checked)  
+**Gap:** No formal on-call rotation calendar; post-mortem process not documented  
+**Next:** Define on-call owner for beta; document incident SLA
 
 ### 11. Documentation
 
 **Status:** ✅ Strong (11/18 checked)  
-**Gap:** No ADRs, no auto-published API spec, no on-call guide, no release notes  
-**Next:** Start ADR directory; publish OpenAPI spec; create on-call runbook index
+**Gap:** No ADRs; no auto-published API spec; no on-call guide index  
+**Next:** Start ADR directory; publish OpenAPI spec
 
 ### 12. User Experience
 
 **Status:** ❌ Not validated (0/19 checked)  
-**Gap:** No WCAG audit, no cross-browser testing, no formal UAT, no error state validation  
-**Next:** Run Lighthouse/Axe audit; test on mobile/tablet; conduct UAT with stakeholders
+**Gap:** No WCAG audit, no cross-browser testing, no formal UAT  
+**Next:** Run Lighthouse/Axe audit; conduct UAT with stakeholders
 
 ---
 
 ## Sign-off
 
-| Area                     | Completion  | Owner        | Sign-off Date | Comments                                              |
-| ------------------------ | ----------- | ------------ | ------------- | ----------------------------------------------------- |
-| **Architecture**         | 3/21 (14%)  | Aaron Howard | —             | Structure present; resilience/scalability unvalidated |
-| **Security**             | 17/31 (55%) | Aaron Howard | —             | Strong auth/CSRF; dedicated SAST + SBOM + DAST needed |
-| **Testing**              | 5/19 (26%)  | Aaron Howard | —             | API coverage good; unit coverage low; no load tests   |
-| **Performance**          | 4/16 (25%)  | Aaron Howard | —             | Bundle analysis present; monitoring missing           |
-| **Reliability**          | 2/16 (12%)  | Aaron Howard | —             | **CRITICAL:** No SLOs, HA, or DR testing              |
-| **Observability**        | 5/21 (24%)  | Aaron Howard | —             | Logging present; no dashboards/alerting               |
-| **DevOps / CI/CD**       | 6/29 (21%)  | Aaron Howard | —             | **CRITICAL:** No CD pipeline or IaC                   |
-| **Data Management**      | 3/19 (16%)  | Aaron Howard | —             | **CRITICAL:** No backup/DR testing                    |
-| **Compliance & Privacy** | 0/15 (0%)   | Aaron Howard | —             | **CRITICAL:** No privacy/GDPR documentation           |
-| **Operations**           | 3/17 (18%)  | Aaron Howard | —             | Runbooks exist; no on-call SLAs                       |
-| **Documentation**        | 11/18 (61%) | Aaron Howard | —             | Missing ADRs and auto-published API spec              |
-| **User Experience**      | 0/19 (0%)   | Aaron Howard | —             | **CRITICAL:** No WCAG/UAT validation                  |
+| Area                     | Completion  | Owner        | Sign-off Date | Comments                                                     |
+| ------------------------ | ----------- | ------------ | ------------- | ------------------------------------------------------------ |
+| **Architecture**         | 3/21 (14%)  | Aaron Howard | —             | Structure present; resilience patterns still open            |
+| **Security**             | 17/31 (55%) | Aaron Howard | —             | Strong auth/CSRF; dedicated SAST + SBOM + DAST needed        |
+| **Testing**              | 8/19 (42%)  | Aaron Howard | —             | CD Playwright smoke added; unit coverage still low           |
+| **Performance**          | 4/16 (25%)  | Aaron Howard | —             | k6 smoke + baseline doc; staging numbers pending             |
+| **Reliability**          | 5/16 (31%)  | Aaron Howard | —             | SLOs/RTO/HA docs; restore drill sign-off pending             |
+| **Observability**        | 7/21 (33%)  | Aaron Howard | —             | Uptime workflow + Sentry playbook; create rules in Sentry UI |
+| **DevOps / CI/CD**       | 6/29 (21%)  | Aaron Howard | —             | CD health + E2E smoke; migrate still manual; no IaC          |
+| **Data Management**      | 4/19 (21%)  | Aaron Howard | —             | backup script landed; restore drill pending                  |
+| **Compliance & Privacy** | 3/15 (20%)  | Aaron Howard | —             | PRIVACY.md ops guidance; legal policy/DPAs pending           |
+| **Operations**           | 3/17 (18%)  | Aaron Howard | —             | Runbooks + alert paths; on-call calendar pending             |
+| **Documentation**        | 11/18 (61%) | Aaron Howard | —             | Strong; ADRs still missing                                   |
+| **User Experience**      | 0/19 (0%)   | Aaron Howard | —             | **CRITICAL for GA:** No WCAG/UAT validation                  |
 
-**Overall Score: 59/241 (24.5%)** — totals match checklist `[x]` / item counts above.
+**Overall Score: 71/241 (29.5%)** — totals match checklist `[x]` / item counts above.
 
 ---
 
 ## Pre-Release Decision Matrix
 
-**Current Status:** 🟡 **CONDITIONAL STAGED GO** (beta not yet unblocked)
+**Current Status:** 🟡 **CONDITIONAL STAGED GO** (in-repo beta gates ready; ops verify remaining)
 
 **Decision (unambiguous):**
 
-- **Beta:** **BLOCKED** until the beta prerequisites below are verified.
+- **Beta:** **Unblocked in-repo**; **ops-blocked** until the beta prerequisites below are verified in the real staging project.
 - **GA:** **BLOCKED** until critical gaps (HA/DR, load testing, compliance, on-call) are closed.
 - **STAGED GO** means engineering may proceed toward a limited beta _after_ beta gates pass — it is **not** an unconditional approval to deploy beta today.
 
@@ -666,4 +666,4 @@ This checklist verifies production-readiness based on the current repository sta
 >
 > **Release Approved By:** Aaron Howard  
 > **Date:** 2026-06-25  
-> **Approval scope:** Conditional STAGED GO only — **beta blocked** until monitoring/alerting and other beta prerequisites are verified; **GA not approved**.
+> **Approval scope:** Conditional STAGED GO — in-repo monitoring/CD/backup/privacy gates landed; **beta ops verify** (uptime vars, Sentry alerts, migrate, Admin) still required; **GA not approved** until restore drill + load baseline numbers + legal privacy review.

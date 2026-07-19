@@ -34,3 +34,5 @@ Report security vulnerabilities privately to the maintainers (e.g. via GitHub Se
 ## Full audit and checklists
 
 Detailed vulnerability assessment, checklists, and compliance notes: [docs/SECURITY.md](./docs/SECURITY.md).
+
+Privacy / data-handling ops guidance: [docs/PRIVACY.md](./docs/PRIVACY.md).

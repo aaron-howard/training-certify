@@ -385,6 +385,7 @@ worker-src 'self' blob:
 - ✅ No unnecessary data collection
 - ✅ User data access restricted
 - ✅ Secure storage (encrypted database connections)
+- 📄 Ops guidance (data categories, retention intent, DSAR): [PRIVACY.md](./PRIVACY.md) — legal privacy policy / DPA sign-off still required before GA
 
 ---
 

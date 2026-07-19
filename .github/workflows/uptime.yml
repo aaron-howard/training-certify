@@ -1,0 +1,78 @@
+name: Uptime
+
+# External availability probes for staging/production.
+# Configure repository variables (Settings → Variables):
+#   STAGING_BASE_URL, PRODUCTION_BASE_URL
+# Watch this workflow (or enable Actions failure emails) for availability alerts.
+
+on:
+  schedule:
+    # Every 10 minutes
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Which environment to probe'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+          - both
+        default: both
+
+permissions:
+  contents: read
+
+jobs:
+  uptime-staging:
+    name: Staging uptime
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'schedule' ||
+      github.event.inputs.target == 'staging' ||
+      github.event.inputs.target == 'both'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Probe staging
+        env:
+          BASE_URL: ${{ vars.STAGING_BASE_URL }}
+          RETRIES: '3'
+          RETRY_SLEEP: '10'
+        run: |
+          set -euo pipefail
+          if [ -z "${BASE_URL:-}" ]; then
+            echo "::warning::STAGING_BASE_URL is not set; skipping staging probe."
+            echo "Set repository variable STAGING_BASE_URL to enable this check."
+            exit 0
+          fi
+          chmod +x scripts/check-uptime.sh
+          ./scripts/check-uptime.sh
+
+  uptime-production:
+    name: Production uptime
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'schedule' ||
+      github.event.inputs.target == 'production' ||
+      github.event.inputs.target == 'both'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Probe production
+        env:
+          BASE_URL: ${{ vars.PRODUCTION_BASE_URL }}
+          RETRIES: '3'
+          RETRY_SLEEP: '10'
+        run: |
+          set -euo pipefail
+          if [ -z "${BASE_URL:-}" ]; then
+            echo "::warning::PRODUCTION_BASE_URL is not set; skipping production probe."
+            echo "Set repository variable PRODUCTION_BASE_URL to enable this check."
+            exit 0
+          fi
+          chmod +x scripts/check-uptime.sh
+          ./scripts/check-uptime.sh
