@@ -16,7 +16,15 @@ on:
 permissions:
   contents: read
   deployments: write
-  id-token: write # Required for OIDC authentication (if using AWS/GCP)
+  id-token: write
+
+# Required GitHub secrets for Vercel deploys:
+#   VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID
+# Prefer linking the Vercel Git integration for automatic preview/production
+# deploys; this workflow is for explicit staging (main) and production (manual).
+# After deploy, run migrations against the target DB:
+#   DATABASE_URL=... pnpm run db:migrate
+# See docs/DEPLOYMENT.md (First Admin bootstrap + migrations).
 
 jobs:
   deploy-staging:
@@ -29,15 +37,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
         with:
           version: 9
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20.x'
           cache: 'pnpm'
@@ -57,24 +65,26 @@ jobs:
 
       - name: Deploy to staging
         id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
-          echo "Deploying to staging environment..."
-          # Vercel deployment (if using Vercel)
-          if [ -n "${{ secrets.VERCEL_TOKEN }}" ]; then
-            pnpm exec vercel --token ${{ secrets.VERCEL_TOKEN }} --yes
-            echo "url=$(pnpm exec vercel inspect --token ${{ secrets.VERCEL_TOKEN }} | grep -o 'https://[^ ]*' | head -1)" >> $GITHUB_OUTPUT
-          else
-            # Add other deployment commands here
-            # Examples:
-            # - Railway: railway up --environment staging
-            # - AWS: aws s3 sync dist/ s3://your-bucket
-            # - Custom: your-deployment-script.sh
-            echo "url=https://staging.example.com" >> $GITHUB_OUTPUT
-            echo "⚠️ NOTE: Configure VERCEL_TOKEN secret or update with your deployment commands"
+          set -euo pipefail
+          if [ -z "${VERCEL_TOKEN:-}" ] || [ -z "${VERCEL_ORG_ID:-}" ] || [ -z "${VERCEL_PROJECT_ID:-}" ]; then
+            echo "::error::Missing VERCEL_TOKEN, VERCEL_ORG_ID, or VERCEL_PROJECT_ID secrets."
+            echo "Configure them in repo Settings → Secrets, or rely on Vercel Git integration and disable this job."
+            exit 1
           fi
+          pnpm exec vercel pull --yes --environment=preview --token "$VERCEL_TOKEN"
+          pnpm exec vercel build --token "$VERCEL_TOKEN"
+          DEPLOY_URL=$(pnpm exec vercel deploy --prebuilt --token "$VERCEL_TOKEN")
+          echo "url=${DEPLOY_URL}" >> "$GITHUB_OUTPUT"
+          echo "Deployed staging: ${DEPLOY_URL}"
+          echo "::notice::Run pnpm run db:migrate against the staging DATABASE_URL if schema changed."
 
       - name: Create deployment
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         with:
           script: |
             github.rest.repos.createDeployment({
@@ -89,8 +99,6 @@ jobs:
   deploy-production:
     name: Deploy to Production
     runs-on: ubuntu-latest
-    # Production deployments require manual approval via workflow_dispatch
-    # This prevents accidental production deployments
     if: github.event.inputs.environment == 'production'
     environment:
       name: production
@@ -98,15 +106,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
         with:
           version: 9
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20.x'
           cache: 'pnpm'
@@ -126,24 +134,25 @@ jobs:
 
       - name: Deploy to production
         id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
-          echo "Deploying to production environment..."
-          # Vercel production deployment (if using Vercel)
-          if [ -n "${{ secrets.VERCEL_TOKEN }}" ]; then
-            pnpm exec vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
-            echo "url=$(pnpm exec vercel inspect --token ${{ secrets.VERCEL_TOKEN }} --prod | grep -o 'https://[^ ]*' | head -1)" >> $GITHUB_OUTPUT
-          else
-            # Add other deployment commands here
-            # Examples:
-            # - Railway: railway up --environment production
-            # - AWS: aws s3 sync dist/ s3://your-bucket
-            # - Custom: your-deployment-script.sh
-            echo "url=https://example.com" >> $GITHUB_OUTPUT
-            echo "⚠️ NOTE: Configure VERCEL_TOKEN secret or update with your deployment instructions"
+          set -euo pipefail
+          if [ -z "${VERCEL_TOKEN:-}" ] || [ -z "${VERCEL_ORG_ID:-}" ] || [ -z "${VERCEL_PROJECT_ID:-}" ]; then
+            echo "::error::Missing VERCEL_TOKEN, VERCEL_ORG_ID, or VERCEL_PROJECT_ID secrets."
+            exit 1
           fi
+          pnpm exec vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
+          pnpm exec vercel build --prod --token "$VERCEL_TOKEN"
+          DEPLOY_URL=$(pnpm exec vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN")
+          echo "url=${DEPLOY_URL}" >> "$GITHUB_OUTPUT"
+          echo "Deployed production: ${DEPLOY_URL}"
+          echo "::notice::Run DATABASE_URL=\$PROD_URL pnpm run db:migrate, then bootstrap first Admin (docs/DEPLOYMENT.md)."
 
       - name: Create deployment
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         with:
           script: |
             github.rest.repos.createDeployment({

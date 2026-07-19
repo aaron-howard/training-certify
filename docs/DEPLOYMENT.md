@@ -25,22 +25,49 @@ This guide covers deploying Training Certify to production environments.
 ### 2. Database Setup
 
 - [ ] Create production database
-- [ ] Run migrations: `npm run db:migrate`
-- [ ] Verify schema: `npm run db:studio`
+- [ ] Run migrations: `pnpm run db:migrate` (do **not** use `drizzle-kit push` in production)
+- [ ] Verify schema: `pnpm run db:studio`
 - [ ] Set up automated backups
+- [ ] Bootstrap first Admin (see [First Admin bootstrap](#first-admin-bootstrap) below)
 
 ### 3. Build Application
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 ### 4. Run Tests
 
 ```bash
-npm run test
-npm run lint
+pnpm run test
+pnpm run lint
 ```
+
+---
+
+## First Admin bootstrap
+
+New Clerk users sync into Postgres with role **`User`** by default. Promote the first operator to Admin after they sign in once:
+
+1. Sign in to the deployed app with the intended admin account (creates/syncs the `users` row).
+2. In production Postgres, set the role:
+
+```sql
+-- By email (preferred)
+UPDATE users
+SET role = 'Admin', updated_at = NOW()
+WHERE lower(email) = lower('admin@example.com');
+
+-- Or by Clerk user id (users.id)
+UPDATE users
+SET role = 'Admin', updated_at = NOW()
+WHERE id = 'user_...';
+```
+
+3. Sign out and back in (or hard-refresh) so session/role checks pick up `Admin`.
+4. Confirm Admin-only UI (e.g. User Management on Team Management) and `GET /api/users` succeed.
+
+Optional: after the first Admin exists, use the in-app User Management UI to promote others.
 
 ---
 
@@ -48,27 +75,30 @@ npm run lint
 
 ### Required Variables
 
-These variables **must** be set for the application to run:
+These variables **must** be set for the application to run. In `NODE_ENV=production`, startup also requires `CSRF_SECRET` and `BLOB_READ_WRITE_TOKEN`.
 
-| Variable                     | Description                  | Example                               | Validation                             |
-| ---------------------------- | ---------------------------- | ------------------------------------- | -------------------------------------- |
-| `DATABASE_URL`               | PostgreSQL connection string | `postgresql://user:pass@host:5432/db` | Must be valid PostgreSQL URL           |
-| `CLERK_SECRET_KEY`           | Clerk secret key             | `sk_live_...`                         | Must start with `sk_`                  |
-| `VITE_CLERK_PUBLISHABLE_KEY` | Clerk publishable key        | `pk_live_...`                         | Must start with `pk_`                  |
-| `NODE_ENV`                   | Environment                  | `production`                          | `development`, `production`, or `test` |
-| `PORT`                       | Server port                  | `3000`                                | String (defaults to `3000`)            |
+| Variable                     | Description                  | Example                               | Validation                                 |
+| ---------------------------- | ---------------------------- | ------------------------------------- | ------------------------------------------ |
+| `DATABASE_URL`               | PostgreSQL connection string | `postgresql://user:pass@host:5432/db` | Must be valid PostgreSQL URL               |
+| `CLERK_SECRET_KEY`           | Clerk secret key             | `sk_live_...`                         | Must start with `sk_`                      |
+| `VITE_CLERK_PUBLISHABLE_KEY` | Clerk publishable key        | `pk_live_...`                         | Must start with `pk_`                      |
+| `NODE_ENV`                   | Environment                  | `production`                          | `development`, `production`, or `test`     |
+| `PORT`                       | Server port                  | `3000`                                | String (defaults to `3000`)                |
+| `CSRF_SECRET`                | CSRF HMAC secret             | `openssl rand -base64 32`             | **Required in production**, min 32 chars   |
+| `BLOB_READ_WRITE_TOKEN`      | Vercel Blob write token      | `vercel_blob_rw_...`                  | **Required in production** (proof uploads) |
 
-**Note:** The application validates all required environment variables at startup. If any are missing or invalid, the application will fail to start with a clear error message.
+**Note:** The application validates all required environment variables at startup (`src/lib/env.ts`). If any are missing or invalid, the application will fail to start with a clear error message.
 
 ### Optional Variables (Recommended for Production)
 
-| Variable            | Description                                                | Default                       | When to Use                                                                                                                               |
-| ------------------- | ---------------------------------------------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `SENTRY_DSN`        | Sentry error tracking DSN                                  | -                             | Production error monitoring                                                                                                               |
-| `REDIS_URL`         | Redis connection string                                    | -                             | Multi-instance deployments (distributed caching)                                                                                          |
-| `USE_DB_RATE_LIMIT` | Keep API rate limits on Postgres (shared across instances) | unset (enabled in production) | Set to `false` only for debugging — forces per-process in-memory limits. See [rate-limiting-serverless.md](./rate-limiting-serverless.md) |
-| `HTTPS_ONLY`        | Force HTTPS redirects                                      | `false`                       | Production (set to `true`)                                                                                                                |
-| `CSRF_SECRET`       | CSRF protection secret (min 32 chars)                      | -                             | Production (required for CSRF protection)                                                                                                 |
+| Variable                    | Description                                                | Default                       | When to Use                                                                                                                               |
+| --------------------------- | ---------------------------------------------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `SENTRY_DSN`                | Sentry error tracking DSN                                  | -                             | Production error monitoring                                                                                                               |
+| `SENTRY_TRACES_SAMPLE_RATE` | Sentry traces sample rate                                  | `0.1` in production           | Override default sampling                                                                                                                 |
+| `INTERNAL_OPS_TOKEN`        | Bearer token for `/metrics` and deep `/health`             | unset (endpoints public)      | **Set in production** so metrics are not scraped anonymously                                                                              |
+| `REDIS_URL`                 | Redis connection string                                    | -                             | Documented for future multi-instance cache (not wired yet)                                                                                |
+| `USE_DB_RATE_LIMIT`         | Keep API rate limits on Postgres (shared across instances) | unset (enabled in production) | Set to `false` only for debugging — forces per-process in-memory limits. See [rate-limiting-serverless.md](./rate-limiting-serverless.md) |
+| `HTTPS_ONLY`                | Force HTTPS redirects                                      | `false`                       | Production (set to `true`)                                                                                                                |
 
 ### Environment Variable Details
 

@@ -211,7 +211,7 @@ Some dependencies require version overrides (in `package.json` under `pnpm.overr
     "overrides": {
       "tar": "^7.5.8",
       "seroval": "^1.4.1",
-      "undici": "^6.23.0",
+      "undici": "^6.27.0",
       "path-to-regexp": "^6.3.0",
       "esbuild": "^0.25.0"
     }

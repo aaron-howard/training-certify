@@ -44,6 +44,16 @@ The Training Certify platform uses multiple monitoring tools to ensure reliabili
 
 **Purpose:** Prometheus-format metrics for monitoring
 
+**Auth:** When `INTERNAL_OPS_TOKEN` is set (recommended in production), requests must include:
+
+```bash
+curl -H "Authorization: Bearer $INTERNAL_OPS_TOKEN" https://your-host/metrics
+# or
+curl -H "X-Internal-Ops-Token: $INTERNAL_OPS_TOKEN" https://your-host/metrics
+```
+
+If `INTERNAL_OPS_TOKEN` is unset, `/metrics` and deep `/health` are public — do not leave them open on internet-facing production.
+
 **Metrics Exposed:**
 
 - **Request counts** — `http_requests_total` (per method/path/status) and aggregate `http_requests_total`
@@ -56,25 +66,35 @@ All API routes are wrapped with `withApiMetrics()` so every request is timed and
 **Usage:**
 
 ```bash
-curl http://localhost:3000/metrics
+curl -H "Authorization: Bearer $INTERNAL_OPS_TOKEN" http://localhost:3000/metrics
 ```
 
 ### 3. Health Checks
 
 **Endpoints:**
 
-- `GET /health` - Health check (database, environment)
-- `GET /ready` - Readiness check (for load balancers)
+- `GET /health` - Health check (database, environment); gated by `INTERNAL_OPS_TOKEN` when set
+- `GET /ready` - Readiness check (for load balancers; public)
+- `GET /api/health` - Public liveness (rate-limited)
 
 **Usage:**
 
 ```bash
-# Health check
-curl http://localhost:3000/health
+# Health check (with ops token in production)
+curl -H "Authorization: Bearer $INTERNAL_OPS_TOKEN" http://localhost:3000/health
 
 # Readiness check
 curl http://localhost:3000/ready
 ```
+
+### Sentry sampling
+
+Defaults in production (`src/lib/sentry.server.ts`):
+
+- `SENTRY_TRACES_SAMPLE_RATE` → **0.1** (10%)
+- `SENTRY_PROFILES_SAMPLE_RATE` → **0.1** (10%)
+
+Override via env if you need more detail temporarily. Development defaults remain `1.0` when unset.
 
 ### 4. Structured Logging
 

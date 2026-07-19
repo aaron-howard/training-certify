@@ -49,7 +49,7 @@ describe('/api/compliance Integration Tests', () => {
   })
 
   describe('GET /api/compliance', () => {
-    it('should return compliance data for Admin', async () => {
+    it('should return compliance data for Admin with computed rate', async () => {
       const { auth } = await import('@clerk/tanstack-react-start/server')
       const admin = await mockAuthForRole('Admin', auth)
 
@@ -60,8 +60,16 @@ describe('/api/compliance Integration Tests', () => {
           userId: admin.id,
         }),
       ]
+      const mockUserCerts = [
+        { status: 'active' },
+        { status: 'active' },
+        { status: 'expired' },
+        { status: 'expiring-soon' },
+      ]
 
-      await setupTestMocks(admin, mockAuditLogs)
+      await setupTestMocks(admin, mockAuditLogs, {
+        dbSequence: [mockAuditLogs, mockUserCerts],
+      })
 
       const { Route } = await import('../../routes/api.compliance')
       const handler = (Route.options.server?.handlers as any)?.GET
@@ -78,8 +86,32 @@ describe('/api/compliance Integration Tests', () => {
       expect(data).toHaveProperty('stats')
       expect(Array.isArray(data.auditLogs)).toBe(true)
       expect(data.stats).toHaveProperty('complianceRate')
+      expect(data.stats.complianceRate).toBe(50) // 2 active / 4 total
       expect(data.stats).toHaveProperty('totalAudits')
+      expect(data.stats.totalAudits).toBe(2)
       expect(data.stats).toHaveProperty('issuesFound')
+    })
+
+    it('should return 0 compliance rate when there are no certifications', async () => {
+      const { auth } = await import('@clerk/tanstack-react-start/server')
+      const admin = await mockAuthForRole('Admin', auth)
+      const mockAuditLogs = [factories.auditLog({ action: 'Audit completed' })]
+
+      await setupTestMocks(admin, mockAuditLogs, {
+        dbSequence: [mockAuditLogs, []],
+      })
+
+      const { Route } = await import('../../routes/api.compliance')
+      const handler = (Route.options.server?.handlers as any)?.GET
+      if (!handler) throw new Error('GET handler not found')
+
+      const response = await handler({
+        request: new Request('http://localhost/api/compliance'),
+      } as any)
+
+      expect(response.status).toBe(200)
+      const data = await response.json()
+      expect(data.stats.complianceRate).toBe(0)
     })
 
     it('should return compliance data for Auditor', async () => {
@@ -88,7 +120,9 @@ describe('/api/compliance Integration Tests', () => {
 
       const mockAuditLogs = [factories.auditLog({ action: 'Audit completed' })]
 
-      await setupTestMocks(auditor, mockAuditLogs)
+      await setupTestMocks(auditor, mockAuditLogs, {
+        dbSequence: [mockAuditLogs, [{ status: 'active' }]],
+      })
 
       const { Route } = await import('../../routes/api.compliance')
       const handler = (Route.options.server?.handlers as any)?.GET
@@ -102,6 +136,7 @@ describe('/api/compliance Integration Tests', () => {
       expect(response.status).toBe(200)
       const data = await response.json()
       expect(data).toHaveProperty('auditLogs')
+      expect(data.stats.complianceRate).toBe(100)
     })
 
     it('should return 403 for User role', async () => {
@@ -149,5 +184,21 @@ describe('/api/compliance Integration Tests', () => {
 
       expect(response.status).toBe(401)
     })
+  })
+})
+
+describe('computeComplianceRate', () => {
+  it('computes percentage of active certifications', async () => {
+    const { computeComplianceRate } =
+      await import('../../routes/api.compliance')
+    expect(computeComplianceRate([])).toBe(0)
+    expect(
+      computeComplianceRate([
+        { status: 'active' },
+        { status: 'expired' },
+        { status: 'active' },
+      ]),
+    ).toBe(67)
+    expect(computeComplianceRate([{ status: 'active' }])).toBe(100)
   })
 })

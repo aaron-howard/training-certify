@@ -23,6 +23,8 @@
     "db:studio": "drizzle-kit studio",
     "db:drop": "drizzle-kit drop",
     "db:seed-vendors": "npx tsx scripts/run-seed-vendors-keep-list.ts",
+    "catalog:fill-validation": "pnpm dlx tsx scripts/fill-vendor-validation-from-catalog.ts",
+    "env:validate": "node --experimental-strip-types -e \"import { validateEnv } from './src/lib/env.ts'; validateEnv(); console.log('Environment OK')\"",
     "docs": "typedoc",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui"
@@ -55,39 +57,39 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@clerk/testing": "^2.0.33",
-    "@playwright/test": "^1.60.0",
+    "@clerk/testing": "^2.1.4",
+    "@playwright/test": "^1.61.0",
     "@tanstack/devtools-vite": "^0.7.0",
     "@tanstack/eslint-config": "^0.4.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",
     "@types/jsdom": "^27.0.0",
-    "@types/node": "^25.9.1",
+    "@types/node": "^25.9.3",
     "@types/pg": "^8.20.0",
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.2.0",
-    "@vitest/coverage-v8": "^4.1.8",
+    "@vitest/coverage-v8": "^4.1.9",
     "dotenv": "^17.4.2",
     "drizzle-kit": "0.31.10",
     "eslint": "^9.39.4",
     "graphemer": "^1.4.0",
     "husky": "^9.1.7",
     "jsdom": "^27.0.0",
-    "prettier": "^3.8.3",
+    "prettier": "^3.8.4",
     "rollup-plugin-visualizer": "^7.0.1",
     "typedoc": "^0.28.19",
     "typescript": "^5.7.2",
-    "vercel": "^54.4.1",
+    "vercel": "^54.14.2",
     "vite": "^7.3.5",
-    "vitest": "^4.1.8",
-    "web-vitals": "^5.2.0"
+    "vitest": "^4.1.9",
+    "web-vitals": "^5.3.0"
   },
   "pnpm": {
     "overrides": {
-      "tar": "^7.5.8",
+      "tar": "^7.5.16",
       "seroval": "^1.4.1",
-      "undici": "^6.23.0",
+      "undici": "^6.27.0",
       "path-to-regexp": "^6.3.0",
       "esbuild": "^0.28.1",
       "minimatch@3": "^3.1.5",
@@ -107,7 +109,11 @@
       "@clerk/shared@3": "3.47.4",
       "@clerk/shared@4": "4.12.0",
       "js-cookie": "^3.0.7",
-      "ws": "^8.20.1"
+      "ws": "^8.20.1",
+      "launch-editor": "^2.14.1",
+      "form-data": "^4.0.6",
+      "@opentelemetry/core": "^2.8.0",
+      "js-yaml": "^4.2.0"
     }
   }
 }

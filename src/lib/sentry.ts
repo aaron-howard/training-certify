@@ -20,9 +20,13 @@ export function initSentry() {
     environment: process.env.SENTRY_ENVIRONMENT || 'production',
     release: process.env.SENTRY_RELEASE || 'training-certify@1.0.0',
     tracesSampleRate: parseFloat(
-      process.env.SENTRY_TRACES_SAMPLE_RATE || '1.0',
+      process.env.SENTRY_TRACES_SAMPLE_RATE ||
+        (process.env.NODE_ENV === 'production' ? '0.1' : '1.0'),
     ),
-    profilesSampleRate: 1.0,
+    profilesSampleRate: parseFloat(
+      process.env.SENTRY_PROFILES_SAMPLE_RATE ||
+        (process.env.NODE_ENV === 'production' ? '0.1' : '1.0'),
+    ),
     replaysSessionSampleRate: parseFloat(
       process.env.SENTRY_REPLAYS_SESSION_SAMPLE_RATE || '0.1',
     ),

@@ -14,6 +14,15 @@
 
 Use **vendor-list-deduped.txt** (or the checklist from `scripts/vendor-validation-checklist.ts`) to validate each vendor has a public certification program. Vendors that do not go on **vendor-cleanup-list.txt** (one name per line).
 
+**Production seed authority:** For go-live, treat [`certification-catalog.json`](./certification-catalog.json) as the approved catalog. Fill the eight batch CSVs with:
+
+```bash
+npx tsx scripts/fill-vendor-validation-from-catalog.ts
+# optional: --dry-run
+```
+
+That sets `hasCertProgram=Y` for vendors present in the seed catalog and `hasCertProgram=N` (plus **vendor-cleanup-list.txt**) for everyone else until manually validated.
+
 ## Phase 3
 
 Run `npx tsx scripts/remove-vendors-from-cleanup-list.ts --dry-run` then without `--dry-run` to remove those vendors and their certifications from the database.
