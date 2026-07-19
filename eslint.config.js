@@ -14,6 +14,7 @@ export default [
       '.output',
       'scripts/normalize-catalog-categories.js',
       'docs/api-jsdoc',
+      'perf/**',
     ],
   },
 ]

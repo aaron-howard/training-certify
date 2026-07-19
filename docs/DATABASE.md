@@ -59,11 +59,12 @@ DATABASE_URL="postgresql://..." npm run db:migrate
 
 #### 4. Rollback (if needed)
 
-```bash
-npm run db:rollback
-```
+There is **no** `db:rollback` script. Drizzle Kit does not ship automatic down migrations for this project. Roll back by:
 
-**Note:** Not all migrations are reversible. Always test rollback in staging first.
+1. Restoring from a backup / provider PITR, or
+2. Applying a carefully authored forward migration that reverses the change (manual SQL).
+
+Always practice on staging first. See [ROLLBACK.md](./ROLLBACK.md).
 
 ---
 
@@ -83,8 +84,7 @@ npm run db:migrate
 # 3. Test application
 npm run dev
 
-# 4. Rollback test
-npm run db:rollback
+# 4. Rollback test (manual SQL or restore from backup — no db:rollback script)
 
 # 5. Re-apply
 npm run db:migrate
@@ -138,33 +138,14 @@ CREATE INDEX idx_users_email_verified ON users(email_verified);
 
 #### PostgreSQL Backup Script
 
-Create `scripts/backup-db.sh`:
+Committed at [`scripts/backup-db.sh`](../scripts/backup-db.sh):
 
 ```bash
-#!/bin/bash
-# Database backup script
-
-# Configuration
-BACKUP_DIR="/var/backups/training-certify"
-DATE=$(date +%Y%m%d_%H%M%S)
-BACKUP_FILE="$BACKUP_DIR/backup_$DATE.sql"
-DATABASE_URL="${DATABASE_URL}"
-
-# Create backup directory
-mkdir -p "$BACKUP_DIR"
-
-# Perform backup
-echo "🔄 Starting database backup..."
-pg_dump "$DATABASE_URL" > "$BACKUP_FILE"
-
-# Compress backup
-gzip "$BACKUP_FILE"
-echo "✅ Backup completed: $BACKUP_FILE.gz"
-
-# Clean up old backups (keep last 7 days)
-find "$BACKUP_DIR" -name "backup_*.sql.gz" -mtime +7 -delete
-echo "🗑️  Old backups cleaned up"
+DATABASE_URL="postgresql://..." pnpm run db:backup
+# Optional: BACKUP_DIR=./backups RETENTION_DAYS=7
 ```
+
+Requires `pg_dump`. Prefer managed-provider automated backups + PITR for production; use this script for operator-controlled dumps and restore drills.
 
 #### Schedule with Cron
 
@@ -173,7 +154,7 @@ echo "🗑️  Old backups cleaned up"
 crontab -e
 
 # Add daily backup at 2 AM
-0 2 * * * /path/to/scripts/backup-db.sh >> /var/log/db-backup.log 2>&1
+0 2 * * * cd /path/to/training-certify && DATABASE_URL="..." pnpm run db:backup >> /var/log/db-backup.log 2>&1
 ```
 
 ### Backup Retention Policy
@@ -217,6 +198,23 @@ psql training_certify_restore_test -c "SELECT COUNT(*) FROM users;"
 # 4. Clean up
 dropdb training_certify_restore_test
 ```
+
+### Restore drill sign-off
+
+Complete once on **staging** before GA (and quarterly thereafter):
+
+- [ ] Took a fresh dump with `pnpm run db:backup` (or provider snapshot)
+- [ ] Restored into a separate staging/test database
+- [ ] Verified row counts for `users` and a sample certification table
+- [ ] Confirmed app can boot against restored DB (`/ready` healthy) or documented why not
+- [ ] Recorded date, operator, and duration (feeds RTO evidence)
+
+| Field    | Value     |
+| -------- | --------- |
+| Date     | _pending_ |
+| Operator | _pending_ |
+| Duration | _pending_ |
+| Notes    | _pending_ |
 
 ### Production Restoration
 
@@ -394,7 +392,7 @@ kill -TERM $(pgrep -f "node.*start")
 
 1. Application fails to start
 2. Check migration logs
-3. Rollback migration: `npm run db:rollback`
+3. Rollback migration: restore from backup / PITR or apply a manual reverse migration (no `db:rollback` script)
 4. Fix migration script
 5. Re-generate migration
 6. Test in staging
@@ -496,21 +494,21 @@ SELECT pg_terminate_backend(pid);
 
 ### Package.json Scripts
 
-Add these to `package.json`:
+Relevant scripts already in `package.json`:
 
 ```json
 {
   "scripts": {
-    "db:generate": "drizzle-kit generate:pg",
+    "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:rollback": "drizzle-kit rollback",
     "db:studio": "drizzle-kit studio",
-    "db:push": "drizzle-kit push:pg",
-    "db:backup": "./scripts/backup-db.sh",
-    "db:restore": "./scripts/restore-db.sh"
+    "db:push": "drizzle-kit push",
+    "db:backup": "bash scripts/backup-db.sh"
   }
 }
 ```
+
+There is no `db:rollback` or `db:restore` script — restore with `gunzip -c backup_….sql.gz | psql …` (see above).
 
 ### Drizzle Config
 

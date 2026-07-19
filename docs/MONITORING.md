@@ -2,7 +2,7 @@
 
 This document outlines the monitoring and alerting setup for the Training Certify platform.
 
-**Last Updated:** February 6, 2026
+**Last Updated:** July 19, 2026
 
 ---
 
@@ -12,8 +12,58 @@ The Training Certify platform uses multiple monitoring tools to ensure reliabili
 
 - **Error Tracking:** Sentry
 - **Application Metrics:** Custom metrics endpoint
-- **Health Checks:** `/health` and `/ready` endpoints
+- **Health Checks:** `/health`, `/ready`, and `/api/health` endpoints
+- **External uptime:** GitHub Actions workflow `uptime.yml` (probes staging/production)
 - **Logging:** Structured logging (Pino)
+
+---
+
+## Service Level Objectives (SLOs)
+
+| SLO                   | Target                          | Measurement                                       | Alert path                                       |
+| --------------------- | ------------------------------- | ------------------------------------------------- | ------------------------------------------------ |
+| **Availability**      | ≥ 99.5% monthly (beta)          | `/ready` and `/api/health` success via uptime job | `uptime.yml` job failure → Actions notifications |
+| **Error rate**        | < 5% of requests over 5 minutes | Sentry issue volume + `/metrics` error counters   | Sentry alert rules (below)                       |
+| **API latency (p95)** | < 1000 ms (steady state)        | Sentry traces / `/metrics` histograms             | Sentry performance + investigate slow DB         |
+| **API latency (p99)** | < 2000 ms                       | Same                                              | Same (allow Vercel cold starts)                  |
+
+These SLOs are operational targets for beta/staging. Tighten before GA once baselines exist (`perf/baselines/`).
+
+---
+
+## External uptime probes
+
+Workflow: [`.github/workflows/uptime.yml`](../.github/workflows/uptime.yml)  
+Script: [`scripts/check-uptime.sh`](../scripts/check-uptime.sh)
+
+**Setup:**
+
+1. In GitHub → **Settings → Secrets and variables → Actions → Variables**, set:
+   - `STAGING_BASE_URL` — e.g. `https://training-certify-….vercel.app`
+   - `PRODUCTION_BASE_URL` — production canonical URL
+2. Watch the **Uptime** workflow (repo **Watch → Custom → Actions**) or enable email on failed workflows for your account/org.
+3. Manually verify: **Actions → Uptime → Run workflow**.
+
+The job fails if `/ready` is not ready or `/api/health` is not `healthy` after retries. Scheduled every 10 minutes.
+
+Post-deploy CD also runs the same probe against the fresh Vercel URL (see `deploy.yml`).
+
+---
+
+## Sentry alert playbook
+
+Assuming `SENTRY_DSN` is already set in Vercel:
+
+1. Open the Sentry project → **Alerts → Create Alert Rule**.
+2. Create at least:
+   - **New issue** — notify immediately (email or Slack).
+   - **Error spike** — e.g. more than 50 events in 5 minutes (tune after a week of baseline traffic).
+   - **High volume of a single issue** — e.g. 20+ events of one fingerprint in 10 minutes.
+3. Notification channel for beta: **email** to on-call owner (or Slack webhook). PagerDuty is optional later.
+4. Verify: trigger a test error in staging (or Sentry “Send test notification”) and confirm delivery.
+5. Keep sampling at production defaults (10% traces/profiles) unless investigating.
+
+Do not leave `/metrics` or deep `/health` public — set `INTERNAL_OPS_TOKEN` in Vercel.
 
 ---
 

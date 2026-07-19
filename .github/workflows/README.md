@@ -38,9 +38,34 @@ This directory contains GitHub Actions workflows for CI/CD and repository manage
 
 **Required secrets:** `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
 
-**Post-deploy:** Run `pnpm run db:migrate` against the target `DATABASE_URL`, then bootstrap the first Admin (see `docs/DEPLOYMENT.md`).
+**Post-deploy gates (both environments):**
+
+1. Health smoke via `scripts/check-uptime.sh` (`/ready` + `/api/health`)
+2. Playwright smoke (`e2e/smoke.spec.ts` + `e2e/auth-redirect.spec.ts`) against the deploy URL
+
+**After deploy (operator):** Run `pnpm run db:migrate` against the target `DATABASE_URL`, then bootstrap the first Admin (see `docs/DEPLOYMENT.md` go-live verify). Migrations are **not** auto-applied by this workflow.
 
 **Status:** ✅ Configured (fails fast if Vercel secrets are missing)
+
+---
+
+### `uptime.yml` - External availability probes
+
+**Triggers:** Every 10 minutes (cron) + manual `workflow_dispatch`
+
+**Jobs:** Probe `STAGING_BASE_URL` and/or `PRODUCTION_BASE_URL` repository variables (`/ready` + `/api/health`). Skips with a warning if a variable is unset.
+
+**Status:** ✅ Configured (enable by setting GitHub Actions variables)
+
+---
+
+### `load-test.yml` - k6 smoke load test
+
+**Triggers:** Manual `workflow_dispatch` only
+
+**Jobs:** Runs `perf/smoke-api.k6.js` against `STAGING_BASE_URL`.
+
+**Status:** ✅ Configured
 
 ---
 
@@ -87,12 +112,15 @@ Dependabot is configured via `.github/dependabot.yml`:
 
 ### Required Secrets
 
-For deployment workflows, you may need:
+For deployment workflows:
 
-- `VERCEL_TOKEN` - If deploying to Vercel
-- `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` - If deploying to AWS
-- `RAILWAY_TOKEN` - If deploying to Railway
-- Other platform-specific secrets
+- `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` — Vercel CLI deploy
+- Optional for richer E2E: `CLERK_SECRET_KEY`, `VITE_CLERK_PUBLISHABLE_KEY`
+
+### Required Variables (uptime / load test)
+
+- `STAGING_BASE_URL` — staging origin (no trailing slash)
+- `PRODUCTION_BASE_URL` — production origin
 
 ### Environment Protection
 

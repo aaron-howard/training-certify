@@ -16,6 +16,9 @@ nul
 
 .vercel
 
+# Local DB dumps from pnpm run db:backup
+backups/
+
 # Test coverage
 coverage
 
