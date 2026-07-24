@@ -16,6 +16,7 @@ updates:
     labels:
       - 'dependencies'
       - 'security'
+      - 'github-actions' 
     commit-message:
       prefix: 'chore'
       include: 'scope'

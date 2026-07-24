@@ -1,0 +1,7 @@
+{
+  "plugins": {
+    "semgrep-plugin": {
+      "enabled": true
+    }
+  }
+}
