@@ -1,4 +1,6 @@
 {
+  "typescript.experimental.useTsgo": true,
+  "typescript.tsdk": "node_modules/typescript-native/lib",
   "files.watcherExclude": {
     "**/routeTree.gen.ts": true
   },

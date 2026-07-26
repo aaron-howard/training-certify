@@ -12,7 +12,8 @@
     "check:api-coverage": "node scripts/check-api-coverage.mjs",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "type-check": "tsc --noEmit",
+    "type-check": "node node_modules/typescript-native/bin/tsc --noEmit",
+    "type-check:ts6": "node node_modules/typescript/bin/tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check": "prettier --write . && eslint --fix",
@@ -54,7 +55,6 @@
     "react-dom": "^19.2.6",
     "tailwindcss": "^4.3.0",
     "use-sync-external-store": "^1.6.0",
-    "vite-tsconfig-paths": "^6.1.1",
     "zod": "^3.25.76"
   },
   "devDependencies": {
@@ -80,41 +80,11 @@
     "prettier": "^3.8.4",
     "rollup-plugin-visualizer": "^7.0.1",
     "typedoc": "^0.28.19",
-    "typescript": "^5.7.2",
+    "typescript": "^6.0.0",
+    "typescript-native": "npm:typescript@^7.0.0",
     "vercel": "^54.14.2",
     "vite": "^7.3.5",
     "vitest": "^4.1.9",
     "web-vitals": "^5.3.0"
-  },
-  "pnpm": {
-    "overrides": {
-      "tar": "^7.5.16",
-      "seroval": "^1.4.1",
-      "undici": "^6.27.0",
-      "path-to-regexp": "^6.3.0",
-      "esbuild": "^0.28.1",
-      "minimatch@3": "^3.1.5",
-      "minimatch@9": "^9.0.6",
-      "minimatch@10": "^10.2.5",
-      "picomatch": "^4.0.4",
-      "rollup": "^4.59.0",
-      "flatted": "^3.4.1",
-      "ajv@6": "^6.14.0",
-      "ajv@8": "^8.18.0",
-      "@tootallnate/once": "^3.0.1",
-      "smol-toml": "^1.6.1",
-      "srvx": "^0.11.15",
-      "brace-expansion@2": "^2.0.3",
-      "yaml": "^2.8.3",
-      "postcss": "^8.5.14",
-      "@clerk/shared@3": "3.47.4",
-      "@clerk/shared@4": "4.12.0",
-      "js-cookie": "^3.0.7",
-      "ws": "^8.20.1",
-      "launch-editor": "^2.14.1",
-      "form-data": "^4.0.6",
-      "@opentelemetry/core": "^2.8.0",
-      "js-yaml": "^4.2.0"
-    }
   }
 }

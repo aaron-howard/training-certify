@@ -1,6 +1,8 @@
-# `package.json` overrides (pnpm)
+# `pnpm-workspace.yaml` overrides (pnpm)
 
-pnpm [`overrides`](https://pnpm.io/package_json#pnpmoverrides) live under **`pnpm.overrides`** in `package.json` (not npm’s top-level `overrides` field). They force specific versions of **transitive** dependencies. JSON does not allow comments in `package.json`, so this file keeps a complete summary table for all active overrides, plus detailed rationale/removal guidance for high-risk or long-lived entries.
+pnpm [`overrides`](https://pnpm.io/settings#overrides) live under the **`overrides`** key in `pnpm-workspace.yaml` (pnpm v11+; the old `package.json` → `pnpm.overrides` field is ignored). They force specific versions of **transitive** dependencies. This file keeps a complete summary table for all active overrides, plus detailed rationale/removal guidance for high-risk or long-lived entries.
+
+Native postinstall packages (`esbuild`, `@sentry/cli`, `unrs-resolver`) are allowlisted via **`allowBuilds`** in the same workspace file so pnpm 11 `strictDepBuilds` does not fail install.
 
 **Review cadence:** When upgrading Vite, TanStack Start, Nitro, or `vercel`, re-run the checks below and try deleting overrides one at a time.
 
@@ -21,11 +23,11 @@ pnpm audit --audit-level=high
 
 | Package             | Override   | Primary reason                                                   |
 | ------------------- | ---------- | ---------------------------------------------------------------- |
-| `tar`               | `^7.5.8`   | Security: patched release for extraction/CVE class               |
+| `tar`               | `^7.5.19`  | Security: patched release for extraction/DoS advisories          |
 | `seroval`           | `^1.4.1`   | Align serialization across TanStack / Nitro tree                 |
 | `undici`            | `^6.27.0`  | Security: keep 6.x on a patched minor (CVE-2026-9679/6733/11525) |
 | `path-to-regexp`    | `^6.3.0`   | Security: ReDoS / routing fixes in 6.x                           |
-| `esbuild`           | `^0.25.0`  | Security: build tool chain; path handling fixes                  |
+| `esbuild`           | `^0.28.1`  | Security: build tool chain; path handling fixes                  |
 | `minimatch@3`       | `^3.1.5`   | Security: ReDoS fix for ESLint’s 3.x line                        |
 | `minimatch@9`       | `^9.0.6`   | Security: ReDoS fix for TanStack ESLint 9.x line                 |
 | `minimatch@10`      | `^10.2.5`  | Security: ReDoS fix for other 10.x consumers                     |
@@ -47,16 +49,16 @@ pnpm audit --audit-level=high
 
 ---
 
-## `tar` → `^7.5.8`
+## `tar` → `^7.5.19`
 
-**Why:** Older `tar` (used transitively by `@vercel/*`, `@mapbox/node-pre-gyp`, and similar) had **high-severity** issues in archive extraction (e.g. symlink / hardlink handling). The ecosystem often lags on declaring a safe lower bound.
+**Why:** Older `tar` (used transitively by `@vercel/*`, `@mapbox/node-pre-gyp`, and similar) had **high/critical** issues in archive extraction and decompression DoS. The ecosystem often lags on declaring a safe lower bound.
 
-**Advisory (example):** [GHSA-83g3-92jg-28cx](https://github.com/advisories/GHSA-83g3-92jg-28cx) (fixed in `tar` ≥ 7.5.8; related issues tracked under the `tar` advisory list).
+**Advisory (example):** [GHSA-23hp-3jrh-7fpw](https://github.com/advisories/GHSA-23hp-3jrh-7fpw) (fixed in `tar` ≥ 7.5.19; related issues under the `tar` advisory list).
 
 **Before removing:**
 
-1. Run `pnpm why tar` and confirm every path resolves to **≥ 7.5.8** without the override.
-2. Run `pnpm audit --audit-level=high` and confirm no `tar`-related finding.
+1. Run `pnpm why tar` and confirm every path resolves to **≥ 7.5.19** without the override.
+2. Run `pnpm audit --audit-level=critical` and confirm no `tar`-related finding.
 3. Run `pnpm run test` and `pnpm run build`.
 
 ---
