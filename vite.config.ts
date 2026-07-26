@@ -2,7 +2,6 @@ import { defineConfig } from 'vite'
 import { devtools } from '@tanstack/devtools-vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
-import viteTsConfigPaths from 'vite-tsconfig-paths'
 import tailwindcss from '@tailwindcss/vite'
 import { nitro } from 'nitro/vite'
 import path from 'path'
@@ -50,10 +49,6 @@ export default defineConfig(({ mode }) => ({
     devtools(),
     // Stub server files for client builds to prevent bundling errors
     stubServerFiles(),
-    // this is the plugin that enables path aliases
-    viteTsConfigPaths({
-      projects: ['./tsconfig.json'],
-    }),
     tailwindcss(),
     tanstackStart(),
     nitro(),
