@@ -97,8 +97,8 @@ If the deployment included database migrations:
 2. **Rollback database migration:**
 
    ```bash
-   # See Database Migration Rollback section below
-   npm run db:rollback
+   # No db:rollback script — use provider PITR, restore from pnpm run db:backup,
+   # or apply a manual reverse migration. See Database Migration Rollback below.
    ```
 
 3. **Rollback application code:**

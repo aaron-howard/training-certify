@@ -81,7 +81,31 @@ jobs:
           DEPLOY_URL=$(pnpm exec vercel deploy --prebuilt --token "$VERCEL_TOKEN")
           echo "url=${DEPLOY_URL}" >> "$GITHUB_OUTPUT"
           echo "Deployed staging: ${DEPLOY_URL}"
-          echo "::notice::Run pnpm run db:migrate against the staging DATABASE_URL if schema changed."
+          echo "::notice::Run pnpm run db:migrate against the staging DATABASE_URL if schema changed. See docs/DEPLOYMENT.md go-live verify."
+
+      - name: Post-deploy health smoke
+        env:
+          BASE_URL: ${{ steps.deploy.outputs.url }}
+          RETRIES: '8'
+          RETRY_SLEEP: '10'
+        run: |
+          set -euo pipefail
+          chmod +x scripts/check-uptime.sh
+          ./scripts/check-uptime.sh
+
+      - name: Install Playwright browsers (Chromium)
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Post-deploy Playwright smoke
+        env:
+          CI: true
+          PLAYWRIGHT_BASE_URL: ${{ steps.deploy.outputs.url }}
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
+        run: |
+          set -euo pipefail
+          # Smoke + auth-redirect only; skip visual baselines on remote deploys
+          pnpm exec playwright test e2e/smoke.spec.ts e2e/auth-redirect.spec.ts --project=chromium
 
       - name: Create deployment
         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
@@ -149,7 +173,31 @@ jobs:
           DEPLOY_URL=$(pnpm exec vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN")
           echo "url=${DEPLOY_URL}" >> "$GITHUB_OUTPUT"
           echo "Deployed production: ${DEPLOY_URL}"
-          echo "::notice::Run DATABASE_URL=\$PROD_URL pnpm run db:migrate, then bootstrap first Admin (docs/DEPLOYMENT.md)."
+          echo "::notice::Run DATABASE_URL=\$PROD_URL pnpm run db:migrate, then bootstrap first Admin (docs/DEPLOYMENT.md go-live verify)."
+
+      - name: Post-deploy health smoke
+        env:
+          BASE_URL: ${{ steps.deploy.outputs.url }}
+          RETRIES: '8'
+          RETRY_SLEEP: '10'
+        run: |
+          set -euo pipefail
+          chmod +x scripts/check-uptime.sh
+          ./scripts/check-uptime.sh
+
+      - name: Install Playwright browsers (Chromium)
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Post-deploy Playwright smoke
+        env:
+          CI: true
+          PLAYWRIGHT_BASE_URL: ${{ steps.deploy.outputs.url }}
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
+        run: |
+          set -euo pipefail
+          # Smoke + auth-redirect only; skip visual baselines on remote deploys
+          pnpm exec playwright test e2e/smoke.spec.ts e2e/auth-redirect.spec.ts --project=chromium
 
       - name: Create deployment
         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7

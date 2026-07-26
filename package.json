@@ -23,6 +23,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:drop": "drizzle-kit drop",
+    "db:backup": "bash scripts/backup-db.sh",
     "db:seed-vendors": "npx tsx scripts/run-seed-vendors-keep-list.ts",
     "catalog:fill-validation": "pnpm dlx tsx scripts/fill-vendor-validation-from-catalog.ts",
     "env:validate": "node --experimental-strip-types -e \"import { validateEnv } from './src/lib/env.ts'; validateEnv(); console.log('Environment OK')\"",

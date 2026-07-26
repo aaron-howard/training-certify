@@ -1,0 +1,52 @@
+name: Load test
+
+# Manual k6 smoke against staging. Non-blocking; does not run on every push.
+# Requires repository variable STAGING_BASE_URL.
+
+on:
+  workflow_dispatch:
+    inputs:
+      vus:
+        description: 'Virtual users'
+        required: false
+        default: '3'
+      duration:
+        description: 'Test duration (k6 format)'
+        required: false
+        default: '30s'
+
+permissions:
+  contents: read
+
+jobs:
+  k6-smoke:
+    name: k6 API smoke
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Install k6
+        run: |
+          set -euo pipefail
+          sudo gpg -k
+          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg \
+            --keyserver hkp://keyserver.ubuntu.com:80 \
+            --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" \
+            | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install -y k6
+
+      - name: Run smoke load test
+        env:
+          BASE_URL: ${{ vars.STAGING_BASE_URL }}
+          VUS: ${{ github.event.inputs.vus }}
+          DURATION: ${{ github.event.inputs.duration }}
+        run: |
+          set -euo pipefail
+          if [ -z "${BASE_URL:-}" ]; then
+            echo "::error::STAGING_BASE_URL repository variable is not set."
+            exit 1
+          fi
+          k6 run -e "BASE_URL=${BASE_URL}" -e "VUS=${VUS}" -e "DURATION=${DURATION}" perf/smoke-api.k6.js

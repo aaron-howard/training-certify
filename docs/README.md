@@ -25,10 +25,12 @@ Main project docs live in the **repository root**. This folder holds deeper guid
 | [auth-flow.md](./auth-flow.md)                                             | Authentication and authorization flow                                 |
 | [database-schema.md](./database-schema.md)                                 | Database schema details                                               |
 | [api/README.md](./api/README.md)                                           | API reference and OpenAPI                                             |
-| [MONITORING.md](./MONITORING.md)                                           | Monitoring and alerting                                               |
+| [MONITORING.md](./MONITORING.md)                                           | SLOs, uptime workflow, Sentry alert playbook                          |
+| [PRIVACY.md](./PRIVACY.md)                                                 | Privacy / DSAR ops guidance (not legal sign-off)                      |
 | [VERCEL_TROUBLESHOOTING.md](./VERCEL_TROUBLESHOOTING.md)                   | Vercel-specific issues                                                |
 | [ROLLBACK.md](./ROLLBACK.md)                                               | Rollback procedures                                                   |
 | [PRODUCTION_READINESS.md](./PRODUCTION_READINESS.md)                       | Production readiness report                                           |
+| [PRODUCTION_READINESS_CHECKLIST.md](./PRODUCTION_READINESS_CHECKLIST.md)   | Full production readiness checklist assessment                        |
 | [dependency-overrides.md](./dependency-overrides.md)                       | `package.json` pnpm overrides (why / when to remove)                  |
 | [dependabot-majors.md](./dependabot-majors.md)                             | Dependabot major-version policy and quarterly review                  |
 | [dependency-minor-patch-workflow.md](./dependency-minor-patch-workflow.md) | Weekly triage for grouped minor/patch Dependabot PRs                  |
