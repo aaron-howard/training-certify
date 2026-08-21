@@ -21,31 +21,39 @@ pnpm audit --audit-level=high
 
 ## Summary table
 
-| Package             | Override   | Primary reason                                                   |
-| ------------------- | ---------- | ---------------------------------------------------------------- |
-| `tar`               | `^7.5.19`  | Security: patched release for extraction/DoS advisories          |
-| `seroval`           | `^1.4.1`   | Align serialization across TanStack / Nitro tree                 |
-| `undici`            | `^6.27.0`  | Security: keep 6.x on a patched minor (CVE-2026-9679/6733/11525) |
-| `path-to-regexp`    | `^6.3.0`   | Security: ReDoS / routing fixes in 6.x                           |
-| `esbuild`           | `^0.28.1`  | Security: build tool chain; path handling fixes                  |
-| `minimatch@3`       | `^3.1.5`   | Security: ReDoS fix for ESLint’s 3.x line                        |
-| `minimatch@9`       | `^9.0.6`   | Security: ReDoS fix for TanStack ESLint 9.x line                 |
-| `minimatch@10`      | `^10.2.5`  | Security: ReDoS fix for other 10.x consumers                     |
-| `picomatch`         | `^4.0.4`   | Security: align fdir/vite picomatch consumers                    |
-| `rollup`            | `^4.59.0`  | Security: build-time path handling fixes                         |
-| `flatted`           | `^3.4.1`   | Security: circular JSON / prototype pollution fix                |
-| `ajv@6`             | `^6.14.0`  | Security: ReDoS with `$data` (ESLint tree)                       |
-| `ajv@8`             | `^8.18.0`  | Security: ReDoS with `$data` (Vercel CLI tree)                   |
-| `@tootallnate/once` | `^3.0.1`   | Security: control-flow scoping (Vercel CLI)                      |
-| `smol-toml`         | `^1.6.1`   | Security: DoS via commented lines (Vercel CLI)                   |
-| `srvx`              | `^0.11.15` | Security: middleware bypass; lifts 0.8.x stragglers              |
-| `brace-expansion@2` | `^2.0.3`   | Security: ReDoS / hang in minimatch 10.x tree                    |
-| `yaml`              | `^2.8.3`   | Security: stack overflow on nested YAML (typedoc)                |
-| `postcss`           | `^8.5.14`  | Security: XSS in CSS stringify (Vite)                            |
-| `@clerk/shared@3`   | `3.47.4`   | Clerk 0.x peer line until full Clerk 1.x migration               |
-| `@clerk/shared@4`   | `4.12.0`   | Clerk 1.x: ≥4.8.1 for GHSA-vqx2-fgx2-5wq9                        |
-| `js-cookie`         | `^3.0.7`   | Security: prototype hijack in assign() (Clerk tree)              |
-| `ws`                | `^8.20.1`  | Security: memory disclosure (TanStack devtools)                  |
+| Package             | Override   | Primary reason                                                  |
+| ------------------- | ---------- | --------------------------------------------------------------- |
+| `tar`               | `^7.5.19`  | Security: patched release for extraction/DoS advisories         |
+| `seroval`           | `^1.4.1`   | Align serialization across TanStack / Nitro tree                |
+| `undici`            | `^6.28.0`  | Security: keep 6.x on a patched minor (retry/CRLF/cookie GHSAs) |
+| `path-to-regexp`    | `^6.3.0`   | Security: ReDoS / routing fixes in 6.x                          |
+| `esbuild`           | `^0.28.1`  | Security: build tool chain; path handling fixes                 |
+| `minimatch@3`       | `^3.1.5`   | Security: ReDoS fix for ESLint’s 3.x line                       |
+| `minimatch@9`       | `^9.0.6`   | Security: ReDoS fix for TanStack ESLint 9.x line                |
+| `minimatch@10`      | `^10.2.5`  | Security: ReDoS fix for other 10.x consumers                    |
+| `picomatch`         | `^4.0.4`   | Security: align fdir/vite picomatch consumers                   |
+| `rollup`            | `^4.59.0`  | Security: build-time path handling fixes                        |
+| `flatted`           | `^3.4.1`   | Security: circular JSON / prototype pollution fix               |
+| `ajv@6`             | `^6.14.0`  | Security: ReDoS with `$data` (ESLint tree)                      |
+| `ajv@8`             | `^8.18.0`  | Security: ReDoS with `$data` (Vercel CLI tree)                  |
+| `@tootallnate/once` | `^3.0.1`   | Security: control-flow scoping (Vercel CLI)                     |
+| `smol-toml`         | `^1.6.1`   | Security: DoS via commented lines (Vercel CLI)                  |
+| `srvx`              | `^0.11.15` | Security: middleware bypass; lifts 0.8.x stragglers             |
+| `brace-expansion@1` | `^1.1.18`  | Security: ReDoS / OOM in ESLint minimatch 3.x                   |
+| `brace-expansion@2` | `^2.1.4`   | Security: ReDoS / OOM in eslint-plugin-import-x                 |
+| `brace-expansion@5` | `^5.0.9`   | Security: ReDoS / OOM in Sentry / TypeDoc / Vercel CLI          |
+| `yaml`              | `^2.8.3`   | Security: stack overflow on nested YAML (typedoc)               |
+| `postcss`           | `^8.5.23`  | Security: sourceMappingURL path traversal (Vite)                |
+| `@clerk/shared@3`   | `3.47.4`   | Clerk 0.x peer line until full Clerk 1.x migration              |
+| `@clerk/shared@4`   | `4.12.0`   | Clerk 1.x: ≥4.8.1 for GHSA-vqx2-fgx2-5wq9                       |
+| `js-cookie`         | `^3.0.7`   | Security: prototype hijack in assign() (Clerk tree)             |
+| `ws`                | `^8.21.0`  | Security: fragment DoS (jsdom) + prior memory disclosure        |
+| `js-yaml`           | `^4.3.1`   | Security: quadratic YAML merge-key / !!omap DoS (ESLint)        |
+| `nanoid`            | `^3.3.18`  | Security: infinite loop on size 0 / negative (PostCSS)          |
+| `shell-quote`       | `^1.9.0`   | Security: quadratic parse() DoS (TanStack launch-editor)        |
+| `fast-uri`          | `^3.1.5`   | Security: host confusion via backslash authority (Vercel CLI)   |
+| `ip-address`        | `^10.3.1`  | Security: SSRF classification bugs (Vercel CLI SOCKS)           |
+| `linkify-it`        | `^5.0.2`   | Security: mailto: quadratic DoS (TypeDoc markdown-it)           |
 
 ---
 
@@ -75,14 +83,14 @@ pnpm audit --audit-level=high
 
 ---
 
-## `undici` → `^6.27.0`
+## `undici` → `^6.28.0`
 
-**Why:** `undici` is pulled in by **Node tooling** and some **framework / adapter** paths (notably `@vercel/blob` for certification proof uploads). Older 6.x minors had **security fixes** landed in later 6.x releases; the override keeps the whole tree on a **patched** 6.x line without jumping to an incompatible major. As of Jul 2026, `6.27.0` patches CVE-2026-9679, CVE-2026-6733, and CVE-2026-11525.
+**Why:** `undici` is pulled in by **Node tooling** and some **framework / adapter** paths (notably `@vercel/blob` for certification proof uploads). Keep the whole tree on a **patched** 6.x line without jumping to an incompatible major. `6.28.0` patches GHSA-8xcm-r25x-g524 (retry interceptor desync), GHSA-m8rv-5g2x-5cg5 (CRLF via blob `type`), and GHSA-v3r7-h72x-cjcm (cookie attribute injection), on top of the earlier 6.27.x CVEs.
 
 **Before removing:**
 
 1. Run `pnpm why undici` and note the shallowest vulnerable range (if any) from `pnpm audit`.
-2. After removing, confirm `node -e "require('undici/package.json').version"` (or `pnpm list undici`) meets your security bar.
+2. After removing, confirm `pnpm list undici` meets your security bar (`≥ 6.28.0` on the 6.x line).
 
 ---
 
@@ -123,14 +131,47 @@ pnpm audit --audit-level=high
 
 ---
 
-## `ws` → `^8.20.1`
+## `ws` → `^8.21.0`
 
-**Why:** `@tanstack/devtools-vite` → `@tanstack/devtools-event-bus` pulls `ws` **&lt; 8.20.1**, flagged **moderate** for uninitialized memory disclosure ([GHSA-58qx-3vcg-4xpx](https://github.com/advisories/GHSA-58qx-3vcg-4xpx)).
+**Why:** `jsdom` (Vitest) still resolved `ws` **8.20.1**, which is **high** for memory-exhaustion DoS from tiny WebSocket fragments ([GHSA-96hv-2xvq-fx4p](https://github.com/advisories/GHSA-96hv-2xvq-fx4p)). The previous `^8.20.1` pin also covered [GHSA-58qx-3vcg-4xpx](https://github.com/advisories/GHSA-58qx-3vcg-4xpx) (TanStack devtools event-bus). Forcing **≥ 8.21.0** covers both.
 
 **Before removing:**
 
-1. Bump `@tanstack/devtools-vite` (or the event-bus package) if a release pins `ws` ≥ 8.20.1, then try removing the override.
-2. `pnpm audit --audit-level=moderate` — no `ws` finding.
+1. `pnpm why ws` — confirm jsdom and `@tanstack/devtools-event-bus` declare **≥ 8.21.0** without the override.
+2. `pnpm audit --audit-level=high` — no `ws` finding.
+
+---
+
+## `brace-expansion` → `@1 ^1.1.18` / `@2 ^2.1.4` / `@5 ^5.0.9`
+
+**Why:** Three stacked ReDoS / OOM advisories ([GHSA-3jxr-9vmj-r5cp](https://github.com/advisories/GHSA-3jxr-9vmj-r5cp), [GHSA-mh99-v99m-4gvg](https://github.com/advisories/GHSA-mh99-v99m-4gvg), [GHSA-rgw5-rvv9-x895](https://github.com/advisories/GHSA-rgw5-rvv9-x895)) land on every major line still in the tree: ESLint `minimatch@3` (1.x), `eslint-plugin-import-x` (2.x), and Sentry / TypeDoc / Vercel CLI `minimatch@10` (5.x). The incomplete `maxLength` fix in 5.0.8 is why 5.x must be **≥ 5.0.9**.
+
+**Before removing:**
+
+1. `pnpm why brace-expansion` — confirm no path stays below the patched floor for that major.
+2. `pnpm audit --audit-level=high` — no `brace-expansion` finding.
+
+---
+
+## `postcss` → `^8.5.23`
+
+**Why:** Vite (and Tailwind / TanStack Start / Nitro) pull PostCSS. `≤ 8.5.17` auto-loads attacker-controlled `sourceMappingURL` paths ([GHSA-r28c-9q8g-f849](https://github.com/advisories/GHSA-r28c-9q8g-f849)); `≤ 8.5.22` is an incomplete fix when `from` is unset ([GHSA-fxqj-rqcc-2cmp](https://github.com/advisories/GHSA-fxqj-rqcc-2cmp)).
+
+**Before removing:**
+
+1. Upgrade `vite` until it declares PostCSS **≥ 8.5.23**, then try removing the override.
+2. `pnpm run build` and `pnpm audit --audit-level=high` — no `postcss` finding.
+
+---
+
+## `js-yaml` → `^4.3.1`
+
+**Why:** ESLint (`@eslint/eslintrc`) and the Vercel CLI still resolve `4.2.0`. That line is **high** for quadratic CPU on merge-key chains ([GHSA-52cp-r559-cp3m](https://github.com/advisories/GHSA-52cp-r559-cp3m)) and `!!omap` resolution ([GHSA-5p4m-2wfm-xmqj](https://github.com/advisories/GHSA-5p4m-2wfm-xmqj)).
+
+**Before removing:**
+
+1. `pnpm why js-yaml` — confirm ESLint / Vercel CLI declare **≥ 4.3.1**.
+2. `pnpm audit --audit-level=high` — no `js-yaml` finding.
 
 ---
 
