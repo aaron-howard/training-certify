@@ -50,7 +50,7 @@ export function parsePaginationParams(
  * @param limit - Items per page
  * @returns PaginationMeta object
  */
-export function calculatePaginationMeta(
+function calculatePaginationMeta(
   total: number,
   page: number,
   limit: number,

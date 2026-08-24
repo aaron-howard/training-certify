@@ -329,7 +329,6 @@ export const getDbOrThrow = async (): Promise<
   return database
 }
 
-export const db = globalForDb.db
 export { instanceId }
 
 /**

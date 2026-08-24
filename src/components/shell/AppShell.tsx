@@ -3,11 +3,7 @@ import { Menu, X } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { MainNav } from './MainNav'
 import { UserMenu } from './UserMenu'
-
-export interface NavigationItem {
-  label: string
-  href: string
-}
+import type { NavigationItem } from './MainNav'
 
 export interface AppShellProps {
   children: React.ReactNode

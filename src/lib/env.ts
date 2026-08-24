@@ -128,58 +128,6 @@ export function validateEnv(): Env {
 }
 
 /**
- * Get validated environment variables with type safety.
- *
- * Returns environment variables that have been validated against the
- * envSchema. This provides type safety and ensures all required environment
- * variables are present and valid.
- *
- * @returns Validated environment variables object
- * @throws {z.ZodError} If environment variables don't match the schema
- *
- * @example
- * ```typescript
- * const env = getEnv()
- * const dbUrl = env.DATABASE_URL // Type-safe access
- * ```
- */
-export function getEnv(): Env {
-  return parseEnv(process.env)
-}
-
-/**
- * Check if the application is running in production mode.
- *
- * Determines the environment based on NODE_ENV environment variable.
- *
- * @returns true if NODE_ENV === 'production', false otherwise
- *
- * @example
- * ```typescript
- * if (isProduction()) {
- *   // Production-only code
- * }
- * ```
- */
-export function isProduction(): boolean {
-  return process.env.NODE_ENV === 'production'
-}
-
-/**
- * Check if running in development
- */
-export function isDevelopment(): boolean {
-  return process.env.NODE_ENV === 'development'
-}
-
-/**
- * Check if running in test
- */
-export function isTest(): boolean {
-  return process.env.NODE_ENV === 'test'
-}
-
-/**
  * Lazy-loaded validated environment (for compatibility)
  */
 let _env: Env | null = null

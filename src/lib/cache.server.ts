@@ -205,10 +205,3 @@ export async function getOrCompute<T>(
 export function invalidateCache(pattern: string): void {
   cache.invalidate(pattern)
 }
-
-/**
- * Delete specific cache key
- */
-export function deleteCache(key: string): void {
-  cache.delete(key)
-}

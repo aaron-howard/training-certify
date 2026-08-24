@@ -125,7 +125,7 @@ export const CreateUserCertificationSchema = z.object({
     .nullable(),
 })
 
-export const UpdateUserCertificationDetailsSchema = z.object({
+const UpdateUserCertificationDetailsSchema = z.object({
   status: CertificationStatusSchema.optional(),
   issueDate: dateString,
   expirationDate: dateString,
@@ -176,7 +176,7 @@ export const UpdateCertificationInputSchema = z.object({
   }),
 })
 
-export const AddCertificationProofSchema = z.object({
+const AddCertificationProofSchema = z.object({
   id: z.string().uuid('Invalid certification ID'),
   action: z.literal('addProof'),
   proof: z.object({
@@ -198,7 +198,7 @@ export const AddCertificationProofSchema = z.object({
   }),
 })
 
-export const UpdateCertificationDetailsActionSchema = z.object({
+const UpdateCertificationDetailsActionSchema = z.object({
   id: z.string().uuid('Invalid certification ID'),
   action: z.literal('updateDetails'),
   updates: UpdateUserCertificationDetailsSchema,

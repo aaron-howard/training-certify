@@ -69,7 +69,7 @@ export function generateCSRFToken(): string {
  * }
  * ```
  */
-export function validateCSRFToken(token: string, secret: string): boolean {
+function validateCSRFToken(token: string, secret: string): boolean {
   if (!token || !secret) {
     return false
   }

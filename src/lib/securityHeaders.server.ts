@@ -84,7 +84,7 @@ export function buildContentSecurityPolicy(isProduction: boolean): string {
  * response.headers.set('X-Frame-Options', headers['X-Frame-Options'])
  * ```
  */
-export function getSecurityHeaders(): Record<string, string> {
+function getSecurityHeaders(): Record<string, string> {
   const isProduction = process.env.NODE_ENV === 'production'
 
   return {
@@ -135,27 +135,4 @@ export function applySecurityHeaders(response: Response): Response {
   })
 
   return response
-}
-
-/**
- * Create a new Response with security headers automatically applied.
- *
- * Convenience function that creates a Response and applies all security headers
- * in one step. Use this instead of `new Response()` for API responses.
- *
- * @param body - Response body (string, Blob, FormData, etc.)
- * @param init - Optional ResponseInit object (status, headers, etc.)
- * @returns New Response object with security headers applied
- *
- * @example
- * ```typescript
- * return createSecureResponse(JSON.stringify({ data: 'test' }), { status: 200 })
- * ```
- */
-export function createSecureResponse(
-  body: BodyInit | null,
-  init?: ResponseInit,
-): Response {
-  const response = new Response(body, init)
-  return applySecurityHeaders(response)
 }
