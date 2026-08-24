@@ -1,0 +1,63 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "entry": [
+    "src/entry-client.tsx",
+    "src/entry-server.tsx",
+    "src/routes/**/*.{ts,tsx}",
+    "src/router.tsx",
+    "src/routeTree.gen.ts",
+    "scripts/**/*.{ts,js,mjs,sh}",
+    "e2e/**/*.{ts,tsx}",
+    "perf/**/*.{js,ts}",
+    "vite.config.ts",
+    "app.config.ts",
+    "drizzle.config.ts",
+    "playwright.config.ts",
+    "vitest.config.ts",
+    "eslint.config.js",
+    "prettier.config.js",
+    "src/db/seed.ts"
+  ],
+  "ignore": [
+    "product/**",
+    "product-plan/**",
+    "docs/api-jsdoc/**",
+    "data/**",
+    "drizzle/**",
+    "**/*.md",
+    "fallow-results.json",
+    "lint-results.json",
+    "npm-audit-results.json"
+  ],
+  "ignoreDependencies": [
+    "typescript-native",
+    "@tanstack/react-router-ssr-query",
+    "@tailwindcss/vite",
+    "nitro"
+  ],
+  "ignoreExports": [
+    {
+      "file": "src/lib/logging.client-stub.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/logging.server.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/sentry.server.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/monitoring.server.ts",
+      "exports": ["*"]
+    }
+  ],
+  "duplicates": {
+    "minOccurrences": 3,
+    "ignore": ["docs/api-jsdoc/**", "product-plan/**", "product/**"]
+  },
+  "rules": {
+    "unused-dependencies": "warn"
+  }
+}

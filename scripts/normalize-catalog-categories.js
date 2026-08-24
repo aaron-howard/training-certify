@@ -523,7 +523,7 @@ function normalizeCategory(value) {
 
 // Run when executed directly: node scripts/normalize-catalog-categories.js
 const catalogPath = new URL(
-  '../data/expanded_certification _catalog.json',
+  '../data/certification-catalog.json',
   import.meta.url,
 )
 const fs = await import('fs')
