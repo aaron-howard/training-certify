@@ -3,6 +3,7 @@
   "entry": [
     "src/entry-client.tsx",
     "src/entry-server.tsx",
+    "src/start.ts",
     "src/routes/**/*.{ts,tsx}",
     "src/router.tsx",
     "src/routeTree.gen.ts",
@@ -18,7 +19,7 @@
     "prettier.config.js",
     "src/db/seed.ts"
   ],
-  "ignore": [
+  "ignorePatterns": [
     "product/**",
     "product-plan/**",
     "docs/api-jsdoc/**",
@@ -33,7 +34,9 @@
     "typescript-native",
     "@tanstack/react-router-ssr-query",
     "@tailwindcss/vite",
-    "nitro"
+    "nitro",
+    "@clerk/testing",
+    "dotenv"
   ],
   "ignoreExports": [
     {
@@ -50,6 +53,26 @@
     },
     {
       "file": "src/lib/monitoring.server.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/components/pages/CatalogRoutePage.tsx",
+      "exports": ["CatalogRoutePage"]
+    },
+    {
+      "file": "src/components/pages/CertificationManagementRoutePage.tsx",
+      "exports": ["CertificationManagementRoutePage"]
+    },
+    {
+      "file": "src/components/pages/TeamManagementRoutePage.tsx",
+      "exports": ["TeamManagementRoutePage"]
+    },
+    {
+      "file": "src/types/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/start.ts",
       "exports": ["*"]
     }
   ],

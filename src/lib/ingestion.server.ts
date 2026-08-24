@@ -5,12 +5,12 @@ import { logError, logWarning, logger } from './logging.server'
 const BASE_URL = 'https://www.itexams.com'
 const ALL_EXAMS_URL = `${BASE_URL}/all-exams/`
 
-export interface VendorInfo {
+interface VendorInfo {
   name: string
   slug: string
 }
 
-export interface ExamInfo {
+interface ExamInfo {
   code: string
   name: string
   vendorName: string
@@ -103,7 +103,7 @@ function isRetiredExam(vendorId: string, code: string): boolean {
 /**
  * Fetches the list of all vendors from ITExams.
  */
-export async function fetchVendors(): Promise<Array<VendorInfo>> {
+async function fetchVendors(): Promise<Array<VendorInfo>> {
   if (!isServer) {
     logWarning('fetchVendors called on client. Skipping.', {
       function: 'fetchVendors',
@@ -153,7 +153,7 @@ export async function fetchVendors(): Promise<Array<VendorInfo>> {
 /**
  * Fetches exams for a specific vendor.
  */
-export async function fetchExams(vendor: VendorInfo): Promise<Array<ExamInfo>> {
+async function fetchExams(vendor: VendorInfo): Promise<Array<ExamInfo>> {
   if (!isServer) {
     logWarning('fetchExams called on client. Skipping.', {
       function: 'fetchExams',

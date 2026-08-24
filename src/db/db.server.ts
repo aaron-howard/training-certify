@@ -330,24 +330,3 @@ export const getDbOrThrow = async (): Promise<
 }
 
 export { instanceId }
-
-/**
- * Close database connections gracefully.
- * Used during application shutdown to clean up resources.
- *
- * @throws Never throws - logs errors instead
- */
-export async function closeDb(): Promise<void> {
-  if (globalForDb.pool) {
-    try {
-      logger.info({ instanceId }, 'Closing database connection pool')
-      await globalForDb.pool.end()
-      globalForDb.db = undefined
-      globalForDb.pool = undefined
-      globalForDb.initPromise = undefined
-      logger.info({ instanceId }, 'Database connections closed')
-    } catch (error) {
-      logError(error, { instanceId }, 'Error closing database')
-    }
-  }
-}
