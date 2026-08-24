@@ -1,7 +1,6 @@
 /**
  * Test data factories for creating mock data
  */
-import { vi } from 'vitest'
 
 export const factories = {
   user: (overrides = {}) => ({
@@ -78,24 +77,4 @@ export const factories = {
     timestamp: new Date(),
     ...overrides,
   }),
-}
-
-export const mockClerkAuth = (userId: string | null = 'user_test123') => {
-  const { auth } = require('@clerk/tanstack-react-start/server')
-  auth.mockResolvedValue({ userId })
-}
-
-export const mockDatabase = (mockData: Record<string, unknown> = {}) => {
-  return {
-    select: vi.fn().mockReturnThis(),
-    from: vi.fn().mockReturnThis(),
-    where: vi.fn().mockReturnThis(),
-    limit: vi.fn().mockReturnThis(),
-    insert: vi.fn().mockReturnThis(),
-    values: vi.fn().mockReturnThis(),
-    returning: vi.fn().mockResolvedValue([mockData]),
-    update: vi.fn().mockReturnThis(),
-    set: vi.fn().mockReturnThis(),
-    delete: vi.fn().mockReturnThis(),
-  }
 }

@@ -182,7 +182,7 @@ export interface ApiHandlerOptions {
  * @throws {ForbiddenError} If user doesn't have required role
  * @throws {Error} If rate limit is exceeded or CSRF token is invalid
  */
-export async function setupApiHandler(
+async function setupApiHandler(
   request: Request,
   options: ApiHandlerOptions = {},
 ): Promise<AuthSession> {

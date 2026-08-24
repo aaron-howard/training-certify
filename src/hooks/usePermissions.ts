@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { logger } from '../lib/logging.client-stub'
-import { ROLE_PRIVILEGE_ORDER } from '../lib/roles'
 import type { AppUserRole } from '../lib/roles'
 
 /** Platform role — alias of `AppUserRole` from `src/lib/roles.ts`. */
@@ -140,15 +139,4 @@ export function usePermissions(
     const perms = rolePermissions[r] as Permissions | undefined
     return perms ?? rolePermissions.User
   }, [role])
-}
-
-// Helper to check if a role is at least a certain level
-export function isAtLeastRole(
-  currentRole: Role | string | undefined,
-  requiredRole: Role,
-): boolean {
-  const currentIndex = ROLE_PRIVILEGE_ORDER.indexOf(currentRole as AppUserRole)
-  const requiredIndex = ROLE_PRIVILEGE_ORDER.indexOf(requiredRole)
-  if (currentIndex === -1 || requiredIndex === -1) return false
-  return currentIndex >= requiredIndex
 }

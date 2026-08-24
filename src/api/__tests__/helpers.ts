@@ -4,7 +4,7 @@
  */
 
 import { auth } from '@clerk/tanstack-react-start/server'
-import { expect, vi } from 'vitest'
+import { vi } from 'vitest'
 import { factories } from '../../test/factories'
 
 /**
@@ -230,7 +230,7 @@ export function createMockDb(mockData: any = {}) {
  * This handles the pattern where auth checks happen first, then data queries
  * First select().from() call returns auth user, subsequent calls return data
  */
-export function setupAuthAndDataMock(authUser: any, data: any) {
+function setupAuthAndDataMock(authUser: any, data: any) {
   const authResponse = Array.isArray(authUser) ? authUser : [authUser]
   const dataResponse = Array.isArray(data) ? data : [data]
 
@@ -315,58 +315,6 @@ export function setupAuthAndDataMock(authUser: any, data: any) {
   }
 
   return mockDb
-}
-
-/**
- * Create a mock request object
- */
-export function createMockRequest(
-  options: {
-    method?: string
-    url?: string
-    body?: any
-    headers?: Record<string, string>
-  } = {},
-) {
-  const {
-    method = 'GET',
-    url = 'http://localhost:3000/api/test',
-    body = null,
-    headers = {},
-  } = options
-
-  return {
-    method,
-    url,
-    headers: new Headers(headers),
-    json: vi.fn().mockResolvedValue(body),
-  } as any
-}
-
-/**
- * Assert that a response has the expected status and structure
- */
-export async function assertResponse(
-  response: any,
-  expectedStatus: number,
-  assertions?: (data: any) => void,
-) {
-  expect(response.status).toBe(expectedStatus)
-
-  if (assertions && response.json) {
-    const data = await response.json()
-    assertions(data)
-  }
-}
-
-/**
- * Clear all rate limiter state
- */
-export function clearRateLimiter() {
-  const { rateLimiter } = require('../../lib/rateLimit.server')
-  if (rateLimiter && rateLimiter.clear) {
-    rateLimiter.clear()
-  }
 }
 
 /**

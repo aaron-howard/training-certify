@@ -108,21 +108,3 @@ export class NotFoundError extends AppError {
     super(message, 404, 'NOT_FOUND')
   }
 }
-
-/**
- * Error thrown when a database operation fails.
- *
- * Maps to HTTP 500 Internal Server Error status code.
- * Use this for database connection issues, query failures, or other
- * database-related errors that aren't user input validation issues.
- */
-export class DatabaseError extends AppError {
-  /**
-   * Creates a new DatabaseError.
-   *
-   * @param message - Error message describing the database failure (default: 'Database operation failed')
-   */
-  constructor(message: string = 'Database operation failed') {
-    super(message, 500, 'DATABASE_ERROR')
-  }
-}

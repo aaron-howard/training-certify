@@ -22,18 +22,6 @@ export const USER_ROLE_ENUM_VALUES = USER_ROLES as unknown as [
 /** Default allow-list for authenticated API handlers (any logged-in platform role). */
 export const ALL_APP_ROLES: ReadonlyArray<AppUserRole> = [...USER_ROLES]
 
-/**
- * Ascending privilege for `isAtLeastRole` (index 0 = least privilege).
- * Not the same order as the DB enum — only used for comparisons.
- */
-export const ROLE_PRIVILEGE_ORDER: ReadonlyArray<AppUserRole> = [
-  'User',
-  'Auditor',
-  'Executive',
-  'Manager',
-  'Admin',
-] as const
-
 export function isAppUserRole(value: string): value is AppUserRole {
   return (USER_ROLES as ReadonlyArray<string>).includes(value)
 }
