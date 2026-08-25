@@ -1,0 +1,31 @@
+---
+description: Drizzle ORM, PostgreSQL schema, and database access patterns
+globs: src/db/**/*.{ts,sql},drizzle.config.ts,scripts/**/*.{ts,js,mjs,sql}
+alwaysApply: false
+---
+
+# Database conventions
+
+## Schema and migrations
+
+- Canonical schema: `@src/db/schema.ts`
+- Generate/apply with Drizzle Kit scripts in `package.json` (`db:generate`, `db:migrate`, `db:push`).
+- Do not hand-edit generated SQL carelessly; prefer `drizzle-kit generate` after schema changes.
+- Keep `USER_ROLE_ENUM_VALUES` / role enum aligned with `@src/lib/roles.ts`.
+
+## Runtime access
+
+- Use `getDb` / `getDbOrThrow` / `closeDb` patterns from `@src/db/db.server.ts`.
+- Prefer `getDbOrThrow` in API handlers that already treat DB as required.
+- Always use Drizzle query builders — never concatenate user input into SQL strings.
+
+## Scripts
+
+- One-off / ops scripts live under `scripts/` and are fallow **entry points** (do not delete as “unused” without an explicit request).
+- Scripts that touch the DB typically load `dotenv` and use `DATABASE_URL`.
+
+## Seeding
+
+- Seed entry: `@src/db/seed.ts` and vendor/catalog scripts under `scripts/`.
+- Catalog data files live in `data/`; treat them as datasets, not application source.
+---

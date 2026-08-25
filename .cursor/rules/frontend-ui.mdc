@@ -1,0 +1,35 @@
+---
+description: React UI, TanStack Router pages, and Tailwind patterns
+globs: src/components/**/*.{ts,tsx},src/routes/**/*.{ts,tsx},src/hooks/**/*.{ts,tsx},src/styles.css
+alwaysApply: false
+---
+
+# Frontend conventions
+
+## Routing
+
+- File-based routes under `src/routes/` — do not hand-edit `src/routeTree.gen.ts`.
+- Heavy pages (`catalog`, `team-management`, `certification-management`) use `lazyRouteComponent` with a **named export** on the page module. Keep those named exports; do not “clean” them as unused.
+- Root shell / auth gate: `@src/routes/__root.tsx` + `@src/components/shell/`.
+
+## Components
+
+- Prefer existing components under `src/components/{admin,catalog,dashboard,pages,sections,shell}/`.
+- Use Tailwind CSS v4 utility classes already present in the app (slate/blue shell patterns). Do not introduce a second design system.
+- Client CSRF mutations: `fetchWithCsrf` from `@src/lib/csrf.ts`.
+- Permissions: `@src/hooks/usePermissions.ts` and roles from `@src/lib/roles.ts`.
+
+## Server boundary
+
+- Never import `*.server.ts` modules into client components or route modules that ship to the browser.
+- Logging on the client uses `@src/lib/logging.client-stub.ts` (Vite stubs server logging).
+
+## Data fetching
+
+- Prefer TanStack Query patterns already used in page components; hit `/api/*` routes rather than inventing parallel server-fn call sites unless the file already uses `createServerFn`.
+
+## Styling
+
+- Follow existing spacing/typography in shell and section components.
+- Icons: `lucide-react` (already a dependency).
+---

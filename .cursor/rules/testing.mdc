@@ -1,0 +1,32 @@
+---
+description: Vitest API/unit tests and Playwright E2E conventions
+globs: src/**/*.{test,spec}.{ts,tsx},src/api/__tests__/**/*,e2e/**/*,vitest.config.ts,playwright.config.ts
+alwaysApply: false
+---
+
+# Testing conventions
+
+## Unit / API (Vitest)
+
+- Config: `@vitest.config.ts`
+- API integration tests: `src/api/__tests__/`
+- Shared mocks: `@src/api/__tests__/helpers.ts` (`mockAuthForRole`, `setupTestMocks`, `createMockDb`, …)
+- Factories: `@src/test/factories.ts`
+- Mock Clerk + DB; do not hit real Postgres/Clerk in unit tests.
+
+## Coverage gates
+
+- `pnpm run test:coverage`
+- `pnpm run check:api-coverage` — API route files must stay ≥80% statements (CI enforced).
+
+## E2E (Playwright)
+
+- Specs: `e2e/`
+- Config loads `.env` / `.env.local`; Clerk signed-in flows need secrets documented in `@docs/e2e-clerk.md`.
+- Prefer stable smoke/auth-redirect coverage; update visual snapshots only intentionally (`--update-snapshots`).
+
+## When changing behavior
+
+- Update or add tests next to the change.
+- Prefer extending existing API test files over creating one-off unmaintainable suites.
+---

@@ -1,0 +1,44 @@
+---
+description: Core project conventions for Training Certify
+alwaysApply: true
+---
+
+# Training Certify — project rules
+
+Municipal / compliance certification tracking app (TanStack Start + React 19 + Drizzle + Clerk + PostgreSQL). Prefer existing patterns over inventing new ones.
+
+## Source of truth
+
+- Stack and structure: `@ARCHITECTURE.md`
+- Setup and env: `@SETUP.md`
+- Security model: `@SECURITY.md`
+- Testing: `@TESTING.md`
+- API overview: `@API.md`
+
+## Package manager and checks
+
+- Use **pnpm** only (`pnpm-lock.yaml` is authoritative).
+- Before finishing non-trivial changes, run the relevant checks:
+  - `pnpm run type-check`
+  - `pnpm run lint`
+  - `pnpm test` (or a focused Vitest path)
+- Pre-commit runs format + ESLint + type-check via Husky — keep Prettier happy.
+
+## Layout (do not invent parallel trees)
+
+- Pages and API: `src/routes/` (file-based TanStack Router)
+- UI: `src/components/`
+- Server-only helpers: `src/lib/*.server.ts` (never import these into client bundles)
+- DB: `src/db/schema.ts`, `src/db/db.server.ts`, migrations under `src/db/migrations/`
+- Shared Zod schemas: `src/lib/validation.ts`
+- Roles: `src/lib/roles.ts` (`USER_ROLES`, `API_ROLE_SETS`, `AppUserRole`)
+
+## Design OS artifacts
+
+`product/` and `product-plan/` are planning/export artifacts, not the runtime app. Do not “fix” dead-code findings there by deleting product specs unless explicitly asked. Fallow ignores them via `.fallowrc.json`.
+
+## Git / PRs
+
+- Prefer merge commits on `main` (squash is disabled by repo settings).
+- PR template expects summary, linked item when applicable, and documented test steps.
+- Do not commit secrets, `.env`, dumps with credentials, or large generated noise unless requested.
