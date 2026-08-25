@@ -1,0 +1,50 @@
+---
+description: API route handlers — auth, CSRF, rate limits, validation, errors
+globs: src/routes/api*.ts,src/lib/api-helpers.server.ts,src/lib/auth.server.ts,src/lib/csrf.server.ts,src/lib/rateLimit.server.ts,src/lib/validation.ts,src/lib/errors.ts,src/lib/roles.ts
+alwaysApply: false
+---
+
+# API route conventions
+
+File-based API routes live in `src/routes/api.*.ts` using `createFileRoute` + `server.handlers`.
+
+## Prefer shared helpers
+
+Use `@src/lib/api-helpers.server.ts`:
+
+- Reads: `setupReadHandler` / `withApiMetrics` / `withDbTiming`
+- Mutations: `setupMutationHandler` (auth + CSRF + rate limit wiring)
+- Errors: `handleApiError` — never leak stack traces in production
+
+## AuthZ / AuthN
+
+- Authenticate with Clerk-backed helpers in `@src/lib/auth.server.ts` (`requireRole`, `getVerifiedAuth`).
+- Authorize with `API_ROLE_SETS` / `AppUserRole` from `@src/lib/roles.ts`.
+- Users must only access their own data unless the role is Admin/Manager (or the set defined for that endpoint).
+
+## Mutations must
+
+1. Require CSRF (`requireCSRFToken` / `getCSRFTokenFromRequest` from `@src/lib/csrf.server.ts`).
+2. Apply rate limits (`RateLimitPresets` + `requireRateLimit` from `@src/lib/rateLimit.server.ts`).
+3. Validate body/query with Zod schemas from `@src/lib/validation.ts` (or colocated schemas that match that style).
+4. Use Drizzle — no string-built SQL with user input.
+5. Invalidate relevant cache keys via `@src/lib/cache.server.ts` after writes.
+
+## Errors
+
+Throw typed errors from `@src/lib/errors.ts`:
+
+- `ValidationError` (400)
+- `UnauthorizedError` / `ForbiddenError` (401/403)
+- `NotFoundError` (404)
+
+Return consistent JSON via existing helpers; do not invent ad-hoc error envelopes.
+
+## Client mutations
+
+Browser code should use `fetchWithCsrf` from `@src/lib/csrf.ts` for POST/PUT/PATCH/DELETE to CSRF-protected routes.
+
+## Tests
+
+API route changes need Vitest coverage under `src/api/__tests__/`. CI enforces ≥80% statement coverage on API route files via `pnpm run check:api-coverage`.
+---

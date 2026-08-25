@@ -1,0 +1,34 @@
+---
+description: Security, privacy, and secrets handling for Training Certify
+globs: src/lib/{auth,csrf,rateLimit,securityHeaders,env,internalOpsAuth}*.ts,src/lib/certificationProof*.ts,SECURITY.md,docs/SECURITY.md,docs/PRIVACY.md
+alwaysApply: false
+---
+
+# Security rules
+
+Full model: `@SECURITY.md` and `@docs/SECURITY.md`. Privacy ops: `@docs/PRIVACY.md`.
+
+## Never
+
+- Commit secrets, tokens, or real `DATABASE_URL` / Clerk / CSRF values.
+- Log PII, tokens, or full auth headers.
+- Disable CSRF, auth, or rate limiting to “make tests pass” in production code paths.
+- Trust client-supplied user IDs for privileged actions without `getVerifiedAuth` / `requireRole` checks.
+
+## Required production env (do not invent alternatives)
+
+- `DATABASE_URL`
+- `CLERK_SECRET_KEY`
+- `VITE_CLERK_PUBLISHABLE_KEY`
+- `CSRF_SECRET` (min 32 chars in production)
+
+Optional: `SENTRY_DSN`, `LOG_LEVEL`, `HTTPS_ONLY`, `BLOB_READ_WRITE_TOKEN` (proof uploads).
+
+## Uploads
+
+Certification proofs go through `POST /api/certifications/proof` → Vercel Blob. Keep PDF/JPEG/PNG + size limits; do not broaden file types without an explicit security review.
+
+## Headers
+
+Apply security headers via `@src/lib/securityHeaders.server.ts` (`applySecurityHeaders`) on responses that already do so — keep CSP/HSTS behavior intact.
+---
