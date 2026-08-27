@@ -28,3 +28,7 @@ playwright-report/
 blob-report/
 .playwright/
 .env*.local
+
+# Local Claude / Cursor settings
+.claude/settings.json
+.cursor/
